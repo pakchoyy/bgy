@@ -1,0 +1,13 @@
+{
+  "name": "Bantu Guru Yuk",
+  "short_name": "BantuGuru",
+  "description": "Generator soal Kurikulum Merdeka berbasis AI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#34d399",
+  "theme_color": "#34d399",
+  "icons": [
+    {"src": "guru-cibisd2.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "guru-cibisd2.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
