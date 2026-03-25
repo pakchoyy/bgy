@@ -4,9 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bantu Guru Yuk | Buat Soal</title>
-<link rel="icon" href="guru-cibisd2.png" sizes="192x192" type="image/png"/>
-<link rel="shortcut icon" href="guru-cibisd2.png" type="image/png"/>
-<link rel="apple-touch-icon" href="guru-cibisd2.png"/>
+<link rel="icon" href="/soal/guru-cibisd2.png" sizes="192x192" type="image/png"/>
+<link rel="shortcut icon" href="/soal/guru-cibisd2.png" type="image/png"/>
+<link rel="apple-touch-icon" href="/soal/guru-cibisd2.png"/>
 <link rel="manifest" href="./manifest.json"/>
 <meta name="theme-color" content="#34d399"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -300,7 +300,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 <!-- ══ HEADER ══ -->
 <header>
   <div class="header-brand">
-    <img src="guru-cibisd2.png" alt="Logo"/>
+    <img src="/soal/guru-cibisd2.png" alt="Logo"/>
     <div>
       <h1>Bantu Guru Yuk | Buat Soal</h1>
       <p>Kurikulum Merdeka Based &bull; Powered by AI</p>
@@ -968,10 +968,8 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
     simpanHistori(data);
   }catch(e){
     showError('Gagal: '+e.message+'. Cek API Key kamu.');
-  finally{
-  setTimeout(() => {
-    setLoading(false);
-  }, 1500); // 1.5 detik
+    finally{
+  setLoading(false);
   }
 
 function setLoading(s){
