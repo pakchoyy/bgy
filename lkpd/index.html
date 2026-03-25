@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bantu Guru Yuk - Free Version</title>
+<title>Bantu Guru Yuk | Prompt Generator Media Ajar</title>
 <link rel="icon" href="guru-cibisd2.png" sizes="192x192" type="image/png">
 <link rel="shortcut icon" href="guru-cibisd2.png" type="image/png">
 <link rel="apple-touch-icon" href="guru-cibisd2.png">
@@ -13,9 +13,7 @@
 <style>
 body{font-family:'Segoe UI',sans-serif;margin:0;background:#eef2f7;}
 #installPopup{position:fixed;top:-160px;left:0;right:0;background:#2f9e44;color:#fff;padding:15px;text-align:center;transition:.4s;z-index:9999;}
-.header{background:linear-gradient(90deg,#6cc6a6,#4dabf7);color:#fff;padding:18px;}
-.header-box{display:flex;align-items:center;justify-content:center;gap:10px;}
-.header img{width:44px;}
+.header{background:linear-gradient(90deg,#6cc6a6,#4dabf7);color:#fff;padding:20px 18px;}
 .navbar{background:transparent;padding:10px;text-align:center;box-shadow:none;}
 .navbar a{display:inline-block;margin:0 6px;padding:6px 14px;font-weight:bold;cursor:pointer;border-radius:20px;background:linear-gradient(90deg,#6cc6a6,#4dabf7);color:white;font-size:14px;}
 .navbar a.active{background:linear-gradient(90deg,#f59f00,#ffd43b);color:#000;}
@@ -71,17 +69,18 @@ window.addEventListener("load",()=>{
 <div id="installPopup">
 <span style="font-weight:bold">Install aplikasi Bantu Guru Yuk</span>
 <button onclick="installApp()" style="margin-left:10px;background:white;color:#2f9e44;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;">Install</button>
-<button onclick="closeInstall()" style="margin-left:10px;background:red;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;">Tutup</button>
+<button onclick="closeInstall()" style="margin-left:10px;background:rgba(255,255,255,0.2);color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;">✕ Tutup</button>
 </div>
 
 <div class="header">
-<div class="header-box">
-<img src="guru-cibisd2.png">
-<div>
-<div style="font-size:22px;font-weight:bold;letter-spacing:1px;">BANTU GURU YUK</div>
-<div style="font-size:12px;opacity:.9;">v26.3.0 • <span style="color:yellow">Free Version</span></div>
-</div>
-</div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;">
+    <img src="guru-cibisd2.png" style="width:54px;height:54px;object-fit:contain;">
+    <div>
+      <div style="font-size:22px;font-weight:bold;letter-spacing:1px;line-height:1.2;">BANTU GURU YUK</div>
+      <div style="font-size:13px;font-weight:600;opacity:.95;margin-top:2px;">Prompt Generator Media Ajar</div>
+      <div style="font-size:11px;opacity:.8;margin-top:2px;">v26.3.0 • <span style="color:yellow;">Free Version</span></div>
+    </div>
+  </div>
 </div>
 
 <div class="navbar">
@@ -387,10 +386,16 @@ hasil.value=prompt;
 }
 
 function copyPrompt(){
-  hasil.select();
-  document.execCommand("copy");
-  notif.style.display="block";
-  setTimeout(()=>notif.style.display="none",2000);
+  if(!hasil.value.trim()){alert('Generate prompt dulu!');return;}
+  navigator.clipboard.writeText(hasil.value).then(()=>{
+    notif.style.display="block";
+    setTimeout(()=>notif.style.display="none",2000);
+  }).catch(()=>{
+    hasil.select();
+    document.execCommand("copy");
+    notif.style.display="block";
+    setTimeout(()=>notif.style.display="none",2000);
+  });
 }
 
 async function generateDiSini(){
@@ -474,8 +479,11 @@ function showSection(id,e){
 }
 
 function installApp(){
-  if(deferredPrompt){ deferredPrompt.prompt(); }
-  else { alert("Install belum tersedia"); }
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(()=>{deferredPrompt=null;});
+  }
+  closeInstall();
 }
 
 function closeInstall(){
@@ -491,7 +499,7 @@ document.addEventListener("DOMContentLoaded",function(){
     installPopup.style.top="0";
   });
   if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("service-worker.js");
+    navigator.serviceWorker.register("sw.js");
   }
   autoMapel();
   autoStyle();
