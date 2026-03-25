@@ -4,8 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bantu Guru Yuk | Buat Soal</title>
-<link rel="icon" href="/soal/guru-cibisd2.png" sizes="192x192" type="image/png"/>
-<link rel="shortcut icon" href="/soal/guru-cibisd2.png" type="image/png"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234EB89D'/><stop offset='100%25' stop-color='%234A90C4'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text y='62' x='50' text-anchor='middle' font-size='54' font-family='serif'>📚</text></svg>" type="image/svg+xml"/>
 <link rel="apple-touch-icon" href="/soal/guru-cibisd2.png"/>
 <link rel="manifest" href="./manifest.json"/>
 <meta name="theme-color" content="#34d399"/>
@@ -69,10 +68,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* ══ INSTALL POPUP ══ */
-#installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+#installPopup{position:fixed;top:-90px;left:0;right:0;background:#16a34a;color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
 #installPopup.show{top:0;}
 #installPopup button{border:none;border-radius:8px;padding:5px 14px;font-weight:700;cursor:pointer;font-size:.8rem;}
-.btn-install{background:#fff;color:#3b82f6;}
+.btn-install{background:#fff;color:#16a34a;}
 .btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
 
 /* ══ NAVBAR ══ */
@@ -206,7 +205,7 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .doc-header-table{width:100%;border-collapse:collapse;margin-bottom:0;}
 .doc-header-table td{vertical-align:middle;padding:3px 5px;border:none;}
 .doc-logo-cell{width:70px;text-align:center;}
-..doc-logo-cell img{
+.doc-logo-cell img{
   max-height:60px;
   width:auto;
   object-fit:contain;
@@ -466,7 +465,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         <label>Kelas</label>
         <select id="kelas" onchange="onKelasChange()">
           <option value="1">1</option><option value="2">2</option>
-          <option value="3" selected>3</option><option value="4">4</option>
+          <option value="3">3</option><option value="4">4</option>
           <option value="5">5</option><option value="6">6</option>
         </select>
       </div>
@@ -486,7 +485,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
       <div class="form-group">
         <label>Topik Tambahan (Opsional)</label>
-        <textarea id="topikTambahan" placeholder="Contoh: fokus soal cerita, konteks lingkungan..."></textarea>
+        <textarea id="topikTambahan" placeholder="Contoh: fokus soal cerita, konteks lingkungan..." style="min-height:100px;"></textarea>
       </div>
 
       <div class="form-group">
@@ -673,10 +672,13 @@ let deferredInstallPrompt=null;
    INIT
 ════════════════════════════════════════════ */
 (function init(){
-  // Hapus loading screen setelah halaman siap
+  // Hapus loading screen setelah halaman siap, minimal 4 detik
+  const loadStart=Date.now();
   window.addEventListener('load',()=>{
+    const elapsed=Date.now()-loadStart;
+    const remaining=Math.max(0,4000-elapsed);
     const ls=document.getElementById('loadingScreen');
-    if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>ls.remove(),400);}
+    if(ls){setTimeout(()=>{ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>ls.remove(),400);},remaining);}
   });
   // Theme
   const saved=localStorage.getItem('theme');
@@ -686,8 +688,12 @@ let deferredInstallPrompt=null;
   // API Key dari localStorage
   const savedKey=localStorage.getItem('gemini_api_key');
   if(savedKey){GEMINI_API_KEY=savedKey;}
-  // Form
-  renderMapelOptions();renderMateriChecklist();
+  // Form - default kelas 2, Bahasa Indonesia
+  renderMapelOptions();
+  document.getElementById('kelas').value='2';
+  renderMapelOptions();
+  document.getElementById('mataPelajaran').value='Bahasa Indonesia';
+  renderMateriChecklist();
   // Init histori badge
   updateHistoriBadge(getHistoriList().length);
   // Install prompt
@@ -695,11 +701,23 @@ let deferredInstallPrompt=null;
     e.preventDefault();deferredInstallPrompt=e;
     const last=localStorage.getItem('installClosedAt');
     const now=Date.now();
-    // Tampilkan lagi kalau belum pernah tutup, atau sudah lebih dari 1 hari
     if(!last||now-parseInt(last)>86400000){
-      setTimeout(()=>document.getElementById('installPopup').classList.add('show'),2000);
+      setTimeout(()=>document.getElementById('installPopup').classList.add('show'),2500);
     }
   });
+  // Tampilkan popup install jika belum pernah ditutup (untuk browser yang sudah install atau tidak support)
+  // hanya tampil sekali, setelah 3 detik
+  const lastClosed=localStorage.getItem('installClosedAt');
+  const nowTs=Date.now();
+  if(!lastClosed||nowTs-parseInt(lastClosed)>86400000){
+    // Cek apakah sudah diinstall sebagai PWA
+    if(!window.matchMedia('(display-mode: standalone)').matches){
+      setTimeout(()=>{
+        const popup=document.getElementById('installPopup');
+        if(popup&&!popup.classList.contains('show'))popup.classList.add('show');
+      },3000);
+    }
+  }
 })();
 
 /* ════════════════════════════════════════════
@@ -759,9 +777,9 @@ function simpanHistori(data){
         tanggal:document.getElementById('tanggal').value,
         jenisUjian:document.getElementById('jenisUjian').value,
         kelas,mapel,
-        pgCount:document.getElementById('pgCount').value,
-        isianCount:document.getElementById('isianCount').value,
-        uraianCount:document.getElementById('uraianCount').value,
+        pgCount:document.getElementById('jmlPG').value,
+        isianCount:document.getElementById('jmlIsian').value,
+        uraianCount:document.getElementById('jmlUraian').value,
       }
     };
     let list=getHistoriList();
@@ -819,9 +837,9 @@ function loadHistori(id){
       document.getElementById('semester').value=f.semester||'1';
       document.getElementById('tanggal').value=f.tanggal||'';
       if(document.getElementById('jenisUjian'))document.getElementById('jenisUjian').value=f.jenisUjian||'';
-      document.getElementById('pgCount').value=f.pgCount||10;
-      document.getElementById('isianCount').value=f.isianCount||5;
-      document.getElementById('uraianCount').value=f.uraianCount||3;
+      document.getElementById('jmlPG').value=f.pgCount||10;
+      document.getElementById('jmlIsian').value=f.isianCount||5;
+      document.getElementById('jmlUraian').value=f.uraianCount||3;
       // Set kelas & mapel lalu update materi
       document.getElementById('kelas').value=f.kelas||'1';
       document.getElementById('mataPelajaran').value=f.mapel||'';
@@ -984,7 +1002,7 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
     document.getElementById('btnKunci').textContent='🔑 Kunci';
     simpanHistori(data);
   }catch(e){
-    showError('Gagal: '+e.message+'. Cek API Key kamu.');
+    showError('Gagal generate soal: '+e.message+'. Coba lagi beberapa saat.');
   }finally{
   setTimeout(() => {
     setLoading(false);
@@ -1264,15 +1282,21 @@ function exportPDF(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
   const mapel=document.getElementById('mataPelajaran').value;
   const kelas=document.getElementById('kelas').value;
-  const konten=document.getElementById('previewBox').innerHTML;
 
-  const printWin=window.open('','_blank');
-  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+  // Kumpulkan semua halaman
+  let allContent='';
+  for(let i=0;i<halamanSoal.length;i++){
+    allContent+=`<div class="page-break">${halamanSoal[i]}</div>`;
+  }
+
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
   <title>Soal_${mapel}_Kelas${kelas}</title>
   <style>
     @page{size:A4;margin:15mm 20mm 15mm 22mm;}
     *{box-sizing:border-box;}
     body{font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;color:#000;margin:0;padding:0;}
+    .page-break{page-break-after:always;}
+    .page-break:last-child{page-break-after:avoid;}
     table{border-collapse:collapse;width:100%;}
     td{vertical-align:top;}
     .doc-header-table td{vertical-align:middle;padding:3px 5px;}
@@ -1284,25 +1308,37 @@ function exportPDF(){
     .doc-tahun{font-size:10pt;}
     .doc-header-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:4pt 0 8pt;}
     .doc-identitas-table{width:100%;font-size:10.5pt;margin-bottom:2pt;}
-    .id-label{width:105pt;} .id-sep{width:10pt;} .id-value{border-bottom:1px solid #333;min-width:80pt;}
-    .doc-identitas-line{border-top:3px solid #000;margin:6pt 0 10pt;}
+    .id-label{width:105pt;}.id-sep{width:10pt;}.id-value{border-bottom:1px solid #333;min-width:80pt;}
+    .doc-identitas-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:6pt 0 10pt;}
     .doc-section-title{font-weight:bold;text-decoration:underline;font-size:11pt;margin:10pt 0 2pt;}
     .doc-petunjuk{font-style:italic;font-size:10pt;margin-bottom:5pt;}
     .doc-soal-table{width:100%;border-collapse:collapse;}
     .soal-no{width:22pt;vertical-align:top;padding-top:1pt;}
     .opsi-table{width:100%;border-collapse:collapse;margin-top:2pt;}
-    .opsi-label{width:22pt;} .opsi-teks{width:44%;}
+    .opsi-label{width:22pt;}.opsi-teks{width:44%;}
     .isian-garis{display:inline-block;border-bottom:1px solid #000;width:55%;min-width:120pt;}
-    .uraian-box{border:1px solid #bbb;min-height:50pt;width:100%;margin-top:3pt;}
+    .uraian-kotak{border:1px solid #bbb;min-height:44pt;width:100%;margin-top:3pt;}
     img{max-width:100%;}
   </style>
-  </head><body>${konten}</body></html>`);
-  printWin.document.close();
-  setTimeout(()=>{
-    printWin.focus();
-    printWin.print();
-    printWin.close();
-  },500);
+  </head><body>${allContent}</body></html>`;
+
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const printWin=window.open(url,'_blank');
+  if(!printWin){
+    // fallback: download as html jika popup diblok
+    const a=document.createElement('a');
+    a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.html`;a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),3000);
+    return;
+  }
+  printWin.onload=function(){
+    setTimeout(()=>{
+      printWin.focus();
+      printWin.print();
+      setTimeout(()=>{printWin.close();URL.revokeObjectURL(url);},1000);
+    },500);
+  };
 }
 
 /* ════════════════════════════════════════════
@@ -1318,18 +1354,27 @@ function exportWord(){
   const judulUjian=getJudulUjian();
   const tanggal=document.getElementById('tanggal').value?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}):'.....................';
 
-  let body=`<div align="center" style="font-family:Times New Roman,serif;">
-    <p style="font-size:11pt;font-weight:bold;text-transform:uppercase;margin:0;">${judulUjian}</p>
-    <p style="font-size:14pt;font-weight:bold;text-transform:uppercase;margin:2pt 0;">${namaSekolah}</p>
-    <p style="font-size:10pt;margin:0;">Tahun Pelajaran ${tahun}</p>
-  </div>
-  <div style="border-top:3px solid black;margin:6pt 0 10pt;"></div>
+  // Logo sebagai img tag (base64 jika ada)
+  const logoKiriHtml=logos.logo1?`<img src="${logos.logo1}" style="width:60px;height:60px;object-fit:contain;"/>`:'';
+  const logoKananHtml=logos.logo2?`<img src="${logos.logo2}" style="width:60px;height:60px;object-fit:contain;"/>`:'';
+
+  let body=`<table width="100%" style="border-collapse:collapse;font-family:Times New Roman,serif;margin-bottom:4pt;">
+  <tr>
+    <td style="width:70px;text-align:center;">${logoKiriHtml}</td>
+    <td style="text-align:center;">
+      <p style="font-size:11pt;font-weight:bold;text-transform:uppercase;margin:0;">${judulUjian}</p>
+      <p style="font-size:14pt;font-weight:bold;text-transform:uppercase;margin:2pt 0;">${namaSekolah}</p>
+      <p style="font-size:10pt;margin:0;">Tahun Pelajaran ${tahun}</p>
+    </td>
+    <td style="width:70px;text-align:center;">${logoKananHtml}</td>
+  </tr></table>
+  <div style="border-top:3px solid black;border-bottom:3px solid black;height:4px;margin:6pt 0 10pt;"></div>
   <table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;border-collapse:collapse;">
     <tr><td width="115">Mata Pelajaran</td><td width="12">:</td><td style="border-bottom:1px solid #333;">${mapel}</td><td width="18"></td><td width="100">Nama</td><td width="12">:</td><td style="border-bottom:1px solid #333;min-width:130pt;">&nbsp;</td></tr>
     <tr><td>Kelas / Semester</td><td>:</td><td style="border-bottom:1px solid #333;">${kelas} / ${semStr}</td><td></td><td>No. Absen</td><td>:</td><td style="border-bottom:1px solid #333;">&nbsp;</td></tr>
     <tr><td>Tanggal</td><td>:</td><td style="border-bottom:1px solid #333;">${tanggal}</td><td></td><td>Nilai</td><td>:</td><td style="border-bottom:1px solid #333;">&nbsp;</td></tr>
   </table>
-  <div style="border-top:3px solid black;margin:8pt 0 10pt;"></div>`;
+  <div style="border-top:3px solid black;border-bottom:3px solid black;height:4px;margin:8pt 0 10pt;"></div>`;
 
   if(pg.length>0){
     body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;font-weight:bold;text-decoration:underline;margin:12pt 0 4pt;">I. Pilihan Ganda</p>`;
@@ -1352,20 +1397,26 @@ function exportWord(){
     uraian.forEach((item,i)=>{body+=`<table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;margin-bottom:6pt;border-collapse:collapse;"><tr><td width="22" valign="top">${pg.length+isian.length+i+1}.</td><td>${item.soal}<table width="100%" style="margin-top:3pt;"><tr><td style="border:1px solid #bbb;height:48pt;">&nbsp;</td></tr></table></td></tr></table>`;});
   }
 
-  const wordHtml=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+  // Gunakan format HTML murni yang didownload sebagai .doc (lebih kompatibel)
+  const fullHtml=`<!DOCTYPE html><html><head><meta charset="utf-8">
 <style>
-  body{font-family:"Times New Roman",serif;font-size:11pt;margin:2cm 2.5cm;}
+  body{font-family:"Times New Roman",serif;font-size:11pt;margin:2cm 2.5cm;color:#000;}
   p{margin:3pt 0;line-height:1.4;}
   table{border-collapse:collapse;width:100%;}
   td{vertical-align:top;font-family:"Times New Roman",serif;font-size:11pt;}
-  .soal-no{width:22pt;vertical-align:top;}
-  .opsi-table td{padding:1pt 4pt;}
+  img{max-width:100%;height:auto;}
 </style>
 </head><body>${body}</body></html>`;
-  const blob=new Blob(['\ufeff',wordHtml],{type:'application/msword'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');
-  a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.docx`;a.click();URL.revokeObjectURL(url);
+
+  const blob=new Blob([fullHtml],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Soal_${mapel}_Kelas${kelas}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
 }
 
 /* ════════════════════════════════════════════
