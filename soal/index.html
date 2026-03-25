@@ -101,7 +101,7 @@ img {
   height: auto;
 }
 .header-brand h1{
-  font-size:1.15rem;font-weight:800;letter-spacing:-.5px;color:#fff;
+  font-size:1.3rem;font-weight:800;letter-spacing:-.5px;color:#fff;
   text-shadow:0 1px 3px rgba(0,0,0,.15);
 }
 .header-brand p{font-size:.68rem;color:rgba(255,255,255,.85);margin-top:1px;}
@@ -270,6 +270,21 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   .navbar a{padding:6px 10px;font-size:.78rem;}
 }
 
+.btn-primary {
+  width: 100%;
+  padding: 18px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 14px;
+  margin-top: 16px;
+  transition: 0.2s;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.btn-primary:hover {
+  transform: scale(1.03);
+}
+
 /* Print */
 @page{size:A4;margin:15mm;}
 @media print{
@@ -284,7 +299,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
 <!-- ══ LOADING SCREEN ══ -->
 <div id="loadingScreen">
-  <img src="guru-cibisd2.png" alt="Logo"/>
+  <img src="/soal/guru-cibisd2.png" alt="Logo"/>
   <div class="ls-title">Bantu Guru Yuk</div>
   <div class="ls-sub">Kurikulum Merdeka Based · Powered by AI</div>
   <div class="ls-spinner"></div>
@@ -307,7 +322,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     </div>
   </div>
   <div class="header-right">
-    <span class="version-badge">v26.3.9c • Free Version</span>
     <button id="darkToggle" onclick="toggleDark()">🌙 Dark</button>
   </div>
 </header>
@@ -544,7 +558,10 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 </div><!-- end tab-home -->
 
 <footer>
-  <div class="footer-title">© 2026 Bantu Guru Yuk by Pak.Choyy</div>
+  <div class="footer-title">© 2026 Bantu Guru Yuk by 
+<a href="https://www.tiktok.com/@pak.choyy" target="_blank">
+  Pak.Choyy
+</a></div>
   <div class="footer-sub">Kurikulum Merdeka Based &bull; Powered by AI &bull; v26.3.9c</div>
 </footer>
 
@@ -969,7 +986,9 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
   }catch(e){
     showError('Gagal: '+e.message+'. Cek API Key kamu.');
   }finally{
-  setLoading(false);
+  setTimeout(() => {
+    setLoading(false);
+  }, 1200); // ⏳ 1.2 detik (pas)
   }
 }
   
