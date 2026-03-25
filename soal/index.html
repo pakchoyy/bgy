@@ -968,10 +968,11 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
     simpanHistori(data);
   }catch(e){
     showError('Gagal: '+e.message+'. Cek API Key kamu.');
-    finally{
+  }finally{
   setLoading(false);
   }
-
+}
+  
 function setLoading(s){
   document.getElementById('btnGenerate').disabled=s;
   document.getElementById('spinner').style.display=s?'block':'none';
