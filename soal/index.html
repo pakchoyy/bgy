@@ -4,9 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bantu Guru Yuk | Buat Soal</title>
-<link rel="icon" href="./guru-cibisd2.png" sizes="192x192" type="image/png"/>
-<link rel="shortcut icon" href="./guru-cibisd2.png" type="image/png"/>
-<link rel="apple-touch-icon" href="./guru-cibisd2.png"/>
+<link rel="icon" href="guru-cibisd2.png" sizes="192x192" type="image/png"/>
+<link rel="shortcut icon" href="guru-cibisd2.png" type="image/png"/>
+<link rel="apple-touch-icon" href="guru-cibisd2.png"/>
 <link rel="manifest" href="./manifest.json"/>
 <meta name="theme-color" content="#34d399"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -90,7 +90,16 @@ header{
 }
 body.dark header{background:linear-gradient(135deg,#1e3a5f,#1e293b);}
 .header-brand{display:flex;align-items:center;gap:10px;}
-.header-brand img{width:36px;height:36px;border-radius:10px;}
+.header-brand img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
 .header-brand h1{
   font-size:1.15rem;font-weight:800;letter-spacing:-.5px;color:#fff;
   text-shadow:0 1px 3px rgba(0,0,0,.15);
@@ -959,10 +968,11 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
     simpanHistori(data);
   }catch(e){
     showError('Gagal: '+e.message+'. Cek API Key kamu.');
-  }finally{
+  finally{
+  setTimeout(() => {
     setLoading(false);
+  }, 1500); // 1.5 detik
   }
-}
 
 function setLoading(s){
   document.getElementById('btnGenerate').disabled=s;
