@@ -437,53 +437,50 @@ function copyPrompt(){
 
 // ===== GENERATE GAMBAR — Pollinations.ai (gratis, no API key) =====
 async function generateGambar(){
+
   if(!hasil.value.trim()){
     alert("Generate prompt dulu sebelum generate gambar!");
     return;
   }
-  const btn        = document.getElementById("btnImageGen");
-  const loadingBox = document.getElementById("loadingImageBox");
-  const hasilBox   = document.getElementById("hasilImageBox");
-  const errorBox   = document.getElementById("errorBox");
 
-  btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span> Membuat gambar...';
-  loadingBox.style.display="block";
-  hasilBox.style.display="none";
-  errorBox.style.display="none";
+  const btn = document.getElementById("btnImageGen");
+  const loadingBox = document.getElementById("loadingImageBox");
+  const hasilBox = document.getElementById("hasilImageBox");
+  const errorBox = document.getElementById("errorBox");
+  const img = document.getElementById("hasilImage");
+
+  btn.disabled = true;
+  btn.innerHTML = "⏳ Membuat gambar...";
+  loadingBox.style.display = "block";
+  hasilBox.style.display = "none";
+  errorBox.style.display = "none";
 
   try {
-    // Ukuran berdasarkan jenis media
-    let w=800,h=1100;
-    if(media.value==="Poster") {w=800;h=1131;}
-    else if(media.value==="Flashcard") {w=1100;h=800;}
-    else if(media.value==="Infografis") {w=800;h=1200;}
-    else if(media.value==="Lembar Mewarnai") {w=800;h=1100;}
 
-    // Ambil max 800 karakter prompt agar URL tidak terlalu panjang
-    const promptText = hasil.value.substring(0, 800);
+    let w=800,h=1100;
+
+    const promptText = hasil.value.substring(0, 300);
     const seed = Math.floor(Math.random()*99999);
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=${w}&height=${h}&seed=${seed}&nologo=true&enhance=true`;
+
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=${w}&height=${h}&seed=${seed}`;
 
     currentImageUrl = url;
-    const img = document.getElementById("hasilImage");
 
-    // Tunggu gambar selesai dimuat
-    await new Promise((resolve, reject) => {
-      const timeout = setTimeout(()=>reject(new Error("Timeout. Server AI sedang sibuk, coba lagi.")), 60000);
-      img.onload  = ()=>{ clearTimeout(timeout); resolve(); };
-      img.onerror = ()=>{ clearTimeout(timeout); reject(new Error("Gagal memuat gambar. Cek koneksi internet.")); };
-      img.src = url;
-    });
+    // 🔥 LANGSUNG TAMPILKAN TANPA WAIT
+    img.src = url;
 
-    loadingBox.style.display="none";
-    hasilBox.style.display="block";
-    hasilBox.scrollIntoView({behavior:"smooth",block:"center"});
+    // kasih delay biar user ngerasa loading
+    setTimeout(()=>{
+      loadingBox.style.display="none";
+      hasilBox.style.display="block";
+    },2000);
 
   } catch(err) {
+
     loadingBox.style.display="none";
     errorBox.style.display="block";
-    errorBox.innerHTML=`❌ <b>Gagal generate gambar.</b><br>${err.message}<br><small style="color:#999;">Coba generate lagi beberapa detik kemudian.</small>`;
+    errorBox.innerHTML="❌ Gagal generate gambar. Coba lagi.";
+
   }
 
   btn.disabled=false;
