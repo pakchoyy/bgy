@@ -1,25 +1,27 @@
 {
-"name": "Bantu Guru Yuk",
-"short_name": "Bantu Guru Yuk",
-"description": "Generator LKPD, Poster, dan Media Pembelajaran",
-"start_url": "index.html",
-"display": "standalone",
-"background_color": "#ffffff",
-"theme_color": "#2e7d32",
-"orientation": "portrait",
-"icons": [
+  "name": "Bantu Guru Yuk",
+  "short_name": "GuruYuk",
+  "description": "Generator LKPD, Poster, dan Media Pembelajaran",
 
-{
-"src": "guru-cibisd2.png",
-"sizes": "192x192",
-"type": "image/png"
-},
+  "start_url": "/lkpd/",
+  "scope": "/lkpd/",
 
-{
-"src": "guru-cibisd2.png",
-"sizes": "512x512",
-"type": "image/png"
-}
+  "display": "standalone",
+  "orientation": "portrait",
 
-]
+  "background_color": "#ffffff",
+  "theme_color": "#2e7d32",
+
+  "icons": [
+    {
+      "src": "/lkpd/guru-cibisd2.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lkpd/guru-cibisd2.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
