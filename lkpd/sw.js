@@ -1,6 +1,7 @@
-const CACHE_NAME = "bantu-guru-v1";
+const CACHE_NAME = "bantu-guru-v2";
 
-const urlsToCache = [
+// FILE WAJIB CACHE
+const CORE_ASSETS = [
   "/lkpd/",
   "/lkpd/index.html",
   "/lkpd/manifest.json",
@@ -9,24 +10,70 @@ const urlsToCache = [
 
 // INSTALL
 self.addEventListener("install", event => {
+  console.log("SW: Install");
   self.skipWaiting();
+
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
+      .then(cache => cache.addAll(CORE_ASSETS))
   );
 });
 
 // ACTIVATE
 self.addEventListener("activate", event => {
-  event.waitUntil(self.clients.claim());
+  console.log("SW: Activate");
+
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            console.log("SW: Delete old cache", key);
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
+
+  self.clients.claim();
 });
 
-// FETCH
+// FETCH (SMART STRATEGY)
 self.addEventListener("fetch", event => {
+
+  // SKIP API (biar tidak ganggu fetch Gemini kamu)
+  if (event.request.url.includes("script.google.com")) return;
+
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
+      .then(cached => {
+
+        // 🔥 kalau ada di cache → pakai cache
+        if (cached) return cached;
+
+        // 🔥 kalau tidak → ambil dari internet + simpan
+        return fetch(event.request)
+          .then(response => {
+
+            // hanya cache file valid
+            if (!response || response.status !== 200 || response.type !== "basic") {
+              return response;
+            }
+
+            const responseClone = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(event.request, responseClone));
+
+            return response;
+          })
+          .catch(() => {
+            // fallback kalau offline
+            if (event.request.destination === "document") {
+              return caches.match("/lkpd/index.html");
+            }
+          });
       })
   );
 });
