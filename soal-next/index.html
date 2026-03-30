@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator Soal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>Generator Soal</h1>
+      <p class="subtitle">Buat soal latihan otomatis dalam hitungan detik.</p>
+
+      <form id="generator-form" class="form">
+        <label for="school-name">Nama Sekolah</label>
+        <input id="school-name" type="text" value="SDN MAJU JAYA 01" required>
+
+        <label for="exam-title">Judul Ujian</label>
+        <input id="exam-title" type="text" value="ULANGAN HARIAN" required>
+
+        <label for="academic-year">Tahun Pelajaran</label>
+        <input id="academic-year" type="text" value="2025/2026" required>
+
+        <label for="subject">Mata Pelajaran</label>
+        <select id="subject" required>
+          <option value="Matematika">Matematika</option>
+          <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+          <option value="IPA">IPA</option>
+          <option value="IPS">IPS</option>
+        </select>
+
+        <label for="topic">Topik</label>
+        <input id="topic" type="text" placeholder="Contoh: Pecahan, Teks Eksplanasi, Ekosistem" required>
+
+        <label for="difficulty">Tingkat Kesulitan</label>
+        <select id="difficulty" required>
+          <option value="Mudah">Mudah</option>
+          <option value="Sedang">Sedang</option>
+          <option value="Sulit">Sulit</option>
+        </select>
+
+        <label for="question-type">Tipe Soal</label>
+        <select id="question-type" required>
+          <option value="Pilihan Ganda">Pilihan Ganda</option>
+          <option value="Essay">Essay</option>
+        </select>
+
+        <label for="count">Jumlah Soal</label>
+        <input id="count" type="number" min="1" max="20" value="5" required>
+
+        <button type="submit">Generate Soal</button>
+      </form>
+    </section>
+
+    <section class="card output-card">
+      <div class="output-header">
+        <h2>Hasil Soal</h2>
+        <div class="actions">
+          <button id="copy-btn" type="button">Salin</button>
+          <button id="export-docx-btn" type="button">DOCX</button>
+          <button id="export-pdf-btn" type="button">PDF</button>
+        </div>
+      </div>
+      <article id="print-area" class="doc-preview">
+        <h3 class="doc-title">ULANGAN HARIAN</h3>
+        <h4 class="doc-school">SDN MAJU JAYA 01</h4>
+        <p class="doc-year">Tahun Pelajaran 2025/2026</p>
+
+        <div class="meta-grid">
+          <div>Mata Pelajaran</div><div>: Bahasa Indonesia</div>
+          <div>Kelas / Semester</div><div>: 2 / Ganjil</div>
+          <div>Tanggal</div><div>: 30 Maret 2026</div>
+          <div>Nama</div><div>: ____________________</div>
+          <div>No. Absen</div><div>: ____________________</div>
+          <div>Nilai</div><div>: ____________________</div>
+        </div>
+
+        <h5 class="section-title">I. Pilihan Ganda</h5>
+        <p class="section-note">Berilah tanda silang (X) pada huruf jawaban yang paling benar!</p>
+        <pre id="output">Isi form lalu klik "Generate Soal".</pre>
+      </article>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
