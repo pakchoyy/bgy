@@ -59,7 +59,7 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 #previewRefBox p{margin:8px 0 0;font-size:13px;color:#e67700;font-weight:bold;}
 
 /* ===== LIMIT BAR ===== */
-#limitBar{margin-top:14px;background:#f1f3f5;border-radius:10px;padding:12px 14px;font-size:13px;color:#495057;border:1px solid #dee2e6;}
+#limitBar{background:#f1f3f5;border-radius:10px;padding:12px 14px;font-size:13px;color:#495057;border:1px solid #dee2e6;margin-bottom:6px;}
 #limitBar.pro{background:#f8f0ff;border-color:#9775fa;color:#6741d9;}
 #limitBar .limit-row{display:flex;justify-content:space-between;align-items:center;}
 #limitCount{font-weight:bold;font-size:15px;}
@@ -164,10 +164,8 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
   <a onclick="showSection('kontak',event)">Kontak</a>
 </div>
 
-<!-- ===== HOME ===== -->
-<div id="home" class="container section active">
-
-  <!-- LIMIT BAR -->
+<!-- LIMIT BAR -->
+<div style="max-width:760px;margin:0 auto;padding:0 0 8px;">
   <div id="limitBar">
     <div class="limit-row">
       <span id="limitText">Generate hari ini:</span>
@@ -175,6 +173,10 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
     </div>
     <div id="limitSub" style="font-size:12px;color:#868e96;margin-top:4px;">Reset tiap tengah malam. <span id="proLink" onclick="bukaModal()" style="color:#6741d9;cursor:pointer;font-weight:bold;text-decoration:underline;">Upgrade ke Pro →</span></div>
   </div>
+</div>
+
+<!-- ===== HOME ===== -->
+<div id="home" class="container section active">
 
   <label>Kelas</label>
   <select id="kelas" onchange="autoMapel();autoStyle();">
@@ -344,7 +346,7 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 // ============================================================
 // KONFIGURASI — GANTI INI SETELAH DEPLOY WORKER
 // ============================================================
-const WORKER_URL = "https://bgypro.pulsachoy.workers.dev"; // ← ganti dengan URL worker kamu
+const WORKER_URL = "https://bgy-pro.namakamu.workers.dev"; // ← ganti dengan URL worker kamu
 
 // ============================================================
 // KONSTANTA
@@ -402,7 +404,7 @@ function updateUI(){
     bar.style.borderColor = "#9775fa";
     countEl.textContent = "∞ Unlimited";
     countEl.className = "pro-badge";
-    sub.innerHTML = '💎 Kamu pengguna <b>BGY Pro</b>. Terima kasih! <span style="color:#e03131;cursor:pointer;font-size:12px;" onclick="logoutPro()">Keluar Pro</span>';
+    sub.innerHTML = '💎 Kamu pengguna <b>BGY Pro</b>. Terima kasih!';
     banner.style.display = "none";
   } else {
     const sisa = getSisaGenerate();
