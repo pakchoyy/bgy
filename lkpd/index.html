@@ -62,15 +62,12 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 #previewRefBox p{margin:8px 0 0;font-size:13px;color:#e67700;font-weight:bold;}
 
 /* ===== LIMIT BAR ===== */
-#limitBar{background:linear-gradient(135deg,#6741d9,#9775fa);border-radius:12px;padding:16px 18px;margin-bottom:6px;box-shadow:0 4px 16px rgba(103,65,217,0.25);text-align:center;}
-
-#limitBar .limit-row{display:flex;justify-content:center;align-items:center;gap:8px;}
-#limitText{font-size:16px;font-weight:600;color:rgba(255,255,255,0.85);}
-#limitCount{font-weight:bold;font-size:24px;color:#fff;}
-#limitCount.pro-badge{color:#fff;font-size:26px;}
-#limitSub{font-size:13px;color:rgba(255,255,255,0.7);margin-top:5px;}
-#limitCount.habis{color:#ffd43b;}
-#limitCount.pro-badge{color:#6741d9;}
+#limitBar{background:transparent;border-radius:0;padding:16px 18px;box-shadow:none;text-align:center;}
+#limitText{font-size:15px;font-weight:700;color:#495057;display:block;margin-bottom:4px;}
+#limitCount{font-weight:bold;font-size:32px;color:#343a40;display:block;line-height:1.1;}
+#limitCount.habis{color:#e03131;}
+#limitCount.pro-badge{font-size:34px;color:#6741d9;}
+#limitSub{font-size:14px;color:#868e96;margin-top:6px;display:block;}
 
 /* ===== PRO BADGE ===== */
 .badge-pro{display:inline-block;background:linear-gradient(90deg,#6741d9,#9775fa);color:white;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;}
@@ -146,9 +143,8 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
     <button id="btnAktivasi" onclick="aktivasiPro()" style="background:linear-gradient(90deg,#6741d9,#9775fa);margin-top:14px;">✨ Aktivasi Sekarang</button>
     <button onclick="tutupModal()" style="background:#dee2e6;color:#495057;margin-top:8px;font-size:13px;">Tutup</button>
     <div style="margin-top:12px;font-size:12px;color:#aaa;">
-      Belum punya kode? Hubungi via
-      <a href="https://wa.me/6289530713597" target="_blank" style="color:#6741d9;font-weight:bold;">WhatsApp</a> atau
-      <a href="https://tiktok.com/@pak.choyy" target="_blank" style="color:#6741d9;font-weight:bold;">TikTok</a>
+      Belum punya kode?
+      <a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" style="color:#6741d9;font-weight:bold;">Beli di sini →</a>
     </div>
   </div>
 </div>
@@ -177,13 +173,19 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 </div>
 
 <!-- LIMIT BAR -->
-<div style="max-width:760px;margin:0 auto;padding:0 0 8px;">
-  <div id="limitBar">
-    <div class="limit-row">
-      <span id="limitText">Generate hari ini:</span>
-      <span id="limitCount">4 / 4</span>
-    </div>
-    <div id="limitSub">Reset tiap tengah malam</div>
+<div id="limitBar">
+  <span id="limitText">Generate hari ini:</span>
+  <span id="limitCount">4 / 4</span>
+  <span id="limitSub">Reset tiap tengah malam</span>
+</div>
+
+<!-- PRO BANNER -->
+<div id="proBanner" style="max-width:760px;margin:0 auto;padding:0 10px 8px;display:none;">
+  <div onclick="window.open('https://lynk.id/kreacy/nq35v4y36gz8')"
+    style="background:linear-gradient(135deg,#1a1a2e,#2d1b69);border:2px solid #f59f00;border-radius:12px;padding:16px 18px;cursor:pointer;text-align:center;box-shadow:0 4px 20px rgba(245,159,0,0.2);">
+    <div style="font-size:17px;font-weight:bold;color:#ffd43b;">💎 Upgrade ke BGY Pro</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.65);margin-top:5px;">Generate unlimited · Histori 50 prompt</div>
+    <div style="margin-top:10px;background:linear-gradient(90deg,#f59f00,#ffd43b);color:#1a1a2e;font-weight:bold;font-size:13px;padding:7px 20px;border-radius:20px;display:inline-block;">🛒 Beli Sekarang</div>
   </div>
 </div>
 
@@ -331,6 +333,7 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
   <p>Untuk info lebih lanjut, bantuan penggunaan, kritik, saran, atau pembelian kode Pro:</p>
   <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;">WhatsApp</button>
   <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;">TikTok</button>
+  <button onclick="window.open('https://lynk.id/kreacy/nq35v4y36gz8')" style="background:linear-gradient(90deg,#6741d9,#9775fa);">💎 Beli BGY Pro</button>
   <p style="margin-top:15px;font-size:13px;color:#555;">Masukan dan saran Anda sangat membantu pengembangan aplikasi ini.</p>
 </div>
 
@@ -411,10 +414,10 @@ function updateUI(){
     header.classList.add("pro-header");
     // Limit bar
     bar.style.background = "linear-gradient(135deg,#1a1a2e,#2d1b69)";
-    bar.style.boxShadow  = "0 4px 16px rgba(245,159,0,0.2)";
+    bar.style.boxShadow  = "none";
     countEl.textContent  = "∞ Unlimited";
     countEl.className    = "pro-badge";
-    sub.innerHTML        = '💎 BGY Pro · Unlimited';
+    sub.textContent      = '💎 Kamu pengguna BGY Pro. Terima kasih!';
     if(banner) banner.style.display = "none";
   } else {
     // Header normal
