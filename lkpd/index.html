@@ -201,24 +201,42 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 </div>
 
 <!-- ===== HOME ===== -->
-<div id="home" class="container section active">
+<div id="limitBar" style="
+max-width:500px;
+margin:20px auto;
+padding:16px;
+border-radius:14px;
+background:linear-gradient(90deg,#a8d5c2,#90c2e7);
+text-align:center;
+">
 
-  <!-- LIMIT BAR (hanya di Home) -->
-  <div id="limitBar">
-    <div class="limit-row">
-      <span id="limitText">Generate hari ini:</span>
-      <span id="limitCount">4 / 4</span>
-    </div>
-   <div id="limitSub" style="margin-top:6px;text-align:center;">
-  Reset tiap tengah malam<br>
+  <div class="limit-row">
+    <span id="limitText">Generate hari ini:</span>
+    <span id="limitCount">4 / 4</span>
+  </div>
 
-  <a href="https://lynk.id/kreacy/nq35v4y36gz8"
-     target="_blank"
-     id="badgeUpgrade"
-     onclick="gtag('event','klik_upgrade')"
-     style="display:inline-block;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:4px 14px;border-radius:20px;text-decoration:none;">
-     💎 Upgrade ke Pro →
-  </a>
+  <div id="limitSub" style="margin-top:6px;">
+    Reset tiap tengah malam<br>
+
+    <a href="https://lynk.id/kreacy/nq35v4y36gz8"
+    target="_blank"
+    id="badgeUpgrade"
+    onclick="gtag('event','klik_upgrade')"
+    style="
+    display:inline-block;
+    margin-top:6px;
+    background:#111;
+    border:1.5px solid #ffd43b;
+    color:#ffd43b;
+    font-size:12px;
+    font-weight:bold;
+    padding:4px 14px;
+    border-radius:20px;
+    text-decoration:none;">
+    💎 Upgrade ke Pro →
+    </a>
+
+  </div>
 
 </div>
 
