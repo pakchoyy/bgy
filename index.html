@@ -46,32 +46,17 @@
 
     .btn {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       padding: 14px 16px;
       border-radius: 14px;
       text-decoration: none;
       font-weight: 600;
       color: white;
-      transition: 0.2s;
     }
 
-    .btn span {
-      font-size: 18px;
-    }
-
-    .lkpd {
-      background: #4f46e5;
-    }
-
-    .soal {
-      background: #22c55e;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      opacity: 0.9;
-    }
+    .lkpd { background: #4f46e5; }
+    .soal { background: #22c55e; }
 
     .footer {
       margin-top: 18px;
@@ -84,26 +69,23 @@
 <body>
 
   <div class="card">
-
     <div class="banner">📚 Bantu Guru Yuk</div>
     <div class="sub">Media ajar cepat untuk guru SD</div>
 
     <div class="menu">
-      <a href="/lkpd/" class="btn lkpd">
-        📘 LKPD
-        <span>→</span>
+      <!-- SUDAH DIPERBAIKI DI SINI -->
+      <a href="/lkpd/index.html?v=1" class="btn lkpd">
+        📘 LKPD <span>→</span>
       </a>
 
-      <a href="/soal/" class="btn soal">
-        📝 Soal
-        <span>→</span>
+      <a href="/soal/index.html?v=1" class="btn soal">
+        📝 Soal <span>→</span>
       </a>
     </div>
 
     <div class="footer">
       Gratis • Mudah • Siap Pakai
     </div>
-
   </div>
 
 </body>
