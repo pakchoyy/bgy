@@ -1,6 +1,18 @@
+
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
+
+<script>
+(function(){
+  const url = new URL(window.location);
+  if (!url.searchParams.has('v')) {
+    url.searchParams.set('v', Date.now());
+    window.location.replace(url.toString());
+  }
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bantu Guru Yuk | Prompt Generator Media Ajar</title>
