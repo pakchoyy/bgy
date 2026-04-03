@@ -1,91 +1,769 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generator Soal</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bantu Guru Yuk | Prompt Generator Media Ajar</title>
+<link rel="icon" href="/lkpd/guru-cibisd2.png" sizes="192x192" type="image/png">
+<link rel="shortcut icon" href="/lkpd/guru-cibisd2.png" type="image/png">
+<link rel="apple-touch-icon" href="/lkpd/guru-cibisd2.png">
+<link rel="manifest" href="/lkpd/manifest.json">
+<meta name="theme-color" content="#4dabf7">
+<style>
+/* ===== BASE ===== */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',sans-serif;margin:0;padding:0;background:#eef2f7;}
+
+/* ===== LOADING ===== */
+#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#4dabf7,#6cc6a6);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;z-index:99999;}
+
+/* ===== INSTALL POPUP ===== */
+#installPopup{position:fixed;top:-160px;left:0;right:0;background:#2f9e44;color:#fff;padding:15px;text-align:center;transition:.4s;z-index:9999;}
+
+/* ===== HEADER ===== */
+.header{background:linear-gradient(90deg,#6cc6a6,#4dabf7);color:#fff;padding:14px 18px;width:100%;transition:background .4s;}
+.header.pro-header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);}
+.badge-pro{display:inline-block;background:linear-gradient(90deg,#f59f00,#ffd43b);color:#1a1a2e;font-size:11px;font-weight:bold;padding:3px 10px;border-radius:10px;margin-left:6px;vertical-align:middle;letter-spacing:.5px;}
+
+/* ===== NAVBAR ===== */
+.navbar{padding:10px;text-align:center;}
+.navbar a{display:inline-block;margin:0 5px;padding:6px 14px;font-weight:bold;cursor:pointer;border-radius:20px;background:linear-gradient(90deg,#6cc6a6,#4dabf7);color:white;font-size:14px;user-select:none;}
+.navbar a.active{background:linear-gradient(90deg,#f59f00,#ffd43b);color:#000;}
+
+/* ===== CONTAINER ===== */
+.container{max-width:760px;margin:20px auto 10px;background:#fff;padding:24px;border-radius:14px;}
+
+/* ===== FORM ===== */
+label{font-weight:bold;display:block;margin-top:14px;}
+select,input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;font-family:inherit;font-size:14px;}
+textarea{height:180px;resize:vertical;}
+#jenisBox,#modeBox,#jumlahBox{display:none;}
+
+/* ===== BUTTONS ===== */
+button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;color:#fff;cursor:pointer;font-weight:bold;font-size:14px;}
+.btn-green{background:#2f9e44;}
+.btn-blue{background:#1971c2;}
+.btn-chatgpt{background:#10a37f;font-size:16px;padding:14px;}
+.btn-purple{background:#6741d9;}
+.btn-gemini-open{background:linear-gradient(90deg,#4285f4,#34a853);font-size:16px;padding:14px;}
+.btn-red{background:#e03131;}
+.btn-gray{background:#868e96;font-size:13px;}
+
+/* ===== NOTIF ===== */
+#notif{display:none;background:#2f9e44;color:#fff;padding:10px;margin-top:10px;border-radius:8px;text-align:center;}
+
+/* ===== SECTION ===== */
+.section{display:none;}
+.section.active{display:block;}
+
+/* ===== UPLOAD REF ===== */
+#previewRefBox{display:none;margin-top:10px;background:#fff8e1;border:2px solid #f59f00;border-radius:10px;padding:12px;text-align:center;}
+#previewRefBox img{width:160px;height:160px;object-fit:cover;border-radius:10px;border:2px solid #f59f00;display:block;margin:10px auto 0;}
+#previewRefBox p{margin:8px 0 0;font-size:13px;color:#e67700;font-weight:bold;}
+
+/* ===== LIMIT BAR ===== */
+#limitBar{background:linear-gradient(135deg,#6741d9,#9775fa);border-radius:0;padding:18px;box-shadow:0 4px 16px rgba(103,65,217,0.2);text-align:center;}
+#limitText{font-size:15px;font-weight:700;color:rgba(255,255,255,0.9);display:block;margin-bottom:4px;}
+#limitCount{font-weight:bold;font-size:32px;color:#fff;display:block;line-height:1.1;}
+#limitCount.habis{color:#ffd43b;}
+#limitCount.pro-badge{font-size:34px;color:#fff;}
+#limitSub{font-size:14px;color:rgba(255,255,255,0.8);margin-top:6px;display:block;}
+
+/* ===== PRO BADGE ===== */
+.badge-pro{display:inline-block;background:linear-gradient(90deg,#6741d9,#9775fa);color:white;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+.badge-free{display:inline-block;background:#868e96;color:white;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+
+/* ===== HISTORI ===== */
+#historiBox{display:none;margin-top:20px;border-top:2px dashed #dee2e6;padding-top:16px;}
+#historiBox h4{margin:0 0 10px;font-size:15px;color:#495057;}
+.histori-item{background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.2s;}
+.histori-item:hover{background:#e9ecef;border-color:#adb5bd;}
+.histori-item .h-meta{font-size:11px;color:#868e96;margin-bottom:4px;}
+.histori-item .h-preview{font-size:13px;color:#343a40;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ===== MODAL AKTIVASI ===== */
+#modalOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;justify-content:center;align-items:center;}
+#modalOverlay.show{display:flex;}
+#modalBox{background:#fff;border-radius:16px;padding:24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
+#modalBox h3{margin:0 0 6px;color:#6741d9;}
+#modalBox p{font-size:13px;color:#555;margin:0 0 16px;}
+#inputKodePro{text-align:center;font-size:16px;letter-spacing:2px;font-weight:bold;text-transform:uppercase;}
+#modalError{display:none;color:#e03131;font-size:13px;margin-top:8px;}
+#modalSuccess{display:none;color:#2f9e44;font-size:13px;margin-top:8px;font-weight:bold;}
+.spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ===== PRO BANNER ===== */
+#proBanner{display:none;margin-top:14px;background:linear-gradient(135deg,#1a1a2e,#2d1b69);border:2px solid #f59f00;border-radius:12px;padding:18px;cursor:pointer;text-align:center;box-shadow:0 4px 20px rgba(245,159,0,0.2);}
+#proBanner:hover{box-shadow:0 6px 24px rgba(245,159,0,0.35);}
+#proBanner .pro-title{font-size:17px;font-weight:bold;color:#ffd43b;}
+#proBanner .pro-sub{font-size:12px;color:rgba(255,255,255,0.65);margin-top:5px;}
+
+/* ===== CONTOH GRID ===== */
+.contoh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.contoh-item{text-align:center;}
+.contoh-item img{width:100%;border-radius:10px;border:2px solid #ddd;}
+.contoh-label{font-size:14px;font-weight:bold;margin-top:6px;background:#fff176;display:inline-block;padding:2px 10px;border-radius:6px;color:#333;}
+
+/* ===== FOOTER ===== */
+.footer{margin-top:20px;background:linear-gradient(90deg,#6cc6a6,#4dabf7);padding:20px 18px;text-align:center;color:#fff;line-height:1.9;}
+.footer .badge-ft{font-size:11px;background:rgba(255,255,255,0.2);display:inline-block;padding:3px 10px;border-radius:10px;margin-bottom:8px;}
+.footer .credit{font-size:14px;font-weight:bold;}
+.footer .credit a{color:#fff176;text-decoration:underline;font-weight:bold;}
+.footer .visitor{font-size:13px;margin-top:4px;opacity:.9;}
+.footer .visitor a{color:white;text-decoration:none;}
+</style>
 </head>
 <body>
-  <main class="container">
-    <section class="card">
-      <h1>Generator Soal</h1>
-      <p class="subtitle">Buat soal latihan otomatis dalam hitungan detik.</p>
 
-      <form id="generator-form" class="form">
-        <label for="school-name">Nama Sekolah</label>
-        <input id="school-name" type="text" value="SDN MAJU JAYA 01" required>
+<!-- LOADING -->
+<div id="loadingScreen">
+  <img src="/lkpd/guru-cibisd2.png" style="width:72px;height:72px;object-fit:contain;margin-bottom:12px;" alt="Logo">
+  <div style="font-size:20px;font-weight:bold;">Bantu Guru Yuk</div>
+  <div style="font-size:13px;margin-top:6px;">Loading...</div>
+</div>
+<script>window.addEventListener("load",()=>{const el=document.getElementById("loadingScreen");if(el)el.remove();});</script>
 
-        <label for="exam-title">Judul Ujian</label>
-        <input id="exam-title" type="text" value="ULANGAN HARIAN" required>
+<!-- INSTALL POPUP -->
+<div id="installPopup">
+  <span style="font-weight:bold;">Install aplikasi Bantu Guru Yuk</span>
+  <button onclick="installApp()" style="margin-left:10px;background:white;color:#2f9e44;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;width:auto;">Install</button>
+  <button onclick="closeInstall()" style="margin-left:6px;background:rgba(255,255,255,0.2);color:white;border:none;padding:6px 10px;border-radius:6px;font-weight:bold;cursor:pointer;width:auto;">✕</button>
+</div>
 
-        <label for="academic-year">Tahun Pelajaran</label>
-        <input id="academic-year" type="text" value="2025/2026" required>
+<!-- MODAL AKTIVASI PRO -->
+<div id="modalOverlay" onclick="tutupModal(event)">
+  <div id="modalBox">
+    <div style="font-size:32px;">💎</div>
+    <h3>Aktivasi BGY Pro</h3>
+    <p>Masukkan kode aktivasi yang kamu dapatkan dari Pak Choyy</p>
+    <input type="text" id="inputKodePro" placeholder="BGY-XXXX-0000" maxlength="20">
+    <div id="modalError"></div>
+    <div id="modalSuccess"></div>
+    <button id="btnAktivasi" onclick="aktivasiPro()" style="background:linear-gradient(90deg,#6741d9,#9775fa);margin-top:14px;">✨ Aktivasi Sekarang</button>
+    <button onclick="tutupModal()" style="background:#dee2e6;color:#495057;margin-top:8px;font-size:13px;">Tutup</button>
+    <div style="margin-top:12px;font-size:12px;color:#aaa;">
+      Belum punya kode?
+      <a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" style="color:#6741d9;font-weight:bold;">Beli di sini →</a>
+    </div>
+  </div>
+</div>
 
-        <label for="subject">Mata Pelajaran</label>
-        <select id="subject" required>
-          <option value="Matematika">Matematika</option>
-          <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-          <option value="IPA">IPA</option>
-          <option value="IPS">IPS</option>
-        </select>
-
-        <label for="topic">Topik</label>
-        <input id="topic" type="text" placeholder="Contoh: Pecahan, Teks Eksplanasi, Ekosistem" required>
-
-        <label for="difficulty">Tingkat Kesulitan</label>
-        <select id="difficulty" required>
-          <option value="Mudah">Mudah</option>
-          <option value="Sedang">Sedang</option>
-          <option value="Sulit">Sulit</option>
-        </select>
-
-        <label for="question-type">Tipe Soal</label>
-        <select id="question-type" required>
-          <option value="Pilihan Ganda">Pilihan Ganda</option>
-          <option value="Essay">Essay</option>
-        </select>
-
-        <label for="count">Jumlah Soal</label>
-        <input id="count" type="number" min="1" max="20" value="5" required>
-
-        <button type="submit">Generate Soal</button>
-      </form>
-    </section>
-
-    <section class="card output-card">
-      <div class="output-header">
-        <h2>Hasil Soal</h2>
-        <div class="actions">
-          <button id="copy-btn" type="button">Salin</button>
-          <button id="export-docx-btn" type="button">DOCX</button>
-          <button id="export-pdf-btn" type="button">PDF</button>
-        </div>
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;">
+    <img src="/lkpd/guru-cibisd2.png" style="width:54px;height:54px;object-fit:contain;" alt="Logo">
+    <div>
+      <div style="font-size:22px;font-weight:bold;letter-spacing:1px;line-height:1.2;">
+        BANTU GURU YUK
+        <span id="headerBadge" class="badge-free">FREE</span>
       </div>
-      <article id="print-area" class="doc-preview">
-        <h3 class="doc-title">ULANGAN HARIAN</h3>
-        <h4 class="doc-school">SDN MAJU JAYA 01</h4>
-        <p class="doc-year">Tahun Pelajaran 2025/2026</p>
+      <div style="font-size:13px;font-weight:600;opacity:.95;margin-top:2px;">Prompt Generator Media Ajar</div>
+      <div style="font-size:11px;opacity:.8;margin-top:2px;">v26.5.0</div>
+    </div>
+  </div>
+</div>
 
-        <div class="meta-grid">
-          <div>Mata Pelajaran</div><div>: Bahasa Indonesia</div>
-          <div>Kelas / Semester</div><div>: 2 / Ganjil</div>
-          <div>Tanggal</div><div>: 30 Maret 2026</div>
-          <div>Nama</div><div>: ____________________</div>
-          <div>No. Absen</div><div>: ____________________</div>
-          <div>Nilai</div><div>: ____________________</div>
-        </div>
+<!-- NAVBAR -->
+<div class="navbar">
+  <a onclick="showSection('home',event)" class="active">Home</a>
+  <a onclick="showSection('histori',event)">Histori</a>
+  <a onclick="showSection('tentang',event)">Tentang</a>
+  <a onclick="showSection('kontak',event)">Kontak</a>
+</div>
 
-        <h5 class="section-title">I. Pilihan Ganda</h5>
-        <p class="section-note">Berilah tanda silang (X) pada huruf jawaban yang paling benar!</p>
-        <pre id="output">Isi form lalu klik "Generate Soal".</pre>
-      </article>
-    </section>
-  </main>
+<!-- LIMIT BAR — full width, 2 baris, tengah, font besar -->
+<div id="limitBar">
+  <span id="limitText">Generate hari ini:</span>
+  <span id="limitCount">4 / 4</span>
+  <span id="limitSub">Reset tiap tengah malam</span>
+</div>
 
-  <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="app.js"></script>
+<!-- ===== HOME ===== -->
+<div id="home" class="container section active">
+
+  <label>Kelas</label>
+  <select id="kelas" onchange="autoMapel();autoStyle();">
+    <option>PAUD</option><option>TK A</option><option>TK B</option>
+    <option selected>SD Kelas 2</option><option>SD Kelas 1</option>
+    <option>SD Kelas 3</option><option>SD Kelas 4</option>
+    <option>SD Kelas 5</option><option>SD Kelas 6</option>
+    <option>SMP Kelas 7</option><option>SMP Kelas 8</option><option>SMP Kelas 9</option>
+    <option>SMA Kelas 10</option><option>SMA Kelas 11</option><option>SMA Kelas 12</option>
+    <option>Umum</option>
+  </select>
+
+  <label>Mata Pelajaran</label>
+  <select id="mapel"><option value="Umum">Umum</option></select>
+
+  <label>Jenis Media</label>
+  <select id="media" onchange="autoStyle()">
+    <option>LKPD</option><option>Poster</option><option>Infografis</option>
+    <option>Flashcard</option><option>Lembar Mewarnai</option>
+  </select>
+
+  <div id="jenisBox">
+    <label>Jenis LKPD</label>
+    <select id="jenis">
+      <option>Pilihan Ganda</option><option>Isian</option>
+      <option>Menjodohkan</option><option>Uraian</option><option>Bebas</option>
+    </select>
+  </div>
+
+  <div id="modeBox">
+    <label>Mode</label>
+    <select id="mode">
+      <option>Siswa</option><option>Guru (dengan kunci jawaban)</option>
+    </select>
+  </div>
+
+  <div id="jumlahBox">
+    <label>Jumlah Soal</label>
+    <select id="jumlah" onchange="customJumlah()">
+      <option>5</option><option selected>10</option><option>15</option>
+      <option>20</option><option value="custom">Custom</option>
+    </select>
+    <input id="jumlahCustom" placeholder="Masukkan jumlah soal" style="display:none;margin-top:6px;">
+  </div>
+
+  <label>Materi</label>
+  <textarea id="materi" placeholder="Tulis materi dengan jelas dan spesifik agar hasil media ajar lebih akurat."></textarea>
+
+  <label>Gaya Ilustrasi</label>
+  <select id="gaya" onchange="handleGayaUpload()">
+    <option>Cartoon Kids — kartun ceria anak SD</option>
+    <option>Storybook — ilustrasi buku cerita anak</option>
+    <option>Comic — gaya komik berwarna</option>
+    <option>Crayon — efek gambar krayon</option>
+    <option>Watercolor — cat air lembut</option>
+    <option>Flat Vector — infografis modern</option>
+    <option>3D Clay — plastisin</option>
+    <option>Pixar Style — animasi film</option>
+    <option>Sketch — gambar pensil</option>
+    <option>Black White — tanpa warna</option>
+    <option value="upload">+ Upload Referensi Gambar</option>
+  </select>
+  <input type="file" id="uploadRef" accept="image/*" style="display:none;">
+
+  <div id="previewRefBox">
+    <b>📎 Gambar Referensi Kamu:</b>
+    <img id="previewRefImg" src="" alt="Referensi">
+    <p>⚠️ Jangan lupa <b>lampirkan gambar ini</b> ke ChatGPT / Gemini setelah paste prompt!</p>
+  </div>
+
+  <!-- TOMBOL AKSI -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
+    <button class="btn-green" onclick="generatePrompt()" id="btnGenerate">⚡ Generate Prompt</button>
+    <button class="btn-gray" onclick="resetForm()">🔄 Reset Form</button>
+  </div>
+
+  <textarea id="hasil" placeholder="Prompt akan muncul di sini..." style="margin-top:12px;"></textarea>
+  <button class="btn-blue" onclick="copyPrompt()">📋 Salin Prompt</button>
+  <div id="notif">✅ Prompt berhasil disalin!</div>
+
+  <div style="font-size:13px;color:#0b7285;margin-top:8px;text-align:center;font-weight:bold;">
+    Disarankan menggunakan ChatGPT untuk hasil paling akurat
+  </div>
+
+  <button class="btn-chatgpt" onclick="openGPT()">🤖 Open ChatGPT</button>
+  <button class="btn-gemini-open" onclick="openGemini()">✨ Open Gemini</button>
+
+  <!-- CONTOH -->
+  <div style="margin-top:24px;">
+    <div style="text-align:center;font-weight:bold;font-size:15px;margin-bottom:10px;color:#444;">📸 Contoh Hasil Generate Prompt</div>
+    <div class="contoh-grid">
+      <div class="contoh-item"><img src="/lkpd/contoh-lkpd.jpg" alt="LKPD"><div class="contoh-label">📄 LKPD</div></div>
+      <div class="contoh-item"><img src="/lkpd/contoh-poster.jpg" alt="Poster"><div class="contoh-label">🖼️ Poster</div></div>
+      <div class="contoh-item"><img src="/lkpd/contoh-infografis.jpg" alt="Infografis"><div class="contoh-label">📊 Infografis</div></div>
+      <div class="contoh-item"><img src="/lkpd/contoh-mewarnai.jpg" alt="Mewarnai"><div class="contoh-label">🎨 Mewarnai</div></div>
+    </div>
+  </div>
+
+</div><!-- end home -->
+
+<!-- ===== HISTORI ===== -->
+<div id="histori" class="container section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <h3 style="margin:0;">📋 Histori Prompt</h3>
+    <button onclick="hapusHistori()" style="width:auto;padding:6px 12px;background:#e03131;font-size:12px;margin:0;">🗑️ Hapus Semua</button>
+  </div>
+  <div id="historiList">
+    <div style="text-align:center;color:#aaa;padding:30px 0;font-size:14px;">Belum ada histori prompt.</div>
+  </div>
+</div>
+
+<!-- ===== TENTANG ===== -->
+<div id="tentang" class="container section">
+  <h3>Tentang Aplikasi</h3>
+  <p><b>Bantu Guru Yuk v26.5.0</b> adalah generator media ajar yang membantu guru membuat bahan pembelajaran secara cepat, rapi, dan siap cetak.</p>
+  <p>Dirancang khusus untuk <b>Kurikulum Merdeka</b>, tersedia untuk jenjang PAUD, TK, SD, SMP, dan SMA.</p>
+  <h4>Fitur Free:</h4>
+  <ul>
+    <li>Generate prompt 4x per hari</li>
+    <li>Semua jenis media (LKPD, Poster, Infografis, dll)</li>
+    <li>Histori 5 prompt terakhir</li>
+    <li>Reset form</li>
+  </ul>
+  <h4>Fitur Pro 💎:</h4>
+  <ul>
+    <li>Generate prompt <b>unlimited</b></li>
+    <li>Histori <b>50 prompt</b> terakhir</li>
+    <li>Badge Pro eksklusif</li>
+    <li>Prioritas fitur baru</li>
+  </ul>
+  <button onclick="bukaModal()" style="background:linear-gradient(90deg,#6741d9,#9775fa);">💎 Aktivasi BGY Pro</button>
+  <h4 style="margin-top:20px;">Versi:</h4><p>v26.5.0</p>
+  <h4>Pengembang:</h4><p>Pak Choyy</p>
+</div>
+
+<!-- ===== KONTAK ===== -->
+<div id="kontak" class="container section">
+  <h3>Kontak</h3>
+  <p>Untuk info lebih lanjut, bantuan penggunaan, kritik, saran, atau pembelian kode Pro:</p>
+  <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;">WhatsApp</button>
+  <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;">TikTok</button>
+  <button onclick="window.open('https://lynk.id/kreacy/nq35v4y36gz8')" style="background:linear-gradient(90deg,#6741d9,#9775fa);">💎 Beli BGY Pro</button>
+  <p style="margin-top:15px;font-size:13px;color:#555;">Masukan dan saran Anda sangat membantu pengembangan aplikasi ini.</p>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div class="footer">
+  <div class="badge-ft">✨ Versi Free & Pro tersedia</div>
+  <div class="credit">
+    © 2026 Bantu Guru Yuk by
+    <a href="https://tiktok.com/@pak.choyy" target="_blank">Pak.Choyy</a>
+  </div>
+  <div class="visitor">
+    <a href="https://www.counters-free.net/">Total Pengunjung</a>
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/auth.php?id=5670b1ee46ce1ccae5c30b7f86650bf5ced3f40e"></script>
+    <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1509735/t/9"></script>
+  </div>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// ============================================================
+// KONFIGURASI
+// ============================================================
+const WORKER_URL = "https://bgypro.pulsachoy.workers.dev";
+
+// ============================================================
+// KONSTANTA
+// ============================================================
+const FREE_LIMIT     = 4;       // generate per hari (free)
+const FREE_HISTORI   = 5;       // maks histori (free)
+const PRO_HISTORI    = 50;      // maks histori (pro)
+
+// ============================================================
+// STATE
+// ============================================================
+let deferredPrompt = null;
+let kunciTambahan  = "";
+
+// ============================================================
+// DOM REFS
+// ============================================================
+const kelas        = document.getElementById("kelas");
+const mapel        = document.getElementById("mapel");
+const media        = document.getElementById("media");
+const jenis        = document.getElementById("jenis");
+const mode         = document.getElementById("mode");
+const jumlah       = document.getElementById("jumlah");
+const jumlahCustom = document.getElementById("jumlahCustom");
+const materi       = document.getElementById("materi");
+const gaya         = document.getElementById("gaya");
+const hasil        = document.getElementById("hasil");
+const notif        = document.getElementById("notif");
+const installPopup = document.getElementById("installPopup");
+
+// ============================================================
+// HELPERS: PRO STATUS
+// ============================================================
+function isPro(){
+  return localStorage.getItem("bgy_pro") === "1";
+}
+
+function updateUI(){
+  const pro = isPro();
+  // Header badge
+  const badge = document.getElementById("headerBadge");
+  badge.textContent = pro ? "PRO" : "FREE";
+  badge.className   = pro ? "badge-pro" : "badge-free";
+
+  // Limit bar
+  const bar     = document.getElementById("limitBar");
+  const countEl = document.getElementById("limitCount");
+  const sub     = document.getElementById("limitSub");
+
+  const header  = document.querySelector(".header");
+  const banner  = document.getElementById("proBanner");
+
+  if(pro){
+    header.classList.add("pro-header");
+    bar.style.background = "linear-gradient(135deg,#1a1a2e,#2d1b69)";
+    bar.style.boxShadow  = "0 4px 16px rgba(245,159,0,0.2)";
+    countEl.textContent  = "∞ Unlimited";
+    countEl.className    = "pro-badge";
+    sub.textContent      = "💎 Kamu pengguna BGY Pro. Terima kasih!";
+    if(banner) banner.style.display = "none";
+  } else {
+    header.classList.remove("pro-header");
+    bar.style.background = "";
+    bar.style.boxShadow  = "";
+    const sisa = getSisaGenerate();
+    countEl.textContent = sisa + " / " + FREE_LIMIT;
+    countEl.className   = sisa === 0 ? "habis" : "";
+    sub.textContent     = "Reset tiap tengah malam";
+    if(banner) banner.style.display = "block";
+  }
+
+  renderHistori();
+}
+
+// ============================================================
+// HELPERS: LIMIT GENERATE (FREE)
+// ============================================================
+function getTodayKey(){
+  return "bgy_gen_" + new Date().toISOString().slice(0,10);
+}
+
+function getSisaGenerate(){
+  if(isPro()) return Infinity;
+  const used = parseInt(localStorage.getItem(getTodayKey()) || "0");
+  return Math.max(0, FREE_LIMIT - used);
+}
+
+function tambahGenerate(){
+  if(isPro()) return;
+  const key  = getTodayKey();
+  const used = parseInt(localStorage.getItem(key) || "0");
+  localStorage.setItem(key, used + 1);
+}
+
+// ============================================================
+// HELPERS: HISTORI
+// ============================================================
+function getHistori(){
+  try{ return JSON.parse(localStorage.getItem("bgy_histori") || "[]"); }
+  catch{ return []; }
+}
+
+function simpanHistori(promptText){
+  const maxH = isPro() ? PRO_HISTORI : FREE_HISTORI;
+  let list   = getHistori();
+  const entry = {
+    ts:     Date.now(),
+    kelas:  kelas.value,
+    media:  media.value,
+    materi: materi.value.substring(0, 60),
+    prompt: promptText
+  };
+  list.unshift(entry);
+  if(list.length > maxH) list = list.slice(0, maxH);
+  localStorage.setItem("bgy_histori", JSON.stringify(list));
+}
+
+function renderHistori(){
+  const list = getHistori();
+  const el   = document.getElementById("historiList");
+  if(!list.length){
+    el.innerHTML = '<div style="text-align:center;color:#aaa;padding:30px 0;font-size:14px;">Belum ada histori prompt.</div>';
+    return;
+  }
+  const maxH = isPro() ? PRO_HISTORI : FREE_HISTORI;
+  el.innerHTML = list.slice(0, maxH).map((h, i) => {
+    const tgl = new Date(h.ts).toLocaleString("id-ID", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+    return `<div class="histori-item" onclick="muatHistori(${i})">
+      <div class="h-meta">📅 ${tgl} &nbsp;|&nbsp; ${h.kelas} &nbsp;|&nbsp; ${h.media}</div>
+      <div class="h-preview">${h.materi || "(materi kosong)"}</div>
+    </div>`;
+  }).join("");
+}
+
+function muatHistori(idx){
+  const list = getHistori();
+  if(!list[idx]) return;
+  hasil.value = list[idx].prompt;
+  showSection("home", {target: document.querySelector(".navbar a")});
+  document.querySelectorAll(".navbar a").forEach((a,i)=>{ if(i===0) a.classList.add("active"); else a.classList.remove("active"); });
+  hasil.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+function hapusHistori(){
+  if(!confirm("Hapus semua histori prompt?")) return;
+  localStorage.removeItem("bgy_histori");
+  renderHistori();
+}
+
+// ============================================================
+// AKTIVASI PRO
+// ============================================================
+function bukaModal(){
+  document.getElementById("modalOverlay").classList.add("show");
+  document.getElementById("inputKodePro").value = "";
+  document.getElementById("modalError").style.display   = "none";
+  document.getElementById("modalSuccess").style.display = "none";
+  document.getElementById("inputKodePro").focus();
+}
+
+function tutupModal(e){
+  if(!e || e.target === document.getElementById("modalOverlay")){
+    document.getElementById("modalOverlay").classList.remove("show");
+  }
+}
+
+async function aktivasiPro(){
+  const kode = document.getElementById("inputKodePro").value.trim();
+  const errEl = document.getElementById("modalError");
+  const okEl  = document.getElementById("modalSuccess");
+  const btn   = document.getElementById("btnAktivasi");
+
+  errEl.style.display = "none";
+  okEl.style.display  = "none";
+
+  if(!kode){
+    errEl.textContent   = "Masukkan kode aktivasi dulu!";
+    errEl.style.display = "block";
+    return;
+  }
+
+  btn.disabled   = true;
+  btn.innerHTML  = '<span class="spinner-sm"></span> Memvalidasi...';
+
+  try {
+    const res  = await fetch(WORKER_URL + "/validate", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ code: kode })
+    });
+    const data = await res.json();
+
+    if(data.valid){
+      localStorage.setItem("bgy_pro", "1");
+      localStorage.setItem("bgy_pro_code", kode.toUpperCase());
+      okEl.textContent   = data.message || "Aktivasi berhasil!";
+      okEl.style.display = "block";
+      updateUI();
+      setTimeout(()=> document.getElementById("modalOverlay").classList.remove("show"), 2000);
+    } else {
+      errEl.textContent   = data.message || "Kode tidak valid";
+      errEl.style.display = "block";
+    }
+  } catch(e) {
+    errEl.textContent   = "Gagal terhubung ke server. Cek koneksi internet.";
+    errEl.style.display = "block";
+  }
+
+  btn.disabled  = false;
+  btn.innerHTML = "✨ Aktivasi Sekarang";
+}
+
+function logoutPro(){
+  if(!confirm("Keluar dari mode Pro?")) return;
+  localStorage.removeItem("bgy_pro");
+  localStorage.removeItem("bgy_pro_code");
+  updateUI();
+}
+
+// ============================================================
+// FORM LOGIC
+// ============================================================
+function autoStyle(){
+  const isLKPD = media.value === "LKPD";
+  document.getElementById("jenisBox").style.display  = isLKPD ? "block" : "none";
+  document.getElementById("modeBox").style.display   = isLKPD ? "block" : "none";
+  document.getElementById("jumlahBox").style.display = isLKPD ? "block" : "none";
+  jenis.disabled = !isLKPD;
+  mode.disabled  = !isLKPD;
+  if(media.value==="Poster"||media.value==="Infografis") gaya.value="Flat Vector — infografis modern";
+  else if(media.value==="Flashcard") gaya.value="Cartoon Kids — kartun ceria anak SD";
+  else if(media.value==="Lembar Mewarnai") gaya.value="Black White — tanpa warna";
+}
+
+function autoMapel(){
+  const k = kelas.value;
+  let d = ["Umum"];
+  if(k==="PAUD") d=["Umum","Nilai Agama dan Moral","Motorik","Kognitif","Bahasa","Sosial Emosional","Seni"];
+  else if(k.includes("TK")) d=["Umum","Nilai Agama","Bahasa","Kognitif","Motorik","Seni"];
+  else if(k.includes("SD Kelas 1")||k.includes("SD Kelas 2")) d=["Umum","Pendidikan Agama dan Budi Pekerti","Pendidikan Pancasila","Bahasa Indonesia","Matematika","Seni Budaya","PJOK"];
+  else if(k.includes("SD Kelas 3")||k.includes("SD Kelas 4")||k.includes("SD Kelas 5")||k.includes("SD Kelas 6")) d=["Umum","Pendidikan Agama dan Budi Pekerti","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPAS","Seni Budaya","PJOK"];
+  else if(k.includes("SMP")) d=["Umum","Bahasa Indonesia","Matematika","IPA","IPS","Bahasa Inggris"];
+  else if(k.includes("SMA")) d=["Umum","Bahasa Indonesia","Matematika","Biologi","Fisika","Kimia","Sejarah","Ekonomi"];
+  mapel.innerHTML = d.map(n=>`<option value="${n}">${n}</option>`).join("");
+}
+
+function customJumlah(){
+  jumlahCustom.style.display = jumlah.value==="custom" ? "block" : "none";
+}
+
+function getOpsiPG(){
+  const k = kelas.value;
+  if(k==="PAUD"||k.includes("TK")) return "2 pilihan jawaban: A dan B";
+  if(k.includes("SD Kelas 1")||k.includes("SD Kelas 2")||k.includes("SD Kelas 3")) return "3 pilihan jawaban: A, B, dan C";
+  return "4 pilihan jawaban: A, B, C, dan D";
+}
+
+function resetForm(){
+  kelas.value  = "SD Kelas 2";
+  autoMapel();
+  media.value  = "LKPD";
+  autoStyle();
+  jenis.value  = "Pilihan Ganda";
+  mode.value   = "Siswa";
+  jumlah.value = "10";
+  jumlahCustom.style.display = "none";
+  materi.value = "";
+  gaya.value   = "Cartoon Kids — kartun ceria anak SD";
+  hasil.value  = "";
+  document.getElementById("previewRefBox").style.display = "none";
+  const old = document.getElementById("gayaRef");
+  if(old) old.remove();
+}
+
+function handleGayaUpload(){
+  if(gaya.value==="upload") document.getElementById("uploadRef").click();
+}
+document.getElementById("uploadRef").addEventListener("change", function(){
+  const file = this.files[0]; if(!file) return;
+  const old  = document.getElementById("gayaRef"); if(old) old.remove();
+  const opt  = document.createElement("option");
+  opt.value  = "Referensi gambar: " + file.name;
+  opt.text   = "📎 Referensi: " + file.name;
+  opt.id     = "gayaRef";
+  gaya.appendChild(opt); gaya.value = opt.value;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById("previewRefImg").src = e.target.result;
+    document.getElementById("previewRefBox").style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+// ============================================================
+// GENERATE PROMPT
+// ============================================================
+function generatePrompt(){
+  if(!isPro() && getSisaGenerate() <= 0){
+    if(confirm("Limit harian kamu sudah habis (4x/hari).\n\nUpgrade ke Pro untuk generate unlimited?\n\nTekan OK untuk aktivasi.")){
+      bukaModal();
+    }
+    return;
+  }
+
+  if(!materi.value.trim()){ alert("Materi belum diisi!"); materi.focus(); return; }
+  let j = jumlah.value==="custom" ? (jumlahCustom.value.trim()||"10") : jumlah.value;
+  if(isNaN(j)||parseInt(j)<=0){ alert("Jumlah soal tidak valid!"); jumlahCustom.focus(); return; }
+  j = parseInt(j);
+
+  kunciTambahan = mode.value.includes("Guru") ? "\nInclude a separate answer key at the bottom for the teacher." : "";
+  let paper = "A4", orient = "Portrait";
+  if(media.value==="Poster") paper="A3";
+  else if(media.value==="Flashcard"){ paper="A6"; orient="Landscape"; }
+
+  let extraMedia="";
+  if(media.value==="Poster") extraMedia="\nUse poster layout with large title and attractive illustration.\nShort, clear text readable from a distance.\nNo questions or exercises needed.";
+  else if(media.value==="Infografis") extraMedia="\nUse infographic layout with clear sections.\nUse icons and visual elements to clarify information.\nStructured and easy to understand.";
+  else if(media.value==="Flashcard") extraMedia="\nCreate flashcard in A6 Landscape size.\nFront side: question or image.\nBack side: answer or explanation.\nLarge bold font for easy reading.\nThick border with bright attractive colors.\nChild-friendly design.";
+  else if(media.value==="Lembar Mewarnai") extraMedia="\nBlack and white outline only, no colors at all.\nThick clear lines for easy coloring.\nLarge image filling the page.\nAdd a short title or text at the top.\nNo shadows or color gradients.";
+
+  let extraLKPD="";
+  if(media.value==="LKPD"){
+    extraLKPD="\n\n=== LKPD STANDARD FORMAT ===\nCreate a relevant LKPD title based on the topic.\nAdd student identity header: Name: ___________ Class: ___________ Date: ___________\nAdd clear instructions at the beginning.\nNumber questions sequentially.\nDo NOT place any image or illustration over text or questions.\nPlace illustrations only in designated areas: header, sidebar, or bottom of page.\nText and questions must always be readable and unobstructed.";
+    if(jenis.value==="Pilihan Ganda") extraLKPD+="\nQuestion type: Multiple Choice\nEach question has "+getOpsiPG()+".\nAdd a small circle before each option. Example: ○ A. ... ○ B. ...\nNumber of questions: "+j;
+    else if(jenis.value==="Isian") extraLKPD+="\nQuestion type: Fill in the Blank\nEach question ends with a long dotted line. Example: The capital of Indonesia is ....\nNumber of questions: "+j;
+    else if(jenis.value==="Menjodohkan") extraLKPD+="\nQuestion type: Matching\nCreate two columns: left = questions, right = shuffled answers.\nNumber of pairs: "+j;
+    else if(jenis.value==="Uraian") extraLKPD+="\nQuestion type: Essay\nEach question is followed by a wide blank space.\nNumber of questions: "+j;
+    else if(jenis.value==="Bebas") extraLKPD+="\nQuestion type: Free Activity\nCreate creative activities: drawing, writing, coloring, or filling in a table.";
+    extraLKPD += kunciTambahan;
+  }
+
+  let refRule="";
+  if(gaya.value.startsWith("Referensi gambar:")) refRule="\n\n=== REFERENCE IMAGE RULES ===\nUse the attached reference image as a guide for illustration style.\nFollow the illustration style, colors, and character design.\nDO NOT copy any text or content from the reference.";
+
+  let p = "Create a "+media.value+" educational material.";
+  p += media.value==="LKPD" ? "\nClass: "+kelas.value : "\nTarget student level: "+kelas.value;
+  p += "\nSubject: "+mapel.value;
+  p += "\nTopic: "+materi.value;
+  p += "\nIllustration style: "+gaya.value;
+  p += extraMedia+extraLKPD+refRule;
+  p += "\n\n=== GENERAL RULES ===";
+  p += "\nAll text content must be in simple Indonesian language.";
+  p += "\nAdjust language difficulty to the level of "+kelas.value+" students.";
+  p += "\nNo typos allowed.";
+  p += "\nPaper size: "+paper;
+  p += "\nOrientation: "+orient;
+  p += "\nProfessional and neat layout.";
+  p += "\nHigh quality, print ready, 300 dpi.";
+  p += "\nNo watermark.";
+  p += "\nDo not write curriculum phase or code in the design.";
+  p += "\nIMPORTANT: Follow all instructions exactly.";
+
+  hasil.value = p;
+  tambahGenerate();
+  simpanHistori(p);
+  updateUI();
+}
+
+// ============================================================
+// COPY PROMPT
+// ============================================================
+function copyPrompt(){
+  if(!hasil.value.trim()){ alert("Generate prompt dulu!"); return; }
+  navigator.clipboard.writeText(hasil.value).then(()=>{
+    notif.style.display="block";
+    setTimeout(()=>notif.style.display="none",2000);
+  }).catch(()=>{
+    hasil.select(); document.execCommand("copy");
+    notif.style.display="block";
+    setTimeout(()=>notif.style.display="none",2000);
+  });
+}
+
+// ============================================================
+// NAVIGASI
+// ============================================================
+function openGPT(){ window.open("https://chat.openai.com"); }
+function openGemini(){ window.open("https://gemini.google.com"); }
+
+function showSection(id, e){
+  document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".navbar a").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  if(e && e.target) e.target.classList.add("active");
+  if(id==="histori") renderHistori();
+}
+
+// ============================================================
+// PWA INSTALL
+// ============================================================
+window.addEventListener("beforeinstallprompt", e=>{
+  const closedAt = localStorage.getItem("installClosedAt");
+  if(closedAt && (Date.now()-parseInt(closedAt)) < 86400000) return;
+  e.preventDefault(); deferredPrompt=e;
+  installPopup.style.top="0";
+});
+function installApp(){
+  if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>deferredPrompt=null); }
+  closeInstall();
+}
+function closeInstall(){
+  installPopup.style.top="-160px";
+  localStorage.setItem("installClosedAt", Date.now().toString());
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener("DOMContentLoaded", function(){
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("/lkpd/sw.js",{scope:"/lkpd/"})
+      .then(r=>console.log("SW registered:",r.scope))
+      .catch(e=>console.error("SW error:",e));
+  }
+  autoMapel();
+  autoStyle();
+  updateUI();
+});
+</script>
 </body>
 </html>
