@@ -9,6 +9,21 @@
 <link rel="apple-touch-icon" href="/lkpd/guru-cibisd2.png">
 <link rel="manifest" href="/lkpd/manifest.json">
 <meta name="theme-color" content="#4dabf7">
+<meta name="description" content="Bantu Guru Yuk — Generator prompt media ajar gratis untuk guru SD, SMP, SMA. Buat LKPD, Poster, Infografis, Flashcard, dan Lembar Mewarnai otomatis berbasis Kurikulum Merdeka.">
+<meta name="keywords" content="bantu guru yuk, generator media ajar, LKPD otomatis, prompt ChatGPT guru, kurikulum merdeka, media pembelajaran SD, buat soal otomatis, pak choyy">
+<meta name="author" content="Pak Choyy">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://bantuguruyuk.web.id/lkpd/">
+<!-- Open Graph (WhatsApp, Facebook preview) -->
+<meta property="og:title" content="Bantu Guru Yuk | Generator Media Ajar Gratis">
+<meta property="og:description" content="Buat LKPD, Poster, Infografis, dan media ajar lainnya dalam hitungan detik. Gratis untuk guru Indonesia.">
+<meta property="og:url" content="https://bantuguruyuk.web.id/lkpd/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://bantuguruyuk.web.id/lkpd/guru-cibisd2.png">
+<!-- Twitter/X preview -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bantu Guru Yuk | Generator Media Ajar Gratis">
+<meta name="twitter:description" content="Buat LKPD, Poster, Infografis otomatis untuk Kurikulum Merdeka.">
 <style>
 /* ===== BASE ===== */
 *{box-sizing:border-box;}
@@ -22,7 +37,7 @@ body{font-family:'Segoe UI',sans-serif;margin:0;padding:0;background:#eef2f7;}
 
 /* ===== HEADER ===== */
 .header{background:linear-gradient(90deg,#6cc6a6,#4dabf7);color:#fff;padding:14px 18px;width:100%;transition:background .4s;}
-.header.pro-header{background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);}
+
 .badge-pro{display:inline-block;background:linear-gradient(90deg,#f59f00,#ffd43b);color:#1a1a2e;font-size:11px;font-weight:bold;padding:3px 10px;border-radius:10px;margin-left:6px;vertical-align:middle;letter-spacing:.5px;}
 
 /* ===== NAVBAR ===== */
@@ -62,12 +77,15 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 #previewRefBox p{margin:8px 0 0;font-size:13px;color:#e67700;font-weight:bold;}
 
 /* ===== LIMIT BAR ===== */
-#limitBar{background:linear-gradient(135deg,#6741d9,#9775fa);border-radius:0;padding:18px;box-shadow:0 4px 16px rgba(103,65,217,0.5);text-align:center;}
-#limitText{font-size:15px;font-weight:700;color:rgba(255,255,255,0.9);display:block;margin-bottom:4px;}
-#limitCount{font-weight:bold;font-size:32px;color:#fff;display:block;line-height:1.1;}
-#limitCount.habis{color:#ffd43b;}
-#limitCount.pro-badge{font-size:34px;color:#fff;}
-#limitSub{font-size:14px;color:rgba(255,255,255,0.8);margin-top:6px;display:block;}
+#limitBar{background:linear-gradient(90deg,rgba(108,198,166,0.15),rgba(77,171,247,0.15));border-radius:12px;padding:16px 18px;margin-bottom:6px;box-shadow:0 4px 16px rgba(77,171,247,0.2);text-align:center;backdrop-filter:blur(4px);}
+
+#limitBar .limit-row{display:flex;justify-content:center;align-items:center;gap:8px;}
+#limitText{font-size:16px;font-weight:600;color:rgba(255,255,255,0.85);}
+#limitCount{font-weight:bold;font-size:24px;color:#1a1a1a;}
+#limitCount.pro-badge{color:#1a1a1a;font-size:26px;}
+#limitSub{font-size:13px;color:#333;margin-top:5px;}
+#limitCount.habis{color:#e03131;}
+#limitCount.pro-badge{color:#6741d9;}
 
 /* ===== PRO BADGE ===== */
 .badge-pro{display:inline-block;background:linear-gradient(90deg,#6741d9,#9775fa);color:white;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;}
@@ -143,8 +161,9 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
     <button id="btnAktivasi" onclick="aktivasiPro()" style="background:linear-gradient(90deg,#6741d9,#9775fa);margin-top:14px;">✨ Aktivasi Sekarang</button>
     <button onclick="tutupModal()" style="background:#dee2e6;color:#495057;margin-top:8px;font-size:13px;">Tutup</button>
     <div style="margin-top:12px;font-size:12px;color:#aaa;">
-      Belum punya kode?
-      <a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" style="color:#6741d9;font-weight:bold;">Beli di sini →</a>
+      Belum punya kode? Hubungi via
+      <a href="https://wa.me/6289530713597" target="_blank" style="color:#6741d9;font-weight:bold;">WhatsApp</a> atau
+      <a href="https://tiktok.com/@pak.choyy" target="_blank" style="color:#6741d9;font-weight:bold;">TikTok</a>
     </div>
   </div>
 </div>
@@ -172,15 +191,17 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
   <a onclick="showSection('kontak',event)">Kontak</a>
 </div>
 
-<!-- LIMIT BAR — full width, 2 baris, tengah, font besar -->
-<div id="limitBar">
-  <span id="limitText">Generate hari ini:</span>
-  <span id="limitCount">4 / 4</span>
-  <span id="limitSub">Reset tiap tengah malam</span>
-</div>
-
 <!-- ===== HOME ===== -->
 <div id="home" class="container section active">
+
+  <!-- LIMIT BAR (hanya di Home) -->
+  <div id="limitBar">
+    <div class="limit-row">
+      <span id="limitText">Generate hari ini:</span>
+      <span id="limitCount">4 / 4</span>
+    </div>
+    <div id="limitSub">Reset tiap tengah malam<br><a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" id="badgeUpgrade" style="display:inline-block;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:4px 14px;border-radius:20px;text-decoration:none;letter-spacing:.3px;">💎 Upgrade ke Pro →</a></div>
+  </div>
 
   <label>Kelas</label>
   <select id="kelas" onchange="autoMapel();autoStyle();">
@@ -268,6 +289,7 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
   <button class="btn-chatgpt" onclick="openGPT()">🤖 Open ChatGPT</button>
   <button class="btn-gemini-open" onclick="openGemini()">✨ Open Gemini</button>
 
+
   <!-- CONTOH -->
   <div style="margin-top:24px;">
     <div style="text-align:center;font-weight:bold;font-size:15px;margin-bottom:10px;color:#444;">📸 Contoh Hasil Generate Prompt</div>
@@ -322,7 +344,6 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
   <p>Untuk info lebih lanjut, bantuan penggunaan, kritik, saran, atau pembelian kode Pro:</p>
   <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;">WhatsApp</button>
   <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;">TikTok</button>
-  <button onclick="window.open('https://lynk.id/kreacy/nq35v4y36gz8')" style="background:linear-gradient(90deg,#6741d9,#9775fa);">💎 Beli BGY Pro</button>
   <p style="margin-top:15px;font-size:13px;color:#555;">Masukan dan saran Anda sangat membantu pengembangan aplikasi ini.</p>
 </div>
 
@@ -343,9 +364,9 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 <!-- ===== JAVASCRIPT ===== -->
 <script>
 // ============================================================
-// KONFIGURASI
+// KONFIGURASI — GANTI INI SETELAH DEPLOY WORKER
 // ============================================================
-const WORKER_URL = "https://bgypro.pulsachoy.workers.dev";
+const WORKER_URL = "https://bgy-pro.namakamu.workers.dev"; // ← ganti dengan URL worker kamu
 
 // ============================================================
 // KONSTANTA
@@ -395,28 +416,25 @@ function updateUI(){
   const countEl = document.getElementById("limitCount");
   const sub     = document.getElementById("limitSub");
 
-  const header  = document.querySelector(".header");
-  const banner  = document.getElementById("proBanner");
 
   if(pro){
-    header.classList.add("pro-header");
-    bar.style.background = "linear-gradient(135deg,#1a1a2e,#2d1b69)";
-    bar.style.boxShadow  = "0 4px 16px rgba(245,159,0,0.5)";
+    // Limit bar - sama warna tapi teks unlimited
+    bar.style.background = "linear-gradient(90deg,rgba(108,198,166,0.15),rgba(77,171,247,0.15))";
     countEl.textContent  = "∞ Unlimited";
     countEl.className    = "pro-badge";
-    sub.textContent      = "💎 Kamu pengguna BGY Pro. Terima kasih!";
-    if(banner) banner.style.display = "none";
+    sub.innerHTML        = '<span style="color:#1a1a1a;">💎 BGY Pro aktif</span>';
+    // Sembunyikan badge upgrade
+    const bu = document.getElementById("badgeUpgrade");
+    if(bu) bu.style.display = "none";
   } else {
-    header.classList.remove("pro-header");
     bar.style.background = "";
-    bar.style.boxShadow  = "";
     const sisa = getSisaGenerate();
     countEl.textContent = sisa + " / " + FREE_LIMIT;
     countEl.className   = sisa === 0 ? "habis" : "";
-    sub.textContent     = "Reset tiap tengah malam";
-    if(banner) banner.style.display = "block";
+    sub.innerHTML       = 'Reset tiap tengah malam<br><a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" id="badgeUpgrade" style="display:inline-block;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:4px 14px;border-radius:20px;text-decoration:none;letter-spacing:.3px;">💎 Upgrade ke Pro →</a>';
   }
 
+  // Render histori
   renderHistori();
 }
 
@@ -485,6 +503,7 @@ function muatHistori(idx){
   if(!list[idx]) return;
   hasil.value = list[idx].prompt;
   showSection("home", {target: document.querySelector(".navbar a")});
+  // aktifkan tab home
   document.querySelectorAll(".navbar a").forEach((a,i)=>{ if(i===0) a.classList.add("active"); else a.classList.remove("active"); });
   hasil.scrollIntoView({behavior:"smooth", block:"center"});
 }
@@ -643,10 +662,9 @@ document.getElementById("uploadRef").addEventListener("change", function(){
 // GENERATE PROMPT
 // ============================================================
 function generatePrompt(){
+  // Cek limit
   if(!isPro() && getSisaGenerate() <= 0){
-    if(confirm("Limit harian kamu sudah habis (4x/hari).\n\nUpgrade ke Pro untuk generate unlimited?\n\nTekan OK untuk aktivasi.")){
-      bukaModal();
-    }
+    if(confirm("Limit harian kamu sudah habis (4x/hari).\n\nUpgrade ke Pro untuk generate unlimited?\n\nTekan OK untuk info aktivasi.")){window.open("https://lynk.id/kreacy/nq35v4y36gz8","_blank");}
     return;
   }
 
@@ -699,6 +717,8 @@ function generatePrompt(){
   p += "\nIMPORTANT: Follow all instructions exactly.";
 
   hasil.value = p;
+
+  // Tambah counter & simpan histori
   tambahGenerate();
   simpanHistori(p);
   updateUI();
