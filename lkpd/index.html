@@ -297,7 +297,7 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 
   <button class="btn-chatgpt" onclick="openGPT()">🤖 Open ChatGPT</button>
   <button class="btn-gemini-open" onclick="openGemini()">✨ Open Gemini</button>
-<button class="btn-purple" onclick="bukaModal()" style="margin-top: 10px; background: linear-gradient(90deg,#6741d9,#9775fa);">
+<button class="btn-purple" onclick="trackPro(); bukaModal()" style="margin-top: 10px; background: linear-gradient(90deg,#6741d9,#9775fa);">
   💎 Aktivasi BGY Pro </button>
 
   <!-- CONTOH -->
@@ -430,7 +430,9 @@ function updateUI(){
 
 
   if(pro){
-    document.querySelector(".btn-purple").style.display = "none";
+   document.querySelectorAll(".btn-purple").forEach(btn => {
+  btn.style.display = "none";
+});
     // Limit bar - sama warna tapi teks unlimited
     bar.style.background = "linear-gradient(90deg,rgba(108,198,166,0.5),rgba(77,171,247,0.5))";
     countEl.textContent  = "∞ Unlimited";
@@ -675,6 +677,7 @@ document.getElementById("uploadRef").addEventListener("change", function(){
 // GENERATE PROMPT
 // ============================================================
 function generatePrompt(){
+  gtag('event', 'generate_prompt');
   // Cek limit
   if(!isPro() && getSisaGenerate() <= 0){
     if(confirm("Limit harian kamu sudah habis (4x/hari).\n\nUpgrade ke Pro untuk generate unlimited?\n\nTekan OK untuk info aktivasi.")){window.open("https://lynk.id/kreacy/nq35v4y36gz8","_blank");}
@@ -755,8 +758,14 @@ function copyPrompt(){
 // ============================================================
 // NAVIGASI
 // ============================================================
-function openGPT(){ window.open("https://chat.openai.com"); }
-function openGemini(){ window.open("https://gemini.google.com"); }
+function openGPT(){
+  gtag('event', 'open_chatgpt');
+  window.open("https://chat.openai.com");
+}
+function openGemini(){
+   gtag('event', 'open_gemini');
+  window.open("https://gemini.google.com");
+}
 
 function showSection(id, e){
   document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
