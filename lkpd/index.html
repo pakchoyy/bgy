@@ -209,7 +209,13 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
       <span id="limitText">Generate hari ini:</span>
       <span id="limitCount">4 / 4</span>
     </div>
-    <div id="limitSub">Reset tiap tengah malam<br><a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" id="badgeUpgrade" style="display:inline-block;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:4px 14px;border-radius:20px;text-decoration:none;letter-spacing:.3px;">💎 Upgrade ke Pro →</a></div>
+    <div id="limitSub">Reset tiap tengah malam<br><a href="https://lynk.id/kreacy/nq35v4y36gz8" 
+target="_blank" 
+id="badgeUpgrade"
+onclick="gtag('event','klik_upgrade')"
+style="display:inline-block;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:4px 14px;border-radius:20px;text-decoration:none;letter-spacing:.3px;">
+💎 Upgrade ke Pro →
+</a>
   </div>
 
   <label>Kelas</label>
@@ -297,8 +303,11 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 
   <button class="btn-chatgpt" onclick="openGPT()">🤖 Open ChatGPT</button>
   <button class="btn-gemini-open" onclick="openGemini()">✨ Open Gemini</button>
-<button class="btn-purple" onclick="bukaModal()" style="margin-top: 10px; background: linear-gradient(90deg,#6741d9,#9775fa);">
-  💎 Aktivasi BGY Pro </button>
+<button class="btn-purple" 
+onclick="gtag('event','klik_pro'); bukaModal();" 
+style="margin-top:10px; background:linear-gradient(90deg,#6741d9,#9775fa);">
+💎 Aktivasi BGY Pro
+</button>
 
   <!-- CONTOH -->
   <div style="margin-top:24px;">
