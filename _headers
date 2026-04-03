@@ -1,0 +1,26 @@
+# Cloudflare Pages _headers
+# Taruh file ini di ROOT repo (sejajar folder lkpd/)
+# Tujuan: HTML & SW selalu fresh, tidak perlu manual purge cache
+
+# HTML — tidak pernah di-cache CDN, selalu ambil dari server
+/lkpd/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/lkpd/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Service Worker — wajib tidak di-cache, browser check setiap 24 jam
+/lkpd/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /lkpd/
+
+# Manifest — cache pendek
+/lkpd/manifest.json
+  Cache-Control: max-age=3600
+
+# Gambar aset — cache panjang (jarang berubah)
+/lkpd/*.png
+  Cache-Control: public, max-age=604800
+
+/lkpd/*.jpg
+  Cache-Control: public, max-age=604800
