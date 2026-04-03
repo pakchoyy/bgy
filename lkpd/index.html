@@ -89,8 +89,14 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 #previewRefBox p{margin:8px 0 0;font-size:13px;color:#e67700;font-weight:bold;}
 
 /* ===== LIMIT BAR ===== */
-#limitBar{background:linear-gradient(90deg,rgba(108,198,166,0.5),rgba(77,171,247,0.5));
-
+#limitBar{
+  background:linear-gradient(90deg,rgba(108,198,166,0.5),rgba(77,171,247,0.5));
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
 #limitBar .limit-row{display:flex;justify-content:center;align-items:center;gap:8px;}
 #limitText{font-size:16px;font-weight:600;color:#000;}
 #limitCount{font-weight:bold;font-size:24px;color:#1a1a1a;}
