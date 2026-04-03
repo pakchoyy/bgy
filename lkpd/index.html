@@ -62,7 +62,7 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 #previewRefBox p{margin:8px 0 0;font-size:13px;color:#e67700;font-weight:bold;}
 
 /* ===== LIMIT BAR ===== */
-#limitBar{background:linear-gradient(135deg,#6741d9,#9775fa);border-radius:0;padding:18px;box-shadow:0 4px 16px rgba(103,65,217,0.2);text-align:center;}
+#limitBar{background:linear-gradient(135deg,#6741d9,#9775fa);border-radius:0;padding:18px;box-shadow:0 4px 16px rgba(103,65,217,0.5);text-align:center;}
 #limitText{font-size:15px;font-weight:700;color:rgba(255,255,255,0.9);display:block;margin-bottom:4px;}
 #limitCount{font-weight:bold;font-size:32px;color:#fff;display:block;line-height:1.1;}
 #limitCount.habis{color:#ffd43b;}
@@ -401,7 +401,7 @@ function updateUI(){
   if(pro){
     header.classList.add("pro-header");
     bar.style.background = "linear-gradient(135deg,#1a1a2e,#2d1b69)";
-    bar.style.boxShadow  = "0 4px 16px rgba(245,159,0,0.2)";
+    bar.style.boxShadow  = "0 4px 16px rgba(245,159,0,0.5)";
     countEl.textContent  = "∞ Unlimited";
     countEl.className    = "pro-badge";
     sub.textContent      = "💎 Kamu pengguna BGY Pro. Terima kasih!";
