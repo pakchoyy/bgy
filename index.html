@@ -1,8 +1,9 @@
 
-  <!DOCTYPE html>
+ 
+<!DOCTYPE html>
 <html lang="id">
 <head>
-    <!-- Google tag (gtag.js) -->
+     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -16,159 +17,51 @@
 <title>Bantu Guru Yuk</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif}
-
-/* LAYOUT */
-.container{
-  display:grid;
-  grid-template-columns:220px 1fr;
-  height:100vh;
-}
-
-/* SIDEBAR */
-.sidebar{
-  background:#1e293b;
-  color:#fff;
-  padding:20px;
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:linear-gradient(135deg,#4f46e5,#22c55e);
   display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-.sidebar h2{
-  font-size:18px;
-  margin-bottom:10px;
-}
-
-.menu a{
-  display:block;
-  padding:12px;
-  border-radius:10px;
-  text-decoration:none;
-  color:#cbd5f9;
-  font-size:14px;
-  transition:0.2s;
-}
-
-.menu a:hover{
-  background:#334155;
-  color:#fff;
-}
-
-/* CONTENT */
-.content{
-  background:#f1f5f9;
-  padding:30px;
-}
-
-.header{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:20px;
-}
-
-/* CARD */
-.cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:16px;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
 .card{
   background:white;
-  padding:20px;
-  border-radius:16px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  padding:25px;
+  border-radius:20px;
+  text-align:center;
+  width:90%;
+  max-width:350px;
+}
+
+h1{margin-bottom:5px;}
+p{color:#666;margin-bottom:20px;}
+
+a{
+  display:block;
+  margin:10px 0;
+  padding:12px;
+  border-radius:12px;
   text-decoration:none;
-  color:#111;
-  transition:0.2s;
+  color:white;
 }
 
-.card:hover{
-  transform:translateY(-5px);
-}
-
-.card h3{
-  margin-bottom:6px;
-}
-
-.card p{
-  font-size:13px;
-  color:#64748b;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-  .container{
-    grid-template-columns:1fr;
-  }
-
-  .sidebar{
-    flex-direction:row;
-    overflow-x:auto;
-  }
-
-  .menu{
-    display:flex;
-    gap:10px;
-  }
-
-  .menu a{
-    white-space:nowrap;
-  }
-}
+.lkpd{background:#4f46e5;}
+.soal{background:#22c55e;}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="card">
+  <h1>📚 Bantu Guru Yuk</h1>
+  <p>Pilih menu</p>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h2>📚 BGY</h2>
-
-    <div class="menu">
-      <a href="/">🏠 Home</a>
-
-      <!-- FIX PENTING: LANGSUNG KE FOLDER -->
-      <a href="/soal/">📝 Generator Soal</a>
-      <a href="/lkpd/">📘 Generator LKPD</a>
-
-      <a href="#">📊 Histori</a>
-      <a href="#">⚙️ Pengaturan</a>
-    </div>
-  </div>
-
-  <!-- CONTENT -->
-  <div class="content">
-    <div class="header">Selamat Datang 👋</div>
-
-    <div class="cards">
-
-      <!-- FIX LINK -->
-      <a href="/soal/" class="card">
-        <h3>📝 Buat Soal</h3>
-        <p>Generate soal otomatis sesuai kurikulum</p>
-      </a>
-
-      <a href="/lkpd/" class="card">
-        <h3>📘 Buat LKPD</h3>
-        <p>Buat lembar kerja siap cetak</p>
-      </a>
-
-      <div class="card">
-        <h3>📊 Histori</h3>
-        <p>Riwayat soal yang pernah dibuat</p>
-      </div>
-
-      <div class="card">
-        <h3>⚙️ Pengaturan</h3>
-        <p>Atur preferensi aplikasi</p>
-      </div>
-
-    </div>
-  </div>
+  <!-- FIX PENTING -->
+  <a href="/lkpd" class="lkpd">📘 LKPD</a>
+  <a href="/soal" class="soal">📝 Soal</a>
 
 </div>
 
