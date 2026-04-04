@@ -936,7 +936,7 @@ Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
 Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
 
   try{
-    const resp=await fetch('/api/generate',{
+    const resp=await fetch('/api/generate-soal',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({prompt:prompt})
