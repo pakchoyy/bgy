@@ -1296,10 +1296,38 @@ function exportWord(){
     <p style="font-size:10pt;margin:0;">Tahun Pelajaran ${tahun}</p>
   </div>
   <div style="border-top:3px solid black;margin:6pt 0 10pt;"></div>
-  <table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;border-collapse:collapse;">
-    <tr><td width="115">Mata Pelajaran</td><td width="12">:</td><td style="border-bottom:1px solid #333;">${mapel}</td><td width="18"></td><td width="100">Nama</td><td width="12">:</td><td style="border-bottom:1px solid #333;min-width:130pt;">&nbsp;</td></tr>
-    <tr><td>Kelas / Semester</td><td>:</td><td style="border-bottom:1px solid #333;">${kelas} / ${semStr}</td><td></td><td>No. Absen</td><td>:</td><td style="border-bottom:1px solid #333;">&nbsp;</td></tr>
-    <tr><td>Tanggal</td><td>:</td><td style="border-bottom:1px solid #333;">${tanggal}</td><td></td><td>Nilai</td><td>:</td><td style="border-bottom:1px solid #333;">&nbsp;</td></tr>
+  <table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;border-collapse:collapse;table-layout:fixed;">
+    <colgroup>
+      <col width="120"/><col width="12"/><col width="148"/><col width="20"/>
+      <col width="100"/><col width="12"/><col width="148"/>
+    </colgroup>
+    <tr>
+      <td style="padding:2pt 0;">Mata Pelajaran</td>
+      <td style="padding:2pt 0;">:</td>
+      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">${mapel}</td>
+      <td></td>
+      <td style="padding:2pt 0;">Nama</td>
+      <td style="padding:2pt 0;">:</td>
+      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="padding:2pt 0;">Kelas / Semester</td>
+      <td style="padding:2pt 0;">:</td>
+      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">${kelas} / ${semStr}</td>
+      <td></td>
+      <td style="padding:2pt 0;">No. Absen</td>
+      <td style="padding:2pt 0;">:</td>
+      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="padding:2pt 0;">Tanggal</td>
+      <td style="padding:2pt 0;">:</td>
+      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">${tanggal}</td>
+      <td></td>
+      <td style="padding:2pt 0;">Nilai</td>
+      <td style="padding:2pt 0;">:</td>
+      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">&nbsp;</td>
+    </tr>
   </table>
   <div style="border-top:3px solid black;margin:8pt 0 10pt;"></div>`;
 
