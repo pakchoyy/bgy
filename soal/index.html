@@ -438,8 +438,8 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <div class="form-group">
         <label>Kelas</label>
         <select id="kelas" onchange="onKelasChange()">
-          <option value="1">1</option><option value="2">2</option>
-          <option value="3" selected>3</option><option value="4">4</option>
+          <option value="1">1</option><option value="2" selected>2</option>
+          <option value="3">3</option><option value="4">4</option>
           <option value="5">5</option><option value="6">6</option>
         </select>
       </div>
@@ -657,7 +657,12 @@ let deferredInstallPrompt=null;
   const savedKey=localStorage.getItem('gemini_api_key');
   if(savedKey){GEMINI_API_KEY=savedKey;}
   // Form
-  renderMapelOptions();renderMateriChecklist();
+  renderMapelOptions();
+  // Set default mapel ke Bahasa Indonesia jika tersedia
+  const mapelSel=document.getElementById('mataPelajaran');
+  const biOpt=[...mapelSel.options].find(o=>o.value==='Bahasa Indonesia');
+  if(biOpt)mapelSel.value='Bahasa Indonesia';
+  renderMateriChecklist();
   // Init histori badge
   updateHistoriBadge(getHistoriList().length);
   // Install prompt
@@ -729,9 +734,9 @@ function simpanHistori(data){
         tanggal:document.getElementById('tanggal').value,
         jenisUjian:document.getElementById('jenisUjian').value,
         kelas,mapel,
-        pgCount:document.getElementById('pgCount').value,
-        isianCount:document.getElementById('isianCount').value,
-        uraianCount:document.getElementById('uraianCount').value,
+        pgCount:document.getElementById('jmlPG').value,
+        isianCount:document.getElementById('jmlIsian').value,
+        uraianCount:document.getElementById('jmlUraian').value,
       }
     };
     let list=getHistoriList();
@@ -789,9 +794,9 @@ function loadHistori(id){
       document.getElementById('semester').value=f.semester||'1';
       document.getElementById('tanggal').value=f.tanggal||'';
       if(document.getElementById('jenisUjian'))document.getElementById('jenisUjian').value=f.jenisUjian||'';
-      document.getElementById('pgCount').value=f.pgCount||10;
-      document.getElementById('isianCount').value=f.isianCount||5;
-      document.getElementById('uraianCount').value=f.uraianCount||3;
+      document.getElementById('jmlPG').value=f.pgCount||10;
+      document.getElementById('jmlIsian').value=f.isianCount||5;
+      document.getElementById('jmlUraian').value=f.uraianCount||3;
       // Set kelas & mapel lalu update materi
       document.getElementById('kelas').value=f.kelas||'1';
       document.getElementById('mataPelajaran').value=f.mapel||'';
@@ -936,16 +941,32 @@ Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
 Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
 
   try{
-    const resp=await fetch('/api/generate-soal',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:prompt})
-    });
-    const json=await resp.json();
-    if(json.error)throw new Error(json.error);
-    const rawText=json.text;
-    const cleaned=rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
-    const data=JSON.parse(cleaned);
+    let resp;
+    try{
+      resp=await fetch('/api/generate-soal',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({prompt:prompt})
+      });
+    }catch(networkErr){
+      throw new Error('Gagal terhubung ke server. Periksa koneksi internet kamu.');
+    }
+    let json;
+    try{
+      json=await resp.json();
+    }catch{
+      throw new Error(`Server error (HTTP ${resp.status}). Coba lagi beberapa saat.`);
+    }
+    if(!resp.ok||json.error)throw new Error(json.error||`Server error (HTTP ${resp.status})`);
+    const rawText=json.text||'';
+    if(!rawText)throw new Error('Respons AI kosong. Coba generate ulang.');
+    let data;
+    try{
+      const cleaned=rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
+      data=JSON.parse(cleaned);
+    }catch{
+      throw new Error('Format respons AI tidak valid. Coba generate ulang.');
+    }
     soalData=data;
     buildHalaman(data);
     currentPage=0;showPage(0);
@@ -954,7 +975,7 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
     document.getElementById('btnKunci').textContent='🔑 Kunci';
     simpanHistori(data);
   }catch(e){
-    showError('Gagal: '+e.message+'. Cek API Key kamu.');
+    showError(e.message||'Terjadi kesalahan. Coba lagi.');
   }finally{
     setLoading(false);
   }
@@ -1029,24 +1050,7 @@ function buildHalaman(data){
   renderKunci(data,pg,isian,uraian);
 }
 
-function renderPage(headerHtml,blocks){
-  let html=headerHtml,prevType='',tabelOpen=false;
-  blocks.forEach(b=>{
-    if(b.type==='section'){
-      if(tabelOpen){html+='</table>';tabelOpen=false;}
-      html+=`<div class="doc-section-title">${b.label}</div><div class="doc-petunjuk">${b.petunjuk}</div>`;
-      prevType='';
-    } else {
-      if(b.type!==prevType){
-        if(tabelOpen){html+='</table>';tabelOpen=false;}
-        html+='<table class="doc-soal-table">';tabelOpen=true;prevType=b.type;
-      }
-      html+=buildSoalRow(b);
-    }
-  });
-  if(tabelOpen)html+='</table>';
-  return html;
-}
+// renderPage: digunakan oleh closePage secara internal
 
 function buildDocHeader(){
   const namaSekolah=escHtml(document.getElementById('namaSekolah').value||'SDN ---');
@@ -1323,17 +1327,20 @@ function exportWord(){
   const wordHtml=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="utf-8"><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
 <style>
-  body{font-family:"Times New Roman",serif;font-size:11pt;margin:2cm 2.5cm;}
+  @page WordSection1{size:21cm 29.7cm;margin:2cm 2.5cm 2cm 2.5cm;mso-page-orientation:portrait;}
+  div.WordSection1{page:WordSection1;}
+  body{font-family:"Times New Roman",serif;font-size:11pt;margin:0;}
   p{margin:3pt 0;line-height:1.4;}
   table{border-collapse:collapse;width:100%;}
   td{vertical-align:top;font-family:"Times New Roman",serif;font-size:11pt;}
-  .soal-no{width:22pt;vertical-align:top;}
-  .opsi-table td{padding:1pt 4pt;}
 </style>
-</head><body>${body}</body></html>`;
-  const blob=new Blob(['\ufeff',wordHtml],{type:'application/msword'});
-  const url=URL.createObjectURL(blob);const a=document.createElement('a');
-  a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.docx`;a.click();URL.revokeObjectURL(url);
+</head><body><div class="WordSection1">${body}</div></body></html>`;
+  const blob=new Blob(['\ufeff',wordHtml],{type:'application/msword;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.doc`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
 }
 
 /* ════════════════════════════════════════════
