@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-83WBBEE5BG');
-</script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bantu Guru Yuk | Buat Soal</title>
@@ -304,7 +295,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     </div>
   </div>
   <div class="header-right">
-    <span class="version-badge">v26.3.9c • Free Version</span>
+    
     <button id="darkToggle" onclick="toggleDark()">🌙 Dark</button>
   </div>
 </header>
@@ -519,7 +510,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <!-- AKTIVASI PRO -->
       <div id="aktivasiBox" style="margin-top:12px;border:1.5px dashed #34d399;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(52,211,153,.07),rgba(59,130,246,.07));">
         <div style="font-size:.78rem;font-weight:700;color:#059669;margin-bottom:4px;">🔓 Aktivasi Pro — Generate Unlimited</div>
-        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;">Hubungi <a href="https://wa.me/6285600410356?text=Halo+Pak+Choyy,+saya+mau+aktivasi+Pro+BGY+Soal" target="_blank" style="color:#059669;font-weight:700;">Pak Choyy via WA</a> untuk mendapatkan kode aktivasi.</div>
+        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;">Hubungi <a href="https://wa.me/6289530713597?text=Halo+Pak+Choyy,+saya+mau+aktivasi+Pro+BGY+Soal" target="_blank" style="color:#059669;font-weight:700;">Pak Choyy via WA</a> untuk mendapatkan kode aktivasi.</div>
         <div style="display:flex;gap:6px;">
           <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..." style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;"/>
           <button onclick="aktivasiPro()" style="background:linear-gradient(135deg,#34d399,#3b82f6);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;">Aktifkan</button>
@@ -550,15 +541,14 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     </div>
 
     <div id="previewBox">
-      <div class="empty-state" id="watermarkState" style="position:relative;">
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);font-size:60px;font-weight:900;color:rgba(0,0,0,.06);pointer-events:none;white-space:nowrap;z-index:0;">CONTOH HASIL</div>
+      <div class="empty-state" id="watermarkState">
         <div class="icon">📄</div>
         <p>Lembar soal tampil di sini setelah Generate Soal.</p>
       </div>
     </div>
     <div id="userFeedbackBox" style="display:none;margin-top:10px;padding:12px 16px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);text-align:center;font-size:.82rem;color:var(--text-light);">
       💡 Ada saran atau perbaikan soal?
-      <button onclick="window.open('https://wa.me/6285600410356?text=Saran+BGY+Soal:+','_blank')" style="margin-left:8px;background:var(--grad);color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">Kirim Kritik &amp; Saran</button>
+      <button onclick="window.open('https://wa.me/6289530713597?text=Saran+BGY+Soal:+','_blank')" style="margin-left:8px;background:var(--grad);color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">Kirim Kritik &amp; Saran</button>
     </div>
 
     <div id="kunciBox">
@@ -677,6 +667,8 @@ let halamanSoal=[],currentPage=0;
 const SOAL_PER_HALAMAN=8;
 let GEMINI_API_KEY='';
 let deferredInstallPrompt=null;
+const DAILY_LIMIT=4;
+const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
 
 /* ════════════════════════════════════════════
    INIT
@@ -1052,7 +1044,13 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
 function setLoading(s){
   document.getElementById('btnGenerate').disabled=s;
   document.getElementById('spinner').style.display=s?'block':'none';
-  document.getElementById('btnLabel').textContent=s?'Membuat soal...':'✨ Generate Soal';
+  if(s){
+    document.getElementById('btnLabel').textContent='Membuat soal...';
+  } else {
+    const{remaining}=checkLimit();
+    const remText=isPro()?'':'('+remaining+'x)';
+    document.getElementById('btnLabel').textContent='✨ Generate Soal '+remText;
+  }
 }
 function showError(m){const e=document.getElementById('errorBox');e.textContent='⚠️ '+m;e.style.display='block';}
 function hideError(){document.getElementById('errorBox').style.display='none';}
@@ -1609,8 +1607,6 @@ function validateForm(){
 /* ════════════════════════════════════════════
    [NEW] DAILY LIMIT & PRO SYSTEM
 ════════════════════════════════════════════ */
-const DAILY_LIMIT = 4;
-const WORKER_URL = 'https://bgypro-soal.pulsachoy.workers.dev/';
 
 function isPro(){
   try{const d=JSON.parse(localStorage.getItem('bgy_pro')||'{}');return d.aktif===true;}catch{return false;}
@@ -1638,11 +1634,21 @@ function checkLimit(){
 function updateLimitDisplay(){
   const el=document.getElementById('limitInfo');
   if(!el)return;
-  if(isPro()){el.textContent='⭐ Pro Aktif — Generate Unlimited';el.style.color='#059669';
-    document.getElementById('aktivasiBox').style.display='none';return;}
+  if(isPro()){
+    el.textContent='⭐ Pro Aktif — Generate Unlimited';
+    el.style.color='#059669';
+    document.getElementById('aktivasiBox').style.display='none';
+    document.getElementById('btnLabel').textContent='✨ Generate Soal';
+    return;
+  }
   const{ok,remaining}=checkLimit();
   el.textContent=ok?`🔢 Sisa generate hari ini: ${remaining}x`:'⛔ Batas harian habis. Aktivasi Pro atau coba besok.';
   el.style.color=remaining<=1?'#dc2626':'#64748b';
+  // Update button label with remaining count
+  const btnLbl=document.getElementById('btnLabel');
+  if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1){
+    btnLbl.textContent=ok?`✨ Generate Soal (${remaining}x)`:'⛔ Limit Habis';
+  }
 }
 
 async function aktivasiPro(){
