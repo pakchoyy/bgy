@@ -11,6 +11,7 @@
 <meta name="theme-color" content="#34d399"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -475,6 +476,16 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       </div>
 
       <div class="form-group">
+        <label>Template Soal</label>
+        <select id="templateSoal" onchange="applyTemplate()">
+          <option value="">-- Pilih Template --</option>
+          <option value="latihan">Latihan (PG 5, Isian 3, Uraian 2)</option>
+          <option value="ulangan">Ulangan (PG 10, Isian 5, Uraian 3)</option>
+          <option value="pas">PAS (PG 20, Isian 10, Uraian 5)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label>Jumlah Soal per Tipe</label>
         <div class="row-3">
           <div>
@@ -492,6 +503,20 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         <div class="spinner" id="spinner"></div>
         <span id="btnLabel">✨ Generate Soal</span>
       </button>
+      <div id="generateFeedback" style="font-size:.78rem;margin-top:6px;min-height:18px;text-align:center;color:var(--text-light);"></div>
+      <div id="limitInfo" style="font-size:.75rem;text-align:center;margin-top:4px;color:#64748b;"></div>
+      <button class="btn btn-secondary" id="btnReset" onclick="resetForm()" style="margin-top:6px;width:100%;font-size:.8rem;">🔄 Reset Form</button>
+
+      <!-- AKTIVASI PRO -->
+      <div id="aktivasiBox" style="margin-top:12px;border:1.5px dashed #34d399;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(52,211,153,.07),rgba(59,130,246,.07));">
+        <div style="font-size:.78rem;font-weight:700;color:#059669;margin-bottom:4px;">🔓 Aktivasi Pro — Generate Unlimited</div>
+        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;">Hubungi <a href="https://wa.me/6285600410356?text=Halo+Pak+Choyy,+saya+mau+aktivasi+Pro+BGY+Soal" target="_blank" style="color:#059669;font-weight:700;">Pak Choyy via WA</a> untuk mendapatkan kode aktivasi.</div>
+        <div style="display:flex;gap:6px;">
+          <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..." style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;"/>
+          <button onclick="aktivasiPro()" style="background:linear-gradient(135deg,#34d399,#3b82f6);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;">Aktifkan</button>
+        </div>
+        <div id="aktivasiMsg" style="font-size:.72rem;margin-top:6px;min-height:14px;"></div>
+      </div>
 
     </div>
   </div>
@@ -516,10 +541,15 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     </div>
 
     <div id="previewBox">
-      <div class="empty-state">
+      <div class="empty-state" id="watermarkState" style="position:relative;">
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);font-size:60px;font-weight:900;color:rgba(0,0,0,.06);pointer-events:none;white-space:nowrap;z-index:0;">CONTOH HASIL</div>
         <div class="icon">📄</div>
         <p>Lembar soal tampil di sini setelah Generate Soal.</p>
       </div>
+    </div>
+    <div id="userFeedbackBox" style="display:none;margin-top:10px;padding:12px 16px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);text-align:center;font-size:.82rem;color:var(--text-light);">
+      💡 Ada saran atau perbaikan soal?
+      <button onclick="window.open('https://wa.me/6285600410356?text=Saran+BGY+Soal:+','_blank')" style="margin-left:8px;background:var(--grad);color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">Kirim Kritik &amp; Saran</button>
     </div>
 
     <div id="kunciBox">
@@ -531,7 +561,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 </div><!-- end tab-home -->
 
 <footer>
-  <div class="footer-title">© 2026 Bantu Guru Yuk by Pak.Choyy</div>
+  <div class="footer-title">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" style="color:inherit;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Pak.Choyy</a></div>
   <div class="footer-sub">Kurikulum Merdeka Based &bull; Powered by AI &bull; v26.3.9c</div>
 </footer>
 
@@ -663,6 +693,10 @@ let deferredInstallPrompt=null;
   const biOpt=[...mapelSel.options].find(o=>o.value==='Bahasa Indonesia');
   if(biOpt)mapelSel.value='Bahasa Indonesia';
   renderMateriChecklist();
+  // Restore auto save
+  restoreAutoSave();
+  // Update limit display
+  updateLimitDisplay();
   // Init histori badge
   updateHistoriBadge(getHistoriList().length);
   // Install prompt
@@ -774,7 +808,9 @@ function renderHistoriList(){
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0;">
-        <button onclick="loadHistori(${item.id})" style="background:var(--grad);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:700;cursor:pointer;">📂 Buka</button>
+        <button onclick="loadHistori(${item.id})" style="background:var(--grad);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">📂 Buka</button>
+        <button onclick="duplikatHistori(${item.id})" style="background:#dbeafe;color:#1d4ed8;border:none;border-radius:8px;padding:6px 10px;font-size:.78rem;font-weight:700;cursor:pointer;" title="Duplikat">📋</button>
+        <button onclick="regenerateHistori(${item.id})" style="background:#dcfce7;color:#16a34a;border:none;border-radius:8px;padding:6px 10px;font-size:.78rem;font-weight:700;cursor:pointer;" title="Regenerate">🔄</button>
         <button onclick="hapusHistori(${item.id})" style="background:#fee2e2;color:#dc2626;border:none;border-radius:8px;padding:6px 10px;font-size:.78rem;font-weight:700;cursor:pointer;">🗑️</button>
       </div>
     </div>
@@ -902,10 +938,9 @@ function getJudulUjian(){
    GENERATE — langsung fetch Gemini API
 ════════════════════════════════════════════ */
 async function handleGenerate(){
+  if(!validateForm())return;
   const materi=getMateriTerpilih();
-  if(!materi){showError('Pilih minimal satu materi.');return;}
   const kesulitan=getKesulitanTerpilih();
-  if(!kesulitan){showError('Pilih minimal satu tingkat kesulitan.');return;}
   const topik=document.getElementById('topikTambahan').value.trim();
   const materiLengkap=topik?`${materi}. Catatan: ${topik}`:materi;
   const kelas=parseInt(document.getElementById('kelas').value);
@@ -915,8 +950,15 @@ async function handleGenerate(){
   const jmlUraian=parseInt(document.getElementById('jmlUraian').value)||0;
   const opsiPG=kelas<=2?'3 opsi (A, B, C)':'4 opsi (A, B, C, D)';
 
-  hideError();setLoading(true);
+  // Cek limit harian
+  const limitCheck=checkLimit();
+  if(!limitCheck.ok){
+    showError('⛔ Batas generate harian ('+DAILY_LIMIT+'x) sudah habis. Aktivasi Pro untuk unlimited, atau coba lagi besok.');
+    return;
+  }
+  hideError();setLoading(true);showGenerateFeedback('🤖 AI sedang membuat soal...',0);
 
+  const gaya=kelas<=2?'Gunakan kalimat sangat pendek dan sederhana, cocok untuk siswa baru membaca.':kelas<=4?'Gunakan kalimat campuran (narasi singkat dan langsung).':'Gunakan soal kontekstual dan HOTS (berpikir tingkat tinggi).';
   const prompt=`Kamu adalah guru SD berpengalaman yang membuat soal Kurikulum Merdeka.
 Buatkan soal untuk siswa kelas ${kelas} SD.
 Mata Pelajaran: ${mapel}
@@ -926,6 +968,8 @@ Jumlah soal:
 - Pilihan Ganda: ${jmlPG} soal (gunakan ${opsiPG})
 - Isian Singkat: ${jmlIsian} soal
 - Uraian: ${jmlUraian} soal
+
+Gaya penulisan soal: ${gaya}
 
 Aturan:
 - Gunakan Bahasa Indonesia yang baik dan benar
@@ -968,13 +1012,28 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
       throw new Error('Format respons AI tidak valid. Coba generate ulang.');
     }
     soalData=data;
+    // Increment daily usage
+    if(!isPro())incrementDaily();
+    // Save to question bank
+    saveToBank(kelas,mapel,materi,data);
     buildHalaman(data);
     currentPage=0;showPage(0);
     kunciVisible=false;
     document.getElementById('kunciBox').style.display='none';
     document.getElementById('btnKunci').textContent='🔑 Kunci';
     simpanHistori(data);
+    // Auto scroll to preview
+    setTimeout(()=>document.getElementById('previewBox').scrollIntoView({behavior:'smooth',block:'start'}),200);
+    // Enable inline edit
+    setTimeout(()=>enableInlineEdit(),400);
+    // Success feedback
+    showGenerateFeedback('✅ Soal berhasil dibuat!',3000);
+    // Show user feedback box
+    document.getElementById('userFeedbackBox').style.display='block';
+    autoSaveForm();
+    updateLimitDisplay();
   }catch(e){
+    showGenerateFeedback('',0);
     showError(e.message||'Terjadi kesalahan. Coba lagi.');
   }finally{
     setLoading(false);
@@ -1093,10 +1152,10 @@ function buildSoalRow(b){
       opsiHtml+=`<tr><td class="opsi-label">${escHtml(h1)}</td><td class="opsi-teks">${escHtml(t1)}</td><td class="opsi-label">${escHtml(h2)}</td><td>${escHtml(t2)}</td></tr>`;
     }
     opsiHtml+='</table>';
-    return `<tr><td class="soal-no">${b.no}.</td><td>${escHtml(b.item.soal)}${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
+    return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${escHtml(b.item.soal)}</span>${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
   }
-  if(b.type==='isian')return `<tr><td class="soal-no">${b.no}.</td><td>${escHtml(b.item.soal)}<br><span class="isian-garis">&nbsp;</span></td></tr><tr><td colspan="2" style="height:3px;"></td></tr>`;
-  if(b.type==='uraian')return `<tr><td class="soal-no">${b.no}.</td><td>${escHtml(b.item.soal)}<div class="uraian-kotak"></div></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;
+  if(b.type==='isian')return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${escHtml(b.item.soal)}</span><br><span class="isian-garis">&nbsp;</span></td></tr><tr><td colspan="2" style="height:3px;"></td></tr>`;
+  if(b.type==='uraian')return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${escHtml(b.item.soal)}</span><div class="uraian-kotak"></div></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;
   return '';
 }
 
@@ -1352,21 +1411,21 @@ function exportWord(){
     uraian.forEach((item,i)=>{body+=`<table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;margin-bottom:6pt;border-collapse:collapse;"><tr><td width="22" valign="top">${pg.length+isian.length+i+1}.</td><td>${item.soal}<table width="100%" style="margin-top:3pt;"><tr><td style="border:1px solid #bbb;height:48pt;">&nbsp;</td></tr></table></td></tr></table>`;});
   }
 
-  const wordHtml=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+  const wordHtml=`<!DOCTYPE html><html><head><meta charset="utf-8">
 <style>
-  @page WordSection1{size:21cm 29.7cm;margin:2cm 2.5cm 2cm 2.5cm;mso-page-orientation:portrait;}
-  div.WordSection1{page:WordSection1;}
-  body{font-family:"Times New Roman",serif;font-size:11pt;margin:0;}
-  p{margin:3pt 0;line-height:1.4;}
+  body{font-family:"Times New Roman",serif;font-size:11pt;margin:0;line-height:1.4;}
+  p{margin:3pt 0;}
   table{border-collapse:collapse;width:100%;}
   td{vertical-align:top;font-family:"Times New Roman",serif;font-size:11pt;}
 </style>
-</head><body><div class="WordSection1">${body}</div></body></html>`;
-  const blob=new Blob(['\ufeff',wordHtml],{type:'application/msword;charset=utf-8'});
-  const url=URL.createObjectURL(blob);
+</head><body>${body}</body></html>`;
+  if(typeof htmlDocx==='undefined'){
+    alert('Library docx belum termuat. Coba refresh halaman.');return;
+  }
+  const docxBlob=htmlDocx.asBlob(wordHtml,{orientation:'portrait',margins:{top:1134,right:1417,bottom:1134,left:1417}});
+  const url=URL.createObjectURL(docxBlob);
   const a=document.createElement('a');
-  a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.doc`;
+  a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.docx`;
   document.body.appendChild(a);a.click();
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
 }
@@ -1386,6 +1445,223 @@ function copyContent(){
    HELPER
 ════════════════════════════════════════════ */
 function escHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ════════════════════════════════════════════
+   [NEW] TEMPLATE SYSTEM
+════════════════════════════════════════════ */
+function applyTemplate(){
+  const t=document.getElementById('templateSoal').value;
+  const map={latihan:[5,3,2],ulangan:[10,5,3],pas:[20,10,5]};
+  if(!map[t])return;
+  document.getElementById('jmlPG').value=map[t][0];
+  document.getElementById('jmlIsian').value=map[t][1];
+  document.getElementById('jmlUraian').value=map[t][2];
+}
+
+/* ════════════════════════════════════════════
+   [NEW] RESET FORM
+════════════════════════════════════════════ */
+function resetForm(){
+  if(!confirm('Reset form ke default?'))return;
+  document.getElementById('namaSekolah').value='SDN Maju Jaya 01';
+  document.getElementById('tahunPelajaran').value='2025/2026';
+  document.getElementById('semester').value='1';
+  document.getElementById('tanggal').valueAsDate=new Date();
+  document.getElementById('jenisUjian').value='Ulangan Harian';
+  document.getElementById('jmlPG').value=10;
+  document.getElementById('jmlIsian').value=5;
+  document.getElementById('jmlUraian').value=3;
+  document.getElementById('topikTambahan').value='';
+  document.getElementById('templateSoal').value='';
+  document.querySelectorAll('.cb-kesulitan').forEach((c,i)=>c.checked=i<3);
+  localStorage.removeItem('bgy_form_autosave');
+  document.getElementById('errorBox').style.display='none';
+}
+
+/* ════════════════════════════════════════════
+   [NEW] AUTO SAVE FORM
+════════════════════════════════════════════ */
+function autoSaveForm(){
+  const data={
+    namaSekolah:document.getElementById('namaSekolah').value,
+    tahunPelajaran:document.getElementById('tahunPelajaran').value,
+    semester:document.getElementById('semester').value,
+    tanggal:document.getElementById('tanggal').value,
+    jenisUjian:document.getElementById('jenisUjian').value,
+    kelas:document.getElementById('kelas').value,
+    mapel:document.getElementById('mataPelajaran').value,
+    jmlPG:document.getElementById('jmlPG').value,
+    jmlIsian:document.getElementById('jmlIsian').value,
+    jmlUraian:document.getElementById('jmlUraian').value,
+    topikTambahan:document.getElementById('topikTambahan').value,
+    kesulitan:[...document.querySelectorAll('.cb-kesulitan')].map(c=>c.checked)
+  };
+  localStorage.setItem('bgy_form_autosave',JSON.stringify(data));
+}
+function restoreAutoSave(){
+  try{
+    const raw=localStorage.getItem('bgy_form_autosave');
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    if(d.namaSekolah)document.getElementById('namaSekolah').value=d.namaSekolah;
+    if(d.tahunPelajaran)document.getElementById('tahunPelajaran').value=d.tahunPelajaran;
+    if(d.semester)document.getElementById('semester').value=d.semester;
+    if(d.tanggal)document.getElementById('tanggal').value=d.tanggal;
+    if(d.jenisUjian)document.getElementById('jenisUjian').value=d.jenisUjian;
+    if(d.kelas){document.getElementById('kelas').value=d.kelas;renderMapelOptions();}
+    if(d.mapel)document.getElementById('mataPelajaran').value=d.mapel;
+    if(d.jmlPG)document.getElementById('jmlPG').value=d.jmlPG;
+    if(d.jmlIsian)document.getElementById('jmlIsian').value=d.jmlIsian;
+    if(d.jmlUraian)document.getElementById('jmlUraian').value=d.jmlUraian;
+    if(d.topikTambahan)document.getElementById('topikTambahan').value=d.topikTambahan;
+    if(d.kesulitan){const cbs=document.querySelectorAll('.cb-kesulitan');d.kesulitan.forEach((v,i)=>{if(cbs[i])cbs[i].checked=v;});}
+    renderMateriChecklist();
+  }catch(e){console.warn('restoreAutoSave:',e);}
+}
+// Pasang event listener auto save
+['namaSekolah','tahunPelajaran','semester','tanggal','jenisUjian','kelas','mataPelajaran','jmlPG','jmlIsian','jmlUraian','topikTambahan'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('change',autoSaveForm);
+});
+document.querySelectorAll('.cb-kesulitan').forEach(c=>c.addEventListener('change',autoSaveForm));
+
+/* ════════════════════════════════════════════
+   [NEW] SMART FEEDBACK
+════════════════════════════════════════════ */
+let feedbackTimer=null;
+function showGenerateFeedback(msg,delay=3000){
+  const el=document.getElementById('generateFeedback');
+  if(!el)return;
+  el.textContent=msg;
+  clearTimeout(feedbackTimer);
+  if(delay>0)feedbackTimer=setTimeout(()=>el.textContent='',delay);
+}
+
+/* ════════════════════════════════════════════
+   [NEW] QUESTION BANK (localStorage cache)
+════════════════════════════════════════════ */
+function getBankKey(kelas,mapel,materi){return `bgy_bank_${kelas}_${mapel}_${btoa(unescape(encodeURIComponent(materi))).substring(0,20)}`;}
+function loadFromBank(kelas,mapel,materi){
+  try{const r=localStorage.getItem(getBankKey(kelas,mapel,materi));return r?JSON.parse(r):null;}catch{return null;}
+}
+function saveToBank(kelas,mapel,materi,data){
+  try{localStorage.setItem(getBankKey(kelas,mapel,materi),JSON.stringify(data));}catch(e){console.warn('bank save:',e);}
+}
+
+/* ════════════════════════════════════════════
+   [NEW] INLINE EDIT SOAL
+════════════════════════════════════════════ */
+function enableInlineEdit(){
+  document.querySelectorAll('.soal-teks').forEach(el=>{
+    el.setAttribute('contenteditable','true');
+    el.style.cursor='text';
+    el.style.outline='none';
+    el.addEventListener('focus',()=>el.style.background='rgba(59,130,246,.07)');
+    el.addEventListener('blur',()=>{el.style.background='';});
+  });
+}
+
+/* ════════════════════════════════════════════
+   [NEW] DUPLIKAT & REGENERATE HISTORI
+════════════════════════════════════════════ */
+function duplikatHistori(id){
+  const list=getHistoriList();
+  const item=list.find(h=>h.id===id);
+  if(!item)return;
+  const copy={...item,id:Date.now(),tanggal:new Date().toLocaleDateString('id-ID')};
+  list.unshift(copy);
+  localStorage.setItem('bgy_histori',JSON.stringify(list));
+  updateHistoriBadge(list.length);
+  renderHistoriList();
+}
+function regenerateHistori(id){
+  const list=getHistoriList();
+  const item=list.find(h=>h.id===id);
+  if(!item)return;
+  loadHistori(id);
+  setTimeout(()=>handleGenerate(),300);
+}
+
+/* ════════════════════════════════════════════
+   [NEW] BASIC VALIDATION EXTRA
+════════════════════════════════════════════ */
+function validateForm(){
+  const pg=parseInt(document.getElementById('jmlPG').value)||0;
+  const is=parseInt(document.getElementById('jmlIsian').value)||0;
+  const ur=parseInt(document.getElementById('jmlUraian').value)||0;
+  if(pg<0||is<0||ur<0){showError('Jumlah soal tidak boleh negatif.');return false;}
+  if(pg+is+ur===0){showError('Jumlah soal minimal 1.');return false;}
+  const materi=getMateriTerpilih();
+  if(!materi){showError('Pilih minimal satu materi.');return false;}
+  if(!getKesulitanTerpilih()){showError('Pilih minimal satu tingkat kesulitan.');return false;}
+  return true;
+}
+
+/* ════════════════════════════════════════════
+   [NEW] DAILY LIMIT & PRO SYSTEM
+════════════════════════════════════════════ */
+const DAILY_LIMIT = 4;
+const WORKER_URL = 'https://bgypro-soal.pulsachoy.workers.dev/';
+
+function isPro(){
+  try{const d=JSON.parse(localStorage.getItem('bgy_pro')||'{}');return d.aktif===true;}catch{return false;}
+}
+function getTodayStr(){return new Date().toISOString().slice(0,10);}
+function getDailyUsage(){
+  try{const r=localStorage.getItem('bgy_daily_usage');return r?JSON.parse(r):{date:'',count:0};}catch{return {date:'',count:0};}
+}
+function incrementDaily(){
+  const today=getTodayStr();
+  let u=getDailyUsage();
+  if(u.date!==today)u={date:today,count:0};
+  u.count++;
+  localStorage.setItem('bgy_daily_usage',JSON.stringify(u));
+  return u.count;
+}
+function checkLimit(){
+  if(isPro())return{ok:true,remaining:999};
+  const today=getTodayStr();
+  const u=getDailyUsage();
+  if(u.date!==today)return{ok:true,remaining:DAILY_LIMIT};
+  const rem=DAILY_LIMIT-u.count;
+  return{ok:rem>0,remaining:Math.max(0,rem)};
+}
+function updateLimitDisplay(){
+  const el=document.getElementById('limitInfo');
+  if(!el)return;
+  if(isPro()){el.textContent='⭐ Pro Aktif — Generate Unlimited';el.style.color='#059669';
+    document.getElementById('aktivasiBox').style.display='none';return;}
+  const{ok,remaining}=checkLimit();
+  el.textContent=ok?`🔢 Sisa generate hari ini: ${remaining}x`:'⛔ Batas harian habis. Aktivasi Pro atau coba besok.';
+  el.style.color=remaining<=1?'#dc2626':'#64748b';
+}
+
+async function aktivasiPro(){
+  const kode=document.getElementById('inputKodeAktivasi').value.trim();
+  const msgEl=document.getElementById('aktivasiMsg');
+  if(!kode){msgEl.textContent='⚠️ Masukkan kode aktivasi dulu.';msgEl.style.color='#dc2626';return;}
+  msgEl.textContent='⏳ Memverifikasi...';msgEl.style.color='#64748b';
+  try{
+    const res=await fetch(WORKER_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'verify',kode})
+    });
+    const json=await res.json();
+    if(json.valid){
+      localStorage.setItem('bgy_pro',JSON.stringify({aktif:true,kode,tgl:getTodayStr()}));
+      msgEl.textContent='✅ Aktivasi berhasil! Selamat, kamu sekarang Pro 🎉';
+      msgEl.style.color='#059669';
+      updateLimitDisplay();
+    } else {
+      msgEl.textContent='❌ Kode tidak valid. Hubungi Pak Choyy via WA.';
+      msgEl.style.color='#dc2626';
+    }
+  }catch(e){
+    msgEl.textContent='❌ Gagal terhubung ke server verifikasi.';
+    msgEl.style.color='#dc2626';
+  }
+}
 </script>
 </body>
 </html>
