@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-83WBBEE5BG');
-</script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bantu Guru Yuk | Buat Soal</title>
@@ -469,7 +460,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
       <div class="form-group">
         <label>Topik Tambahan (Opsional)</label>
-        <textarea id="topikTambahan" placeholder="Contoh: fokus soal cerita, konteks lingkungan..."></textarea>
+        <textarea id="topikTambahan" placeholder="Contoh: fokus soal cerita, konteks lingkungan..." style="min-height:90px;resize:vertical;"></textarea>
       </div>
 
       <div class="form-group">
@@ -482,16 +473,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           <label><input type="checkbox" class="cb-kesulitan" value="C5-Mengevaluasi"/> C5</label>
           <label><input type="checkbox" class="cb-kesulitan" value="C6-Mencipta"/> C6</label>
         </div>
-      </div>
-
-      <div class="form-group">
-        <label>Template Soal</label>
-        <select id="templateSoal" onchange="applyTemplate()">
-          <option value="">-- Pilih Template --</option>
-          <option value="latihan">Latihan (PG 5, Isian 3, Uraian 2)</option>
-          <option value="ulangan">Ulangan (PG 10, Isian 5, Uraian 3)</option>
-          <option value="pas">PAS (PG 20, Isian 10, Uraian 5)</option>
-        </select>
       </div>
 
       <div class="form-group">
@@ -534,10 +515,9 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   <div class="col-preview preview-wrap">
     <div class="card" style="padding:10px 14px;margin-bottom:12px;">
       <div class="export-bar">
-        <button class="btn btn-secondary" onclick="exportPDF()">💾 Save PDF</button>
-        <button class="btn btn-secondary" onclick="exportWord()">💾 Save Word</button>
-        <button class="btn btn-secondary" onclick="copyContent()">📋 Copy</button>
-        <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+        <button class="btn btn-secondary" onclick="exportPDF()">📄 Download PDF</button>
+        <button class="btn btn-secondary" onclick="exportWord()">📝 Download Word</button>
+        <button class="btn btn-secondary" onclick="copyContent()">📋 Copy Teks</button>
         <button class="btn btn-secondary" id="btnKunci" onclick="toggleKunci()">🔑 Kunci Jawaban</button>
         <button class="btn btn-secondary" onclick="downloadKunciPDF()">📥 Unduh Kunci</button>
       </div>
@@ -1309,17 +1289,27 @@ function downloadKunci(){
 ════════════════════════════════════════════ */
 function exportPDF(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
+  if(!halamanSoal||!halamanSoal.length){alert('Tidak ada soal untuk di-export.');return;}
   const mapel=document.getElementById('mataPelajaran').value;
   const kelas=document.getElementById('kelas').value;
-  const konten=document.getElementById('previewBox').innerHTML;
 
-  const printWin=window.open('','_blank');
+  // Buka semua halaman di iframe tersembunyi lalu print sebagai PDF
+  // Cara paling reliable di HP & desktop: buka popup dengan semua halaman sekaligus
+  const allContent=halamanSoal.join('<div style="page-break-before:always;"></div>');
+
+  const printWin=window.open('','_blank','width=900,height=700');
+  if(!printWin){alert('Popup diblokir browser. Izinkan popup untuk halaman ini.');return;}
   printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
   <title>Soal_${mapel}_Kelas${kelas}</title>
   <style>
     @page{size:A4;margin:15mm 20mm 15mm 22mm;}
+    @media print{
+      body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      .page-break{page-break-before:always;}
+    }
     *{box-sizing:border-box;}
-    body{font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;color:#000;margin:0;padding:0;}
+    html,body{margin:0;padding:0;}
+    body{font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;color:#000;}
     table{border-collapse:collapse;width:100%;}
     td{vertical-align:top;}
     .doc-header-table td{vertical-align:middle;padding:3px 5px;}
@@ -1331,25 +1321,28 @@ function exportPDF(){
     .doc-tahun{font-size:10pt;}
     .doc-header-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:4pt 0 8pt;}
     .doc-identitas-table{width:100%;font-size:10.5pt;margin-bottom:2pt;}
-    .id-label{width:105pt;} .id-sep{width:10pt;} .id-value{border-bottom:1px solid #333;min-width:80pt;}
+    .id-label{width:105pt;}.id-sep{width:10pt;}.id-value{border-bottom:1px solid #333;min-width:80pt;}
     .doc-identitas-line{border-top:3px solid #000;margin:6pt 0 10pt;}
     .doc-section-title{font-weight:bold;text-decoration:underline;font-size:11pt;margin:10pt 0 2pt;}
     .doc-petunjuk{font-style:italic;font-size:10pt;margin-bottom:5pt;}
     .doc-soal-table{width:100%;border-collapse:collapse;}
     .soal-no{width:22pt;vertical-align:top;padding-top:1pt;}
     .opsi-table{width:100%;border-collapse:collapse;margin-top:2pt;}
-    .opsi-label{width:22pt;} .opsi-teks{width:44%;}
+    .opsi-label{width:22pt;}.opsi-teks{width:44%;}
     .isian-garis{display:inline-block;border-bottom:1px solid #000;width:55%;min-width:120pt;}
-    .uraian-box{border:1px solid #bbb;min-height:50pt;width:100%;margin-top:3pt;}
+    .uraian-kotak{border:1px solid #bbb;width:100%;height:44px;margin-top:3px;}
     img{max-width:100%;}
+    /* Hilangkan header/footer browser saat print */
+    @page{margin:15mm 20mm;}
   </style>
-  </head><body>${konten}</body></html>`);
+  <script>
+    window.onload=function(){
+      // Delay sedikit agar gambar/logo sempat load
+      setTimeout(function(){window.print();},600);
+    };
+  <\/script>
+  </head><body>${allContent}</body></html>`);
   printWin.document.close();
-  setTimeout(()=>{
-    printWin.focus();
-    printWin.print();
-    printWin.close();
-  },500);
 }
 
 /* ════════════════════════════════════════════
@@ -1357,93 +1350,116 @@ function exportPDF(){
 ════════════════════════════════════════════ */
 function exportWord(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  const pg=soalData.pilihanGanda||[];const isian=soalData.isian||[];const uraian=soalData.uraian||[];
-  const mapel=document.getElementById('mataPelajaran').value;const kelas=document.getElementById('kelas').value;
-  const semester=document.getElementById('semester').value;const semStr=semester==='1'?'Ganjil':'Genap';
+  const pg=soalData.pilihanGanda||[];
+  const isian=soalData.isian||[];
+  const uraian=soalData.uraian||[];
+  const mapel=document.getElementById('mataPelajaran').value;
+  const kelas=document.getElementById('kelas').value;
+  const semester=document.getElementById('semester').value;
+  const semStr=semester==='1'?'Ganjil':'Genap';
   const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
   const tahun=document.getElementById('tahunPelajaran').value||'2025/2026';
   const judulUjian=getJudulUjian();
-  const tanggal=document.getElementById('tanggal').value?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}):'.....................';
+  const tanggal=document.getElementById('tanggal').value
+    ?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
+    :'.....................';
 
-  let body=`<div align="center" style="font-family:Times New Roman,serif;">
+  // Bangun HTML yang bersih untuk Word — hindari nested table di dalam TD
+  let body='';
+
+  // Header tengah
+  body+=`<div style="text-align:center;font-family:Times New Roman,serif;margin-bottom:4pt;">
     <p style="font-size:11pt;font-weight:bold;text-transform:uppercase;margin:0;">${judulUjian}</p>
     <p style="font-size:14pt;font-weight:bold;text-transform:uppercase;margin:2pt 0;">${namaSekolah}</p>
     <p style="font-size:10pt;margin:0;">Tahun Pelajaran ${tahun}</p>
   </div>
-  <div style="border-top:3px solid black;margin:6pt 0 10pt;"></div>
-  <table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;border-collapse:collapse;table-layout:fixed;">
-    <colgroup>
-      <col width="120"/><col width="12"/><col width="148"/><col width="20"/>
-      <col width="100"/><col width="12"/><col width="148"/>
-    </colgroup>
-    <tr>
-      <td style="padding:2pt 0;">Mata Pelajaran</td>
-      <td style="padding:2pt 0;">:</td>
-      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">${mapel}</td>
-      <td></td>
-      <td style="padding:2pt 0;">Nama</td>
-      <td style="padding:2pt 0;">:</td>
-      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">&nbsp;</td>
-    </tr>
-    <tr>
-      <td style="padding:2pt 0;">Kelas / Semester</td>
-      <td style="padding:2pt 0;">:</td>
-      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">${kelas} / ${semStr}</td>
-      <td></td>
-      <td style="padding:2pt 0;">No. Absen</td>
-      <td style="padding:2pt 0;">:</td>
-      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">&nbsp;</td>
-    </tr>
-    <tr>
-      <td style="padding:2pt 0;">Tanggal</td>
-      <td style="padding:2pt 0;">:</td>
-      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">${tanggal}</td>
-      <td></td>
-      <td style="padding:2pt 0;">Nilai</td>
-      <td style="padding:2pt 0;">:</td>
-      <td style="border-bottom:1px solid #333;padding:2pt 3pt;">&nbsp;</td>
-    </tr>
-  </table>
-  <div style="border-top:3px solid black;margin:8pt 0 10pt;"></div>`;
+  <hr style="border:none;border-top:3px solid black;margin:6pt 0 3pt;"/>
+  <hr style="border:none;border-top:3px solid black;margin:0 0 8pt;"/>`;
 
+  // Identitas — pakai paragraf bukan table untuk kompatibilitas Word HP
+  body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:2pt 0;">Mata Pelajaran&nbsp;: ${mapel} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nama &nbsp;: _________________________</p>`;
+  body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:2pt 0;">Kelas / Semester : ${kelas} / ${semStr} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; No. Absen : ___________</p>`;
+  body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:2pt 0;">Tanggal &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${tanggal} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nilai &nbsp;&nbsp;&nbsp;&nbsp;: ___________</p>`;
+  body+=`<hr style="border:none;border-top:3px solid black;margin:8pt 0 10pt;"/>`;
+
+  // Pilihan Ganda
   if(pg.length>0){
-    body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;font-weight:bold;text-decoration:underline;margin:12pt 0 4pt;">I. Pilihan Ganda</p>`;
+    body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;font-weight:bold;text-decoration:underline;margin:10pt 0 3pt;">I. Pilihan Ganda</p>`;
     body+=`<p style="font-family:Times New Roman,serif;font-size:10pt;font-style:italic;margin:0 0 6pt;">Berilah tanda silang (X) pada huruf jawaban yang paling benar!</p>`;
     pg.forEach((item,i)=>{
-      body+=`<table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;margin-bottom:5pt;border-collapse:collapse;"><tr><td width="22" valign="top">${i+1}.</td><td valign="top">${item.soal}<table width="100%" style="border-collapse:collapse;margin-top:2pt;">`;
+      body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:4pt 0 2pt;">${i+1}. ${item.soal}</p>`;
       const opsiArr=item.opsi||[];
-      for(let x=0;x<opsiArr.length;x+=2){const h1=opsiArr[x].substring(0,2);const t1=opsiArr[x].substring(2).trim();const h2=opsiArr[x+1]?opsiArr[x+1].substring(0,2):'';const t2=opsiArr[x+1]?opsiArr[x+1].substring(2).trim():'';body+=`<tr><td width="22">${h1}</td><td width="44%">${t1}</td><td width="22">${h2}</td><td>${t2}</td></tr>`;}
-      body+=`</table></td></tr></table>`;
+      // Tampilkan opsi 2 kolom pakai tab
+      for(let x=0;x<opsiArr.length;x+=2){
+        const kiri=opsiArr[x]||'';
+        const kanan=opsiArr[x+1]||'';
+        body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:0 0 0 20pt;">${kiri} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${kanan}</p>`;
+      }
+      body+=`<p style="margin:3pt 0;"></p>`;
     });
   }
+
+  // Isian Singkat
   if(isian.length>0){
-    body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;font-weight:bold;text-decoration:underline;margin:12pt 0 4pt;">II. Isian Singkat</p>`;
+    body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;font-weight:bold;text-decoration:underline;margin:12pt 0 3pt;">II. Isian Singkat</p>`;
     body+=`<p style="font-family:Times New Roman,serif;font-size:10pt;font-style:italic;margin:0 0 6pt;">Isilah titik-titik berikut dengan jawaban yang tepat!</p>`;
-    isian.forEach((item,i)=>{body+=`<table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;margin-bottom:4pt;border-collapse:collapse;"><tr><td width="22" valign="top">${pg.length+i+1}.</td><td>${item.soal}<br/><span style="display:inline-block;border-bottom:1px solid black;width:55%;min-width:150pt;">&nbsp;</span></td></tr></table>`;});
-  }
-  if(uraian.length>0){
-    body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;font-weight:bold;text-decoration:underline;margin:12pt 0 4pt;">III. Uraian</p>`;
-    body+=`<p style="font-family:Times New Roman,serif;font-size:10pt;font-style:italic;margin:0 0 6pt;">Jawablah pertanyaan berikut dengan lengkap dan benar!</p>`;
-    uraian.forEach((item,i)=>{body+=`<table width="100%" style="font-family:Times New Roman,serif;font-size:11pt;margin-bottom:6pt;border-collapse:collapse;"><tr><td width="22" valign="top">${pg.length+isian.length+i+1}.</td><td>${item.soal}<table width="100%" style="margin-top:3pt;"><tr><td style="border:1px solid #bbb;height:48pt;">&nbsp;</td></tr></table></td></tr></table>`;});
+    isian.forEach((item,i)=>{
+      body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:3pt 0;">${pg.length+i+1}. ${item.soal}</p>`;
+      body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:0 0 3pt 20pt;">Jawaban: _______________________________________________</p>`;
+    });
   }
 
-  const wordHtml=`<!DOCTYPE html><html><head><meta charset="utf-8">
-<style>
-  body{font-family:"Times New Roman",serif;font-size:11pt;margin:0;line-height:1.4;}
-  p{margin:3pt 0;}
-  table{border-collapse:collapse;width:100%;}
-  td{vertical-align:top;font-family:"Times New Roman",serif;font-size:11pt;}
-</style>
-</head><body>${body}</body></html>`;
-  if(typeof htmlDocx==='undefined'){
-    alert('Library docx belum termuat. Coba refresh halaman.');return;
+  // Uraian
+  if(uraian.length>0){
+    body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;font-weight:bold;text-decoration:underline;margin:12pt 0 3pt;">III. Uraian</p>`;
+    body+=`<p style="font-family:Times New Roman,serif;font-size:10pt;font-style:italic;margin:0 0 6pt;">Jawablah pertanyaan berikut dengan lengkap dan benar!</p>`;
+    uraian.forEach((item,i)=>{
+      body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:4pt 0 2pt;">${pg.length+isian.length+i+1}. ${item.soal}</p>`;
+      body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:0 0 2pt 20pt;">______________________________________________________________________</p>`;
+      body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:0 0 2pt 20pt;">______________________________________________________________________</p>`;
+      body+=`<p style="font-family:Times New Roman,serif;font-size:11pt;margin:0 0 6pt 20pt;">______________________________________________________________________</p>`;
+    });
   }
-  const docxBlob=htmlDocx.asBlob(wordHtml,{orientation:'portrait',margins:{top:1134,right:1417,bottom:1134,left:1417}});
-  const url=URL.createObjectURL(docxBlob);
+
+  const wordHtml=`<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8">
+<xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom>
+<w:DoNotOptimizeForBrowser/>
+<w:DocumentProtection w:enforcement="0"/>
+<w:Compatibility><w:BreakWrappedTables/><w:SnapToGridInCell/></w:Compatibility>
+</w:WordDocument></xml>
+<style>
+  @page WordSection1{size:21cm 29.7cm;margin:2.5cm 2.8cm 2.5cm 3cm;}
+  div.WordSection1{page:WordSection1;}
+  body{font-family:"Times New Roman",serif;font-size:11pt;margin:0;line-height:1.45;}
+  p{margin:2pt 0;font-family:"Times New Roman",serif;}
+  hr{border:none;border-top:2px solid black;margin:5pt 0;}
+</style>
+</head>
+<body><div class="WordSection1">${body}</div></body></html>`;
+
+  if(typeof htmlDocx!=='undefined'){
+    try{
+      const docxBlob=htmlDocx.asBlob(wordHtml,{orientation:'portrait',margins:{top:1440,right:1134,bottom:1440,left:1134}});
+      const url=URL.createObjectURL(docxBlob);
+      const a=document.createElement('a');
+      a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.docx`;
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+      return;
+    }catch(e){console.warn('html-docx-js gagal:',e);}
+  }
+
+  // Fallback: download sebagai .doc (Word bisa buka)
+  const blob=new Blob(['\ufeff'+wordHtml],{type:'application/msword'});
+  const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.docx`;
+  a.href=url;a.download=`Soal_${mapel}_Kelas${kelas}.doc`;
   document.body.appendChild(a);a.click();
-  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
 }
 
 /* ════════════════════════════════════════════
@@ -1462,17 +1478,6 @@ function copyContent(){
 ════════════════════════════════════════════ */
 function escHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-/* ════════════════════════════════════════════
-   [NEW] TEMPLATE SYSTEM
-════════════════════════════════════════════ */
-function applyTemplate(){
-  const t=document.getElementById('templateSoal').value;
-  const map={latihan:[5,3,2],ulangan:[10,5,3],pas:[20,10,5]};
-  if(!map[t])return;
-  document.getElementById('jmlPG').value=map[t][0];
-  document.getElementById('jmlIsian').value=map[t][1];
-  document.getElementById('jmlUraian').value=map[t][2];
-}
 
 /* ════════════════════════════════════════════
    [NEW] RESET FORM
@@ -1488,7 +1493,6 @@ function resetForm(){
   document.getElementById('jmlIsian').value=5;
   document.getElementById('jmlUraian').value=3;
   document.getElementById('topikTambahan').value='';
-  document.getElementById('templateSoal').value='';
   document.querySelectorAll('.cb-kesulitan').forEach((c,i)=>c.checked=i<3);
   localStorage.removeItem('bgy_form_autosave');
   document.getElementById('errorBox').style.display='none';
