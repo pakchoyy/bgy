@@ -27,39 +27,6 @@ body.dark{
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;}
 
-/* ══ MODAL API KEY ══ */
-#modalOverlay{
-  position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.65);
-  backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;
-}
-.modal-box{
-  background:#fff;border-radius:20px;padding:30px 28px;
-  max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);
-}
-.modal-box h2{font-size:1.2rem;font-weight:800;color:#1e293b;margin-bottom:6px;}
-.modal-box p{font-size:.83rem;color:#64748b;margin-bottom:18px;line-height:1.5;}
-.modal-box input{
-  width:100%;padding:11px 14px;border:2px solid #e2e8f0;border-radius:10px;
-  font-size:.9rem;outline:none;margin-bottom:10px;color:#334155;
-  font-family:monospace;
-}
-.modal-box input:focus{border-color:#3b82f6;}
-.modal-hint{font-size:.75rem;color:#94a3b8;margin-bottom:16px;line-height:1.5;}
-.modal-hint a{color:#3b82f6;text-decoration:none;}
-.modal-hint a:hover{text-decoration:underline;}
-.btn-modal{
-  width:100%;padding:12px;background:var(--grad);color:#fff;
-  border:none;border-radius:12px;font-size:.95rem;font-weight:700;
-  cursor:pointer;box-shadow:0 4px 16px rgba(59,130,246,.3);transition:all .2s;
-}
-.btn-modal:hover{transform:translateY(-2px);}
-.modal-skip{
-  display:block;text-align:center;margin-top:10px;
-  font-size:.76rem;color:#94a3b8;cursor:pointer;
-}
-.modal-skip:hover{color:#64748b;}
-.key-saved{font-size:.72rem;color:#10b981;margin-top:6px;display:none;}
-
 /* ══ LOADING SCREEN ══ */
 #loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--grad);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-family:sans-serif;z-index:99999;}
 #loadingScreen img{width:64px;margin-bottom:14px;border-radius:16px;}
@@ -98,13 +65,6 @@ body.dark header{background:linear-gradient(135deg,#1e3a5f,#1e293b);}
 .header-brand p{font-size:.68rem;color:rgba(255,255,255,.85);margin-top:1px;}
 .header-right{display:flex;align-items:center;gap:7px;}
 .version-badge{font-size:.64rem;background:rgba(255,255,255,.2);color:#fff;padding:3px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.3);font-weight:600;}
-.free-badge{display:none;}
-.btn-apikey{
-  font-size:.75rem;padding:5px 11px;border-radius:99px;
-  background:rgba(255,255,255,.2);color:#fff;
-  border:1px solid rgba(255,255,255,.3);cursor:pointer;font-weight:600;transition:all .2s;
-}
-.btn-apikey:hover{background:rgba(255,255,255,.3);}
 #darkToggle{
   background:var(--gray-100);border:1px solid var(--border);color:var(--text);
   padding:5px 12px;border-radius:99px;cursor:pointer;font-size:.76rem;font-weight:600;transition:all .2s;
@@ -173,7 +133,6 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 
 /* Spinner */
 .spinner{width:15px;height:15px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;}
-@keyframes spin{to{transform:rotate(360deg)}}
 
 /* Error */
 .error-box{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:9px 12px;border-radius:10px;margin-top:8px;font-size:.8rem;display:none;}
@@ -219,15 +178,16 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .isian-garis{display:inline-block;border-bottom:1px solid #333;min-width:160px;width:54%;height:12px;vertical-align:bottom;}
 .uraian-kotak{border:1px solid #bbb;width:100%;height:44px;margin-top:3px;}
 
-/* Kunci */
-#kunciBox{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-top:13px;max-width:794px;margin-left:auto;margin-right:auto;display:none;transition:background .3s;}
-#kunciBox h3{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:11px;display:flex;align-items:center;gap:6px;}
-.kunci-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:5px;}
-.kunci-item{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:5px 8px;font-size:.77rem;color:var(--text);}
-.kunci-item strong{color:var(--blue);}
-.kunci-isian,.kunci-uraian{margin-top:10px;}
-.kunci-isian h4,.kunci-uraian h4{font-size:.78rem;font-weight:700;color:var(--text-light);margin-bottom:4px;}
-.kunci-isian ol,.kunci-uraian ol{padding-left:15px;font-size:.78rem;color:var(--text);line-height:1.8;}
+/* Kunci halaman preview */
+.kunci-page-header{font-size:14pt;font-weight:bold;text-align:center;text-transform:uppercase;font-family:'Times New Roman',serif;margin-bottom:4px;}
+.kunci-page-sub{font-size:10pt;text-align:center;font-family:'Times New Roman',serif;margin-bottom:10px;}
+.kunci-page-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:0 0 16px;}
+.kunci-section-title{font-size:11pt;font-weight:bold;text-decoration:underline;font-family:'Times New Roman',serif;margin:12px 0 8px;}
+.kunci-pg-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;}
+.kunci-pg-cell{border:1px solid #ccc;padding:4px 6px;font-size:10.5pt;font-family:'Times New Roman',serif;text-align:center;}
+.kunci-isian-table,.kunci-uraian-table{width:100%;border-collapse:collapse;font-size:11pt;font-family:'Times New Roman',serif;margin-bottom:10px;}
+.kunci-isian-table td,.kunci-uraian-table td{padding:3px 6px;vertical-align:top;border-bottom:1px solid #eee;}
+.kunci-no-col{width:24px;}
 
 .empty-state{text-align:center;padding:44px 20px;color:#94a3b8;font-family:'Segoe UI',sans-serif;}
 .empty-state .icon{font-size:2.5rem;margin-bottom:8px;}
@@ -260,7 +220,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 /* Print */
 @page{size:A4;margin:15mm;}
 @media print{
-  header,footer,.col-form,.export-bar,#kunciBox,.page-nav,#modalOverlay{display:none!important;}
+  header,footer,.col-form,.export-bar,.page-nav{display:none!important;}
   main{display:block;padding:0;}
   #previewBox{box-shadow:none;padding:0;max-width:100%;border-radius:0;}
   body{background:#fff!important;}
@@ -294,7 +254,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     </div>
   </div>
   <div class="header-right">
-    
     <button id="darkToggle" onclick="toggleDark()">🌙 Dark</button>
   </div>
 </header>
@@ -310,41 +269,31 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 <!-- ══ TAB TENTANG ══ -->
 <div id="tab-tentang" style="display:none;max-width:760px;margin:20px auto;background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;">
   <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:6px;color:var(--text);">ℹ️ Tentang Aplikasi</h3>
-  <p style="font-size:.8rem;color:var(--text-light);margin-bottom:16px;">Bantu Guru Yuk v26.3.9c • Free Version • 2026</p>
-
+  <p style="font-size:.8rem;color:var(--text-light);margin-bottom:16px;">Bantu Guru Yuk v26.4.0 • Free Version • 2026</p>
   <p style="font-size:.88rem;color:var(--text);line-height:1.8;margin-bottom:14px;">
     <b>Bantu Guru Yuk</b> adalah generator soal otomatis berbasis AI yang dirancang khusus untuk guru SD Kurikulum Merdeka. Buat soal berkualitas dalam hitungan detik — tanpa perlu keahlian teknis apapun.
   </p>
-
   <h4 style="font-size:.85rem;font-weight:700;margin:14px 0 8px;color:var(--text);">✨ Fitur Utama</h4>
   <ul style="font-size:.84rem;color:var(--text);line-height:2.1;padding-left:18px;">
     <li>Generate soal PG, Isian Singkat &amp; Uraian otomatis via AI</li>
     <li>Sesuai Taksonomi Bloom C1–C6</li>
     <li>Mendukung semua mata pelajaran SD kelas 1–6</li>
-    <li>Kunci jawaban otomatis lengkap</li>
-    <li>Export soal ke PDF &amp; Word siap cetak</li>
+    <li>Kunci jawaban otomatis — tercetak di halaman terakhir dokumen</li>
+    <li>Export soal ke PDF &amp; Word (kunci sudah termasuk)</li>
     <li>Tampilan lembar soal profesional ala sekolah</li>
     <li>Bisa diinstall sebagai aplikasi (PWA)</li>
   </ul>
-
-  <h4 style="font-size:.85rem;font-weight:700;margin:14px 0 8px;color:var(--text);">🎯 Tujuan</h4>
-  <p style="font-size:.84rem;color:var(--text);line-height:1.8;">
-    Membantu guru menghemat waktu persiapan soal agar bisa lebih fokus pada kualitas pembelajaran dan interaksi dengan siswa.
-  </p>
-
   <h4 style="font-size:.85rem;font-weight:700;margin:14px 0 8px;color:var(--text);">👨‍💻 Pengembang</h4>
   <p style="font-size:.84rem;color:var(--text);line-height:1.8;">
     <b>Pak Choyy</b> — Guru SD yang peduli teknologi pendidikan 🚀<br/>
     <span style="color:var(--blue);">pakchoyy.github.io</span>
   </p>
-
   <div style="margin-top:18px;padding:12px 16px;background:var(--input-bg);border-radius:10px;border:1px solid var(--border);font-size:.8rem;color:var(--text-light);line-height:1.8;">
-    📌 <b>Versi:</b> v26.3.9c &nbsp;|&nbsp; <b>Status:</b> Free Version &nbsp;|&nbsp; <b>Tahun:</b> 2026
+    📌 <b>Versi:</b> v26.4.0 &nbsp;|&nbsp; <b>Status:</b> Free Version &nbsp;|&nbsp; <b>Tahun:</b> 2026
   </div>
 </div>
 
-<!-- ══ TAB KONTAK ══ -->
-<!-- TAB HISTORI -->
+<!-- ══ TAB HISTORI ══ -->
 <div id="tab-histori" style="display:none;max-width:900px;margin:20px auto;padding:0 12px;">
   <div style="background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
@@ -359,6 +308,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   </div>
 </div>
 
+<!-- ══ TAB KONTAK ══ -->
 <div id="tab-kontak" style="display:none;max-width:760px;margin:20px auto;background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;">
   <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;">📬 Kontak</h3>
   <p style="font-size:.85rem;color:var(--text);line-height:1.7;margin-bottom:16px;">Untuk info lebih lanjut, bantuan penggunaan, atau menyampaikan kritik dan saran:</p>
@@ -513,12 +463,14 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   <!-- ══ KOLOM KANAN ══ -->
   <div class="col-preview preview-wrap">
     <div class="card" style="padding:10px 14px;margin-bottom:12px;">
+      <!-- Kunci jawaban sudah otomatis ada di halaman terakhir dokumen PDF & Word -->
       <div class="export-bar">
         <button class="btn btn-secondary" onclick="exportPDF()">📄 Download PDF</button>
         <button class="btn btn-secondary" onclick="exportWord()">📝 Download Word</button>
         <button class="btn btn-secondary" onclick="copyContent()">📋 Copy Teks</button>
-        <button class="btn btn-secondary" id="btnKunci" onclick="toggleKunci()">🔑 Kunci Jawaban</button>
-        <button class="btn btn-secondary" onclick="downloadKunciPDF()">📥 Unduh Kunci</button>
+      </div>
+      <div style="margin-top:8px;font-size:.72rem;color:var(--text-light);">
+        ✅ Kunci jawaban sudah termasuk di halaman terakhir PDF &amp; Word.
       </div>
     </div>
 
@@ -538,18 +490,13 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       💡 Ada saran atau perbaikan soal?
       <button onclick="window.open('https://wa.me/6289530713597?text=Saran+BGY+Soal:+','_blank')" style="margin-left:8px;background:var(--grad);color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">Kirim Kritik &amp; Saran</button>
     </div>
-
-    <div id="kunciBox">
-      <h3>🔑 Kunci Jawaban</h3>
-      <div id="kunciContent"></div>
-    </div>
   </div>
 </main>
 </div><!-- end tab-home -->
 
 <footer>
   <div class="footer-title">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" style="color:inherit;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Pak.Choyy</a></div>
-  <div class="footer-sub">Kurikulum Merdeka Based &bull; Powered by AI &bull; v26.3.9c</div>
+  <div class="footer-sub">Kurikulum Merdeka Based &bull; Powered by AI &bull; v26.4.0</div>
 </footer>
 
 <script>
@@ -649,11 +596,9 @@ const DB_MATERI={
 /* ════════════════════════════════════════════
    STATE
 ════════════════════════════════════════════ */
-let soalData=null,kunciVisible=false;
+let soalData=null;
 let logos={logo1:null,logo2:null};
 let halamanSoal=[],currentPage=0;
-const SOAL_PER_HALAMAN=8;
-let GEMINI_API_KEY='';
 let deferredInstallPrompt=null;
 const DAILY_LIMIT=4;
 const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
@@ -662,38 +607,25 @@ const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
    INIT
 ════════════════════════════════════════════ */
 (function init(){
-  // Hapus loading screen setelah halaman siap
   window.addEventListener('load',()=>{
     const ls=document.getElementById('loadingScreen');
     if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>ls.remove(),400);}
   });
-  // Theme
   const saved=localStorage.getItem('theme');
   if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkToggle').textContent='☀️ Light';}
-  // Tanggal
   document.getElementById('tanggal').valueAsDate=new Date();
-  // API Key dari localStorage
-  const savedKey=localStorage.getItem('gemini_api_key');
-  if(savedKey){GEMINI_API_KEY=savedKey;}
-  // Form
   renderMapelOptions();
-  // Set default mapel ke Bahasa Indonesia jika tersedia
   const mapelSel=document.getElementById('mataPelajaran');
   const biOpt=[...mapelSel.options].find(o=>o.value==='Bahasa Indonesia');
   if(biOpt)mapelSel.value='Bahasa Indonesia';
   renderMateriChecklist();
-  // Restore auto save
   restoreAutoSave();
-  // Update limit display
   updateLimitDisplay();
-  // Init histori badge
   updateHistoriBadge(getHistoriList().length);
-  // Install prompt
   window.addEventListener('beforeinstallprompt',e=>{
     e.preventDefault();deferredInstallPrompt=e;
     const last=localStorage.getItem('installClosedAt');
     const now=Date.now();
-    // Tampilkan lagi kalau belum pernah tutup, atau sudah lebih dari 1 hari
     if(!last||now-parseInt(last)>86400000){
       setTimeout(()=>document.getElementById('installPopup').classList.add('show'),2000);
     }
@@ -703,14 +635,8 @@ const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
 /* ════════════════════════════════════════════
    INSTALL PWA
 ════════════════════════════════════════════ */
-function installApp(){
-  if(deferredInstallPrompt){deferredInstallPrompt.prompt();deferredInstallPrompt=null;}
-  closeInstall();
-}
-function closeInstall(){
-  document.getElementById('installPopup').classList.remove('show');
-  localStorage.setItem('installClosedAt',Date.now().toString());
-}
+function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();deferredInstallPrompt=null;}closeInstall();}
+function closeInstall(){document.getElementById('installPopup').classList.remove('show');localStorage.setItem('installClosedAt',Date.now().toString());}
 
 /* ════════════════════════════════════════════
    NAVBAR TABS
@@ -726,16 +652,9 @@ function showTab(tab,el){
 }
 
 /* ════════════════════════════════════════════
-   MODAL API KEY (tetap untuk opsional)
-════════════════════════════════════════════ */
-function showModal(){console.log('Modal dihapus — API Key dikelola Netlify');}
-function simpanApiKey(){}
-
-/* ════════════════════════════════════════════
    HISTORI SOAL
 ════════════════════════════════════════════ */
 const MAX_HISTORI=20;
-
 function simpanHistori(data){
   try{
     const mapel=document.getElementById('mataPelajaran').value;
@@ -769,32 +688,18 @@ function simpanHistori(data){
     updateHistoriBadge(list.length);
   }catch(e){console.warn('Gagal simpan histori:',e);}
 }
-
-function getHistoriList(){
-  try{return JSON.parse(localStorage.getItem('bgy_histori')||'[]');}
-  catch{return [];}
-}
-
-function updateHistoriBadge(n){
-  const el=document.getElementById('historiBadge');
-  if(el)el.textContent=n>0?n:'';
-}
-
+function getHistoriList(){try{return JSON.parse(localStorage.getItem('bgy_histori')||'[]');}catch{return [];}}
+function updateHistoriBadge(n){const el=document.getElementById('historiBadge');if(el)el.textContent=n>0?n:'';}
 function renderHistoriList(){
   const list=getHistoriList();
   const container=document.getElementById('historiList');
-  if(!list.length){
-    container.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--text-light);font-size:.88rem;">Belum ada histori soal.<br>Generate soal dulu ya! 😊</div>`;
-    return;
-  }
+  if(!list.length){container.innerHTML=`<div style="text-align:center;padding:40px 0;color:var(--text-light);font-size:.88rem;">Belum ada histori soal.<br>Generate soal dulu ya! 😊</div>`;return;}
   container.innerHTML=list.map(item=>`
     <div style="border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;background:var(--input-bg);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div style="flex:1;min-width:200px;">
         <div style="font-weight:700;font-size:.9rem;margin-bottom:3px;">📘 ${item.mapel} — Kelas ${item.kelas}</div>
         <div style="font-size:.78rem;color:var(--text-light);margin-bottom:4px;">🏫 ${item.namaSekolah} &nbsp;|&nbsp; ${item.jenis}</div>
-        <div style="font-size:.75rem;color:var(--text-light);">
-          PG: ${item.pg} &nbsp;|&nbsp; Isian: ${item.isian} &nbsp;|&nbsp; Uraian: ${item.uraian} &nbsp;|&nbsp; 🕒 ${item.tanggal}
-        </div>
+        <div style="font-size:.75rem;color:var(--text-light);">PG: ${item.pg} &nbsp;|&nbsp; Isian: ${item.isian} &nbsp;|&nbsp; Uraian: ${item.uraian} &nbsp;|&nbsp; 🕒 ${item.tanggal}</div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0;">
         <button onclick="loadHistori(${item.id})" style="background:var(--grad);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">📂 Buka</button>
@@ -802,16 +707,13 @@ function renderHistoriList(){
         <button onclick="regenerateHistori(${item.id})" style="background:#dcfce7;color:#16a34a;border:none;border-radius:8px;padding:6px 10px;font-size:.78rem;font-weight:700;cursor:pointer;" title="Regenerate">🔄</button>
         <button onclick="hapusHistori(${item.id})" style="background:#fee2e2;color:#dc2626;border:none;border-radius:8px;padding:6px 10px;font-size:.78rem;font-weight:700;cursor:pointer;">🗑️</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
 function loadHistori(id){
   const list=getHistoriList();
   const item=list.find(h=>h.id===id);
   if(!item){alert('Histori tidak ditemukan.');return;}
   try{
-    // Restore form state
     const f=item.formState;
     if(f){
       document.getElementById('namaSekolah').value=f.namaSekolah||'';
@@ -822,41 +724,22 @@ function loadHistori(id){
       document.getElementById('jmlPG').value=f.pgCount||10;
       document.getElementById('jmlIsian').value=f.isianCount||5;
       document.getElementById('jmlUraian').value=f.uraianCount||3;
-      // Set kelas & mapel lalu update materi
       document.getElementById('kelas').value=f.kelas||'1';
       document.getElementById('mataPelajaran').value=f.mapel||'';
       renderMateriChecklist();
     }
-    // Load soal data
     soalData=JSON.parse(item.data);
     buildHalaman(soalData);
     currentPage=0;showPage(0);
-    kunciVisible=false;
-    document.getElementById('kunciBox').style.display='none';
-    document.getElementById('btnKunci').textContent='🔑 Kunci';
-    // Pindah ke tab home
     showTab('home',document.querySelector('.navbar a'));
     document.querySelectorAll('.navbar a').forEach(a=>a.classList.remove('active'));
     document.querySelector('.navbar a').classList.add('active');
   }catch(e){alert('Gagal load histori: '+e.message);}
 }
-
-function hapusHistori(id){
-  if(!confirm('Hapus histori ini?'))return;
-  let list=getHistoriList().filter(h=>h.id!==id);
-  localStorage.setItem('bgy_histori',JSON.stringify(list));
-  updateHistoriBadge(list.length);
-  renderHistoriList();
-}
-
-function hapusSemuaHistori(){
-  if(!confirm('Hapus semua histori soal?'))return;
-  localStorage.removeItem('bgy_histori');
-  updateHistoriBadge(0);
-  renderHistoriList();
-}
-
-function skipApiKey(){}
+function hapusHistori(id){if(!confirm('Hapus histori ini?'))return;let list=getHistoriList().filter(h=>h.id!==id);localStorage.setItem('bgy_histori',JSON.stringify(list));updateHistoriBadge(list.length);renderHistoriList();}
+function hapusSemuaHistori(){if(!confirm('Hapus semua histori soal?'))return;localStorage.removeItem('bgy_histori');updateHistoriBadge(0);renderHistoriList();}
+function duplikatHistori(id){const list=getHistoriList();const item=list.find(h=>h.id===id);if(!item)return;const copy={...item,id:Date.now(),tanggal:new Date().toLocaleDateString('id-ID')};list.unshift(copy);localStorage.setItem('bgy_histori',JSON.stringify(list));updateHistoriBadge(list.length);renderHistoriList();}
+function regenerateHistori(id){const list=getHistoriList();const item=list.find(h=>h.id===id);if(!item)return;loadHistori(id);setTimeout(()=>handleGenerate(),300);}
 
 /* ════════════════════════════════════════════
    DARK MODE
@@ -896,7 +779,6 @@ function hapusLogo(inputId,key,thumbId,hintId,btnId){
 function onKelasChange(){updateOpsiNote();renderMapelOptions();renderMateriChecklist();}
 function onMapelChange(){renderMateriChecklist();}
 function onSemesterChange(){renderMateriChecklist();}
-
 function renderMapelOptions(){
   const kelas=parseInt(document.getElementById('kelas').value);
   document.getElementById('mataPelajaran').innerHTML=(DB_MAPEL[kelas]||[]).map(m=>`<option value="${m}">${m}</option>`).join('');
@@ -914,7 +796,6 @@ function pilihSemua(){const cbs=document.querySelectorAll('.cb-materi');const al
 function getMateriTerpilih(){return[...document.querySelectorAll('.cb-materi:checked')].map(c=>c.value).join(', ');}
 function getKesulitanTerpilih(){return[...document.querySelectorAll('.cb-kesulitan:checked')].map(c=>c.value).join(', ');}
 function updateOpsiNote(){const k=parseInt(document.getElementById('kelas').value);document.getElementById('opsiNote').textContent=k<=2?'(A–C)':'(A–D)';}
-
 function getJudulUjian(){
   const jenis=document.getElementById('jenisUjian').value;
   const sem=document.getElementById('semester').value;
@@ -924,7 +805,7 @@ function getJudulUjian(){
 }
 
 /* ════════════════════════════════════════════
-   GENERATE — langsung fetch Gemini API
+   GENERATE
 ════════════════════════════════════════════ */
 async function handleGenerate(){
   if(!validateForm())return;
@@ -939,7 +820,6 @@ async function handleGenerate(){
   const jmlUraian=parseInt(document.getElementById('jmlUraian').value)||0;
   const opsiPG=kelas<=2?'3 opsi (A, B, C)':'4 opsi (A, B, C, D)';
 
-  // Cek limit harian
   const limitCheck=checkLimit();
   if(!limitCheck.ok){
     showError('⛔ Batas generate harian ('+DAILY_LIMIT+'x) sudah habis. Aktivasi Pro untuk unlimited, atau coba lagi besok.');
@@ -979,45 +859,28 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
       resp=await fetch('/api/generate-soal',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({prompt:prompt})
+        body:JSON.stringify({prompt})
       });
     }catch(networkErr){
       throw new Error('Gagal terhubung ke server. Periksa koneksi internet kamu.');
     }
     let json;
-    try{
-      json=await resp.json();
-    }catch{
-      throw new Error(`Server error (HTTP ${resp.status}). Coba lagi beberapa saat.`);
-    }
+    try{json=await resp.json();}catch{throw new Error(`Server error (HTTP ${resp.status}). Coba lagi beberapa saat.`);}
     if(!resp.ok||json.error)throw new Error(json.error||`Server error (HTTP ${resp.status})`);
     const rawText=json.text||'';
     if(!rawText)throw new Error('Respons AI kosong. Coba generate ulang.');
     let data;
-    try{
-      const cleaned=rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
-      data=JSON.parse(cleaned);
-    }catch{
-      throw new Error('Format respons AI tidak valid. Coba generate ulang.');
-    }
+    try{const cleaned=rawText.replace(/```json/gi,'').replace(/```/g,'').trim();data=JSON.parse(cleaned);}
+    catch{throw new Error('Format respons AI tidak valid. Coba generate ulang.');}
     soalData=data;
-    // Increment daily usage
     if(!isPro())incrementDaily();
-    // Save to question bank
     saveToBank(kelas,mapel,materi,data);
     buildHalaman(data);
     currentPage=0;showPage(0);
-    kunciVisible=false;
-    document.getElementById('kunciBox').style.display='none';
-    document.getElementById('btnKunci').textContent='🔑 Kunci';
     simpanHistori(data);
-    // Auto scroll to preview
     setTimeout(()=>document.getElementById('previewBox').scrollIntoView({behavior:'smooth',block:'start'}),200);
-    // Enable inline edit
     setTimeout(()=>enableInlineEdit(),400);
-    // Success feedback
-    showGenerateFeedback('✅ Soal berhasil dibuat!',3000);
-    // Show user feedback box
+    showGenerateFeedback('✅ Soal berhasil dibuat! Kunci jawaban ada di halaman terakhir.',4000);
     document.getElementById('userFeedbackBox').style.display='block';
     autoSaveForm();
     updateLimitDisplay();
@@ -1032,9 +895,8 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
 function setLoading(s){
   document.getElementById('btnGenerate').disabled=s;
   document.getElementById('spinner').style.display=s?'block':'none';
-  if(s){
-    document.getElementById('btnLabel').textContent='Membuat soal...';
-  } else {
+  if(s){document.getElementById('btnLabel').textContent='Membuat soal...';}
+  else{
     const{remaining}=checkLimit();
     const remText=isPro()?'':'('+remaining+'x)';
     document.getElementById('btnLabel').textContent='✨ Generate Soal '+remText;
@@ -1044,7 +906,7 @@ function showError(m){const e=document.getElementById('errorBox');e.textContent=
 function hideError(){document.getElementById('errorBox').style.display='none';}
 
 /* ════════════════════════════════════════════
-   BUILD & RENDER HALAMAN
+   BUILD HALAMAN — soal + halaman kunci terakhir
 ════════════════════════════════════════════ */
 function buildHalaman(data){
   const pg=data.pilihanGanda||[];
@@ -1072,7 +934,7 @@ function buildHalaman(data){
         if(tb){html+='</table>';tb=false;}
         html+=`<div class="doc-section-title">${b.label}</div><div class="doc-petunjuk">${b.petunjuk}</div>`;
         prevType='';
-      } else {
+      }else{
         if(b.type!==prevType){if(tb){html+='</table>';tb=false;}html+='<table class="doc-soal-table">';tb=true;prevType=b.type;}
         html+=buildSoalRow(b);
       }
@@ -1101,11 +963,313 @@ function buildHalaman(data){
   }
   if(currentBlocks.length>0)closePage();
   if(!halamanSoal.length)halamanSoal.push(headerHtml+'<p style="padding:20px;color:#999;">Tidak ada soal.</p>');
-  renderKunci(data,pg,isian,uraian);
+
+  // ── Tambah halaman kunci di akhir ──
+  halamanSoal.push(buildKunciPage(data,pg,isian,uraian));
+
+  // Update page nav
+  updatePageNav();
 }
 
-// renderPage: digunakan oleh closePage secara internal
+/* ════════════════════════════════════════════
+   BUILD HALAMAN KUNCI
+════════════════════════════════════════════ */
+function buildKunciPage(data,pg,isian,uraian){
+  const mapel=escHtml(document.getElementById('mataPelajaran').value);
+  const kelas=escHtml(document.getElementById('kelas').value);
+  const namaSekolah=escHtml(document.getElementById('namaSekolah').value||'SDN ---');
+  const judulUjian=escHtml(getJudulUjian());
 
+  let html=`
+  <div class="kunci-page-header">KUNCI JAWABAN</div>
+  <div class="kunci-page-sub">${judulUjian} — ${namaSekolah}</div>
+  <div class="kunci-page-sub" style="margin-bottom:12px;">${mapel} &nbsp;|&nbsp; Kelas ${kelas}</div>
+  <div class="kunci-page-line"></div>`;
+
+  if(pg.length>0){
+    html+=`<div class="kunci-section-title">I. Pilihan Ganda</div>
+    <div class="kunci-pg-grid">`;
+    pg.forEach((item,i)=>{
+      html+=`<div class="kunci-pg-cell">${i+1}. <strong>${escHtml(item.jawaban||'—')}</strong></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if(isian.length>0){
+    html+=`<div class="kunci-section-title">II. Isian Singkat</div>
+    <table class="kunci-isian-table">`;
+    isian.forEach((item,i)=>{
+      html+=`<tr><td class="kunci-no-col">${pg.length+i+1}.</td><td>${escHtml(item.jawaban||'—')}</td></tr>`;
+    });
+    html+=`</table>`;
+  }
+
+  if(uraian.length>0){
+    html+=`<div class="kunci-section-title">III. Uraian</div>
+    <table class="kunci-uraian-table">`;
+    uraian.forEach((item,i)=>{
+      html+=`<tr><td class="kunci-no-col">${pg.length+isian.length+i+1}.</td><td>${escHtml(item.jawaban||'—')}</td></tr>`;
+    });
+    html+=`</table>`;
+  }
+
+  return html;
+}
+
+/* ════════════════════════════════════════════
+   NAVIGASI HALAMAN
+════════════════════════════════════════════ */
+function updatePageNav(){
+  if(!halamanSoal.length)return;
+  document.getElementById('btnPrev').disabled=currentPage===0;
+  document.getElementById('btnNext').disabled=currentPage===halamanSoal.length-1;
+  const total=halamanSoal.length;
+  // Label: halaman terakhir = Kunci
+  if(currentPage===total-1){
+    document.getElementById('pageInfo').textContent=`Kunci (${total}/${total})`;
+  }else{
+    document.getElementById('pageInfo').textContent=`Hal ${currentPage+1} / ${total}`;
+  }
+}
+function showPage(idx){
+  if(!halamanSoal.length)return;
+  currentPage=Math.max(0,Math.min(idx,halamanSoal.length-1));
+  document.getElementById('previewBox').innerHTML=halamanSoal[currentPage];
+  updatePageNav();
+}
+function prevPage(){showPage(currentPage-1);}
+function nextPage(){showPage(currentPage+1);}
+
+/* ════════════════════════════════════════════
+   EXPORT PDF — semua halaman termasuk kunci
+════════════════════════════════════════════ */
+function exportPDF(){
+  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
+  if(!halamanSoal||!halamanSoal.length){alert('Tidak ada soal untuk di-export.');return;}
+  const mapel=document.getElementById('mataPelajaran').value;
+  const kelas=document.getElementById('kelas').value;
+
+  // Semua halaman + kunci sudah ada di halamanSoal (halaman terakhir = kunci)
+  const allContent=halamanSoal.map((h,i)=>
+    i===0?h:`<div style="page-break-before:always;">${h}</div>`
+  ).join('');
+
+  const printWin=window.open('','_blank','width=900,height=700');
+  if(!printWin){alert('Popup diblokir browser. Izinkan popup untuk halaman ini.');return;}
+  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
+  <title>Soal_${mapel}_Kelas${kelas}</title>
+  <style>
+    @page{size:A4;margin:15mm 20mm 15mm 22mm;}
+    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+    *{box-sizing:border-box;}html,body{margin:0;padding:0;}
+    body{font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;color:#000;}
+    table{border-collapse:collapse;width:100%;}td{vertical-align:top;}
+    .doc-header-table td{vertical-align:middle;padding:3px 5px;}
+    .doc-logo-cell{width:70px;text-align:center;}
+    .doc-logo-cell img{width:60px;height:60px;object-fit:contain;}
+    .doc-title-cell{text-align:center;}
+    .doc-ujian-title{font-size:11pt;font-weight:bold;text-transform:uppercase;}
+    .doc-school-name{font-size:14pt;font-weight:900;text-transform:uppercase;}
+    .doc-tahun{font-size:10pt;}
+    .doc-header-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:4pt 0 8pt;}
+    .doc-identitas-table{width:100%;font-size:10.5pt;margin-bottom:2pt;}
+    .id-label{width:105pt;}.id-sep{width:10pt;}.id-value{border-bottom:1px solid #333;min-width:80pt;}
+    .doc-identitas-line{border-top:3px solid #000;margin:6pt 0 10pt;}
+    .doc-section-title{font-weight:bold;text-decoration:underline;font-size:11pt;margin:10pt 0 2pt;}
+    .doc-petunjuk{font-style:italic;font-size:10pt;margin-bottom:5pt;}
+    .doc-soal-table{width:100%;border-collapse:collapse;}
+    .soal-no{width:22pt;vertical-align:top;padding-top:1pt;}
+    .opsi-table{width:100%;border-collapse:collapse;margin-top:2pt;}
+    .opsi-label{width:22pt;}.opsi-teks{width:44%;}
+    .isian-garis{display:inline-block;border-bottom:1px solid #000;width:55%;min-width:120pt;}
+    .uraian-kotak{border:1px solid #bbb;width:100%;height:44px;margin-top:3px;}
+    /* Kunci styles */
+    .kunci-page-header{font-size:14pt;font-weight:bold;text-align:center;text-transform:uppercase;margin-bottom:4px;}
+    .kunci-page-sub{font-size:10pt;text-align:center;margin-bottom:4px;}
+    .kunci-page-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:0 0 16px;}
+    .kunci-section-title{font-size:11pt;font-weight:bold;text-decoration:underline;margin:12px 0 8px;}
+    .kunci-pg-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:10px;}
+    .kunci-pg-cell{border:1px solid #ccc;padding:4px 6px;font-size:10.5pt;text-align:center;}
+    .kunci-isian-table,.kunci-uraian-table{width:100%;border-collapse:collapse;font-size:11pt;margin-bottom:10px;}
+    .kunci-isian-table td,.kunci-uraian-table td{padding:3px 6px;vertical-align:top;border-bottom:1px solid #eee;}
+    .kunci-no-col{width:24px;}
+    img{max-width:100%;}
+  </style>
+  <script>window.onload=function(){setTimeout(function(){window.print();},600);};<\/script>
+  </head><body>${allContent}</body></html>`);
+  printWin.document.close();
+}
+
+/* ════════════════════════════════════════════
+   EXPORT WORD — DOCX stabil dengan kunci
+════════════════════════════════════════════ */
+async function exportWord(){
+  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
+
+  // Gunakan RTF sebagai format utama — lebih stabil di semua device
+  exportWordRTF();
+}
+
+/* ════════════════════════════════════════════
+   EXPORT RTF — stabil di mobile & desktop
+   Format: .doc (RTF) yang bisa dibuka Word/WPS
+════════════════════════════════════════════ */
+function exportWordRTF(){
+  const pg=soalData.pilihanGanda||[];
+  const isian=soalData.isian||[];
+  const uraian=soalData.uraian||[];
+  const mapel=document.getElementById('mataPelajaran').value;
+  const kelas=document.getElementById('kelas').value;
+  const semester=document.getElementById('semester').value;
+  const semStr=semester==='1'?'Ganjil':'Genap';
+  const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
+  const tahun=document.getElementById('tahunPelajaran').value||'2025/2026';
+  const judulUjian=getJudulUjian();
+  const tanggal=document.getElementById('tanggal').value
+    ?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
+    :'.....................';
+
+  function rtfEsc(s){
+    return String(s||'')
+      .replace(/\\/g,'\\\\')
+      .replace(/\{/g,'\\{')
+      .replace(/\}/g,'\\}')
+      .replace(/[^\x00-\x7F]/g,c=>{
+        const code=c.charCodeAt(0);
+        // RTF unicode escape
+        return `\\u${code}?`;
+      });
+  }
+
+  let r='{\\rtf1\\ansi\\ansicpg1252\\uc1\\deff0\r\n';
+  r+='{\\fonttbl{\\f0\\froman\\fcharset0 Times New Roman;}{\\f1\\fswiss\\fcharset0 Arial;}}\r\n';
+  r+='{\\colortbl;\\red0\\green0\\blue0;\\red100\\green100\\blue100;}\r\n';
+  r+='\\paperw11906\\paperh16838\\margl1700\\margr1134\\margt1440\\margb1440\r\n';
+  r+='\\widowctrl\\hyphauto\r\n';
+  r+='\\f0\\fs22\\lang1057\\cf1 ';
+
+  // ═══ HEADER ═══
+  r+='\\pard\\qc\\b\\fs28 '+rtfEsc(judulUjian.toUpperCase())+'\\par\r\n';
+  r+='\\pard\\qc\\b\\fs32 '+rtfEsc(namaSekolah.toUpperCase())+'\\par\r\n';
+  r+='\\pard\\qc\\b0\\fs20 Tahun Pelajaran '+rtfEsc(tahun)+'\\par\r\n';
+  // Garis tebal
+  r+='\\pard\\brdrb\\brdrs\\brdrw15\\brdrsp0 \\par\r\n';
+  r+='\\pard\\brdrt\\brdrs\\brdrw15\\brdrsp0\\sb0\\sa0 \\par\r\n';
+
+  // ═══ IDENTITAS ═══
+  r+='\\pard\\sb80\\b0\\fs22 Mata Pelajaran\\tab : '+rtfEsc(mapel)+'\\tab\\tab\\tab Nama\\tab : ___________________________\\par\r\n';
+  r+='\\pard Kelas / Semester\\tab : '+rtfEsc(kelas)+' / '+rtfEsc(semStr)+'\\tab\\tab\\tab No. Absen\\tab : _______________\\par\r\n';
+  r+='\\pard Tanggal\\tab\\tab : '+rtfEsc(tanggal)+'\\tab\\tab\\tab\\tab\\tab Nilai\\tab : _______________\\par\r\n';
+  r+='\\pard\\brdrb\\brdrs\\brdrw15\\brdrsp0 \\par\r\n';
+  r+='\\pard\\brdrt\\brdrs\\brdrw15\\brdrsp0\\sb0\\sa0 \\par\r\n';
+
+  // ═══ PILIHAN GANDA ═══
+  if(pg.length>0){
+    r+='\\pard\\sb160\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
+    r+='\\pard\\sb40\\i Berilah tanda silang (X) pada huruf jawaban yang paling benar!\\i0\\par\r\n';
+    pg.forEach((item,i)=>{
+      r+='\\pard\\sb80\\fi0 '+(i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
+      const opsi=item.opsi||[];
+      for(let x=0;x<opsi.length;x+=2){
+        const kiri=rtfEsc(opsi[x]||'');
+        const kanan=rtfEsc(opsi[x+1]||'');
+        if(kanan){
+          r+='\\pard\\li360\\sb20 '+kiri+'\\tab\\tab\\tab\\tab '+kanan+'\\par\r\n';
+        }else{
+          r+='\\pard\\li360\\sb20 '+kiri+'\\par\r\n';
+        }
+      }
+      r+='\\pard\\sb60 \\par\r\n';
+    });
+  }
+
+  // ═══ ISIAN SINGKAT ═══
+  if(isian.length>0){
+    r+='\\pard\\sb160\\b\\ul II. Isian Singkat\\ul0\\b0\\par\r\n';
+    r+='\\pard\\sb40\\i Isilah titik-titik berikut dengan jawaban yang tepat!\\i0\\par\r\n';
+    isian.forEach((item,i)=>{
+      r+='\\pard\\sb80 '+(pg.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
+      r+='\\pard\\li360\\sb20 Jawab : __________________________________________________\\par\r\n';
+    });
+  }
+
+  // ═══ URAIAN ═══
+  if(uraian.length>0){
+    r+='\\pard\\sb160\\b\\ul III. Uraian\\ul0\\b0\\par\r\n';
+    r+='\\pard\\sb40\\i Jawablah pertanyaan berikut dengan lengkap dan benar!\\i0\\par\r\n';
+    uraian.forEach((item,i)=>{
+      r+='\\pard\\sb80 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
+      r+='\\pard\\li360\\sb20 ___________________________________________________________________________\\par\r\n';
+      r+='\\pard\\li360\\sb10 ___________________________________________________________________________\\par\r\n';
+      r+='\\pard\\li360\\sb10 ___________________________________________________________________________\\par\r\n';
+      r+='\\pard\\sb60 \\par\r\n';
+    });
+  }
+
+  // ═══ HALAMAN BARU: KUNCI JAWABAN ═══
+  r+='\\page\r\n';
+  r+='\\pard\\qc\\b\\fs28 KUNCI JAWABAN\\b0\\par\r\n';
+  r+='\\pard\\qc\\fs22 '+rtfEsc(judulUjian)+' \\emdash  '+rtfEsc(namaSekolah)+'\\par\r\n';
+  r+='\\pard\\qc\\fs22 '+rtfEsc(mapel)+' | Kelas '+rtfEsc(kelas)+'\\par\r\n';
+  r+='\\pard\\brdrb\\brdrs\\brdrw15\\brdrsp0 \\par\r\n';
+  r+='\\pard\\brdrt\\brdrs\\brdrw15\\brdrsp0\\sb0\\sa0 \\par\r\n';
+
+  if(pg.length>0){
+    r+='\\pard\\sb160\\ql\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
+    // Tabel 5 kolom — simulasi dengan tab
+    const colW=Math.floor(pg.length/5)+1;
+    for(let row=0;row<Math.ceil(pg.length/5);row++){
+      let line='\\pard\\sb40 ';
+      for(let col=0;col<5;col++){
+        const idx=row*5+col;
+        if(idx<pg.length){
+          line+=rtfEsc((idx+1)+'. '+( pg[idx].jawaban||'—'))+'\\tab\\tab ';
+        }
+      }
+      r+=line+'\\par\r\n';
+    }
+  }
+
+  if(isian.length>0){
+    r+='\\pard\\sb160\\b\\ul II. Isian Singkat\\ul0\\b0\\par\r\n';
+    isian.forEach((item,i)=>{
+      r+='\\pard\\sb60 '+(pg.length+i+1)+'. '+rtfEsc(item.jawaban||'—')+'\\par\r\n';
+    });
+  }
+
+  if(uraian.length>0){
+    r+='\\pard\\sb160\\b\\ul III. Uraian\\ul0\\b0\\par\r\n';
+    uraian.forEach((item,i)=>{
+      r+='\\pard\\sb60 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.jawaban||'—')+'\\par\r\n';
+    });
+  }
+
+  r+='}\r\n';
+
+  // Download sebagai .doc (RTF) — kompatibel semua perangkat
+  const blob=new Blob([r],{type:'application/msword'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Soal_${mapel}_Kelas${kelas}.doc`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+}
+
+/* ════════════════════════════════════════════
+   COPY
+════════════════════════════════════════════ */
+function copyContent(){
+  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
+  navigator.clipboard.writeText(document.getElementById('previewBox').innerText).then(()=>{
+    const btn=document.querySelector('[onclick="copyContent()"]');const orig=btn.textContent;
+    btn.textContent='✅ Tersalin!';setTimeout(()=>btn.textContent=orig,2000);
+  });
+}
+
+/* ════════════════════════════════════════════
+   BUILD DOC HEADER
+════════════════════════════════════════════ */
 function buildDocHeader(){
   const namaSekolah=escHtml(document.getElementById('namaSekolah').value||'SDN ---');
   const tahun=escHtml(document.getElementById('tahunPelajaran').value||'2025/2026');
@@ -1155,437 +1319,12 @@ function buildSoalRow(b){
 }
 
 /* ════════════════════════════════════════════
-   NAVIGASI
-════════════════════════════════════════════ */
-function showPage(idx){
-  if(!halamanSoal.length)return;
-  currentPage=Math.max(0,Math.min(idx,halamanSoal.length-1));
-  document.getElementById('previewBox').innerHTML=halamanSoal[currentPage];
-  document.getElementById('pageInfo').textContent=`Hal ${currentPage+1} / ${halamanSoal.length}`;
-  document.getElementById('btnPrev').disabled=currentPage===0;
-  document.getElementById('btnNext').disabled=currentPage===halamanSoal.length-1;
-}
-function prevPage(){showPage(currentPage-1);}
-function nextPage(){showPage(currentPage+1);}
-
-/* ════════════════════════════════════════════
-   DOWNLOAD KUNCI PDF
-════════════════════════════════════════════ */
-function downloadKunciPDF(){
-  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  const pg=soalData.pilihanGanda||[];
-  const isian=soalData.isian||[];
-  const uraian=soalData.uraian||[];
-  const mapel=document.getElementById('mataPelajaran').value;
-  const kelas=document.getElementById('kelas').value;
-  const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
-
-  let body=`<div style="text-align:center;margin-bottom:16pt;">
-    <div style="font-size:13pt;font-weight:900;text-transform:uppercase;">${namaSekolah}</div>
-    <div style="font-size:11pt;font-weight:bold;">KUNCI JAWABAN</div>
-    <div style="font-size:10pt;">${mapel} — Kelas ${kelas}</div>
-    <div style="border-top:3px solid black;border-bottom:3px solid black;height:4px;margin:8pt 0;"></div>
-  </div>`;
-
-  if(pg.length>0){
-    body+=`<div style="font-weight:bold;text-decoration:underline;margin-bottom:6pt;">I. Pilihan Ganda</div>`;
-    body+=`<table style="width:100%;border-collapse:collapse;font-size:11pt;margin-bottom:12pt;">`;
-    for(let i=0;i<pg.length;i+=5){
-      body+=`<tr>`;
-      for(let j=i;j<Math.min(i+5,pg.length);j++){
-        body+=`<td style="padding:3pt 8pt;border:1px solid #ccc;width:20%;">${j+1}. <b>${pg[j].jawaban||'—'}</b></td>`;
-      }
-      body+=`</tr>`;
-    }
-    body+=`</table>`;
-  }
-  if(isian.length>0){
-    body+=`<div style="font-weight:bold;text-decoration:underline;margin-bottom:6pt;">II. Isian Singkat</div>`;
-    body+=`<table style="width:100%;border-collapse:collapse;font-size:11pt;margin-bottom:12pt;">`;
-    isian.forEach((item,i)=>{
-      body+=`<tr><td style="padding:3pt 6pt;vertical-align:top;width:24pt;">${pg.length+i+1}.</td><td style="padding:3pt 6pt;">${item.jawaban||'—'}</td></tr>`;
-    });
-    body+=`</table>`;
-  }
-  if(uraian.length>0){
-    body+=`<div style="font-weight:bold;text-decoration:underline;margin-bottom:6pt;">III. Uraian</div>`;
-    body+=`<table style="width:100%;border-collapse:collapse;font-size:11pt;">`;
-    uraian.forEach((item,i)=>{
-      body+=`<tr><td style="padding:4pt 6pt;vertical-align:top;width:24pt;">${pg.length+isian.length+i+1}.</td><td style="padding:4pt 6pt;">${item.jawaban||'—'}</td></tr>`;
-    });
-    body+=`</table>`;
-  }
-
-  const printWin=window.open('','_blank');
-  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
-  <title>Kunci_${mapel}_Kelas${kelas}</title>
-  <style>@page{size:A4;margin:20mm 25mm;}body{font-family:'Times New Roman',serif;font-size:11pt;color:#000;margin:0;}table{border-collapse:collapse;}td{vertical-align:top;}</style>
-  </head><body>${body}</body></html>`);
-  printWin.document.close();
-  setTimeout(()=>{printWin.focus();printWin.print();printWin.close();},400);
-}
-
-function renderKunci(data,pg,isian,uraian){
-  let html='';
-  if(pg.length>0){html+=`<div style="margin-bottom:7px;"><strong style="font-size:.76rem;color:var(--text-light);">PILIHAN GANDA</strong></div><div class="kunci-grid">`;pg.forEach((item,i)=>{html+=`<div class="kunci-item">${i+1}. <strong>${escHtml(item.jawaban)}</strong></div>`;});html+=`</div>`;}
-  if(isian.length>0){html+=`<div class="kunci-isian"><h4>Isian Singkat</h4><ol>`;isian.forEach(item=>{html+=`<li>${escHtml(item.jawaban)}</li>`;});html+=`</ol></div>`;}
-  if(uraian.length>0){html+=`<div class="kunci-uraian"><h4>Uraian</h4><ol>`;uraian.forEach(item=>{html+=`<li>${escHtml(item.jawaban)}</li>`;});html+=`</ol></div>`;}
-  document.getElementById('kunciContent').innerHTML=html;
-}
-function toggleKunci(){
-  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  kunciVisible=!kunciVisible;
-  document.getElementById('kunciBox').style.display=kunciVisible?'block':'none';
-  document.getElementById('btnKunci').textContent=kunciVisible?'🔒 Tutup':'🔑 Kunci';
-  if(kunciVisible)document.getElementById('kunciBox').scrollIntoView({behavior:'smooth'});
-}
-function downloadKunci(){
-  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  const pg=soalData.pilihanGanda||[];const isian=soalData.isian||[];const uraian=soalData.uraian||[];
-  const mapel=document.getElementById('mataPelajaran').value;const kelas=document.getElementById('kelas').value;
-  const{jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');
-  const margin=15;let y=margin;const lw=pdf.internal.pageSize.getWidth()-margin*2;
-  pdf.setFont('helvetica','bold');pdf.setFontSize(13);
-  pdf.text('KUNCI JAWABAN',pdf.internal.pageSize.getWidth()/2,y,{align:'center'});y+=7;
-  pdf.setFontSize(10);pdf.setFont('helvetica','normal');
-  pdf.text(`Mata Pelajaran: ${mapel}  |  Kelas: ${kelas}`,pdf.internal.pageSize.getWidth()/2,y,{align:'center'});y+=5;
-  pdf.setLineWidth(0.5);pdf.line(margin,y,margin+lw,y);y+=7;
-  if(pg.length>0){
-    pdf.setFont('helvetica','bold');pdf.setFontSize(10);pdf.text('I. PILIHAN GANDA',margin,y);y+=5;
-    pdf.setFont('helvetica','normal');pdf.setFontSize(9);
-    const cols=5;const cw=lw/cols;
-    pg.forEach((item,i)=>{
-      const col=i%cols;const row=Math.floor(i/cols);
-      const x=margin+col*cw;const yy=y+row*5;
-      if(yy>pdf.internal.pageSize.getHeight()-margin){pdf.addPage();y=margin;}
-      pdf.text(`${i+1}. ${item.jawaban}`,x,yy);
-    });
-    y+=Math.ceil(pg.length/cols)*5+5;
-  }
-  if(isian.length>0){
-    pdf.setFont('helvetica','bold');pdf.setFontSize(10);pdf.text('II. ISIAN SINGKAT',margin,y);y+=5;
-    pdf.setFont('helvetica','normal');pdf.setFontSize(9);
-    isian.forEach((item,i)=>{
-      const lines=pdf.splitTextToSize(`${pg.length+i+1}. ${item.jawaban}`,lw);
-      if(y+lines.length*4>pdf.internal.pageSize.getHeight()-margin){pdf.addPage();y=margin;}
-      pdf.text(lines,margin,y);y+=lines.length*4+2;
-    });y+=3;
-  }
-  if(uraian.length>0){
-    pdf.setFont('helvetica','bold');pdf.setFontSize(10);pdf.text('III. URAIAN',margin,y);y+=5;
-    pdf.setFont('helvetica','normal');pdf.setFontSize(9);
-    uraian.forEach((item,i)=>{
-      const lines=pdf.splitTextToSize(`${pg.length+isian.length+i+1}. ${item.jawaban}`,lw);
-      if(y+lines.length*4>pdf.internal.pageSize.getHeight()-margin){pdf.addPage();y=margin;}
-      pdf.text(lines,margin,y);y+=lines.length*4+3;
-    });
-  }
-  pdf.save(`Kunci_${mapel}_Kelas${kelas}.pdf`);
-}
-
-/* ════════════════════════════════════════════
-   EXPORT PDF
-════════════════════════════════════════════ */
-function exportPDF(){
-  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  if(!halamanSoal||!halamanSoal.length){alert('Tidak ada soal untuk di-export.');return;}
-  const mapel=document.getElementById('mataPelajaran').value;
-  const kelas=document.getElementById('kelas').value;
-
-  // Buka semua halaman di iframe tersembunyi lalu print sebagai PDF
-  // Cara paling reliable di HP & desktop: buka popup dengan semua halaman sekaligus
-  const allContent=halamanSoal.join('<div style="page-break-before:always;"></div>');
-
-  const printWin=window.open('','_blank','width=900,height=700');
-  if(!printWin){alert('Popup diblokir browser. Izinkan popup untuk halaman ini.');return;}
-  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
-  <title>Soal_${mapel}_Kelas${kelas}</title>
-  <style>
-    @page{size:A4;margin:15mm 20mm 15mm 22mm;}
-    @media print{
-      body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-      .page-break{page-break-before:always;}
-    }
-    *{box-sizing:border-box;}
-    html,body{margin:0;padding:0;}
-    body{font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;color:#000;}
-    table{border-collapse:collapse;width:100%;}
-    td{vertical-align:top;}
-    .doc-header-table td{vertical-align:middle;padding:3px 5px;}
-    .doc-logo-cell{width:70px;text-align:center;}
-    .doc-logo-cell img{width:60px;height:60px;object-fit:contain;}
-    .doc-title-cell{text-align:center;}
-    .doc-ujian-title{font-size:11pt;font-weight:bold;text-transform:uppercase;}
-    .doc-school-name{font-size:14pt;font-weight:900;text-transform:uppercase;}
-    .doc-tahun{font-size:10pt;}
-    .doc-header-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:4pt 0 8pt;}
-    .doc-identitas-table{width:100%;font-size:10.5pt;margin-bottom:2pt;}
-    .id-label{width:105pt;}.id-sep{width:10pt;}.id-value{border-bottom:1px solid #333;min-width:80pt;}
-    .doc-identitas-line{border-top:3px solid #000;margin:6pt 0 10pt;}
-    .doc-section-title{font-weight:bold;text-decoration:underline;font-size:11pt;margin:10pt 0 2pt;}
-    .doc-petunjuk{font-style:italic;font-size:10pt;margin-bottom:5pt;}
-    .doc-soal-table{width:100%;border-collapse:collapse;}
-    .soal-no{width:22pt;vertical-align:top;padding-top:1pt;}
-    .opsi-table{width:100%;border-collapse:collapse;margin-top:2pt;}
-    .opsi-label{width:22pt;}.opsi-teks{width:44%;}
-    .isian-garis{display:inline-block;border-bottom:1px solid #000;width:55%;min-width:120pt;}
-    .uraian-kotak{border:1px solid #bbb;width:100%;height:44px;margin-top:3px;}
-    img{max-width:100%;}
-    /* Hilangkan header/footer browser saat print */
-    @page{margin:15mm 20mm;}
-  </style>
-  <script>
-    window.onload=function(){
-      // Delay sedikit agar gambar/logo sempat load
-      setTimeout(function(){window.print();},600);
-    };
-  <\/script>
-  </head><body>${allContent}</body></html>`);
-  printWin.document.close();
-}
-
-/* ════════════════════════════════════════════
-   EXPORT WORD — real binary .docx via docx.js
-════════════════════════════════════════════ */
-async function exportWord(){
-  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-
-  // Kalau docx.js belum load, pakai fallback RTF
-  if(typeof docx==='undefined'){
-    exportWordRTF();
-    return;
-  }
-
-  const {Document,Packer,Paragraph,TextRun,AlignmentType,BorderStyle,Table,TableRow,TableCell,WidthType,HeadingLevel,UnderlineType}=docx;
-
-  const pg=soalData.pilihanGanda||[];
-  const isian=soalData.isian||[];
-  const uraian=soalData.uraian||[];
-  const mapel=document.getElementById('mataPelajaran').value;
-  const kelas=document.getElementById('kelas').value;
-  const semester=document.getElementById('semester').value;
-  const semStr=semester==='1'?'Ganjil':'Genap';
-  const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
-  const tahun=document.getElementById('tahunPelajaran').value||'2025/2026';
-  const judulUjian=getJudulUjian();
-  const tanggal=document.getElementById('tanggal').value
-    ?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
-    :'.....................';
-
-  const fTNR='Times New Roman';
-  const sz=22; // 11pt = 22 half-points
-  const szSm=20; // 10pt
-
-  function p(runs,opts={}){
-    return new Paragraph({
-      alignment:opts.align||AlignmentType.LEFT,
-      spacing:{after:opts.after!==undefined?opts.after:60,before:opts.before||0},
-      border:opts.border||undefined,
-      children:Array.isArray(runs)?runs:[runs]
-    });
-  }
-  function t(text,opts={}){
-    return new TextRun({
-      text:String(text||''),
-      font:fTNR,
-      size:opts.size||sz,
-      bold:opts.bold||false,
-      italics:opts.italic||false,
-      underline:opts.underline?{type:UnderlineType.SINGLE}:undefined,
-      allCaps:opts.caps||false,
-    });
-  }
-  function garis(){
-    return new Paragraph({
-      border:{bottom:{style:BorderStyle.SINGLE,size:18,space:0,color:'000000'}},
-      spacing:{after:80,before:40},
-      children:[t('')]
-    });
-  }
-  function spasi(){return p([t('')],{after:40});}
-
-  const children=[];
-
-  // === HEADER ===
-  children.push(p([t(judulUjian.toUpperCase(),{bold:true,caps:true})],{align:AlignmentType.CENTER,after:40}));
-  children.push(p([t(namaSekolah.toUpperCase(),{bold:true,caps:true,size:28})],{align:AlignmentType.CENTER,after:40}));
-  children.push(p([t('Tahun Pelajaran '+tahun,{size:szSm})],{align:AlignmentType.CENTER,after:60}));
-  children.push(garis());
-
-  // === IDENTITAS ===
-  children.push(p([t('Mata Pelajaran : '+mapel,{size:sz}),t('          Nama : ________________________',{size:sz})],{after:40}));
-  children.push(p([t('Kelas / Semester : '+kelas+' / '+semStr,{size:sz}),t('     No. Absen : _____________',{size:sz})],{after:40}));
-  children.push(p([t('Tanggal : '+tanggal,{size:sz}),t('                    Nilai : _____________',{size:sz})],{after:60}));
-  children.push(garis());
-
-  // === PILIHAN GANDA ===
-  if(pg.length>0){
-    children.push(p([t('I. Pilihan Ganda',{bold:true,underline:true})],{before:120,after:60}));
-    children.push(p([t('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,size:szSm})],{after:80}));
-    pg.forEach((item,i)=>{
-      children.push(p([t((i+1)+'. '+item.soal)],{after:40}));
-      const opsiArr=item.opsi||[];
-      for(let x=0;x<opsiArr.length;x+=2){
-        const kiri=(opsiArr[x]||'').padEnd(35,' ');
-        const kanan=opsiArr[x+1]||'';
-        children.push(p([t('    '+kiri+kanan,{size:sz})],{after:20}));
-      }
-      children.push(spasi());
-    });
-  }
-
-  // === ISIAN SINGKAT ===
-  if(isian.length>0){
-    children.push(p([t('II. Isian Singkat',{bold:true,underline:true})],{before:120,after:60}));
-    children.push(p([t('Isilah titik-titik berikut dengan jawaban yang tepat!',{italic:true,size:szSm})],{after:80}));
-    isian.forEach((item,i)=>{
-      children.push(p([t((pg.length+i+1)+'. '+item.soal)],{after:30}));
-      children.push(p([t('    Jawaban : _______________________________________________')],{after:60}));
-    });
-  }
-
-  // === URAIAN ===
-  if(uraian.length>0){
-    children.push(p([t('III. Uraian',{bold:true,underline:true})],{before:120,after:60}));
-    children.push(p([t('Jawablah pertanyaan berikut dengan lengkap dan benar!',{italic:true,size:szSm})],{after:80}));
-    uraian.forEach((item,i)=>{
-      children.push(p([t((pg.length+isian.length+i+1)+'. '+item.soal)],{after:40}));
-      children.push(p([t('    __________________________________________________________________________')],{after:20}));
-      children.push(p([t('    __________________________________________________________________________')],{after:20}));
-      children.push(p([t('    __________________________________________________________________________')],{after:80}));
-    });
-  }
-
-  const doc=new Document({
-    sections:[{
-      properties:{
-        page:{
-          margin:{top:1440,right:1134,bottom:1440,left:1700},
-          size:{width:11906,height:16838} // A4
-        }
-      },
-      children
-    }]
-  });
-
-  try{
-    const blob=await Packer.toBlob(doc);
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;
-    a.download=`Soal_${mapel}_Kelas${kelas}.docx`;
-    document.body.appendChild(a);a.click();
-    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
-  }catch(e){
-    alert('Gagal membuat file Word: '+e.message);
-    console.error(e);
-  }
-}
-
-
-
-
-/* ════════════════════════════════════════════
-   FALLBACK: Export RTF (bisa dibuka Word/WPS HP)
-════════════════════════════════════════════ */
-function exportWordRTF(){
-  const pg=soalData.pilihanGanda||[];
-  const isian=soalData.isian||[];
-  const uraian=soalData.uraian||[];
-  const mapel=document.getElementById('mataPelajaran').value;
-  const kelas=document.getElementById('kelas').value;
-  const semester=document.getElementById('semester').value;
-  const semStr=semester==='1'?'Ganjil':'Genap';
-  const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
-  const tahun=document.getElementById('tahunPelajaran').value||'2025/2026';
-  const judulUjian=getJudulUjian();
-  const tanggal=document.getElementById('tanggal').value
-    ?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
-    :'.....................';
-
-  function rtfEsc(s){
-    return String(s||'')
-      .replace(/\\/g,'\\\\')
-      .replace(/\{/g,'\\{')
-      .replace(/\}/g,'\\}')
-      .replace(/[^\x00-\x7F]/g,c=>'\\u'+c.charCodeAt(0)+'?');
-  }
-
-  let r='{\\rtf1\\ansi\\ansicpg1252\\deff0';
-  r+='{\\fonttbl{\\f0\\froman\\fcharset0 Times New Roman;}}';
-  r+='\\paperw11906\\paperh16838\\margl1700\\margr1134\\margt1440\\margb1440';
-  r+='\\f0\\fs22\\lang1057 ';
-  r+='\\pard\\qc\\b\\fs28 '+rtfEsc(judulUjian.toUpperCase())+'\\par\n';
-  r+='\\pard\\qc\\b\\fs32 '+rtfEsc(namaSekolah.toUpperCase())+'\\par\n';
-  r+='\\pard\\qc\\b0\\fs20 Tahun Pelajaran '+rtfEsc(tahun)+'\\par\\par\n';
-  r+='\\pard\\ql\\b0\\fs22 Mata Pelajaran : '+rtfEsc(mapel)+'\\tab\\tab\\tab Nama : _______________________\\par\n';
-  r+='\\pard Kelas / Semester : '+rtfEsc(kelas)+' / '+rtfEsc(semStr)+'\\tab\\tab\\tab No. Absen : ___________\\par\n';
-  r+='\\pard Tanggal : '+rtfEsc(tanggal)+'\\tab\\tab\\tab\\tab\\tab Nilai : ___________\\par\\par\n';
-
-  if(pg.length>0){
-    r+='\\pard\\sb120\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\n';
-    r+='\\pard\\i Berilah tanda silang (X) pada huruf jawaban yang paling benar!\\i0\\par\n';
-    pg.forEach((item,i)=>{
-      r+='\\pard\\sb60 '+(i+1)+'. '+rtfEsc(item.soal)+'\\par\n';
-      const opsi=item.opsi||[];
-      for(let x=0;x<opsi.length;x+=2){
-        r+='\\pard\\li300 '+rtfEsc(opsi[x]||'')+'\\tab\\tab '+rtfEsc(opsi[x+1]||'')+'\\par\n';
-      }
-      r+='\\pard\\sb40 \\par\n';
-    });
-  }
-
-  if(isian.length>0){
-    r+='\\pard\\sb120\\b\\ul II. Isian Singkat\\ul0\\b0\\par\n';
-    r+='\\pard\\i Isilah titik-titik berikut dengan jawaban yang tepat!\\i0\\par\n';
-    isian.forEach((item,i)=>{
-      r+='\\pard\\sb60 '+(pg.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\n';
-      r+='\\pard\\li300 Jawaban : _______________________________________________\\par\n';
-    });
-  }
-
-  if(uraian.length>0){
-    r+='\\pard\\sb120\\b\\ul III. Uraian\\ul0\\b0\\par\n';
-    r+='\\pard\\i Jawablah pertanyaan berikut dengan lengkap dan benar!\\i0\\par\n';
-    uraian.forEach((item,i)=>{
-      r+='\\pard\\sb60 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\n';
-      r+='\\pard\\li300 ______________________________________________________________________\\par\n';
-      r+='\\pard\\li300 ______________________________________________________________________\\par\n';
-      r+='\\pard\\li300 ______________________________________________________________________\\par\n';
-      r+='\\pard\\sb40 \\par\n';
-    });
-  }
-
-  r+='}';
-
-  const blob=new Blob([r],{type:'application/rtf'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download='Soal_'+mapel+'_Kelas'+kelas+'.rtf';
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
-}
-
-/* ════════════════════════════════════════════
-   COPY
-════════════════════════════════════════════ */
-function copyContent(){
-  if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  navigator.clipboard.writeText(document.getElementById('previewBox').innerText).then(()=>{
-    const btn=document.querySelector('[onclick="copyContent()"]');const orig=btn.textContent;
-    btn.textContent='✅ Tersalin!';setTimeout(()=>btn.textContent=orig,2000);
-  });
-}
-
-/* ════════════════════════════════════════════
    HELPER
 ════════════════════════════════════════════ */
 function escHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-
 /* ════════════════════════════════════════════
-   [NEW] RESET FORM
+   RESET FORM
 ════════════════════════════════════════════ */
 function resetForm(){
   if(!confirm('Reset form ke default?'))return;
@@ -1604,7 +1343,7 @@ function resetForm(){
 }
 
 /* ════════════════════════════════════════════
-   [NEW] AUTO SAVE FORM
+   AUTO SAVE FORM
 ════════════════════════════════════════════ */
 function autoSaveForm(){
   const data={
@@ -1643,7 +1382,6 @@ function restoreAutoSave(){
     renderMateriChecklist();
   }catch(e){console.warn('restoreAutoSave:',e);}
 }
-// Pasang event listener auto save
 ['namaSekolah','tahunPelajaran','semester','tanggal','jenisUjian','kelas','mataPelajaran','jmlPG','jmlIsian','jmlUraian','topikTambahan'].forEach(id=>{
   const el=document.getElementById(id);
   if(el)el.addEventListener('change',autoSaveForm);
@@ -1651,7 +1389,7 @@ function restoreAutoSave(){
 document.querySelectorAll('.cb-kesulitan').forEach(c=>c.addEventListener('change',autoSaveForm));
 
 /* ════════════════════════════════════════════
-   [NEW] SMART FEEDBACK
+   SMART FEEDBACK
 ════════════════════════════════════════════ */
 let feedbackTimer=null;
 function showGenerateFeedback(msg,delay=3000){
@@ -1663,52 +1401,25 @@ function showGenerateFeedback(msg,delay=3000){
 }
 
 /* ════════════════════════════════════════════
-   [NEW] QUESTION BANK (localStorage cache)
+   QUESTION BANK
 ════════════════════════════════════════════ */
 function getBankKey(kelas,mapel,materi){return `bgy_bank_${kelas}_${mapel}_${btoa(unescape(encodeURIComponent(materi))).substring(0,20)}`;}
-function loadFromBank(kelas,mapel,materi){
-  try{const r=localStorage.getItem(getBankKey(kelas,mapel,materi));return r?JSON.parse(r):null;}catch{return null;}
-}
-function saveToBank(kelas,mapel,materi,data){
-  try{localStorage.setItem(getBankKey(kelas,mapel,materi),JSON.stringify(data));}catch(e){console.warn('bank save:',e);}
-}
+function saveToBank(kelas,mapel,materi,data){try{localStorage.setItem(getBankKey(kelas,mapel,materi),JSON.stringify(data));}catch(e){console.warn('bank save:',e);}}
 
 /* ════════════════════════════════════════════
-   [NEW] INLINE EDIT SOAL
+   INLINE EDIT
 ════════════════════════════════════════════ */
 function enableInlineEdit(){
   document.querySelectorAll('.soal-teks').forEach(el=>{
     el.setAttribute('contenteditable','true');
-    el.style.cursor='text';
-    el.style.outline='none';
+    el.style.cursor='text';el.style.outline='none';
     el.addEventListener('focus',()=>el.style.background='rgba(59,130,246,.07)');
     el.addEventListener('blur',()=>{el.style.background='';});
   });
 }
 
 /* ════════════════════════════════════════════
-   [NEW] DUPLIKAT & REGENERATE HISTORI
-════════════════════════════════════════════ */
-function duplikatHistori(id){
-  const list=getHistoriList();
-  const item=list.find(h=>h.id===id);
-  if(!item)return;
-  const copy={...item,id:Date.now(),tanggal:new Date().toLocaleDateString('id-ID')};
-  list.unshift(copy);
-  localStorage.setItem('bgy_histori',JSON.stringify(list));
-  updateHistoriBadge(list.length);
-  renderHistoriList();
-}
-function regenerateHistori(id){
-  const list=getHistoriList();
-  const item=list.find(h=>h.id===id);
-  if(!item)return;
-  loadHistori(id);
-  setTimeout(()=>handleGenerate(),300);
-}
-
-/* ════════════════════════════════════════════
-   [NEW] BASIC VALIDATION EXTRA
+   VALIDATION
 ════════════════════════════════════════════ */
 function validateForm(){
   const pg=parseInt(document.getElementById('jmlPG').value)||0;
@@ -1716,39 +1427,19 @@ function validateForm(){
   const ur=parseInt(document.getElementById('jmlUraian').value)||0;
   if(pg<0||is<0||ur<0){showError('Jumlah soal tidak boleh negatif.');return false;}
   if(pg+is+ur===0){showError('Jumlah soal minimal 1.');return false;}
-  const materi=getMateriTerpilih();
-  if(!materi){showError('Pilih minimal satu materi.');return false;}
+  if(!getMateriTerpilih()){showError('Pilih minimal satu materi.');return false;}
   if(!getKesulitanTerpilih()){showError('Pilih minimal satu tingkat kesulitan.');return false;}
   return true;
 }
 
 /* ════════════════════════════════════════════
-   [NEW] DAILY LIMIT & PRO SYSTEM
+   DAILY LIMIT & PRO
 ════════════════════════════════════════════ */
-
-function isPro(){
-  try{const d=JSON.parse(localStorage.getItem('bgy_pro')||'{}');return d.aktif===true;}catch{return false;}
-}
+function isPro(){try{const d=JSON.parse(localStorage.getItem('bgy_pro')||'{}');return d.aktif===true;}catch{return false;}}
 function getTodayStr(){return new Date().toISOString().slice(0,10);}
-function getDailyUsage(){
-  try{const r=localStorage.getItem('bgy_daily_usage');return r?JSON.parse(r):{date:'',count:0};}catch{return {date:'',count:0};}
-}
-function incrementDaily(){
-  const today=getTodayStr();
-  let u=getDailyUsage();
-  if(u.date!==today)u={date:today,count:0};
-  u.count++;
-  localStorage.setItem('bgy_daily_usage',JSON.stringify(u));
-  return u.count;
-}
-function checkLimit(){
-  if(isPro())return{ok:true,remaining:999};
-  const today=getTodayStr();
-  const u=getDailyUsage();
-  if(u.date!==today)return{ok:true,remaining:DAILY_LIMIT};
-  const rem=DAILY_LIMIT-u.count;
-  return{ok:rem>0,remaining:Math.max(0,rem)};
-}
+function getDailyUsage(){try{const r=localStorage.getItem('bgy_daily_usage');return r?JSON.parse(r):{date:'',count:0};}catch{return{date:'',count:0};}}
+function incrementDaily(){const today=getTodayStr();let u=getDailyUsage();if(u.date!==today)u={date:today,count:0};u.count++;localStorage.setItem('bgy_daily_usage',JSON.stringify(u));return u.count;}
+function checkLimit(){if(isPro())return{ok:true,remaining:999};const today=getTodayStr();const u=getDailyUsage();if(u.date!==today)return{ok:true,remaining:DAILY_LIMIT};const rem=DAILY_LIMIT-u.count;return{ok:rem>0,remaining:Math.max(0,rem)};}
 function updateLimitDisplay(){
   const el=document.getElementById('limitInfo');
   if(!el)return;
@@ -1762,31 +1453,25 @@ function updateLimitDisplay(){
   const{ok,remaining}=checkLimit();
   el.textContent=ok?`🔢 Sisa generate hari ini: ${remaining}x`:'⛔ Batas harian habis. Aktivasi Pro atau coba besok.';
   el.style.color=remaining<=1?'#dc2626':'#64748b';
-  // Update button label with remaining count
   const btnLbl=document.getElementById('btnLabel');
   if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1){
     btnLbl.textContent=ok?`✨ Generate Soal (${remaining}x)`:'⛔ Limit Habis';
   }
 }
-
 async function aktivasiPro(){
   const kode=document.getElementById('inputKodeAktivasi').value.trim();
   const msgEl=document.getElementById('aktivasiMsg');
   if(!kode){msgEl.textContent='⚠️ Masukkan kode aktivasi dulu.';msgEl.style.color='#dc2626';return;}
   msgEl.textContent='⏳ Memverifikasi...';msgEl.style.color='#64748b';
   try{
-    const res=await fetch(WORKER_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'verify',kode})
-    });
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'verify',kode})});
     const json=await res.json();
     if(json.valid){
       localStorage.setItem('bgy_pro',JSON.stringify({aktif:true,kode,tgl:getTodayStr()}));
       msgEl.textContent='✅ Aktivasi berhasil! Selamat, kamu sekarang Pro 🎉';
       msgEl.style.color='#059669';
       updateLimitDisplay();
-    } else {
+    }else{
       msgEl.textContent='❌ Kode tidak valid. Hubungi Pak Choyy via WA.';
       msgEl.style.color='#dc2626';
     }
