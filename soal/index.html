@@ -9,6 +9,17 @@
 <link rel="apple-touch-icon" href="guru-cibisd2.png"/>
 <link rel="manifest" href="./manifest.json"/>
 <meta name="theme-color" content="#34d399"/>
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-83WBBEE5BG');
+  function gaEvent(eventName,params){
+    if(typeof gtag==='function')gtag('event',eventName,params||{});
+  }
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
 <style>
@@ -875,6 +886,15 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
     soalData=data;
     if(!isPro())incrementDaily();
     saveToBank(kelas,mapel,materi,data);
+    // GA4 event
+    gaEvent('generate_soal',{
+      kelas:'Kelas '+kelas,
+      mata_pelajaran:mapel,
+      jumlah_pg:jmlPG,
+      jumlah_isian:jmlIsian,
+      jumlah_uraian:jmlUraian,
+      tipe_user:isPro()?'pro':'free'
+    });
     buildHalaman(data);
     currentPage=0;showPage(0);
     simpanHistori(data);
@@ -1048,6 +1068,7 @@ function exportPDF(){
   if(!halamanSoal||!halamanSoal.length){alert('Tidak ada soal untuk di-export.');return;}
   const mapel=document.getElementById('mataPelajaran').value;
   const kelas=document.getElementById('kelas').value;
+  gaEvent('download_pdf',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
 
   // Semua halaman + kunci sudah ada di halamanSoal (halaman terakhir = kunci)
   const allContent=halamanSoal.map((h,i)=>
@@ -1120,6 +1141,7 @@ function exportWordRTF(){
   const uraian=soalData.uraian||[];
   const mapel=document.getElementById('mataPelajaran').value;
   const kelas=document.getElementById('kelas').value;
+  gaEvent('download_word',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
   const semester=document.getElementById('semester').value;
   const semStr=semester==='1'?'Ganjil':'Genap';
   const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
@@ -1170,16 +1192,19 @@ function exportWordRTF(){
     pg.forEach((item,i)=>{
       r+='\\pard\\sb80\\fi0 '+(i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
       const opsi=item.opsi||[];
+      // Tabel RTF 2 kolom — lebar kolom kiri & kanan sama (4500 twips ~79mm)
+      // Pakai \\trowd untuk setiap baris tabel opsi
       for(let x=0;x<opsi.length;x+=2){
         const kiri=rtfEsc(opsi[x]||'');
         const kanan=rtfEsc(opsi[x+1]||'');
-        if(kanan){
-          r+='\\pard\\li360\\sb20 '+kiri+'\\tab\\tab\\tab\\tab '+kanan+'\\par\r\n';
-        }else{
-          r+='\\pard\\li360\\sb20 '+kiri+'\\par\r\n';
-        }
+        r+='\\trowd\\trgaph0\\trrh0';
+        r+='\\clbrdrt\\brdrnone\\clbrdrl\\brdrnone\\clbrdrb\\brdrnone\\clbrdrr\\brdrnone\\cellx4500 ';
+        r+='\\clbrdrt\\brdrnone\\clbrdrl\\brdrnone\\clbrdrb\\brdrnone\\clbrdrr\\brdrnone\\cellx9000 ';
+        r+='\\pard\\intbl\\li360 '+kiri+'\\cell ';
+        r+='\\pard\\intbl\\li120 '+kanan+'\\cell ';
+        r+='\\row\r\n';
       }
-      r+='\\pard\\sb60 \\par\r\n';
+      r+='\\pard\\sb40 \\par\r\n';
     });
   }
 
@@ -1216,18 +1241,19 @@ function exportWordRTF(){
 
   if(pg.length>0){
     r+='\\pard\\sb160\\ql\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
-    // Tabel 5 kolom — simulasi dengan tab
-    const colW=Math.floor(pg.length/5)+1;
+    // Tabel RTF 5 kolom untuk kunci PG
+    const colW=1800; // ~32mm per kolom, 5 kolom = 9000 twips
     for(let row=0;row<Math.ceil(pg.length/5);row++){
-      let line='\\pard\\sb40 ';
-      for(let col=0;col<5;col++){
-        const idx=row*5+col;
-        if(idx<pg.length){
-          line+=rtfEsc((idx+1)+'. '+( pg[idx].jawaban||'—'))+'\\tab\\tab ';
-        }
+      r+='\\trowd\\trgaph0';
+      for(let c=0;c<5;c++){r+='\\clbrdrt\\brdrs\\brdrw5\\clbrdrl\\brdrs\\brdrw5\\clbrdrb\\brdrs\\brdrw5\\clbrdrr\\brdrs\\brdrw5\\cellx'+(colW*(c+1))+' ';}
+      for(let c=0;c<5;c++){
+        const idx=row*5+c;
+        const val=idx<pg.length?rtfEsc((idx+1)+'. '+(pg[idx].jawaban||'—')):'';
+        r+='\\pard\\intbl\\qc '+val+'\\cell ';
       }
-      r+=line+'\\par\r\n';
+      r+='\\row\r\n';
     }
+    r+='\\pard\\sb80 \\par\r\n';
   }
 
   if(isian.length>0){
