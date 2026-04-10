@@ -379,16 +379,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         </div>
       </div>
 
-      <!-- ══ GAMBAR SOAL ══ -->
-      <div style="background:linear-gradient(135deg,rgba(52,211,153,.07),rgba(59,130,246,.07));border:1.5px solid #a7f3d0;border-radius:12px;padding:11px 13px;margin-bottom:11px;">
-        <div style="font-size:.71rem;font-weight:700;color:#059669;margin-bottom:6px;">🖼️ Gambar Ilustrasi Soal PG</div>
-        <div style="display:flex;align-items:center;gap:7px;">
-          <input type="checkbox" id="cbGambar" style="width:14px;height:14px;accent-color:#3b82f6;" checked/>
-          <label for="cbGambar" style="font-size:.73rem;color:var(--text-light);text-transform:none;letter-spacing:0;font-weight:600;margin:0;">Generate gambar otomatis di soal PG</label>
-        </div>
-        <div style="font-size:.68rem;color:var(--text-light);margin-top:5px;">✅ Gratis via Pollinations AI · ~30% soal PG dapat gambar</div>
-      </div>
-
       <div class="card-title"><span>⚙️</span> Pengaturan Soal</div>
 
       <div class="form-group">
@@ -444,12 +434,19 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
       <div id="errorBox" class="error-box"></div>
 
+      <!-- ══ CHECKBOX GAMBAR — tepat di atas tombol Generate ══ -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 12px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;">
+        <input type="checkbox" id="cbGambar" style="width:15px;height:15px;min-width:15px;accent-color:#3b82f6;cursor:pointer;" checked/>
+        <label for="cbGambar" style="font-size:.8rem;color:var(--text);text-transform:none;letter-spacing:0;font-weight:600;margin:0;cursor:pointer;">🖼️ Pakai gambar di soal pilihan ganda</label>
+      </div>
+
       <button class="btn btn-primary" id="btnGenerate" onclick="handleGenerate()">
         <div class="spinner" id="spinner"></div>
         <span id="btnLabel">✨ Generate Soal</span>
       </button>
       <div id="generateFeedback" style="font-size:.78rem;margin-top:6px;min-height:18px;text-align:center;color:var(--text-light);"></div>
       <div id="limitInfo" style="font-size:.75rem;text-align:center;margin-top:4px;color:#64748b;"></div>
+      <div style="font-size:.68rem;text-align:center;color:var(--text-light);margin-top:2px;font-style:italic;">(reset tiap tengah malam)</div>
       <button class="btn btn-secondary" id="btnReset" onclick="resetForm()" style="margin-top:6px;width:100%;font-size:.8rem;">🔄 Reset Form</button>
 
       <!-- AKTIVASI PRO -->
@@ -841,22 +838,23 @@ function needsImage(soalText){
 ════════════════════════════════════════════ */
 async function generateGambarSoal(soalText,kelas,mapel){
   try{
-    // Buat prompt ringkas dalam bahasa Inggris (Pollinations lebih akurat)
-    const promptEn=`Simple cartoon illustration for Indonesian elementary school grade ${kelas}, ${mapel} subject. Topic: ${soalText}. Colorful, clean, child-friendly, white background, no text, no writing in image.`;
-    const encoded=encodeURIComponent(promptEn);
-    // Pollinations: return URL gambar langsung — tidak butuh API key
-    const url=`https://image.pollinations.ai/prompt/${encoded}?width=400&height=280&nologo=true&seed=${Date.now()%9999}`;
-    // Preload gambar — pastikan bisa diload
-    await new Promise((res,rej)=>{
-      const img=new Image();
-      img.onload=res;
-      img.onerror=rej;
-      img.src=url;
-      setTimeout(rej,15000); // timeout 15 detik
+    // Prompt sesuai konteks soal SD Indonesia
+    const promptGambar=`Ilustrasi anak SD Indonesia, gaya kartun ceria, warna cerah, sederhana, tanpa teks, konteks: ${soalText}`;
+    const resp=await fetch('/api/generate-image',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:promptGambar,kelas,mapel})
     });
-    return url; // return URL langsung (bukan base64)
+    if(!resp.ok){console.warn('generate-image HTTP error:',resp.status);return null;}
+    const json=await resp.json();
+    if(json.error){console.warn('generate-image error:',json.error);return null;}
+    // Backend return base64 di field json.image
+    if(json.image){
+      return json.image.startsWith('data:')?json.image:`data:image/png;base64,${json.image}`;
+    }
+    return null;
   }catch(e){
-    console.warn('Pollinations error:',e);
+    console.warn('generateGambarSoal error:',e);
     return null;
   }
 }
