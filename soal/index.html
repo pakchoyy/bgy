@@ -9,16 +9,13 @@
 <link rel="apple-touch-icon" href="guru-cibisd2.png"/>
 <link rel="manifest" href="./manifest.json"/>
 <meta name="theme-color" content="#34d399"/>
-<!-- Google Analytics GA4 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
 <script>
   window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
   gtag('js',new Date());
   gtag('config','G-83WBBEE5BG');
-  function gaEvent(eventName,params){
-    if(typeof gtag==='function')gtag('event',eventName,params||{});
-  }
+  function gaEvent(eventName,params){if(typeof gtag==='function')gtag('event',eventName,params||{});}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
@@ -61,25 +58,15 @@ body.dark .navbar a{background:rgba(255,255,255,.07);color:#cbd5e1;}
 body.dark .navbar a.active{background:var(--grad);color:#fff;}
 
 /* ══ HEADER ══ */
-header{
-  position:sticky;top:0;z-index:100;background:var(--grad);
-  padding:11px 22px;display:flex;align-items:center;justify-content:space-between;
-  box-shadow:0 2px 12px rgba(0,0,0,.12);
-}
+header{position:sticky;top:0;z-index:100;background:var(--grad);padding:11px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.12);}
 body.dark header{background:linear-gradient(135deg,#1e3a5f,#1e293b);}
 .header-brand{display:flex;align-items:center;gap:10px;}
 .header-brand img{width:36px;height:36px;border-radius:10px;}
-.header-brand h1{
-  font-size:1.15rem;font-weight:800;letter-spacing:-.5px;color:#fff;
-  text-shadow:0 1px 3px rgba(0,0,0,.15);
-}
+.header-brand h1{font-size:1.15rem;font-weight:800;letter-spacing:-.5px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.15);}
 .header-brand p{font-size:.68rem;color:rgba(255,255,255,.85);margin-top:1px;}
 .header-right{display:flex;align-items:center;gap:7px;}
 .version-badge{font-size:.64rem;background:rgba(255,255,255,.2);color:#fff;padding:3px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.3);font-weight:600;}
-#darkToggle{
-  background:var(--gray-100);border:1px solid var(--border);color:var(--text);
-  padding:5px 12px;border-radius:99px;cursor:pointer;font-size:.76rem;font-weight:600;transition:all .2s;
-}
+#darkToggle{background:var(--gray-100);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:99px;cursor:pointer;font-size:.76rem;font-weight:600;transition:all .2s;}
 body.dark #darkToggle{background:#374151;color:#f1f5f9;border-color:#4b5563;}
 
 /* ══ MAIN ══ */
@@ -93,11 +80,7 @@ main{display:grid;grid-template-columns:375px 1fr;gap:22px;padding:22px;max-widt
 /* ══ FORM ══ */
 .form-group{margin-bottom:11px;}
 label{display:block;font-size:.71rem;font-weight:600;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
-input[type=text],input[type=date],input[type=number],select,textarea{
-  width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:10px;
-  font-size:.84rem;color:var(--text);background:var(--input-bg);
-  transition:border-color .2s,background .3s;outline:none;
-}
+input[type=text],input[type=date],input[type=number],input[type=password],select,textarea{width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:10px;font-size:.84rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);}
 textarea{resize:vertical;min-height:58px;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -106,15 +89,20 @@ textarea{resize:vertical;min-height:58px;}
 .school-info h3{font-size:.74rem;font-weight:700;color:var(--text-light);margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px;}
 
 /* Logo upload */
-.logo-upload-area{
-  border:2px dashed var(--border);border-radius:10px;padding:7px;
-  text-align:center;cursor:pointer;transition:border-color .2s;position:relative;
-  min-height:60px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;
-}
+.logo-upload-area{border:2px dashed var(--border);border-radius:10px;padding:7px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;min-height:60px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;}
 .logo-upload-area:hover{border-color:var(--blue);}
 .logo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;}
 .logo-preview-thumb{max-height:44px;max-width:78px;border-radius:4px;object-fit:contain;display:none;}
 .logo-upload-hint{font-size:.66rem;color:var(--text-light);line-height:1.4;}
+
+/* Gemini key box */
+.gemini-key-box{background:linear-gradient(135deg,rgba(59,130,246,.07),rgba(16,185,129,.07));border:1.5px solid #bfdbfe;border-radius:12px;padding:11px 13px;margin-bottom:11px;}
+.gemini-key-box .gk-label{font-size:.71rem;font-weight:700;color:#1d4ed8;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.gemini-key-row{display:flex;gap:6px;align-items:center;}
+.gemini-key-row input{flex:1;font-size:.8rem;}
+.gemini-key-row button{white-space:nowrap;background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:7px 11px;font-size:.76rem;font-weight:700;cursor:pointer;}
+.gemini-status{font-size:.7rem;margin-top:5px;min-height:14px;}
+body.dark .gemini-key-box{border-color:#1e40af;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(16,185,129,.08));}
 
 /* Materi checklist */
 .materi-box{border:2px solid var(--border);border-radius:10px;padding:7px 9px;max-height:165px;overflow-y:auto;background:var(--input-bg);}
@@ -156,12 +144,7 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .page-nav button:disabled{opacity:.3;cursor:not-allowed;}
 .page-info{font-size:.78rem;color:var(--text-light);font-weight:600;min-width:72px;text-align:center;}
 
-#previewBox{
-  background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;
-  width:794px;min-height:1123px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);
-  font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;
-  box-sizing:border-box;height:auto;
-}
+#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-height:1123px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;height:auto;}
 
 /* Dokumen styles */
 .doc-header-table{width:100%;border-collapse:collapse;margin-bottom:0;}
@@ -188,6 +171,11 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .opsi-label{width:21px;}.opsi-teks{width:44%;}
 .isian-garis{display:inline-block;border-bottom:1px solid #333;min-width:160px;width:54%;height:12px;vertical-align:bottom;}
 .uraian-kotak{border:1px solid #bbb;width:100%;height:44px;margin-top:3px;}
+
+/* Gambar soal */
+.soal-img{display:block;max-width:220px;max-height:160px;object-fit:contain;margin:5px 0 6px 0;border:1px solid #ddd;border-radius:4px;}
+.soal-img-loading{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;color:#64748b;font-family:'Segoe UI',sans-serif;padding:6px 10px;background:#f1f5f9;border-radius:6px;margin:4px 0 6px;}
+.soal-img-loading .mini-spin{width:12px;height:12px;border:2px solid #cbd5e1;border-top-color:#3b82f6;border-radius:50%;animation:spin .6s linear infinite;}
 
 /* Kunci halaman preview */
 .kunci-page-header{font-size:14pt;font-weight:bold;text-align:center;text-transform:uppercase;font-family:'Times New Roman',serif;margin-bottom:4px;}
@@ -228,13 +216,24 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   .navbar a{padding:6px 10px;font-size:.78rem;}
 }
 
-/* Print */
-@page{size:A4;margin:15mm;}
+/* ══ PRINT — hapus header/footer browser ══ */
+@page{
+  size:A4;
+  margin:15mm 20mm 15mm 22mm;
+  /* Hapus header & footer bawaan browser */
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
 @media print{
-  header,footer,.col-form,.export-bar,.page-nav{display:none!important;}
+  /* Reset margin halaman agar header/footer browser hilang */
+  @page{margin-top:15mm;margin-bottom:15mm;margin-left:22mm;margin-right:20mm;}
+  html,body{margin:0!important;padding:0!important;}
+  header,footer,.col-form,.export-bar,.page-nav,.navbar,#installPopup{display:none!important;}
   main{display:block;padding:0;}
-  #previewBox{box-shadow:none;padding:0;max-width:100%;border-radius:0;}
+  #previewBox{box-shadow:none;padding:0;max-width:100%;border-radius:0;width:100%!important;}
   body{background:#fff!important;}
+  /* Paksa semua warna tercetak */
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
 </style>
 </head>
@@ -280,27 +279,18 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 <!-- ══ TAB TENTANG ══ -->
 <div id="tab-tentang" style="display:none;max-width:760px;margin:20px auto;background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;">
   <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:6px;color:var(--text);">ℹ️ Tentang Aplikasi</h3>
-  <p style="font-size:.8rem;color:var(--text-light);margin-bottom:16px;">Bantu Guru Yuk v26.4.0 • Free Version • 2026</p>
-  <p style="font-size:.88rem;color:var(--text);line-height:1.8;margin-bottom:14px;">
-    <b>Bantu Guru Yuk</b> adalah generator soal otomatis berbasis AI yang dirancang khusus untuk guru SD Kurikulum Merdeka. Buat soal berkualitas dalam hitungan detik — tanpa perlu keahlian teknis apapun.
-  </p>
+  <p style="font-size:.8rem;color:var(--text-light);margin-bottom:16px;">Bantu Guru Yuk v26.4.1 • Free Version • 2026</p>
+  <p style="font-size:.88rem;color:var(--text);line-height:1.8;margin-bottom:14px;"><b>Bantu Guru Yuk</b> adalah generator soal otomatis berbasis AI yang dirancang khusus untuk guru SD Kurikulum Merdeka.</p>
   <h4 style="font-size:.85rem;font-weight:700;margin:14px 0 8px;color:var(--text);">✨ Fitur Utama</h4>
   <ul style="font-size:.84rem;color:var(--text);line-height:2.1;padding-left:18px;">
     <li>Generate soal PG, Isian Singkat &amp; Uraian otomatis via AI</li>
+    <li>Gambar ilustrasi otomatis di soal PG (via Gemini)</li>
     <li>Sesuai Taksonomi Bloom C1–C6</li>
-    <li>Mendukung semua mata pelajaran SD kelas 1–6</li>
-    <li>Kunci jawaban otomatis — tercetak di halaman terakhir dokumen</li>
     <li>Export soal ke PDF &amp; Word (kunci sudah termasuk)</li>
-    <li>Tampilan lembar soal profesional ala sekolah</li>
-    <li>Bisa diinstall sebagai aplikasi (PWA)</li>
+    <li>PDF tanpa header/footer bawaan browser</li>
   </ul>
-  <h4 style="font-size:.85rem;font-weight:700;margin:14px 0 8px;color:var(--text);">👨‍💻 Pengembang</h4>
-  <p style="font-size:.84rem;color:var(--text);line-height:1.8;">
-    <b>Pak Choyy</b> — Guru SD yang peduli teknologi pendidikan 🚀<br/>
-    <span style="color:var(--blue);">pakchoyy.github.io</span>
-  </p>
   <div style="margin-top:18px;padding:12px 16px;background:var(--input-bg);border-radius:10px;border:1px solid var(--border);font-size:.8rem;color:var(--text-light);line-height:1.8;">
-    📌 <b>Versi:</b> v26.4.0 &nbsp;|&nbsp; <b>Status:</b> Free Version &nbsp;|&nbsp; <b>Tahun:</b> 2026
+    📌 <b>Versi:</b> v26.4.1 &nbsp;|&nbsp; <b>Tahun:</b> 2026
   </div>
 </div>
 
@@ -311,23 +301,18 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <h3 style="font-size:1rem;font-weight:800;margin:0;">🕒 Histori Soal</h3>
       <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:8px;padding:6px 14px;font-size:.78rem;font-weight:700;cursor:pointer;">🗑️ Hapus Semua</button>
     </div>
-    <div id="historiList">
-      <div style="text-align:center;padding:40px 0;color:var(--text-light);font-size:.88rem;">
-        Belum ada histori soal.<br>Generate soal dulu ya! 😊
-      </div>
-    </div>
+    <div id="historiList"><div style="text-align:center;padding:40px 0;color:var(--text-light);font-size:.88rem;">Belum ada histori soal.<br>Generate soal dulu ya! 😊</div></div>
   </div>
 </div>
 
 <!-- ══ TAB KONTAK ══ -->
 <div id="tab-kontak" style="display:none;max-width:760px;margin:20px auto;background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;">
   <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;">📬 Kontak</h3>
-  <p style="font-size:.85rem;color:var(--text);line-height:1.7;margin-bottom:16px;">Untuk info lebih lanjut, bantuan penggunaan, atau menyampaikan kritik dan saran:</p>
+  <p style="font-size:.85rem;color:var(--text);line-height:1.7;margin-bottom:16px;">Untuk info lebih lanjut, bantuan penggunaan, atau kritik dan saran:</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;">
     <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp</button>
     <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok</button>
   </div>
-  <p style="margin-top:14px;font-size:.78rem;color:var(--text-light);">Masukan dan saran Anda sangat membantu pengembangan aplikasi ini.</p>
 </div>
 
 <!-- ══ TAB HOME ══ -->
@@ -392,6 +377,16 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
             <input type="date" id="tanggal"/>
           </div>
         </div>
+      </div>
+
+      <!-- ══ GAMBAR SOAL ══ -->
+      <div style="background:linear-gradient(135deg,rgba(52,211,153,.07),rgba(59,130,246,.07));border:1.5px solid #a7f3d0;border-radius:12px;padding:11px 13px;margin-bottom:11px;">
+        <div style="font-size:.71rem;font-weight:700;color:#059669;margin-bottom:6px;">🖼️ Gambar Ilustrasi Soal PG</div>
+        <div style="display:flex;align-items:center;gap:7px;">
+          <input type="checkbox" id="cbGambar" style="width:14px;height:14px;accent-color:#3b82f6;" checked/>
+          <label for="cbGambar" style="font-size:.73rem;color:var(--text-light);text-transform:none;letter-spacing:0;font-weight:600;margin:0;">Generate gambar otomatis di soal PG</label>
+        </div>
+        <div style="font-size:.68rem;color:var(--text-light);margin-top:5px;">✅ Gratis via Pollinations AI · ~30% soal PG dapat gambar</div>
       </div>
 
       <div class="card-title"><span>⚙️</span> Pengaturan Soal</div>
@@ -474,14 +469,13 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   <!-- ══ KOLOM KANAN ══ -->
   <div class="col-preview preview-wrap">
     <div class="card" style="padding:10px 14px;margin-bottom:12px;">
-      <!-- Kunci jawaban sudah otomatis ada di halaman terakhir dokumen PDF & Word -->
       <div class="export-bar">
         <button class="btn btn-secondary" onclick="exportPDF()">📄 Download PDF</button>
         <button class="btn btn-secondary" onclick="exportWord()">📝 Download Word</button>
         <button class="btn btn-secondary" onclick="copyContent()">📋 Copy Teks</button>
       </div>
       <div style="margin-top:8px;font-size:.72rem;color:var(--text-light);">
-        ✅ Kunci jawaban sudah termasuk di halaman terakhir PDF &amp; Word.
+        ✅ Kunci jawaban sudah termasuk di halaman terakhir PDF &amp; Word. PDF tanpa header/footer browser.
       </div>
     </div>
 
@@ -503,11 +497,11 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     </div>
   </div>
 </main>
-</div><!-- end tab-home -->
+</div>
 
 <footer>
-  <div class="footer-title">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" style="color:inherit;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Pak.Choyy</a></div>
-  <div class="footer-sub">Kurikulum Merdeka Based &bull; Powered by AI &bull; v26.4.0</div>
+  <div class="footer-title">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" style="color:inherit;text-decoration:none;">Pak.Choyy</a></div>
+  <div class="footer-sub">Kurikulum Merdeka Based &bull; Powered by AI &bull; v26.4.1</div>
 </footer>
 
 <script>
@@ -613,6 +607,10 @@ let halamanSoal=[],currentPage=0;
 let deferredInstallPrompt=null;
 const DAILY_LIMIT=4;
 const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
+
+/* ════════════════════════════════════════════
+   (Gemini key dihapus — gambar pakai Pollinations gratis)
+════════════════════════════════════════════ */
 
 /* ════════════════════════════════════════════
    INIT
@@ -816,6 +814,54 @@ function getJudulUjian(){
 }
 
 /* ════════════════════════════════════════════
+   DETEKSI SOAL YANG BUTUH GAMBAR
+   Hanya soal PG yang berkaitan visual/objek nyata
+════════════════════════════════════════════ */
+const KATA_BUTUH_GAMBAR=[
+  'gambar','bentuk','warna','bangun','segitiga','persegi','lingkaran','persegi panjang',
+  'hewan','binatang','kucing','anjing','burung','ikan','katak','sapi','ayam','kambing',
+  'tumbuhan','bunga','daun','pohon','buah','sayuran','wortel','tomat','apel','mangga',
+  'benda','alat','perlengkapan','peralatan','perkakas','mainan',
+  'peta','denah','arah','mata angin','kompas',
+  'bangun ruang','kubus','balok','tabung','kerucut','bola',
+  'jam','waktu','jarum jam','dompet','uang','koin',
+  'tubuh','organ','bagian','anggota','rangka','otot',
+  'tata surya','planet','bulan','matahari','bintang',
+  'jenis','macam','contoh dari','perhatikan','berikut ini'
+];
+
+function needsImage(soalText){
+  const lower=soalText.toLowerCase();
+  return KATA_BUTUH_GAMBAR.some(k=>lower.includes(k));
+}
+
+/* ════════════════════════════════════════════
+   GENERATE GAMBAR VIA POLLINATIONS.AI — GRATIS
+   Tidak butuh API key, tidak butuh billing
+════════════════════════════════════════════ */
+async function generateGambarSoal(soalText,kelas,mapel){
+  try{
+    // Buat prompt ringkas dalam bahasa Inggris (Pollinations lebih akurat)
+    const promptEn=`Simple cartoon illustration for Indonesian elementary school grade ${kelas}, ${mapel} subject. Topic: ${soalText}. Colorful, clean, child-friendly, white background, no text, no writing in image.`;
+    const encoded=encodeURIComponent(promptEn);
+    // Pollinations: return URL gambar langsung — tidak butuh API key
+    const url=`https://image.pollinations.ai/prompt/${encoded}?width=400&height=280&nologo=true&seed=${Date.now()%9999}`;
+    // Preload gambar — pastikan bisa diload
+    await new Promise((res,rej)=>{
+      const img=new Image();
+      img.onload=res;
+      img.onerror=rej;
+      img.src=url;
+      setTimeout(rej,15000); // timeout 15 detik
+    });
+    return url; // return URL langsung (bukan base64)
+  }catch(e){
+    console.warn('Pollinations error:',e);
+    return null;
+  }
+}
+
+/* ════════════════════════════════════════════
    GENERATE
 ════════════════════════════════════════════ */
 async function handleGenerate(){
@@ -830,6 +876,7 @@ async function handleGenerate(){
   const jmlIsian=parseInt(document.getElementById('jmlIsian').value)||0;
   const jmlUraian=parseInt(document.getElementById('jmlUraian').value)||0;
   const opsiPG=kelas<=2?'3 opsi (A, B, C)':'4 opsi (A, B, C, D)';
+  const buatGambar=document.getElementById('cbGambar').checked;
 
   const limitCheck=checkLimit();
   if(!limitCheck.ok){
@@ -855,10 +902,11 @@ Aturan:
 - Gunakan Bahasa Indonesia yang baik dan benar
 - Sesuaikan tingkat kesulitan dengan kelas ${kelas} SD
 - Kalimat soal harus jelas dan tidak ambigu
+- Untuk soal PG yang memerlukan gambar/ilustrasi (misal soal tentang hewan, benda, bangun datar, tumbuhan, dll), tambahkan field "butuhGambar": true
 
 Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
 {
-  "pilihanGanda":[{"soal":"...","opsi":["A. ...","B. ...","C. ...","D. ..."],"jawaban":"A"}],
+  "pilihanGanda":[{"soal":"...","opsi":["A. ...","B. ...","C. ...","D. ..."],"jawaban":"A","butuhGambar":false}],
   "isian":[{"soal":"...","jawaban":"..."}],
   "uraian":[{"soal":"...","jawaban":"..."}]
 }
@@ -883,33 +931,82 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
     let data;
     try{const cleaned=rawText.replace(/```json/gi,'').replace(/```/g,'').trim();data=JSON.parse(cleaned);}
     catch{throw new Error('Format respons AI tidak valid. Coba generate ulang.');}
+
     soalData=data;
     if(!isPro())incrementDaily();
     saveToBank(kelas,mapel,materi,data);
-    // GA4 event
-    gaEvent('generate_soal',{
-      kelas:'Kelas '+kelas,
-      mata_pelajaran:mapel,
-      jumlah_pg:jmlPG,
-      jumlah_isian:jmlIsian,
-      jumlah_uraian:jmlUraian,
-      tipe_user:isPro()?'pro':'free'
-    });
-    buildHalaman(data);
+    gaEvent('generate_soal',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,jumlah_pg:jmlPG,jumlah_isian:jmlIsian,jumlah_uraian:jmlUraian,tipe_user:isPro()?'pro':'free'});
+
+    // ── Build preview dulu tanpa gambar
+    buildHalaman(soalData);
     currentPage=0;showPage(0);
     simpanHistori(data);
     setTimeout(()=>document.getElementById('previewBox').scrollIntoView({behavior:'smooth',block:'start'}),200);
     setTimeout(()=>enableInlineEdit(),400);
-    showGenerateFeedback('✅ Soal berhasil dibuat! Kunci jawaban ada di halaman terakhir.',4000);
+    showGenerateFeedback('✅ Soal berhasil dibuat!',3000);
     document.getElementById('userFeedbackBox').style.display='block';
     autoSaveForm();
     updateLimitDisplay();
+
+    // ── Generate gambar secara async untuk soal PG yang butuh
+    if(buatGambar&&jmlPG>0){
+      generateGambarAsync(data,kelas,mapel);
+    }
+
   }catch(e){
     showGenerateFeedback('',0);
     showError(e.message||'Terjadi kesalahan. Coba lagi.');
   }finally{
     setLoading(false);
   }
+}
+
+/* ════════════════════════════════════════════
+   GENERATE GAMBAR ASYNC — tidak block UI
+════════════════════════════════════════════ */
+async function generateGambarAsync(data,kelas,mapel){
+  const pg=data.pilihanGanda||[];
+  const soalButuhGambar=pg.filter(item=>item.butuhGambar||needsImage(item.soal));
+  if(!soalButuhGambar.length)return;
+
+  showGenerateFeedback(`🎨 Membuat ${soalButuhGambar.length} gambar ilustrasi...`,0);
+
+  // Proses satu per satu agar tidak rate limit
+  for(const item of soalButuhGambar){
+    if(item.gambar)continue; // skip yang sudah ada
+    const idx=pg.indexOf(item);
+    // Tandai loading di preview
+    markImageLoading(idx);
+    const b64=await generateGambarSoal(item.soal,kelas,mapel);
+    if(b64){
+      item.gambar=b64;
+      updateImageInPreview(idx,b64);
+    }else{
+      removeImageLoading(idx);
+    }
+    // Delay antar request
+    await new Promise(r=>setTimeout(r,1200));
+  }
+  showGenerateFeedback('✅ Gambar ilustrasi selesai!',3000);
+  // Rebuild pages dengan gambar terbaru
+  buildHalaman(data);
+  showPage(currentPage);
+}
+
+/* ════════════════════════════════════════════
+   UPDATE GAMBAR DI PREVIEW LANGSUNG
+════════════════════════════════════════════ */
+function markImageLoading(pgIdx){
+  const el=document.getElementById(`soal-img-${pgIdx}`);
+  if(el)el.innerHTML='<div class="soal-img-loading"><div class="mini-spin"></div> Membuat gambar...</div>';
+}
+function updateImageInPreview(pgIdx,src){
+  const el=document.getElementById(`soal-img-${pgIdx}`);
+  if(el)el.innerHTML=`<img class="soal-img" src="${src}" alt="Ilustrasi soal"/>`;
+}
+function removeImageLoading(pgIdx){
+  const el=document.getElementById(`soal-img-${pgIdx}`);
+  if(el)el.innerHTML='';
 }
 
 function setLoading(s){
@@ -926,7 +1023,7 @@ function showError(m){const e=document.getElementById('errorBox');e.textContent=
 function hideError(){document.getElementById('errorBox').style.display='none';}
 
 /* ════════════════════════════════════════════
-   BUILD HALAMAN — soal + halaman kunci terakhir
+   BUILD HALAMAN
 ════════════════════════════════════════════ */
 function buildHalaman(data){
   const pg=data.pilihanGanda||[];
@@ -939,6 +1036,7 @@ function buildHalaman(data){
   const HEADER_H=140;
   const SECTION_H=45;
   const PG_H=75;
+  const PG_IMG_H=200; // lebih tinggi jika ada gambar
   const ISIAN_H=52;
   const URAIAN_H=95;
 
@@ -971,7 +1069,10 @@ function buildHalaman(data){
 
   if(pg.length>0){
     addBlock({type:'section',label:'I. Pilihan Ganda',petunjuk:'Berilah tanda silang (X) pada huruf jawaban yang paling benar!'},SECTION_H);
-    pg.forEach((item,i)=>addBlock({type:'pg',item,no:i+1},PG_H));
+    pg.forEach((item,i)=>{
+      const hasImg=item.butuhGambar||needsImage(item.soal)||item.gambar;
+      addBlock({type:'pg',item,no:i+1,pgIdx:i},hasImg?PG_IMG_H:PG_H);
+    });
   }
   if(isian.length>0){
     addBlock({type:'section',label:'II. Isian Singkat',petunjuk:'Isilah titik-titik berikut dengan jawaban yang tepat!'},SECTION_H);
@@ -984,10 +1085,8 @@ function buildHalaman(data){
   if(currentBlocks.length>0)closePage();
   if(!halamanSoal.length)halamanSoal.push(headerHtml+'<p style="padding:20px;color:#999;">Tidak ada soal.</p>');
 
-  // ── Tambah halaman kunci di akhir ──
+  // Halaman kunci di akhir
   halamanSoal.push(buildKunciPage(data,pg,isian,uraian));
-
-  // Update page nav
   updatePageNav();
 }
 
@@ -999,40 +1098,26 @@ function buildKunciPage(data,pg,isian,uraian){
   const kelas=escHtml(document.getElementById('kelas').value);
   const namaSekolah=escHtml(document.getElementById('namaSekolah').value||'SDN ---');
   const judulUjian=escHtml(getJudulUjian());
-
   let html=`
   <div class="kunci-page-header">KUNCI JAWABAN</div>
   <div class="kunci-page-sub">${judulUjian} — ${namaSekolah}</div>
   <div class="kunci-page-sub" style="margin-bottom:12px;">${mapel} &nbsp;|&nbsp; Kelas ${kelas}</div>
   <div class="kunci-page-line"></div>`;
-
   if(pg.length>0){
-    html+=`<div class="kunci-section-title">I. Pilihan Ganda</div>
-    <div class="kunci-pg-grid">`;
-    pg.forEach((item,i)=>{
-      html+=`<div class="kunci-pg-cell">${i+1}. <strong>${escHtml(item.jawaban||'—')}</strong></div>`;
-    });
+    html+=`<div class="kunci-section-title">I. Pilihan Ganda</div><div class="kunci-pg-grid">`;
+    pg.forEach((item,i)=>{html+=`<div class="kunci-pg-cell">${i+1}. <strong>${escHtml(item.jawaban||'—')}</strong></div>`;});
     html+=`</div>`;
   }
-
   if(isian.length>0){
-    html+=`<div class="kunci-section-title">II. Isian Singkat</div>
-    <table class="kunci-isian-table">`;
-    isian.forEach((item,i)=>{
-      html+=`<tr><td class="kunci-no-col">${pg.length+i+1}.</td><td>${escHtml(item.jawaban||'—')}</td></tr>`;
-    });
+    html+=`<div class="kunci-section-title">II. Isian Singkat</div><table class="kunci-isian-table">`;
+    isian.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${pg.length+i+1}.</td><td>${escHtml(item.jawaban||'—')}</td></tr>`;});
     html+=`</table>`;
   }
-
   if(uraian.length>0){
-    html+=`<div class="kunci-section-title">III. Uraian</div>
-    <table class="kunci-uraian-table">`;
-    uraian.forEach((item,i)=>{
-      html+=`<tr><td class="kunci-no-col">${pg.length+isian.length+i+1}.</td><td>${escHtml(item.jawaban||'—')}</td></tr>`;
-    });
+    html+=`<div class="kunci-section-title">III. Uraian</div><table class="kunci-uraian-table">`;
+    uraian.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${pg.length+isian.length+i+1}.</td><td>${escHtml(item.jawaban||'—')}</td></tr>`;});
     html+=`</table>`;
   }
-
   return html;
 }
 
@@ -1044,12 +1129,7 @@ function updatePageNav(){
   document.getElementById('btnPrev').disabled=currentPage===0;
   document.getElementById('btnNext').disabled=currentPage===halamanSoal.length-1;
   const total=halamanSoal.length;
-  // Label: halaman terakhir = Kunci
-  if(currentPage===total-1){
-    document.getElementById('pageInfo').textContent=`Kunci (${total}/${total})`;
-  }else{
-    document.getElementById('pageInfo').textContent=`Hal ${currentPage+1} / ${total}`;
-  }
+  document.getElementById('pageInfo').textContent=currentPage===total-1?`Kunci (${total}/${total})`:`Hal ${currentPage+1} / ${total}`;
 }
 function showPage(idx){
   if(!halamanSoal.length)return;
@@ -1061,16 +1141,14 @@ function prevPage(){showPage(currentPage-1);}
 function nextPage(){showPage(currentPage+1);}
 
 /* ════════════════════════════════════════════
-   EXPORT PDF — semua halaman termasuk kunci
+   EXPORT PDF — header/footer browser hilang
 ════════════════════════════════════════════ */
 function exportPDF(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  if(!halamanSoal||!halamanSoal.length){alert('Tidak ada soal untuk di-export.');return;}
   const mapel=document.getElementById('mataPelajaran').value;
   const kelas=document.getElementById('kelas').value;
   gaEvent('download_pdf',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
 
-  // Semua halaman + kunci sudah ada di halamanSoal (halaman terakhir = kunci)
   const allContent=halamanSoal.map((h,i)=>
     i===0?h:`<div style="page-break-before:always;">${h}</div>`
   ).join('');
@@ -1080,9 +1158,21 @@ function exportPDF(){
   printWin.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8">
   <title>Soal_${mapel}_Kelas${kelas}</title>
   <style>
-    @page{size:A4;margin:15mm 20mm 15mm 22mm;}
-    @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
-    *{box-sizing:border-box;}html,body{margin:0;padding:0;}
+    /* ── Kunci: hapus header & footer browser ── */
+    @page{
+      size:A4;
+      margin:15mm 20mm 15mm 22mm;
+      margin-header:0;
+      margin-footer:0;
+    }
+    html{margin:0;padding:0;}
+    @media print{
+      html,body{margin:0!important;padding:0!important;}
+      /* Chrome/Edge: sembunyikan header-footer via CSS */
+      @page{margin-top:15mm;margin-bottom:15mm;margin-left:22mm;margin-right:20mm;}
+    }
+    *{box-sizing:border-box;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+    html,body{margin:0;padding:0;}
     body{font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;color:#000;}
     table{border-collapse:collapse;width:100%;}td{vertical-align:top;}
     .doc-header-table td{vertical-align:middle;padding:3px 5px;}
@@ -1104,7 +1194,8 @@ function exportPDF(){
     .opsi-label{width:22pt;}.opsi-teks{width:44%;}
     .isian-garis{display:inline-block;border-bottom:1px solid #000;width:55%;min-width:120pt;}
     .uraian-kotak{border:1px solid #bbb;width:100%;height:44px;margin-top:3px;}
-    /* Kunci styles */
+    .soal-img{display:block;max-width:200px;max-height:140px;object-fit:contain;margin:4px 0 5px;border:1px solid #ddd;}
+    .soal-img-loading{display:none;}
     .kunci-page-header{font-size:14pt;font-weight:bold;text-align:center;text-transform:uppercase;margin-bottom:4px;}
     .kunci-page-sub{font-size:10pt;text-align:center;margin-bottom:4px;}
     .kunci-page-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:0 0 16px;}
@@ -1116,25 +1207,25 @@ function exportPDF(){
     .kunci-no-col{width:24px;}
     img{max-width:100%;}
   </style>
-  <script>window.onload=function(){setTimeout(function(){window.print();},600);};<\/script>
+  <script>
+    // Hapus header/footer browser dengan override title dan sejenisnya
+    window.onload=function(){
+      // Instruksi ke user jika perlu
+      setTimeout(function(){window.print();},700);
+    };
+  <\/script>
   </head><body>${allContent}</body></html>`);
   printWin.document.close();
 }
 
 /* ════════════════════════════════════════════
-   EXPORT WORD — DOCX stabil dengan kunci
+   EXPORT WORD RTF — persis seperti preview
 ════════════════════════════════════════════ */
-async function exportWord(){
+function exportWord(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-
-  // Gunakan RTF sebagai format utama — lebih stabil di semua device
   exportWordRTF();
 }
 
-/* ════════════════════════════════════════════
-   EXPORT RTF — stabil di mobile & desktop
-   Format: .doc (RTF) yang bisa dibuka Word/WPS
-════════════════════════════════════════════ */
 function exportWordRTF(){
   const pg=soalData.pilihanGanda||[];
   const isian=soalData.isian||[];
@@ -1153,47 +1244,71 @@ function exportWordRTF(){
 
   function rtfEsc(s){
     return String(s||'')
-      .replace(/\\/g,'\\\\')
-      .replace(/\{/g,'\\{')
-      .replace(/\}/g,'\\}')
-      .replace(/[^\x00-\x7F]/g,c=>{
-        const code=c.charCodeAt(0);
-        // RTF unicode escape
-        return `\\u${code}?`;
-      });
+      .replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}')
+      .replace(/[^\x00-\x7F]/g,c=>`\\u${c.charCodeAt(0)}?`);
   }
 
   let r='{\\rtf1\\ansi\\ansicpg1252\\uc1\\deff0\r\n';
   r+='{\\fonttbl{\\f0\\froman\\fcharset0 Times New Roman;}{\\f1\\fswiss\\fcharset0 Arial;}}\r\n';
-  r+='{\\colortbl;\\red0\\green0\\blue0;\\red100\\green100\\blue100;}\r\n';
-  r+='\\paperw11906\\paperh16838\\margl1700\\margr1134\\margt1440\\margb1440\r\n';
-  r+='\\widowctrl\\hyphauto\r\n';
-  r+='\\f0\\fs22\\lang1057\\cf1 ';
+  r+='{\\colortbl;\\red0\\green0\\blue0;}\r\n';
+  r+='\\paperw11906\\paperh16838\\margl1587\\margr1134\\margt1134\\margb1134\r\n';
+  r+='\\widowctrl\\hyphauto\\f0\\fs22\\lang1057\\cf1 ';
 
-  // ═══ HEADER ═══
-  r+='\\pard\\qc\\b\\fs28 '+rtfEsc(judulUjian.toUpperCase())+'\\par\r\n';
-  r+='\\pard\\qc\\b\\fs32 '+rtfEsc(namaSekolah.toUpperCase())+'\\par\r\n';
-  r+='\\pard\\qc\\b0\\fs20 Tahun Pelajaran '+rtfEsc(tahun)+'\\par\r\n';
-  // Garis tebal
-  r+='\\pard\\brdrb\\brdrs\\brdrw15\\brdrsp0 \\par\r\n';
-  r+='\\pard\\brdrt\\brdrs\\brdrw15\\brdrsp0\\sb0\\sa0 \\par\r\n';
+  // ═══ HEADER — persis seperti preview ═══
+  // Baris 1: Judul Ujian (center, bold)
+  r+='\\pard\\qc\\sb0\\sa0\\b\\fs22 '+rtfEsc(judulUjian.toUpperCase())+'\\b0\\par\r\n';
+  // Baris 2: Nama Sekolah (center, bold, besar)
+  r+='\\pard\\qc\\sb0\\sa0\\b\\fs28 '+rtfEsc(namaSekolah.toUpperCase())+'\\b0\\par\r\n';
+  // Baris 3: Tahun Pelajaran (center, normal)
+  r+='\\pard\\qc\\sb0\\sa40\\fs20 Tahun Pelajaran '+rtfEsc(tahun)+'\\par\r\n';
 
-  // ═══ IDENTITAS ═══
-  r+='\\pard\\sb80\\b0\\fs22 Mata Pelajaran\\tab : '+rtfEsc(mapel)+'\\tab\\tab\\tab Nama\\tab : ___________________________\\par\r\n';
-  r+='\\pard Kelas / Semester\\tab : '+rtfEsc(kelas)+' / '+rtfEsc(semStr)+'\\tab\\tab\\tab No. Absen\\tab : _______________\\par\r\n';
-  r+='\\pard Tanggal\\tab\\tab : '+rtfEsc(tanggal)+'\\tab\\tab\\tab\\tab\\tab Nilai\\tab : _______________\\par\r\n';
-  r+='\\pard\\brdrb\\brdrs\\brdrw15\\brdrsp0 \\par\r\n';
-  r+='\\pard\\brdrt\\brdrs\\brdrw15\\brdrsp0\\sb0\\sa0 \\par\r\n';
+  // Garis tebal atas (simulasi doc-header-line: border atas tebal, border bawah tebal)
+  r+='\\pard\\sb0\\sa0\\brdrb\\brdrs\\brdrw30 \\par\r\n';
+  r+='\\pard\\sb20\\sa0\\brdrt\\brdrs\\brdrw30 \\par\r\n';
+
+  // ═══ TABEL IDENTITAS — 2 kolom kiri dan kanan ═══
+  // Kolom kiri: Mata Pelajaran, Kelas/Semester, Tanggal
+  // Kolom kanan: Nama, No. Absen, Nilai
+  // Pakai tabel RTF 6 kolom: label | sep | value | spacer | label | sep | value
+  const cw=[1300,200,2000,400,1200,200,2400]; // lebar kolom (twips)
+  let cx=0;const cellX=cw.map(w=>{cx+=w;return cx;});
+
+  function identRow(l1,v1,l2,v2){
+    let row='\\trowd\\trgaph0\\trrh280';
+    cellX.forEach((x,i)=>{
+      row+=`\\clbrdrt\\brdrnone\\clbrdrl\\brdrnone\\clbrdrb${i===2||i===6?'\\brdrs\\brdrw5':'\\brdrnone'}\\clbrdrr\\brdrnone\\cellx${x} `;
+    });
+    row+='\\pard\\intbl\\fs22 '+rtfEsc(l1)+'\\cell ';
+    row+='\\pard\\intbl\\qc : \\cell ';
+    row+='\\pard\\intbl '+rtfEsc(v1)+'\\cell ';
+    row+='\\pard\\intbl  \\cell ';
+    row+='\\pard\\intbl '+rtfEsc(l2)+'\\cell ';
+    row+='\\pard\\intbl\\qc : \\cell ';
+    row+='\\pard\\intbl '+rtfEsc(v2)+'\\cell ';
+    row+='\\row\r\n';
+    return row;
+  }
+  r+='\\pard\\sb80\\sa0 \\par\r\n';
+  r+=identRow('Mata Pelajaran',mapel,'Nama','_______________________________');
+  r+=identRow('Kelas / Semester',kelas+' / '+semStr,'No. Absen','______________');
+  r+=identRow('Tanggal',tanggal,'Nilai','______________');
+
+  // Garis penutup identitas
+  r+='\\pard\\sb80\\sa0\\brdrb\\brdrs\\brdrw30 \\par\r\n';
+  r+='\\pard\\sb20\\sa80\\brdrt\\brdrs\\brdrw30 \\par\r\n';
 
   // ═══ PILIHAN GANDA ═══
   if(pg.length>0){
-    r+='\\pard\\sb160\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
-    r+='\\pard\\sb40\\i Berilah tanda silang (X) pada huruf jawaban yang paling benar!\\i0\\par\r\n';
+    r+='\\pard\\sb120\\sa0\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
+    r+='\\pard\\sb40\\sa0\\i Berilah tanda silang (X) pada huruf jawaban yang paling benar!\\i0\\par\r\n';
     pg.forEach((item,i)=>{
-      r+='\\pard\\sb80\\fi0 '+(i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
+      r+='\\pard\\sb80\\fi0\\sa0 '+(i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
+      // Gambar: RTF tidak support embed base64 dengan mudah, skip gambar di Word
+      // Tulis keterangan kecil jika ada gambar
+      if(item.gambar){
+        r+='\\pard\\li360\\sb0\\sa20\\i\\fs18 [Lihat gambar di preview/PDF]\\i0\\fs22\\par\r\n';
+      }
       const opsi=item.opsi||[];
-      // Tabel RTF 2 kolom — lebar kolom kiri & kanan sama (4500 twips ~79mm)
-      // Pakai \\trowd untuk setiap baris tabel opsi
       for(let x=0;x<opsi.length;x+=2){
         const kiri=rtfEsc(opsi[x]||'');
         const kanan=rtfEsc(opsi[x+1]||'');
@@ -1204,45 +1319,44 @@ function exportWordRTF(){
         r+='\\pard\\intbl\\li120 '+kanan+'\\cell ';
         r+='\\row\r\n';
       }
-      r+='\\pard\\sb40 \\par\r\n';
+      r+='\\pard\\sb30\\sa0 \\par\r\n';
     });
   }
 
   // ═══ ISIAN SINGKAT ═══
   if(isian.length>0){
-    r+='\\pard\\sb160\\b\\ul II. Isian Singkat\\ul0\\b0\\par\r\n';
-    r+='\\pard\\sb40\\i Isilah titik-titik berikut dengan jawaban yang tepat!\\i0\\par\r\n';
+    r+='\\pard\\sb120\\sa0\\b\\ul II. Isian Singkat\\ul0\\b0\\par\r\n';
+    r+='\\pard\\sb40\\sa0\\i Isilah titik-titik berikut dengan jawaban yang tepat!\\i0\\par\r\n';
     isian.forEach((item,i)=>{
-      r+='\\pard\\sb80 '+(pg.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
-      r+='\\pard\\li360\\sb20 Jawab : __________________________________________________\\par\r\n';
+      r+='\\pard\\sb80\\sa0 '+(pg.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
+      r+='\\pard\\li360\\sb10\\sa0 Jawab : __________________________________________________\\par\r\n';
     });
   }
 
   // ═══ URAIAN ═══
   if(uraian.length>0){
-    r+='\\pard\\sb160\\b\\ul III. Uraian\\ul0\\b0\\par\r\n';
-    r+='\\pard\\sb40\\i Jawablah pertanyaan berikut dengan lengkap dan benar!\\i0\\par\r\n';
+    r+='\\pard\\sb120\\sa0\\b\\ul III. Uraian\\ul0\\b0\\par\r\n';
+    r+='\\pard\\sb40\\sa0\\i Jawablah pertanyaan berikut dengan lengkap dan benar!\\i0\\par\r\n';
     uraian.forEach((item,i)=>{
-      r+='\\pard\\sb80 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
-      r+='\\pard\\li360\\sb20 ___________________________________________________________________________\\par\r\n';
-      r+='\\pard\\li360\\sb10 ___________________________________________________________________________\\par\r\n';
-      r+='\\pard\\li360\\sb10 ___________________________________________________________________________\\par\r\n';
-      r+='\\pard\\sb60 \\par\r\n';
+      r+='\\pard\\sb80\\sa0 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
+      r+='\\pard\\li360\\sb10\\sa0 ___________________________________________________________________________\\par\r\n';
+      r+='\\pard\\li360\\sb5\\sa0 ___________________________________________________________________________\\par\r\n';
+      r+='\\pard\\li360\\sb5\\sa0 ___________________________________________________________________________\\par\r\n';
+      r+='\\pard\\sb40\\sa0 \\par\r\n';
     });
   }
 
-  // ═══ HALAMAN BARU: KUNCI JAWABAN ═══
+  // ═══ HALAMAN KUNCI ═══
   r+='\\page\r\n';
-  r+='\\pard\\qc\\b\\fs28 KUNCI JAWABAN\\b0\\par\r\n';
-  r+='\\pard\\qc\\fs22 '+rtfEsc(judulUjian)+' \\emdash  '+rtfEsc(namaSekolah)+'\\par\r\n';
-  r+='\\pard\\qc\\fs22 '+rtfEsc(mapel)+' | Kelas '+rtfEsc(kelas)+'\\par\r\n';
-  r+='\\pard\\brdrb\\brdrs\\brdrw15\\brdrsp0 \\par\r\n';
-  r+='\\pard\\brdrt\\brdrs\\brdrw15\\brdrsp0\\sb0\\sa0 \\par\r\n';
+  r+='\\pard\\qc\\sb0\\sa0\\b\\fs28 KUNCI JAWABAN\\b0\\par\r\n';
+  r+='\\pard\\qc\\sb0\\sa0\\fs22 '+rtfEsc(judulUjian)+' \\emdash '+rtfEsc(namaSekolah)+'\\par\r\n';
+  r+='\\pard\\qc\\sb0\\sa60\\fs22 '+rtfEsc(mapel)+' | Kelas '+rtfEsc(kelas)+'\\par\r\n';
+  r+='\\pard\\sb0\\sa0\\brdrb\\brdrs\\brdrw30 \\par\r\n';
+  r+='\\pard\\sb20\\sa80\\brdrt\\brdrs\\brdrw30 \\par\r\n';
 
   if(pg.length>0){
-    r+='\\pard\\sb160\\ql\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
-    // Tabel RTF 5 kolom untuk kunci PG
-    const colW=1800; // ~32mm per kolom, 5 kolom = 9000 twips
+    r+='\\pard\\sb120\\sa0\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
+    const colW=1800;
     for(let row=0;row<Math.ceil(pg.length/5);row++){
       r+='\\trowd\\trgaph0';
       for(let c=0;c<5;c++){r+='\\clbrdrt\\brdrs\\brdrw5\\clbrdrl\\brdrs\\brdrw5\\clbrdrb\\brdrs\\brdrw5\\clbrdrr\\brdrs\\brdrw5\\cellx'+(colW*(c+1))+' ';}
@@ -1253,26 +1367,19 @@ function exportWordRTF(){
       }
       r+='\\row\r\n';
     }
-    r+='\\pard\\sb80 \\par\r\n';
+    r+='\\pard\\sb80\\sa0 \\par\r\n';
   }
-
   if(isian.length>0){
-    r+='\\pard\\sb160\\b\\ul II. Isian Singkat\\ul0\\b0\\par\r\n';
-    isian.forEach((item,i)=>{
-      r+='\\pard\\sb60 '+(pg.length+i+1)+'. '+rtfEsc(item.jawaban||'—')+'\\par\r\n';
-    });
+    r+='\\pard\\sb120\\sa0\\b\\ul II. Isian Singkat\\ul0\\b0\\par\r\n';
+    isian.forEach((item,i)=>{r+='\\pard\\sb60\\sa0 '+(pg.length+i+1)+'. '+rtfEsc(item.jawaban||'—')+'\\par\r\n';});
   }
-
   if(uraian.length>0){
-    r+='\\pard\\sb160\\b\\ul III. Uraian\\ul0\\b0\\par\r\n';
-    uraian.forEach((item,i)=>{
-      r+='\\pard\\sb60 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.jawaban||'—')+'\\par\r\n';
-    });
+    r+='\\pard\\sb120\\sa0\\b\\ul III. Uraian\\ul0\\b0\\par\r\n';
+    uraian.forEach((item,i)=>{r+='\\pard\\sb60\\sa0 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.jawaban||'—')+'\\par\r\n';});
   }
 
   r+='}\r\n';
 
-  // Download sebagai .doc (RTF) — kompatibel semua perangkat
   const blob=new Blob([r],{type:'application/msword'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
@@ -1330,14 +1437,23 @@ function buildDocHeader(){
 
 function buildSoalRow(b){
   if(b.type==='pg'){
-    const opsiArr=b.item.opsi||[];let opsiHtml='<table class="opsi-table">';
+    const opsiArr=b.item.opsi||[];
+    let opsiHtml='<table class="opsi-table">';
     for(let x=0;x<opsiArr.length;x+=2){
       const h1=opsiArr[x].substring(0,2);const t1=opsiArr[x].substring(2).trim();
       const h2=opsiArr[x+1]?opsiArr[x+1].substring(0,2):'';const t2=opsiArr[x+1]?opsiArr[x+1].substring(2).trim():'';
       opsiHtml+=`<tr><td class="opsi-label">${escHtml(h1)}</td><td class="opsi-teks">${escHtml(t1)}</td><td class="opsi-label">${escHtml(h2)}</td><td>${escHtml(t2)}</td></tr>`;
     }
     opsiHtml+='</table>';
-    return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${escHtml(b.item.soal)}</span>${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
+    // Gambar: tampil jika ada, atau loading placeholder jika soal butuh gambar
+    const pgIdx=b.pgIdx!==undefined?b.pgIdx:0;
+    let imgHtml='';
+    if(b.item.gambar){
+      imgHtml=`<img class="soal-img" src="${b.item.gambar}" alt="Ilustrasi soal"/>`;
+    }else if(b.item.butuhGambar||needsImage(b.item.soal)){
+      imgHtml=`<div class="soal-img-loading"><div class="mini-spin"></div> Gambar sedang dibuat...</div>`;
+    }
+    return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${escHtml(b.item.soal)}</span><div id="soal-img-${pgIdx}">${imgHtml}</div>${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
   }
   if(b.type==='isian')return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${escHtml(b.item.soal)}</span><br><span class="isian-garis">&nbsp;</span></td></tr><tr><td colspan="2" style="height:3px;"></td></tr>`;
   if(b.type==='uraian')return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${escHtml(b.item.soal)}</span><div class="uraian-kotak"></div></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;
@@ -1369,7 +1485,7 @@ function resetForm(){
 }
 
 /* ════════════════════════════════════════════
-   AUTO SAVE FORM
+   AUTO SAVE
 ════════════════════════════════════════════ */
 function autoSaveForm(){
   const data={
@@ -1390,8 +1506,7 @@ function autoSaveForm(){
 }
 function restoreAutoSave(){
   try{
-    const raw=localStorage.getItem('bgy_form_autosave');
-    if(!raw)return;
+    const raw=localStorage.getItem('bgy_form_autosave');if(!raw)return;
     const d=JSON.parse(raw);
     if(d.namaSekolah)document.getElementById('namaSekolah').value=d.namaSekolah;
     if(d.tahunPelajaran)document.getElementById('tahunPelajaran').value=d.tahunPelajaran;
@@ -1409,8 +1524,7 @@ function restoreAutoSave(){
   }catch(e){console.warn('restoreAutoSave:',e);}
 }
 ['namaSekolah','tahunPelajaran','semester','tanggal','jenisUjian','kelas','mataPelajaran','jmlPG','jmlIsian','jmlUraian','topikTambahan'].forEach(id=>{
-  const el=document.getElementById(id);
-  if(el)el.addEventListener('change',autoSaveForm);
+  const el=document.getElementById(id);if(el)el.addEventListener('change',autoSaveForm);
 });
 document.querySelectorAll('.cb-kesulitan').forEach(c=>c.addEventListener('change',autoSaveForm));
 
@@ -1419,10 +1533,8 @@ document.querySelectorAll('.cb-kesulitan').forEach(c=>c.addEventListener('change
 ════════════════════════════════════════════ */
 let feedbackTimer=null;
 function showGenerateFeedback(msg,delay=3000){
-  const el=document.getElementById('generateFeedback');
-  if(!el)return;
-  el.textContent=msg;
-  clearTimeout(feedbackTimer);
+  const el=document.getElementById('generateFeedback');if(!el)return;
+  el.textContent=msg;clearTimeout(feedbackTimer);
   if(delay>0)feedbackTimer=setTimeout(()=>el.textContent='',delay);
 }
 
@@ -1430,17 +1542,16 @@ function showGenerateFeedback(msg,delay=3000){
    QUESTION BANK
 ════════════════════════════════════════════ */
 function getBankKey(kelas,mapel,materi){return `bgy_bank_${kelas}_${mapel}_${btoa(unescape(encodeURIComponent(materi))).substring(0,20)}`;}
-function saveToBank(kelas,mapel,materi,data){try{localStorage.setItem(getBankKey(kelas,mapel,materi),JSON.stringify(data));}catch(e){console.warn('bank save:',e);}}
+function saveToBank(kelas,mapel,materi,data){try{localStorage.setItem(getBankKey(kelas,mapel,materi),JSON.stringify(data));}catch(e){console.warn('bank:',e);}}
 
 /* ════════════════════════════════════════════
    INLINE EDIT
 ════════════════════════════════════════════ */
 function enableInlineEdit(){
   document.querySelectorAll('.soal-teks').forEach(el=>{
-    el.setAttribute('contenteditable','true');
-    el.style.cursor='text';el.style.outline='none';
+    el.setAttribute('contenteditable','true');el.style.cursor='text';el.style.outline='none';
     el.addEventListener('focus',()=>el.style.background='rgba(59,130,246,.07)');
-    el.addEventListener('blur',()=>{el.style.background='';});
+    el.addEventListener('blur',()=>el.style.background='');
   });
 }
 
@@ -1467,22 +1578,13 @@ function getDailyUsage(){try{const r=localStorage.getItem('bgy_daily_usage');ret
 function incrementDaily(){const today=getTodayStr();let u=getDailyUsage();if(u.date!==today)u={date:today,count:0};u.count++;localStorage.setItem('bgy_daily_usage',JSON.stringify(u));return u.count;}
 function checkLimit(){if(isPro())return{ok:true,remaining:999};const today=getTodayStr();const u=getDailyUsage();if(u.date!==today)return{ok:true,remaining:DAILY_LIMIT};const rem=DAILY_LIMIT-u.count;return{ok:rem>0,remaining:Math.max(0,rem)};}
 function updateLimitDisplay(){
-  const el=document.getElementById('limitInfo');
-  if(!el)return;
-  if(isPro()){
-    el.textContent='⭐ Pro Aktif — Generate Unlimited';
-    el.style.color='#059669';
-    document.getElementById('aktivasiBox').style.display='none';
-    document.getElementById('btnLabel').textContent='✨ Generate Soal';
-    return;
-  }
+  const el=document.getElementById('limitInfo');if(!el)return;
+  if(isPro()){el.textContent='⭐ Pro Aktif — Generate Unlimited';el.style.color='#059669';document.getElementById('aktivasiBox').style.display='none';document.getElementById('btnLabel').textContent='✨ Generate Soal';return;}
   const{ok,remaining}=checkLimit();
   el.textContent=ok?`🔢 Sisa generate hari ini: ${remaining}x`:'⛔ Batas harian habis. Aktivasi Pro atau coba besok.';
   el.style.color=remaining<=1?'#dc2626':'#64748b';
   const btnLbl=document.getElementById('btnLabel');
-  if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1){
-    btnLbl.textContent=ok?`✨ Generate Soal (${remaining}x)`:'⛔ Limit Habis';
-  }
+  if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1)btnLbl.textContent=ok?`✨ Generate Soal (${remaining}x)`:'⛔ Limit Habis';
 }
 async function aktivasiPro(){
   const kode=document.getElementById('inputKodeAktivasi').value.trim();
@@ -1494,17 +1596,9 @@ async function aktivasiPro(){
     const json=await res.json();
     if(json.valid){
       localStorage.setItem('bgy_pro',JSON.stringify({aktif:true,kode,tgl:getTodayStr()}));
-      msgEl.textContent='✅ Aktivasi berhasil! Selamat, kamu sekarang Pro 🎉';
-      msgEl.style.color='#059669';
-      updateLimitDisplay();
-    }else{
-      msgEl.textContent='❌ Kode tidak valid. Hubungi Pak Choyy via WA.';
-      msgEl.style.color='#dc2626';
-    }
-  }catch(e){
-    msgEl.textContent='❌ Gagal terhubung ke server verifikasi.';
-    msgEl.style.color='#dc2626';
-  }
+      msgEl.textContent='✅ Aktivasi berhasil! Selamat, kamu sekarang Pro 🎉';msgEl.style.color='#059669';updateLimitDisplay();
+    }else{msgEl.textContent='❌ Kode tidak valid. Hubungi Pak Choyy via WA.';msgEl.style.color='#dc2626';}
+  }catch(e){msgEl.textContent='❌ Gagal terhubung ke server verifikasi.';msgEl.style.color='#dc2626';}
 }
 </script>
 </body>
