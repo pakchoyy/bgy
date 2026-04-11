@@ -1,9 +1,9 @@
-// /api/generate-imagehf.js
-// Hugging Face Inference API — FLUX.1-schnell (gratis)
-
+// /api/generate-image.js
+// Menggunakan Hugging Face Inference API — FLUX.1-schnell
 export const config = { api: { bodyParser: true } };
 
 export default async function handler(req, res) {
+  // Pengaturan Header agar bisa diakses dari web (CORS)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -13,8 +13,8 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method tidak diizinkan' });
   }
 
-  // 🔑 Token Hugging Face — set di Vercel Environment Variables
-  // Nama variable: HF_TOKEN (isi dengan token dari huggingface.co/settings/tokens)
+  // 🔑 Ambil token dari Vercel Environment Variables
+  // Pastikan Anda sudah membuat variabel HF_TOKEN di Vercel Settings
   const token = process.env.HF_TOKEN;
   if (!token) {
     return res.status(500).json({ error: 'HF_TOKEN belum diset di environment variables' });
@@ -31,8 +31,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Prompt kosong' });
     }
 
-    // Prompt diperkuat untuk ilustrasi soal SD
-    const fullPrompt = `${prompt}, cartoon illustration style, colorful, child-friendly, Indonesian elementary school, clean white background, no text, no words, simple and clear`;
+    // Prompt dioptimalkan untuk ilustrasi soal sekolah dasar
+    const fullPrompt = `${prompt}, cartoon illustration style, colorful, child-friendly, clean white background, no text, simple and clear`;
 
     const response = await fetch(
       'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
@@ -47,36 +47,29 @@ export default async function handler(req, res) {
           parameters: {
             width: 512,
             height: 384,
-            num_inference_steps: 4,  // FLUX schnell optimal di 4 steps
-            guidance_scale: 0        // FLUX schnell tidak pakai guidance
+            num_inference_steps: 4, // FLUX schnell optimal di 4 steps
           }
         })
       }
     );
 
     if (!response.ok) {
-      const errText = await response.text();
-      console.warn('HF error:', response.status, errText);
-
-      // Kalau model sedang loading (cold start) — kasih tau frontend
+      // Jika model sedang loading (cold start)
       if (response.status === 503) {
         return res.status(503).json({
-          error: 'Model sedang loading, coba lagi 20 detik',
+          error: 'Model sedang pemanasan, silakan klik lagi dalam 20 detik',
           loading: true
         });
       }
 
       return res.status(500).json({
-        error: `Hugging Face error: ${response.status}`,
-        detail: errText
+        error: `Hugging Face error: ${response.status}`
       });
     }
 
-    // HF return binary image langsung (bukan JSON)
+    // Mengubah hasil gambar (binary) menjadi format Base64
     const arrayBuffer = await response.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString('base64');
-
-    // Deteksi mime type dari response header
     const contentType = response.headers.get('content-type') || 'image/png';
 
     return res.status(200).json({
@@ -84,7 +77,7 @@ export default async function handler(req, res) {
     });
 
   } catch (err) {
-    console.error('generate-imagehf error:', err);
+    console.error('generate-image error:', err);
     return res.status(500).json({ error: err.message });
   }
 }
