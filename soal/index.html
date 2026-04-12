@@ -838,23 +838,22 @@ function needsImage(soalText){
 ════════════════════════════════════════════ */
 async function generateGambarSoal(soalText,kelas,mapel){
   try{
-    // Prompt sesuai konteks soal SD Indonesia
-    const promptGambar=`Ilustrasi anak SD Indonesia, gaya kartun ceria, warna cerah, sederhana, tanpa teks, konteks: ${soalText}`;
-    const resp=await fetch('/api/generate-image',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:promptGambar,kelas,mapel})
+    // Pollinations.ai — gratis, tanpa API key
+    const prompt=`Ilustrasi kartun anak SD Indonesia, warna cerah, sederhana, tanpa teks, white background, ${soalText}`;
+    const encoded=encodeURIComponent(prompt);
+    const seed=Math.floor(Math.random()*99999);
+    const url=`https://image.pollinations.ai/prompt/${encoded}?width=400&height=300&nologo=true&seed=${seed}&model=flux-schnell`;
+    // Preload — pastikan gambar bisa diload
+    await new Promise((res,rej)=>{
+      const img=new Image();
+      img.onload=res;
+      img.onerror=rej;
+      img.src=url;
+      setTimeout(rej,20000); // timeout 20 detik
     });
-    if(!resp.ok){console.warn('generate-image HTTP error:',resp.status);return null;}
-    const json=await resp.json();
-    if(json.error){console.warn('generate-image error:',json.error);return null;}
-    // Backend return base64 di field json.image
-    if(json.image){
-      return json.image.startsWith('data:')?json.image:`data:image/png;base64,${json.image}`;
-    }
-    return null;
+    return url;
   }catch(e){
-    console.warn('generateGambarSoal error:',e);
+    console.warn('Pollinations error:',e);
     return null;
   }
 }
@@ -1221,16 +1220,12 @@ function exportPDF(){
 ════════════════════════════════════════════ */
 function exportWord(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  exportWordRTF();
-}
 
-function exportWordRTF(){
   const pg=soalData.pilihanGanda||[];
   const isian=soalData.isian||[];
   const uraian=soalData.uraian||[];
   const mapel=document.getElementById('mataPelajaran').value;
   const kelas=document.getElementById('kelas').value;
-  gaEvent('download_word',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
   const semester=document.getElementById('semester').value;
   const semStr=semester==='1'?'Ganjil':'Genap';
   const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
@@ -1240,151 +1235,230 @@ function exportWordRTF(){
     ?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
     :'.....................';
 
-  function rtfEsc(s){
-    return String(s||'')
-      .replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}')
-      .replace(/[^\x00-\x7F]/g,c=>`\\u${c.charCodeAt(0)}?`);
-  }
+  gaEvent('download_word',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
 
-  let r='{\\rtf1\\ansi\\ansicpg1252\\uc1\\deff0\r\n';
-  r+='{\\fonttbl{\\f0\\froman\\fcharset0 Times New Roman;}{\\f1\\fswiss\\fcharset0 Arial;}}\r\n';
-  r+='{\\colortbl;\\red0\\green0\\blue0;}\r\n';
-  r+='\\paperw11906\\paperh16838\\margl1587\\margr1134\\margt1134\\margb1134\r\n';
-  r+='\\widowctrl\\hyphauto\\f0\\fs22\\lang1057\\cf1 ';
+  const {
+    Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,
+    WidthType,BorderStyle,AlignmentType,HeadingLevel,
+    PageBreak,UnderlineType,ShadingType
+  }=docx;
 
-  // ═══ HEADER — persis seperti preview ═══
-  // Baris 1: Judul Ujian (center, bold)
-  r+='\\pard\\qc\\sb0\\sa0\\b\\fs22 '+rtfEsc(judulUjian.toUpperCase())+'\\b0\\par\r\n';
-  // Baris 2: Nama Sekolah (center, bold, besar)
-  r+='\\pard\\qc\\sb0\\sa0\\b\\fs28 '+rtfEsc(namaSekolah.toUpperCase())+'\\b0\\par\r\n';
-  // Baris 3: Tahun Pelajaran (center, normal)
-  r+='\\pard\\qc\\sb0\\sa40\\fs20 Tahun Pelajaran '+rtfEsc(tahun)+'\\par\r\n';
-
-  // Garis tebal atas (simulasi doc-header-line: border atas tebal, border bawah tebal)
-  r+='\\pard\\sb0\\sa0\\brdrb\\brdrs\\brdrw30 \\par\r\n';
-  r+='\\pard\\sb20\\sa0\\brdrt\\brdrs\\brdrw30 \\par\r\n';
-
-  // ═══ TABEL IDENTITAS — 2 kolom kiri dan kanan ═══
-  // Kolom kiri: Mata Pelajaran, Kelas/Semester, Tanggal
-  // Kolom kanan: Nama, No. Absen, Nilai
-  // Pakai tabel RTF 6 kolom: label | sep | value | spacer | label | sep | value
-  const cw=[1300,200,2000,400,1200,200,2400]; // lebar kolom (twips)
-  let cx=0;const cellX=cw.map(w=>{cx+=w;return cx;});
-
-  function identRow(l1,v1,l2,v2){
-    let row='\\trowd\\trgaph0\\trrh280';
-    cellX.forEach((x,i)=>{
-      row+=`\\clbrdrt\\brdrnone\\clbrdrl\\brdrnone\\clbrdrb${i===2||i===6?'\\brdrs\\brdrw5':'\\brdrnone'}\\clbrdrr\\brdrnone\\cellx${x} `;
+  // Helper buat paragraph teks biasa
+  function p(text,opts={}){
+    return new Paragraph({
+      spacing:{before:opts.before||0,after:opts.after||60},
+      alignment:opts.align||AlignmentType.LEFT,
+      indent:opts.indent?{left:opts.indent}:undefined,
+      children:[new TextRun({
+        text:String(text||''),
+        bold:opts.bold||false,
+        italics:opts.italic||false,
+        underline:opts.underline?{type:UnderlineType.SINGLE}:undefined,
+        size:opts.size||22,
+        font:'Times New Roman',
+      })]
     });
-    row+='\\pard\\intbl\\fs22 '+rtfEsc(l1)+'\\cell ';
-    row+='\\pard\\intbl\\qc : \\cell ';
-    row+='\\pard\\intbl '+rtfEsc(v1)+'\\cell ';
-    row+='\\pard\\intbl  \\cell ';
-    row+='\\pard\\intbl '+rtfEsc(l2)+'\\cell ';
-    row+='\\pard\\intbl\\qc : \\cell ';
-    row+='\\pard\\intbl '+rtfEsc(v2)+'\\cell ';
-    row+='\\row\r\n';
-    return row;
   }
-  r+='\\pard\\sb80\\sa0 \\par\r\n';
-  r+=identRow('Mata Pelajaran',mapel,'Nama','_______________________________');
-  r+=identRow('Kelas / Semester',kelas+' / '+semStr,'No. Absen','______________');
-  r+=identRow('Tanggal',tanggal,'Nilai','______________');
 
-  // Garis penutup identitas
-  r+='\\pard\\sb80\\sa0\\brdrb\\brdrs\\brdrw30 \\par\r\n';
-  r+='\\pard\\sb20\\sa80\\brdrt\\brdrs\\brdrw30 \\par\r\n';
+  // Helper buat runs campuran
+  function pRuns(runs,opts={}){
+    return new Paragraph({
+      spacing:{before:opts.before||0,after:opts.after||60},
+      alignment:opts.align||AlignmentType.LEFT,
+      indent:opts.indent?{left:opts.indent}:undefined,
+      children:runs.map(r=>new TextRun({
+        text:String(r.text||''),
+        bold:r.bold||false,
+        italics:r.italic||false,
+        underline:r.underline?{type:UnderlineType.SINGLE}:undefined,
+        size:r.size||22,
+        font:'Times New Roman',
+      }))
+    });
+  }
 
-  // ═══ PILIHAN GANDA ═══
+  // Garis tebal (border atas+bawah)
+  function garisTebal(){
+    return new Paragraph({
+      spacing:{before:40,after:40},
+      border:{
+        top:{style:BorderStyle.THICK,size:18,color:'000000'},
+        bottom:{style:BorderStyle.THICK,size:18,color:'000000'},
+      },
+      children:[new TextRun({text:''})]
+    });
+  }
+
+  // Sel tabel tanpa border
+  function cell(text,opts={}){
+    return new TableCell({
+      width:opts.width?{size:opts.width,type:WidthType.DXA}:undefined,
+      borders:{top:{style:BorderStyle.NONE},bottom:opts.underline?{style:BorderStyle.SINGLE,size:4,color:'000000'}:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},
+      children:[new Paragraph({
+        spacing:{before:0,after:0},
+        children:[new TextRun({text:String(text||''),size:22,font:'Times New Roman',bold:opts.bold||false})]
+      })]
+    });
+  }
+
+  // Tabel identitas
+  function tabelIdentitas(){
+    function baris(l1,v1,l2,v2){
+      return new TableRow({children:[
+        cell(l1,{width:1800}),
+        cell(':',{width:200}),
+        cell(v1,{width:2800,underline:false}),
+        cell('',{width:400}),
+        cell(l2,{width:1600}),
+        cell(':',{width:200}),
+        cell(v2,{width:2000,underline:true}),
+      ]});
+    }
+    return new Table({
+      width:{size:100,type:WidthType.PERCENTAGE},
+      borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideH:{style:BorderStyle.NONE},insideV:{style:BorderStyle.NONE}},
+      rows:[
+        baris('Mata Pelajaran',mapel,'Nama','______________________________'),
+        baris('Kelas / Semester',kelas+' / '+semStr,'No. Absen','_______________'),
+        baris('Tanggal',tanggal,'Nilai','_______________'),
+      ]
+    });
+  }
+
+  // Tabel opsi PG — 2 kolom tanpa border
+  function tabelOpsi(opsiArr){
+    const rows=[];
+    for(let x=0;x<opsiArr.length;x+=2){
+      rows.push(new TableRow({children:[
+        new TableCell({
+          width:{size:50,type:WidthType.PERCENTAGE},
+          borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},
+          children:[new Paragraph({spacing:{before:0,after:20},indent:{left:360},children:[new TextRun({text:opsiArr[x]||'',size:22,font:'Times New Roman'})]})]
+        }),
+        new TableCell({
+          width:{size:50,type:WidthType.PERCENTAGE},
+          borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},
+          children:[new Paragraph({spacing:{before:0,after:20},children:[new TextRun({text:opsiArr[x+1]||'',size:22,font:'Times New Roman'})]})]
+        }),
+      ]}));
+    }
+    return new Table({
+      width:{size:100,type:WidthType.PERCENTAGE},
+      borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideH:{style:BorderStyle.NONE},insideV:{style:BorderStyle.NONE}},
+      rows
+    });
+  }
+
+  // Tabel kunci PG — 5 kolom dengan border
+  function tabelKunciPG(){
+    const rows=[];
+    for(let r=0;r<Math.ceil(pg.length/5);r++){
+      const cells=[];
+      for(let c=0;c<5;c++){
+        const idx=r*5+c;
+        const val=idx<pg.length?`${idx+1}. ${pg[idx].jawaban||'—'}` :'';
+        cells.push(new TableCell({
+          width:{size:20,type:WidthType.PERCENTAGE},
+          children:[new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:40,after:40},children:[new TextRun({text:val,size:22,font:'Times New Roman'})]})]
+        }));
+      }
+      rows.push(new TableRow({children:cells}));
+    }
+    return new Table({width:{size:100,type:WidthType.PERCENTAGE},rows});
+  }
+
+  // ═══ SUSUN KONTEN DOKUMEN ═══
+  const children=[];
+
+  // Header
+  children.push(p(judulUjian.toUpperCase(),{bold:true,align:AlignmentType.CENTER,size:22,after:20}));
+  children.push(p(namaSekolah.toUpperCase(),{bold:true,align:AlignmentType.CENTER,size:28,after:20}));
+  children.push(p('Tahun Pelajaran '+tahun,{align:AlignmentType.CENTER,size:20,after:40}));
+  children.push(garisTebal());
+  children.push(tabelIdentitas());
+  children.push(garisTebal());
+  children.push(p(''));
+
+  // Pilihan Ganda
   if(pg.length>0){
-    r+='\\pard\\sb120\\sa0\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
-    r+='\\pard\\sb40\\sa0\\i Berilah tanda silang (X) pada huruf jawaban yang paling benar!\\i0\\par\r\n';
+    children.push(pRuns([{text:'I. Pilihan Ganda',bold:true,underline:true}],{before:120,after:40}));
+    children.push(p('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,after:60}));
     pg.forEach((item,i)=>{
-      r+='\\pard\\sb80\\fi0\\sa0 '+(i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
-      // Gambar: RTF tidak support embed base64 dengan mudah, skip gambar di Word
-      // Tulis keterangan kecil jika ada gambar
-      if(item.gambar){
-        r+='\\pard\\li360\\sb0\\sa20\\i\\fs18 [Lihat gambar di preview/PDF]\\i0\\fs22\\par\r\n';
-      }
-      const opsi=item.opsi||[];
-      for(let x=0;x<opsi.length;x+=2){
-        const kiri=rtfEsc(opsi[x]||'');
-        const kanan=rtfEsc(opsi[x+1]||'');
-        r+='\\trowd\\trgaph0\\trrh0';
-        r+='\\clbrdrt\\brdrnone\\clbrdrl\\brdrnone\\clbrdrb\\brdrnone\\clbrdrr\\brdrnone\\cellx4500 ';
-        r+='\\clbrdrt\\brdrnone\\clbrdrl\\brdrnone\\clbrdrb\\brdrnone\\clbrdrr\\brdrnone\\cellx9000 ';
-        r+='\\pard\\intbl\\li360 '+kiri+'\\cell ';
-        r+='\\pard\\intbl\\li120 '+kanan+'\\cell ';
-        r+='\\row\r\n';
-      }
-      r+='\\pard\\sb30\\sa0 \\par\r\n';
+      children.push(p(`${i+1}. ${item.soal}`,{before:60,after:20}));
+      children.push(tabelOpsi(item.opsi||[]));
     });
   }
 
-  // ═══ ISIAN SINGKAT ═══
+  // Isian Singkat
   if(isian.length>0){
-    r+='\\pard\\sb120\\sa0\\b\\ul II. Isian Singkat\\ul0\\b0\\par\r\n';
-    r+='\\pard\\sb40\\sa0\\i Isilah titik-titik berikut dengan jawaban yang tepat!\\i0\\par\r\n';
+    children.push(pRuns([{text:'II. Isian Singkat',bold:true,underline:true}],{before:160,after:40}));
+    children.push(p('Isilah titik-titik berikut dengan jawaban yang tepat!',{italic:true,after:60}));
     isian.forEach((item,i)=>{
-      r+='\\pard\\sb80\\sa0 '+(pg.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
-      r+='\\pard\\li360\\sb10\\sa0 Jawab : __________________________________________________\\par\r\n';
+      children.push(p(`${pg.length+i+1}. ${item.soal}`,{before:60,after:10}));
+      children.push(p('Jawab : _____________________________________________',{indent:360,after:60}));
     });
   }
 
-  // ═══ URAIAN ═══
+  // Uraian
   if(uraian.length>0){
-    r+='\\pard\\sb120\\sa0\\b\\ul III. Uraian\\ul0\\b0\\par\r\n';
-    r+='\\pard\\sb40\\sa0\\i Jawablah pertanyaan berikut dengan lengkap dan benar!\\i0\\par\r\n';
+    children.push(pRuns([{text:'III. Uraian',bold:true,underline:true}],{before:160,after:40}));
+    children.push(p('Jawablah pertanyaan berikut dengan lengkap dan benar!',{italic:true,after:60}));
     uraian.forEach((item,i)=>{
-      r+='\\pard\\sb80\\sa0 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.soal)+'\\par\r\n';
-      r+='\\pard\\li360\\sb10\\sa0 ___________________________________________________________________________\\par\r\n';
-      r+='\\pard\\li360\\sb5\\sa0 ___________________________________________________________________________\\par\r\n';
-      r+='\\pard\\li360\\sb5\\sa0 ___________________________________________________________________________\\par\r\n';
-      r+='\\pard\\sb40\\sa0 \\par\r\n';
+      children.push(p(`${pg.length+isian.length+i+1}. ${item.soal}`,{before:60,after:10}));
+      children.push(p('___________________________________________________________________________',{indent:360,after:5}));
+      children.push(p('___________________________________________________________________________',{indent:360,after:5}));
+      children.push(p('___________________________________________________________________________',{indent:360,after:60}));
     });
   }
 
   // ═══ HALAMAN KUNCI ═══
-  r+='\\page\r\n';
-  r+='\\pard\\qc\\sb0\\sa0\\b\\fs28 KUNCI JAWABAN\\b0\\par\r\n';
-  r+='\\pard\\qc\\sb0\\sa0\\fs22 '+rtfEsc(judulUjian)+' \\emdash '+rtfEsc(namaSekolah)+'\\par\r\n';
-  r+='\\pard\\qc\\sb0\\sa60\\fs22 '+rtfEsc(mapel)+' | Kelas '+rtfEsc(kelas)+'\\par\r\n';
-  r+='\\pard\\sb0\\sa0\\brdrb\\brdrs\\brdrw30 \\par\r\n';
-  r+='\\pard\\sb20\\sa80\\brdrt\\brdrs\\brdrw30 \\par\r\n';
+  children.push(new Paragraph({children:[new PageBreak()]}));
+  children.push(p('KUNCI JAWABAN',{bold:true,align:AlignmentType.CENTER,size:28,after:20}));
+  children.push(p(`${judulUjian} — ${namaSekolah}`,{align:AlignmentType.CENTER,after:10}));
+  children.push(p(`${mapel} | Kelas ${kelas}`,{align:AlignmentType.CENTER,after:40}));
+  children.push(garisTebal());
+  children.push(p(''));
 
   if(pg.length>0){
-    r+='\\pard\\sb120\\sa0\\b\\ul I. Pilihan Ganda\\ul0\\b0\\par\r\n';
-    const colW=1800;
-    for(let row=0;row<Math.ceil(pg.length/5);row++){
-      r+='\\trowd\\trgaph0';
-      for(let c=0;c<5;c++){r+='\\clbrdrt\\brdrs\\brdrw5\\clbrdrl\\brdrs\\brdrw5\\clbrdrb\\brdrs\\brdrw5\\clbrdrr\\brdrs\\brdrw5\\cellx'+(colW*(c+1))+' ';}
-      for(let c=0;c<5;c++){
-        const idx=row*5+c;
-        const val=idx<pg.length?rtfEsc((idx+1)+'. '+(pg[idx].jawaban||'—')):'';
-        r+='\\pard\\intbl\\qc '+val+'\\cell ';
-      }
-      r+='\\row\r\n';
-    }
-    r+='\\pard\\sb80\\sa0 \\par\r\n';
+    children.push(pRuns([{text:'I. Pilihan Ganda',bold:true,underline:true}],{before:80,after:60}));
+    children.push(tabelKunciPG());
   }
   if(isian.length>0){
-    r+='\\pard\\sb120\\sa0\\b\\ul II. Isian Singkat\\ul0\\b0\\par\r\n';
-    isian.forEach((item,i)=>{r+='\\pard\\sb60\\sa0 '+(pg.length+i+1)+'. '+rtfEsc(item.jawaban||'—')+'\\par\r\n';});
+    children.push(pRuns([{text:'II. Isian Singkat',bold:true,underline:true}],{before:120,after:60}));
+    isian.forEach((item,i)=>{
+      children.push(p(`${pg.length+i+1}. ${item.jawaban||'—'}`,{before:40,after:20}));
+    });
   }
   if(uraian.length>0){
-    r+='\\pard\\sb120\\sa0\\b\\ul III. Uraian\\ul0\\b0\\par\r\n';
-    uraian.forEach((item,i)=>{r+='\\pard\\sb60\\sa0 '+(pg.length+isian.length+i+1)+'. '+rtfEsc(item.jawaban||'—')+'\\par\r\n';});
+    children.push(pRuns([{text:'III. Uraian',bold:true,underline:true}],{before:120,after:60}));
+    uraian.forEach((item,i)=>{
+      children.push(p(`${pg.length+isian.length+i+1}. ${item.jawaban||'—'}`,{before:40,after:20}));
+    });
   }
 
-  r+='}\r\n';
+  // ═══ BUAT & DOWNLOAD ═══
+  const doc=new Document({
+    sections:[{
+      properties:{
+        page:{
+          margin:{top:1134,bottom:1134,left:1587,right:1134}
+        }
+      },
+      children
+    }]
+  });
 
-  const blob=new Blob([r],{type:'application/msword'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;
-  a.download=`Soal_${mapel}_Kelas${kelas}.doc`;
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+  Packer.toBlob(doc).then(blob=>{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`Soal_${mapel}_Kelas${kelas}.docx`;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+  }).catch(err=>{
+    console.error('docx error:',err);
+    alert('Gagal export Word: '+err.message);
+  });
 }
 
 /* ════════════════════════════════════════════
