@@ -42,7 +42,7 @@
   --txt-3: #94A3B8;
 
   /* Sidebar */
-  --sb-bg:    #0F1E3C;
+  --sb-bg:    linear-gradient(160deg, #1a6b4a 0%, #1a4d8f 60%, #1a3a7a 100%);
   --sb-w:     256px;
   --sb-txt:   rgba(255,255,255,.6);
   --sb-txt-a: #FFFFFF;
@@ -70,7 +70,7 @@
   --shadow-sm: 0 1px 4px rgba(0,0,0,.3);
   --shadow-md: 0 4px 20px rgba(0,0,0,.35);
   --shadow-lg: 0 12px 40px rgba(0,0,0,.4);
-  --sb-bg:    #071228;
+  --sb-bg:    linear-gradient(160deg, #0e4a30 0%, #0f3060 60%, #0a2050 100%);
   --sb-item-a: rgba(56,189,248,.18);
 }
 
@@ -134,13 +134,16 @@ a { text-decoration: none; color: inherit; }
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
 .sb-logo {
-  width: 38px; height: 38px;
+  width: 42px; height: 42px;
   border-radius: 10px;
-  background: var(--grad);
+  background: transparent;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(37,99,235,.4);
+  overflow: hidden;
+}
+.sb-logo img {
+  width: 100%; height: 100%;
+  object-fit: contain;
 }
 .sb-brand-text .sb-name {
   font-size: .9rem; font-weight: 900;
@@ -339,7 +342,7 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── HERO ─── */
 .hero {
-  background: var(--sb-bg);
+  background: linear-gradient(160deg, #1a6b4a 0%, #1a4d8f 60%, #1a3a7a 100%);
   border-radius: var(--r-lg);
   padding: 32px 36px;
   display: flex;
@@ -625,7 +628,7 @@ a { text-decoration: none; color: inherit; }
 
 /* Social card */
 .social-card {
-  background: var(--sb-bg);
+  background: linear-gradient(160deg, #1a6b4a 0%, #1a4d8f 60%, #1a3a7a 100%);
   border-radius: var(--r-md);
   padding: 20px;
   position: relative;
@@ -722,7 +725,7 @@ a { text-decoration: none; color: inherit; }
 <!-- ════ SIDEBAR ════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sb-brand">
-    <div class="sb-logo">✦</div>
+    <div class="sb-logo"><img src="guru-cibisd2.png" alt="Logo" /></div>
     <div class="sb-brand-text">
       <div class="sb-name">Bantu Guru Yuk</div>
       <div class="sb-sub">Mempermudah kerja Bapak/Ibu<br>Guru hebat</div>
@@ -789,8 +792,7 @@ a { text-decoration: none; color: inherit; }
     <div class="topbar-left">
       <button class="mob-toggle" id="mobMenu" onclick="openSidebar()">☰</button>
       <div>
-        <div class="topbar-lbl">Platform edukasi AI untuk guru SD</div>
-        <div class="topbar-title">Bantu Guru Yuk</div>
+        <div class="topbar-title" style="font-size:1.5rem;font-weight:900;letter-spacing:-.4px;">Bantu Guru <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Yuk!</span></div>
       </div>
     </div>
     <div class="topbar-right">
@@ -822,13 +824,12 @@ a { text-decoration: none; color: inherit; }
       </div>
 
       <div class="hero-desc">
-        ✦ AI Tools untuk membantu Bapak/Ibu Guru SD dalam membuat perangkat pembelajaran yang berkualitas dan sesuai Kurikulum Merdeka.
+        ✦ AI Tools untuk membantu Bapak/Ibu Guru SD dalam membuat perangkat pembelajaran yang berkualitas dan efektif.
       </div>
 
       <div class="hero-chips">
         <div class="hero-chip">⚡ Cepat &amp; praktis</div>
         <div class="hero-chip">🖱️ Mulai dalam 1 klik</div>
-        <div class="hero-chip">🎓 Kurikulum Merdeka</div>
       </div>
 
       <div class="hero-btns">
@@ -958,7 +959,7 @@ a { text-decoration: none; color: inherit; }
 
     <div class="social-card">
       <div class="card-title">📣 Info Platform</div>
-      <div class="stat-grid">
+      <div class="stat-grid" style="grid-template-columns:1fr 1fr;">
         <div class="stat-item">
           <div class="stat-num">2+</div>
           <div class="stat-lbl">Fitur Aktif</div>
@@ -966,14 +967,6 @@ a { text-decoration: none; color: inherit; }
         <div class="stat-item">
           <div class="stat-num">6</div>
           <div class="stat-lbl">Kelas SD</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">AI</div>
-          <div class="stat-lbl">Gemini 2.5</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-num">Free</div>
-          <div class="stat-lbl">Selamanya</div>
         </div>
       </div>
       <a href="https://tiktok.com/@pak.choyy" target="_blank" class="social-btn">🎵 @pak.choyy di TikTok</a>
@@ -983,6 +976,42 @@ a { text-decoration: none; color: inherit; }
   </div>
 
 </main>
+
+<!-- ════ PWA INSTALL POPUP ════ -->
+<div id="installPopup" style="
+  display:none;
+  position:fixed;
+  bottom:24px; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg,#1a6b4a,#1a4d8f);
+  color:#fff;
+  border-radius:16px;
+  padding:16px 20px;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+  z-index:9999;
+  width:calc(100% - 32px);
+  max-width:380px;
+  animation: slideUp .4s cubic-bezier(.4,0,.2,1) both;
+">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <img src="guru-cibisd2.png" alt="Logo" style="width:44px;height:44px;border-radius:10px;object-fit:contain;background:rgba(255,255,255,.15);padding:4px;flex-shrink:0;" />
+    <div style="flex:1;">
+      <div style="font-weight:900;font-size:.92rem;line-height:1.2;">Install Bantu Guru Yuk</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.7);margin-top:3px;">Pasang di HP untuk akses lebih cepat!</div>
+    </div>
+    <button onclick="closeInstallPopup()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;">✕</button>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:14px;">
+    <button onclick="closeInstallPopup()" style="flex:1;padding:9px;border-radius:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;">Nanti saja</button>
+    <button id="installBtn" onclick="doInstall()" style="flex:2;padding:9px;border-radius:10px;background:#fff;border:none;color:#1a4d8f;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit;">📲 Install Sekarang</button>
+  </div>
+</div>
+
+<style>
+@keyframes slideUp {
+  from { opacity:0; transform:translateX(-50%) translateY(20px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+</style>
 
 <script>
 /* ─── Sidebar mobile ─── */
@@ -1016,6 +1045,39 @@ function toggleTheme() {
   const current = html.getAttribute('data-theme');
   applyTheme(current === 'dark' ? 'light' : 'dark');
 }
+
+/* ─── PWA Install ─── */
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show popup after 3 seconds
+  const dismissed = sessionStorage.getItem('install-dismissed');
+  if (!dismissed) {
+    setTimeout(() => {
+      document.getElementById('installPopup').style.display = 'block';
+    }, 3000);
+  }
+});
+
+function closeInstallPopup() {
+  document.getElementById('installPopup').style.display = 'none';
+  sessionStorage.setItem('install-dismissed', '1');
+}
+
+async function doInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  }
+  closeInstallPopup();
+}
+
+window.addEventListener('appinstalled', () => {
+  closeInstallPopup();
+});
 </script>
 
 </body>
