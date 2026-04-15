@@ -1,41 +1,61 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-83WBBEE5BG');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bantu Guru Yuk</title>
+<link rel="icon" href="guru-cibisd2.png" type="image/png"/>
 <link rel="manifest" href="./manifest.json"/>
-<meta name="theme-color" content="#2563EB"/>
+<meta name="theme-color" content="#3B82C4"/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ─── TOKENS ─── */
 :root {
+  /* Brand */
   --blue-1: #2563EB;
   --blue-2: #3B82F6;
   --teal-1: #0D9488;
   --teal-2: #14B8A6;
   --grad: linear-gradient(135deg, #2563EB 0%, #0D9488 100%);
-  --grad-h: linear-gradient(135deg, #1d55d4 0%, #0a7a70 100%);
+  --grad-soft: linear-gradient(135deg, rgba(37,99,235,.08) 0%, rgba(13,148,136,.08) 100%);
 
-  --bg:       #EFF6FF;
+  /* Surface */
+  --bg:       #F1F5F9;
   --surface:  #FFFFFF;
-  --surface-2:#F0F9FF;
-  --border:   #DBEAFE;
-  --border-2: #BFDBFE;
+  --surface-2:#F8FAFC;
+  --border:   #E2E8F0;
 
+  /* Text */
   --txt-1: #0F172A;
   --txt-2: #475569;
   --txt-3: #94A3B8;
 
+  /* Sidebar */
   --sb-bg:    #0F1E3C;
-  --sb-w:     240px;
-  --rp-w:     280px;
-  --r-sm: 10px; --r-md: 14px; --r-lg: 20px;
+  --sb-w:     256px;
+  --sb-txt:   rgba(255,255,255,.6);
+  --sb-txt-a: #FFFFFF;
+  --sb-item-a: rgba(56,189,248,.15);
+  --sb-item-h: rgba(255,255,255,.06);
+
+  /* Misc */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
   --shadow-sm: 0 1px 4px rgba(15,23,42,.06);
-  --shadow-md: 0 4px 20px rgba(37,99,235,.10);
-  --shadow-lg: 0 10px 40px rgba(37,99,235,.14);
+  --shadow-md: 0 4px 20px rgba(15,23,42,.09);
+  --shadow-lg: 0 12px 40px rgba(15,23,42,.12);
   --trans: all .2s cubic-bezier(.4,0,.2,1);
 }
 
@@ -44,15 +64,17 @@
   --surface:  #112040;
   --surface-2:#162850;
   --border:   #1E3A5F;
-  --border-2: #243f6a;
   --txt-1:    #E2E8F0;
   --txt-2:    #94A3B8;
   --txt-3:    #475569;
-  --shadow-md: 0 4px 20px rgba(0,0,0,.3);
-  --shadow-lg: 0 10px 40px rgba(0,0,0,.4);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.35);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.4);
   --sb-bg:    #071228;
+  --sb-item-a: rgba(56,189,248,.18);
 }
 
+/* ─── BASE ─── */
 html, body { height: 100%; overflow: hidden; }
 body {
   font-family: 'Nunito', sans-serif;
@@ -62,13 +84,15 @@ body {
   transition: background .3s, color .3s;
 }
 a { text-decoration: none; color: inherit; }
+
+/* ─── SCROLLBAR ─── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 99px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 
-/* ═══════════════════
-   LEFT SIDEBAR
-═══════════════════ */
+/* ════════════════════════
+   SIDEBAR
+════════════════════════ */
 .sidebar {
   width: var(--sb-w);
   min-width: var(--sb-w);
@@ -78,16 +102,18 @@ a { text-decoration: none; color: inherit; }
   flex-direction: column;
   flex-shrink: 0;
   position: relative;
-  z-index: 20;
+  z-index: 10;
   overflow: hidden;
   transition: var(--trans);
 }
+
+/* Decorative glow */
 .sidebar::before {
   content: '';
   position: absolute;
   top: -60px; left: -60px;
   width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(37,99,235,.3), transparent 70%);
+  background: radial-gradient(circle, rgba(37,99,235,.25), transparent 70%);
   pointer-events: none;
 }
 .sidebar::after {
@@ -99,441 +125,607 @@ a { text-decoration: none; color: inherit; }
   pointer-events: none;
 }
 
+/* Brand */
 .sb-brand {
-  padding: 20px 16px 16px;
-  display: flex; align-items: center; gap: 10px;
+  padding: 22px 18px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
 .sb-logo {
-  width: 36px; height: 36px;
+  width: 38px; height: 38px;
   border-radius: 10px;
   background: var(--grad);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1rem; flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(37,99,235,.5);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(37,99,235,.4);
 }
-.sb-name { font-size: .85rem; font-weight: 900; color: #fff; line-height: 1.2; }
-.sb-sub  { font-size: .58rem; color: rgba(255,255,255,.35); margin-top: 2px; font-weight: 600; letter-spacing: .2px; }
+.sb-brand-text .sb-name {
+  font-size: .9rem; font-weight: 900;
+  color: #fff;
+  letter-spacing: -.2px;
+  line-height: 1.2;
+}
+.sb-brand-text .sb-sub {
+  font-size: .62rem;
+  color: rgba(255,255,255,.38);
+  margin-top: 3px;
+  line-height: 1.4;
+  font-weight: 500;
+}
 
+/* Section label */
 .sb-section {
-  padding: 18px 16px 5px;
-  font-size: .58rem; font-weight: 800; letter-spacing: 1.3px;
-  text-transform: uppercase; color: rgba(255,255,255,.2);
+  padding: 20px 18px 6px;
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.22);
 }
+
+/* Nav item */
 .nav-item {
-  display: flex; align-items: center; gap: 9px;
-  margin: 2px 8px; padding: 9px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 2px 10px;
+  padding: 10px 12px;
   border-radius: var(--r-sm);
-  color: rgba(255,255,255,.55);
-  font-size: .8rem; font-weight: 700;
-  cursor: pointer; transition: var(--trans); position: relative;
+  color: var(--sb-txt);
+  font-size: .83rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--trans);
+  position: relative;
 }
-.nav-item:hover { background: rgba(255,255,255,.06); color: #fff; }
-.nav-item.active { background: rgba(56,189,248,.14); color: #38BDF8; }
+.nav-item:hover {
+  background: var(--sb-item-h);
+  color: #fff;
+}
+.nav-item.active {
+  background: var(--sb-item-a);
+  color: #38BDF8;
+}
 .nav-item.active::before {
   content: '';
-  position: absolute; left: 0; top: 50%;
+  position: absolute;
+  left: 0; top: 50%;
   transform: translateY(-50%);
   width: 3px; height: 60%;
   background: #38BDF8;
   border-radius: 0 3px 3px 0;
 }
 .nav-icon {
-  width: 28px; height: 28px; border-radius: 7px;
+  width: 30px; height: 30px;
+  border-radius: 8px;
   background: rgba(255,255,255,.06);
   display: flex; align-items: center; justify-content: center;
-  font-size: .9rem; flex-shrink: 0;
+  font-size: .95rem;
+  flex-shrink: 0;
+  transition: var(--trans);
 }
-.nav-item.active .nav-icon { background: rgba(56,189,248,.15); }
-.nav-item.disabled { opacity: .4; pointer-events: none; }
-.nav-badge {
-  margin-left: auto; font-size: .55rem; font-weight: 800;
-  padding: 2px 6px; border-radius: 99px;
-  background: rgba(255,255,255,.07); color: rgba(255,255,255,.28);
+.nav-item.active .nav-icon {
+  background: rgba(56,189,248,.15);
 }
+.nav-item:hover .nav-icon {
+  background: rgba(255,255,255,.1);
+}
+.nav-item.disabled {
+  opacity: .45;
+  pointer-events: none;
+}
+.nav-badge-soon {
+  margin-left: auto;
+  font-size: .58rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.3);
+  letter-spacing: .3px;
+}
+
+/* Sidebar footer */
 .sb-footer {
-  margin-top: auto; padding: 12px 14px;
+  margin-top: auto;
+  padding: 14px 16px;
   border-top: 1px solid rgba(255,255,255,.05);
-  display: flex; align-items: center; gap: 9px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .sb-avatar {
-  width: 30px; height: 30px; border-radius: 50%;
+  width: 32px; height: 32px;
+  border-radius: 50%;
   background: var(--grad);
   display: flex; align-items: center; justify-content: center;
-  font-size: .75rem; font-weight: 900; color: #fff; flex-shrink: 0;
+  font-size: .8rem; font-weight: 900;
+  color: #fff; flex-shrink: 0;
 }
-.sb-fn { font-size: .73rem; font-weight: 800; color: rgba(255,255,255,.7); }
-.sb-fr { font-size: .6rem; color: rgba(255,255,255,.28); margin-top: 1px; }
+.sb-footer-name { font-size: .76rem; font-weight: 800; color: rgba(255,255,255,.7); }
+.sb-footer-role { font-size: .62rem; color: rgba(255,255,255,.3); margin-top: 1px; }
 
-/* ═══════════════════
-   MAIN CENTER
-═══════════════════ */
+/* ════════════════════════
+   MAIN
+════════════════════════ */
 .main {
   flex: 1;
-  min-width: 0;
   overflow-y: auto;
   height: 100vh;
-  padding: 22px 20px 40px;
+  padding: 24px 28px 48px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
 }
 
-/* Topbar */
+/* ─── TOPBAR ─── */
 .topbar {
-  display: flex; align-items: center;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
 }
-.topbar-lbl  { font-size: .68rem; font-weight: 600; color: var(--txt-3); }
-.topbar-title { font-size: 1.1rem; font-weight: 900; color: var(--txt-1); letter-spacing: -.3px; margin-top: 1px; }
-.topbar-right { display: flex; align-items: center; gap: 7px; }
-.icon-btn {
-  width: 36px; height: 36px; border-radius: var(--r-sm);
-  background: var(--surface); border: 1.5px solid var(--border-2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: .95rem; color: var(--txt-2); cursor: pointer;
+.mob-toggle {
+  display: none;
+  width: 36px; height: 36px;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  align-items: center; justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 10px;
+  color: var(--txt-2);
   transition: var(--trans);
 }
-.icon-btn:hover { border-color: var(--blue-2); color: var(--blue-2); }
-.btn-pill {
-  display: flex; align-items: center; gap: 5px;
-  padding: 8px 14px; border-radius: 99px;
-  font-size: .76rem; font-weight: 800;
-  border: none; cursor: pointer; font-family: inherit;
-  transition: var(--trans);
-}
-.btn-grad { background: var(--grad); color: #fff; box-shadow: 0 3px 12px rgba(37,99,235,.3); }
-.btn-grad:hover { background: var(--grad-h); transform: translateY(-1px); box-shadow: 0 5px 18px rgba(37,99,235,.38); }
-.btn-ghost { background: var(--surface); border: 1.5px solid var(--border-2); color: var(--txt-2); }
-.btn-ghost:hover { border-color: var(--blue-2); color: var(--blue-2); }
+.mob-toggle:hover { border-color: var(--blue-2); color: var(--blue-2); }
 
-/* Hero */
+.topbar-left { display: flex; align-items: center; }
+.topbar-lbl {
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--txt-3);
+}
+.topbar-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--txt-1);
+  letter-spacing: -.3px;
+  margin-top: 1px;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+
+/* Dark mode toggle */
+.theme-toggle {
+  width: 38px; height: 38px;
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--txt-2);
+  transition: var(--trans);
+  flex-shrink: 0;
+}
+.theme-toggle:hover { border-color: var(--blue-2); color: var(--blue-2); }
+
+.btn-topbar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  font-size: .78rem; font-weight: 800;
+  border: none; cursor: pointer;
+  font-family: inherit;
+  transition: var(--trans);
+  text-decoration: none;
+}
+.btn-outline {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--txt-2);
+}
+.btn-outline:hover { border-color: var(--blue-2); color: var(--blue-2); }
+.btn-primary {
+  background: var(--grad);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(37,99,235,.28);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,.36); }
+
+/* ─── HERO ─── */
 .hero {
   background: var(--sb-bg);
   border-radius: var(--r-lg);
-  padding: 26px 28px;
-  display: flex; align-items: center; gap: 20px;
-  position: relative; overflow: hidden; flex-shrink: 0;
+  padding: 32px 36px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
 }
+
+/* mesh decorations */
 .hero::before {
   content: '';
-  position: absolute; top: -80px; left: -60px;
-  width: 280px; height: 280px;
-  background: radial-gradient(circle, rgba(37,99,235,.2), transparent 65%);
+  position: absolute;
+  top: -80px; left: -60px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(37,99,235,.18), transparent 65%);
   pointer-events: none;
 }
 .hero::after {
   content: '';
-  position: absolute; bottom: -60px; right: 180px;
-  width: 240px; height: 240px;
+  position: absolute;
+  bottom: -80px; right: 200px;
+  width: 280px; height: 280px;
   background: radial-gradient(circle, rgba(13,148,136,.15), transparent 65%);
   pointer-events: none;
 }
-.hero-geo { position: absolute; top: 10px; right: 10px; opacity: .05; pointer-events: none; }
-.hero-left { flex: 1; position: relative; z-index: 1; }
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.2);
-  border-radius: 99px; padding: 4px 11px;
-  font-size: .67rem; font-weight: 800; color: #38BDF8;
-  letter-spacing: .4px; margin-bottom: 12px;
+.hero-geo {
+  position: absolute;
+  top: 16px; right: 16px;
+  opacity: .06;
+  pointer-events: none;
 }
+
+.hero-left { flex: 1; position: relative; z-index: 1; }
+
+.hero-greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56,189,248,.12);
+  border: 1px solid rgba(56,189,248,.2);
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: .7rem;
+  font-weight: 800;
+  color: #38BDF8;
+  letter-spacing: .4px;
+  margin-bottom: 14px;
+}
+
 .hero-title {
   font-family: 'Playfair Display', serif;
-  font-size: 1.6rem; font-weight: 700; color: #fff;
-  line-height: 1.25; margin-bottom: 6px; letter-spacing: -.3px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 6px;
+  letter-spacing: -.3px;
 }
 .hero-title em {
   font-style: italic;
   background: linear-gradient(90deg, #38BDF8, #34D399);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
+
+.hero-brand {
+  font-size: 1rem;
+  font-weight: 900;
+  color: rgba(255,255,255,.9);
+  margin-bottom: 10px;
+  letter-spacing: -.2px;
+}
+
 .hero-desc {
-  font-size: .77rem; color: rgba(255,255,255,.48);
-  line-height: 1.7; margin-bottom: 16px; max-width: 320px;
+  font-size: .8rem;
+  color: rgba(255,255,255,.48);
+  line-height: 1.7;
+  margin-bottom: 18px;
+  max-width: 340px;
 }
-.hero-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 18px; }
+
+.hero-chips {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
 .hero-chip {
-  display: flex; align-items: center; gap: 4px;
-  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
-  border-radius: 99px; padding: 4px 10px;
-  font-size: .67rem; font-weight: 700; color: rgba(255,255,255,.6);
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: .7rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.65);
 }
-.hero-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
 .btn-hero {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 18px; border-radius: var(--r-sm);
-  font-size: .79rem; font-weight: 800;
-  border: none; cursor: pointer; font-family: inherit;
-  transition: var(--trans); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 20px;
+  border-radius: var(--r-sm);
+  font-size: .82rem; font-weight: 800;
+  border: none; cursor: pointer;
+  font-family: inherit;
+  transition: var(--trans);
+  text-decoration: none;
 }
-.btn-hp { background: var(--grad); color: #fff; box-shadow: 0 4px 16px rgba(37,99,235,.35); }
-.btn-hp:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(37,99,235,.45); }
-.btn-hg { background: rgba(255,255,255,.08); color: rgba(255,255,255,.75); border: 1px solid rgba(255,255,255,.12); }
-.btn-hg:hover { background: rgba(255,255,255,.13); color: #fff; }
+.btn-hero-primary {
+  background: var(--grad);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(37,99,235,.35);
+}
+.btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(37,99,235,.45); }
+.btn-hero-ghost {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.75);
+  border: 1px solid rgba(255,255,255,.12);
+}
+.btn-hero-ghost:hover { background: rgba(255,255,255,.13); color: #fff; }
 
-.hero-right { flex-shrink: 0; width: 200px; position: relative; z-index: 1; }
+/* Quote card */
+.hero-right {
+  flex-shrink: 0;
+  width: 240px;
+  position: relative;
+  z-index: 1;
+}
 .quote-card {
-  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
-  border-radius: var(--r-md); padding: 16px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--r-md);
+  padding: 20px;
+  position: relative;
 }
-.quote-icon { font-size: 1.6rem; line-height: 1; margin-bottom: 8px; opacity: .6; }
-.quote-text { font-size: .77rem; font-weight: 600; color: rgba(255,255,255,.75); line-height: 1.65; font-style: italic; }
-.quote-dots { display: flex; gap: 4px; margin-top: 12px; }
-.quote-dots span { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.2); }
-.quote-dots span:first-child { background: #38BDF8; }
-
-/* Tools grid */
-.section-hd {
-  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+.quote-icon {
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 10px;
+  opacity: .7;
 }
-.section-title { font-size: .9rem; font-weight: 900; color: var(--txt-1); letter-spacing: -.2px; }
-.section-sub { font-size: .7rem; color: var(--txt-2); margin-top: 2px; font-weight: 500; }
+.quote-text {
+  font-size: .82rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.78);
+  line-height: 1.65;
+  font-style: italic;
+}
+.quote-dot {
+  display: flex; gap: 4px; margin-top: 14px;
+}
+.quote-dot span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(255,255,255,.2);
+}
+.quote-dot span:first-child {
+  background: #38BDF8;
+}
 
+/* ─── TOOLS GRID ─── */
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 12px; flex-shrink: 0;
-}
-.tool-card {
-  background: var(--surface);
-  border-radius: var(--r-md);
-  padding: 16px;
-  border: 1.5px solid var(--border);
-  cursor: pointer; text-decoration: none; color: inherit;
-  display: flex; flex-direction: column; gap: 9px;
-  transition: var(--trans); position: relative; overflow: hidden;
-}
-.tool-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-.tc-blue:hover   { border-color: rgba(37,99,235,.4); }
-.tc-teal:hover   { border-color: rgba(13,148,136,.4); }
-.tc-purple:hover { border-color: rgba(124,58,237,.35); }
-.tc-amber:hover  { border-color: rgba(217,119,6,.35); }
-.tc-rose:hover   { border-color: rgba(225,29,72,.35); }
-.tc-sky:hover    { border-color: rgba(14,165,233,.35); }
-.tool-icon-wrap {
-  width: 40px; height: 40px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
-}
-.tc-blue .tool-icon-wrap   { background: rgba(37,99,235,.1); }
-.tc-teal .tool-icon-wrap   { background: rgba(13,148,136,.1); }
-.tc-purple .tool-icon-wrap { background: rgba(124,58,237,.1); }
-.tc-amber .tool-icon-wrap  { background: rgba(217,119,6,.1); }
-.tc-rose .tool-icon-wrap   { background: rgba(225,29,72,.1); }
-.tc-sky .tool-icon-wrap    { background: rgba(14,165,233,.1); }
-.tool-name { font-size: .83rem; font-weight: 900; color: var(--txt-1); line-height: 1.3; }
-.tool-desc { font-size: .7rem; color: var(--txt-2); line-height: 1.5; flex: 1; }
-.tool-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
-.tool-soon { font-size: .58rem; font-weight: 800; padding: 2px 7px; border-radius: 99px; background: var(--surface-2); color: var(--txt-3); border: 1px solid var(--border); }
-.tool-arrow { font-size: .72rem; color: var(--txt-3); transition: var(--trans); }
-.tool-card:hover .tool-arrow { transform: translateX(3px); color: var(--blue-2); }
-.tool-card.coming-soon { opacity: .58; pointer-events: none; }
-
-/* ═══════════════════
-   RIGHT PANEL
-═══════════════════ */
-.right-panel {
-  width: var(--rp-w);
-  min-width: var(--rp-w);
-  height: 100vh;
-  overflow-y: auto;
-  padding: 22px 16px 40px;
-  display: flex; flex-direction: column; gap: 14px;
-  border-left: 1.5px solid var(--border);
-  background: var(--surface);
+  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  gap: 14px;
   flex-shrink: 0;
 }
 
-.rp-card {
-  background: var(--bg);
+.tool-card {
+  background: var(--surface);
   border-radius: var(--r-md);
+  padding: 18px;
   border: 1.5px solid var(--border);
-  padding: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: var(--trans);
+  position: relative;
+  overflow: hidden;
 }
-.rp-title {
-  font-size: .8rem; font-weight: 900; color: var(--txt-1);
-  margin-bottom: 13px; display: flex; align-items: center; gap: 6px;
+.tool-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: var(--r-md);
+  opacity: 0;
+  transition: opacity .2s;
 }
+.tool-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
 
-/* Stats */
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 12px; }
-.stat-item {
-  background: var(--surface); border: 1.5px solid var(--border-2);
-  border-radius: var(--r-sm); padding: 10px; text-align: center;
-}
-.stat-num { font-size: 1.2rem; font-weight: 900; color: var(--txt-1); }
-.stat-lbl { font-size: .58rem; color: var(--txt-3); margin-top: 2px; font-weight: 700; }
+/* color variants */
+.c-blue:hover { border-color: rgba(37,99,235,.35); box-shadow: 0 8px 30px rgba(37,99,235,.1); }
+.c-teal:hover { border-color: rgba(13,148,136,.35); box-shadow: 0 8px 30px rgba(13,148,136,.1); }
+.c-purple:hover { border-color: rgba(124,58,237,.3); }
+.c-amber:hover { border-color: rgba(217,119,6,.3); }
+.c-rose:hover { border-color: rgba(225,29,72,.3); }
+.c-sky:hover { border-color: rgba(14,165,233,.3); }
 
-/* Gradient stat highlight */
-.stat-item.hl .stat-num {
-  background: var(--grad);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+.tool-icon-wrap {
+  width: 42px; height: 42px;
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+}
+.c-blue .tool-icon-wrap   { background: rgba(37,99,235,.1); }
+.c-teal .tool-icon-wrap   { background: rgba(13,148,136,.1); }
+.c-purple .tool-icon-wrap { background: rgba(124,58,237,.1); }
+.c-amber .tool-icon-wrap  { background: rgba(217,119,6,.1); }
+.c-rose .tool-icon-wrap   { background: rgba(225,29,72,.1); }
+.c-sky .tool-icon-wrap    { background: rgba(14,165,233,.1); }
+
+.tool-name {
+  font-size: .86rem; font-weight: 900;
+  color: var(--txt-1);
+  line-height: 1.3;
+}
+.tool-desc {
+  font-size: .73rem; color: var(--txt-2);
+  line-height: 1.55; flex: 1;
+}
+.tool-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 2px;
+}
+.tool-status {
+  font-size: .6rem; font-weight: 800;
+  padding: 3px 8px; border-radius: 99px;
+  letter-spacing: .4px;
+}
+.status-soon {
+  background: var(--surface-2);
+  color: var(--txt-3);
+  border: 1px solid var(--border);
+}
+.tool-arrow {
+  font-size: .75rem; color: var(--txt-3);
+  transition: var(--trans);
+}
+.tool-card:hover .tool-arrow { transform: translateX(3px); color: var(--blue-2); }
+.tool-card.coming-soon { opacity: .6; pointer-events: none; cursor: default; }
+
+/* ─── BOTTOM ROW ─── */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
 }
 
 /* Update log */
-.update-list { display: flex; flex-direction: column; gap: 11px; }
-.update-item { display: flex; gap: 10px; align-items: flex-start; }
-.udot {
-  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
-}
-.d-blue   { background: var(--blue-2); }
-.d-teal   { background: var(--teal-2); }
-.d-amber  { background: #F59E0B; }
-.d-purple { background: #8B5CF6; }
-.ut-title { font-size: .76rem; font-weight: 800; color: var(--txt-1); }
-.ut-sub   { font-size: .67rem; color: var(--txt-3); margin-top: 2px; line-height: 1.4; }
-
-/* Shortcut buttons */
-.shortcut-btn {
-  display: flex; align-items: center; gap: 9px;
-  padding: 10px 12px; border-radius: var(--r-sm);
-  background: var(--surface); border: 1.5px solid var(--border-2);
-  color: var(--txt-2); font-size: .78rem; font-weight: 700;
-  cursor: pointer; transition: var(--trans); text-decoration: none;
-  font-family: inherit; width: 100%; margin-bottom: 7px;
-}
-.shortcut-btn:hover { border-color: var(--blue-2); color: var(--blue-1); background: var(--surface-2); }
-.shortcut-btn:last-child { margin-bottom: 0; }
-.sc-icon {
-  width: 30px; height: 30px; border-radius: 8px;
-  background: var(--grad); display: flex; align-items: center;
-  justify-content: center; font-size: .85rem; flex-shrink: 0;
-}
-
-/* Install banner in right panel */
-.install-banner {
-  background: var(--grad);
-  border-radius: var(--r-md); padding: 16px;
-  position: relative; overflow: hidden; cursor: pointer;
-  border: none; font-family: inherit; width: 100%; text-align: left;
-  transition: var(--trans);
-}
-.install-banner:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-.install-banner::after {
-  content: '';
-  position: absolute; bottom: -30px; right: -20px;
-  width: 100px; height: 100px;
-  background: rgba(255,255,255,.1); border-radius: 50%;
-  pointer-events: none;
-}
-.ib-label { font-size: .62rem; font-weight: 800; color: rgba(255,255,255,.6); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 4px; }
-.ib-title { font-size: .88rem; font-weight: 900; color: #fff; line-height: 1.3; margin-bottom: 6px; }
-.ib-sub   { font-size: .7rem; color: rgba(255,255,255,.65); line-height: 1.5; margin-bottom: 12px; }
-.ib-btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.25);
-  color: #fff; padding: 6px 14px; border-radius: 99px;
-  font-size: .73rem; font-weight: 800; font-family: inherit;
-  cursor: pointer; transition: var(--trans); border: none;
-}
-.ib-btn:hover { background: rgba(255,255,255,.28); }
-
-/* ════════════════════════════
-   INSTALL POPUP MODAL
-════════════════════════════ */
-.modal-bg {
-  position: fixed; inset: 0; z-index: 999;
-  background: rgba(9,18,40,.55);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: opacity .25s;
-}
-.modal-bg.show { opacity: 1; pointer-events: all; }
-.modal {
+.update-card {
   background: var(--surface);
-  border-radius: var(--r-lg);
-  padding: 0;
-  width: 380px; max-width: calc(100vw - 32px);
-  box-shadow: 0 24px 80px rgba(9,18,40,.35);
-  overflow: hidden;
-  transform: translateY(20px) scale(.97);
-  transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .25s;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 20px;
 }
-.modal-bg.show .modal { transform: translateY(0) scale(1); }
+.card-title {
+  font-size: .88rem; font-weight: 900;
+  color: var(--txt-1);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 7px;
+}
 
-.modal-header {
-  background: var(--grad);
-  padding: 28px 28px 24px;
-  position: relative; overflow: hidden;
+.update-list { display: flex; flex-direction: column; gap: 12px; }
+.update-item { display: flex; gap: 12px; align-items: flex-start; }
+.update-line {
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: 4px;
+  flex-shrink: 0;
 }
-.modal-header::before {
+.update-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-blue   { background: var(--blue-2); }
+.dot-teal   { background: var(--teal-2); }
+.dot-amber  { background: #F59E0B; }
+.dot-purple { background: #8B5CF6; }
+
+.ut-title { font-size: .8rem; font-weight: 800; color: var(--txt-1); }
+.ut-sub { font-size: .71rem; color: var(--txt-3); margin-top: 2px; line-height: 1.4; }
+
+/* Social card */
+.social-card {
+  background: var(--sb-bg);
+  border-radius: var(--r-md);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.social-card::before {
   content: '';
-  position: absolute; top: -50px; right: -30px;
-  width: 160px; height: 160px;
-  background: rgba(255,255,255,.1); border-radius: 50%;
+  position: absolute; top: -40px; right: -40px;
+  width: 150px; height: 150px;
+  background: radial-gradient(circle, rgba(37,99,235,.2), transparent 70%);
   pointer-events: none;
 }
-.modal-app-icon {
-  width: 56px; height: 56px; border-radius: 16px;
-  background: rgba(255,255,255,.2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.8rem; margin-bottom: 14px;
-  box-shadow: 0 4px 16px rgba(0,0,0,.2);
-}
-.modal-app-name { font-size: 1.2rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
-.modal-app-url  { font-size: .72rem; color: rgba(255,255,255,.6); font-weight: 600; }
+.social-card .card-title { color: rgba(255,255,255,.7); }
 
-.modal-body { padding: 22px 26px; }
-.modal-title { font-size: 1rem; font-weight: 900; color: var(--txt-1); margin-bottom: 8px; }
-.modal-desc  { font-size: .8rem; color: var(--txt-2); line-height: 1.65; margin-bottom: 18px; }
+.stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; margin-bottom: 14px;
+}
+.stat-item {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r-sm);
+  padding: 11px;
+  text-align: center;
+}
+.stat-num { font-size: 1.3rem; font-weight: 900; color: #fff; }
+.stat-lbl { font-size: .62rem; color: rgba(255,255,255,.38); margin-top: 2px; font-weight: 600; }
 
-.modal-features { display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
-.modal-feat {
-  display: flex; align-items: center; gap: 10px;
-  padding: 9px 12px; border-radius: var(--r-sm);
-  background: var(--bg); border: 1.5px solid var(--border);
-  font-size: .78rem; font-weight: 700; color: var(--txt-1);
+.social-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 9px;
+  border-radius: var(--r-sm);
+  font-size: .77rem; font-weight: 800;
+  text-decoration: none;
+  transition: var(--trans);
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.09);
+  color: rgba(255,255,255,.65);
+  font-family: inherit;
+  cursor: pointer;
+  margin-bottom: 7px;
+  display: flex;
 }
-.modal-feat-icon {
-  width: 28px; height: 28px; border-radius: 7px;
-  background: var(--grad); display: flex; align-items: center;
-  justify-content: center; font-size: .85rem; flex-shrink: 0;
-}
+.social-btn:last-child { margin-bottom: 0; }
+.social-btn:hover { background: rgba(255,255,255,.13); color: #fff; }
 
-.modal-actions { display: flex; gap: 9px; }
-.modal-btn-install {
-  flex: 1; padding: 11px;
-  background: var(--grad); color: #fff;
-  border: none; border-radius: var(--r-sm);
-  font-size: .82rem; font-weight: 900;
-  font-family: inherit; cursor: pointer;
-  box-shadow: 0 4px 14px rgba(37,99,235,.3);
-  transition: var(--trans); display: flex; align-items: center; justify-content: center; gap: 6px;
+/* ─── MOBILE OVERLAY ─── */
+.mob-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 190;
+  opacity: 0;
+  transition: opacity .3s;
 }
-.modal-btn-install:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,.4); }
-.modal-btn-later {
-  padding: 11px 16px;
-  background: var(--surface); border: 1.5px solid var(--border-2);
-  border-radius: var(--r-sm); color: var(--txt-2);
-  font-size: .78rem; font-weight: 800;
-  font-family: inherit; cursor: pointer; transition: var(--trans);
-}
-.modal-btn-later:hover { border-color: var(--txt-3); }
+.mob-overlay.show { display: block; opacity: 1; }
 
-.modal-note {
-  font-size: .65rem; color: var(--txt-3);
-  text-align: center; margin-top: 12px; line-height: 1.6;
-}
-
-/* Mobile */
+/* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {
-  .sidebar { display: none; }
-  .right-panel { display: none; }
+  .sidebar {
+    position: fixed; left: -260px; top: 0;
+    height: 100vh; z-index: 200;
+    transition: left .3s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar.open { left: 0; }
+  .mob-toggle { display: flex !important; }
+  .main { padding: 16px 16px 48px; }
+  .hero { flex-direction: column; padding: 24px 22px; }
+  .hero-right { width: 100%; }
+  .bottom-row { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 1100px) {
-  :root { --rp-w: 250px; }
+@media (max-width: 520px) {
+  .tools-grid { grid-template-columns: 1fr; }
+  .hero-btns { flex-direction: column; }
+  .btn-hero { justify-content: center; }
+  .hero-title { font-size: 1.4rem; }
 }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero       { animation: fadeUp .5s ease both; }
+.tools-grid { animation: fadeUp .5s .1s ease both; }
+.bottom-row { animation: fadeUp .5s .2s ease both; }
 </style>
 </head>
 <body>
 
-<!-- ════ LEFT SIDEBAR ════ -->
+<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
+<!-- ════ SIDEBAR ════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sb-brand">
-    <div class="sb-logo">🎓</div>
-    <div>
+    <div class="sb-logo">✦</div>
+    <div class="sb-brand-text">
       <div class="sb-name">Bantu Guru Yuk</div>
-      <div class="sb-sub">Kurikulum Merdeka · AI</div>
+      <div class="sb-sub">Mempermudah kerja Bapak/Ibu<br>Guru hebat</div>
     </div>
   </div>
 
@@ -543,323 +735,288 @@ a { text-decoration: none; color: inherit; }
     <div class="nav-icon">🏠</div>
     Dashboard
   </a>
+  <a href="/lkpd" class="nav-item">
+    <div class="nav-icon">📘</div>
+    Generator Prompt LKPD
+  </a>
   <a href="/soal" class="nav-item">
     <div class="nav-icon">📝</div>
     Buat Soal
-  </a>
-  <a href="/lkpd" class="nav-item">
-    <div class="nav-icon">📘</div>
-    Generator LKPD
-  </a>
-  <a href="/histori" class="nav-item">
-    <div class="nav-icon">🕐</div>
-    Histori
   </a>
 
   <div class="sb-section">Segera Hadir</div>
 
   <a class="nav-item disabled">
-    <div class="nav-icon">🗓️</div>
-    RPP Generator
-    <span class="nav-badge">Soon</span>
-  </a>
-  <a class="nav-item disabled">
     <div class="nav-icon">📊</div>
     Rapor Otomatis
-    <span class="nav-badge">Soon</span>
+    <span class="nav-badge-soon">Soon</span>
+  </a>
+  <a class="nav-item disabled">
+    <div class="nav-icon">🗓️</div>
+    RPP Generator
+    <span class="nav-badge-soon">Soon</span>
+  </a>
+  <a class="nav-item disabled">
+    <div class="nav-icon">🖼️</div>
+    Media Ajar AI
+    <span class="nav-badge-soon">Soon</span>
   </a>
   <a class="nav-item disabled">
     <div class="nav-icon">📋</div>
     Absensi Digital
-    <span class="nav-badge">Soon</span>
+    <span class="nav-badge-soon">Soon</span>
   </a>
   <a class="nav-item disabled">
     <div class="nav-icon">🏆</div>
     Bank Soal
-    <span class="nav-badge">Soon</span>
-  </a>
-
-  <div class="sb-section">Bantuan</div>
-  <a href="#" class="nav-item">
-    <div class="nav-icon">❓</div>
-    Tentang
-  </a>
-  <a href="https://wa.me/6289530713597" class="nav-item">
-    <div class="nav-icon">💬</div>
-    Kontak
+    <span class="nav-badge-soon">Soon</span>
   </a>
 
   <div class="sb-footer">
     <div class="sb-avatar">P</div>
     <div>
-      <div class="sb-fn">Pak Choyy</div>
-      <div class="sb-fr">@pak.choyy · TikTok</div>
+      <div class="sb-footer-name">Pak Choyy</div>
+      <div class="sb-footer-role">@pak.choyy · TikTok</div>
     </div>
   </div>
 </aside>
 
-<!-- ════ MAIN CONTENT ════ -->
+<!-- ════ MAIN ════ -->
 <main class="main">
 
   <!-- Topbar -->
   <div class="topbar">
-    <div>
-      <div class="topbar-lbl">Platform edukasi AI untuk guru SD</div>
-      <div class="topbar-title">Dashboard</div>
+    <div class="topbar-left">
+      <button class="mob-toggle" id="mobMenu" onclick="openSidebar()">☰</button>
+      <div>
+        <div class="topbar-lbl">Platform edukasi AI untuk guru SD</div>
+        <div class="topbar-title">Bantu Guru Yuk</div>
+      </div>
     </div>
     <div class="topbar-right">
-      <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="Ganti tema">🌙</button>
-      <a href="https://tiktok.com/@pak.choyy" target="_blank" class="btn-pill btn-ghost">🎵 TikTok</a>
-      <a href="https://wa.me/6289530713597" target="_blank" class="btn-pill btn-grad">💬 Hubungi</a>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti tema">🌙</button>
+      <a href="https://tiktok.com/@pak.choyy" target="_blank" class="btn-topbar btn-outline">🎵 TikTok</a>
+      <a href="https://wa.me/6289530713597" target="_blank" class="btn-topbar btn-primary">💬 Hubungi</a>
     </div>
   </div>
 
   <!-- Hero -->
   <div class="hero">
-    <svg class="hero-geo" width="180" height="180" viewBox="0 0 180 180" fill="none">
-      <circle cx="90" cy="90" r="72" stroke="white" stroke-width="1"/>
-      <circle cx="90" cy="90" r="48" stroke="white" stroke-width="1"/>
-      <circle cx="90" cy="90" r="24" stroke="white" stroke-width="1"/>
-      <line x1="18" y1="90" x2="162" y2="90" stroke="white" stroke-width="1"/>
-      <line x1="90" y1="18" x2="90" y2="162" stroke="white" stroke-width="1"/>
+    <!-- Decorative SVG -->
+    <svg class="hero-geo" width="200" height="200" viewBox="0 0 200 200" fill="none">
+      <circle cx="100" cy="100" r="80" stroke="white" stroke-width="1"/>
+      <circle cx="100" cy="100" r="55" stroke="white" stroke-width="1"/>
+      <circle cx="100" cy="100" r="30" stroke="white" stroke-width="1"/>
+      <line x1="20" y1="100" x2="180" y2="100" stroke="white" stroke-width="1"/>
+      <line x1="100" y1="20" x2="100" y2="180" stroke="white" stroke-width="1"/>
     </svg>
 
     <div class="hero-left">
-      <div class="hero-badge">👋 Selamat datang, Bapak/Ibu Guru Hebat</div>
-      <div class="hero-title">Bantu Guru <em>Yuk!</em></div>
-      <div class="hero-desc">✦ AI Tools untuk Bapak/Ibu Guru SD membuat perangkat pembelajaran berkualitas, sesuai Kurikulum Merdeka.</div>
+      <div class="hero-greeting">
+        <span>👋</span>
+        Selamat datang, Bapak/Ibu Guru Hebat
+      </div>
+
+      <div class="hero-title">
+        Bantu Guru <em>Yuk!</em>
+      </div>
+
+      <div class="hero-desc">
+        ✦ AI Tools untuk membantu Bapak/Ibu Guru SD dalam membuat perangkat pembelajaran yang berkualitas dan sesuai Kurikulum Merdeka.
+      </div>
+
       <div class="hero-chips">
         <div class="hero-chip">⚡ Cepat &amp; praktis</div>
         <div class="hero-chip">🖱️ Mulai dalam 1 klik</div>
         <div class="hero-chip">🎓 Kurikulum Merdeka</div>
       </div>
+
       <div class="hero-btns">
-        <a href="/soal" class="btn-hero btn-hp">📝 Buat Soal Sekarang</a>
-        <a href="/lkpd" class="btn-hero btn-hg">📘 Generator LKPD</a>
+        <a href="/soal" class="btn-hero btn-hero-primary">📝 Buat Soal Sekarang</a>
+        <a href="/lkpd" class="btn-hero btn-hero-ghost">📘 Generator LKPD</a>
       </div>
     </div>
 
     <div class="hero-right">
       <div class="quote-card">
         <div class="quote-icon">"</div>
-        <div class="quote-text">AI tidak menggantikan guru, tetapi membantu membuat pembelajaran lebih efektif.</div>
-        <div class="quote-dots"><span></span><span></span><span></span></div>
+        <div class="quote-text">
+          AI tidak menggantikan guru, tetapi membantu membuat pembelajaran lebih efektif.
+        </div>
+        <div class="quote-dot">
+          <span></span><span></span><span></span>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Section header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div>
+      <div style="font-size:.95rem;font-weight:900;color:var(--txt-1);letter-spacing:-.2px;">🛠️ Fitur Tersedia</div>
+      <div style="font-size:.73rem;color:var(--txt-2);margin-top:2px;font-weight:500;">Klik untuk mulai menggunakan</div>
     </div>
   </div>
 
   <!-- Tools -->
-  <div class="section-hd">
-    <div>
-      <div class="section-title">🛠️ Fitur Tersedia</div>
-      <div class="section-sub">Klik untuk mulai menggunakan</div>
+  <div class="tools-grid">
+    <a href="/soal" class="tool-card c-blue">
+      <div class="tool-icon-wrap">📝</div>
+      <div class="tool-name">Buat Soal</div>
+      <div class="tool-desc">Generate soal PG, isian & uraian otomatis sesuai Kurikulum Merdeka. Ekspor ke Word & PDF.</div>
+      <div class="tool-foot">
+        <span class="tool-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="/lkpd" class="tool-card c-teal">
+      <div class="tool-icon-wrap">📘</div>
+      <div class="tool-name">Generator Prompt LKPD</div>
+      <div class="tool-desc">Buat Lembar Kerja Peserta Didik dengan prompt AI dan generate gambar media ajar.</div>
+      <div class="tool-foot">
+        <span class="tool-arrow">→</span>
+      </div>
+    </a>
+
+    <div class="tool-card c-purple coming-soon">
+      <div class="tool-icon-wrap">🗓️</div>
+      <div class="tool-name">RPP Generator</div>
+      <div class="tool-desc">Buat Rencana Pelaksanaan Pembelajaran lengkap sesuai format Kurikulum Merdeka.</div>
+      <div class="tool-foot">
+        <span class="tool-status status-soon">SEGERA</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card c-amber coming-soon">
+      <div class="tool-icon-wrap">📊</div>
+      <div class="tool-name">Rapor Otomatis</div>
+      <div class="tool-desc">Input nilai siswa, sistem generate deskripsi rapor otomatis per mata pelajaran.</div>
+      <div class="tool-foot">
+        <span class="tool-status status-soon">SEGERA</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card c-rose coming-soon">
+      <div class="tool-icon-wrap">🏆</div>
+      <div class="tool-name">Bank Soal</div>
+      <div class="tool-desc">Simpan & kelola kumpulan soal yang sudah dibuat. Bisa digunakan ulang kapanpun.</div>
+      <div class="tool-foot">
+        <span class="tool-status status-soon">SEGERA</span>
+        <span class="tool-arrow">→</span>
+      </div>
+    </div>
+
+    <div class="tool-card c-sky coming-soon">
+      <div class="tool-icon-wrap">📋</div>
+      <div class="tool-name">Absensi Digital</div>
+      <div class="tool-desc">Kelola absensi siswa digital, rekap otomatis per bulan & unduh laporan.</div>
+      <div class="tool-foot">
+        <span class="tool-status status-soon">SEGERA</span>
+        <span class="tool-arrow">→</span>
+      </div>
     </div>
   </div>
 
-  <div class="tools-grid">
-    <a href="/soal" class="tool-card tc-blue">
-      <div class="tool-icon-wrap">📝</div>
-      <div class="tool-name">Buat Soal</div>
-      <div class="tool-desc">Generate soal PG, isian & uraian otomatis. Ekspor ke Word & PDF.</div>
-      <div class="tool-foot"><span class="tool-arrow">→</span></div>
-    </a>
-    <a href="/lkpd" class="tool-card tc-teal">
-      <div class="tool-icon-wrap">📘</div>
-      <div class="tool-name">Generator LKPD</div>
-      <div class="tool-desc">Buat Lembar Kerja Peserta Didik dengan prompt AI dan generate gambar.</div>
-      <div class="tool-foot"><span class="tool-arrow">→</span></div>
-    </a>
-    <div class="tool-card tc-purple coming-soon">
-      <div class="tool-icon-wrap">🗓️</div>
-      <div class="tool-name">RPP Generator</div>
-      <div class="tool-desc">Buat RPP lengkap sesuai format Kurikulum Merdeka secara otomatis.</div>
-      <div class="tool-foot"><span class="tool-soon">SEGERA</span><span class="tool-arrow">→</span></div>
+  <!-- Bottom row -->
+  <div class="bottom-row">
+
+    <div class="update-card">
+      <div class="card-title">📌 Update Terbaru</div>
+      <div class="update-list">
+        <div class="update-item">
+          <div class="update-line"><div class="update-dot dot-blue"></div></div>
+          <div>
+            <div class="ut-title">Export Word diperbaiki</div>
+            <div class="ut-sub">Kop surat kini tampil rapi di Microsoft Word — April 2026</div>
+          </div>
+        </div>
+        <div class="update-item">
+          <div class="update-line"><div class="update-dot dot-teal"></div></div>
+          <div>
+            <div class="ut-title">Default Kelas 2 & Bahasa Indonesia</div>
+            <div class="ut-sub">Form Buat Soal otomatis pilih kelas 2 saat pertama buka</div>
+          </div>
+        </div>
+        <div class="update-item">
+          <div class="update-line"><div class="update-dot dot-purple"></div></div>
+          <div>
+            <div class="ut-title">Error handling API lebih baik</div>
+            <div class="ut-sub">Pesan error kini lebih informatif ketika API gagal</div>
+          </div>
+        </div>
+        <div class="update-item">
+          <div class="update-line"><div class="update-dot dot-amber"></div></div>
+          <div>
+            <div class="ut-title">Dashboard baru diluncurkan</div>
+            <div class="ut-sub">Landing page upgrade dengan layout panel — April 2026</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="tool-card tc-amber coming-soon">
-      <div class="tool-icon-wrap">📊</div>
-      <div class="tool-name">Rapor Otomatis</div>
-      <div class="tool-desc">Input nilai siswa, generate deskripsi rapor otomatis per mapel.</div>
-      <div class="tool-foot"><span class="tool-soon">SEGERA</span><span class="tool-arrow">→</span></div>
+
+    <div class="social-card">
+      <div class="card-title">📣 Info Platform</div>
+      <div class="stat-grid">
+        <div class="stat-item">
+          <div class="stat-num">2+</div>
+          <div class="stat-lbl">Fitur Aktif</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">6</div>
+          <div class="stat-lbl">Kelas SD</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">AI</div>
+          <div class="stat-lbl">Gemini 2.5</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">Free</div>
+          <div class="stat-lbl">Selamanya</div>
+        </div>
+      </div>
+      <a href="https://tiktok.com/@pak.choyy" target="_blank" class="social-btn">🎵 @pak.choyy di TikTok</a>
+      <a href="https://wa.me/6289530713597" target="_blank" class="social-btn">💬 Chat WhatsApp</a>
     </div>
-    <div class="tool-card tc-rose coming-soon">
-      <div class="tool-icon-wrap">🏆</div>
-      <div class="tool-name">Bank Soal</div>
-      <div class="tool-desc">Simpan & kelola kumpulan soal. Bisa digunakan ulang kapanpun.</div>
-      <div class="tool-foot"><span class="tool-soon">SEGERA</span><span class="tool-arrow">→</span></div>
-    </div>
-    <div class="tool-card tc-sky coming-soon">
-      <div class="tool-icon-wrap">📋</div>
-      <div class="tool-name">Absensi Digital</div>
-      <div class="tool-desc">Kelola absensi siswa digital, rekap otomatis & unduh laporan.</div>
-      <div class="tool-foot"><span class="tool-soon">SEGERA</span><span class="tool-arrow">→</span></div>
-    </div>
+
   </div>
 
 </main>
 
-<!-- ════ RIGHT PANEL ════ -->
-<aside class="right-panel">
-
-  <!-- Install Banner -->
-  <button class="install-banner" onclick="showInstallModal()">
-    <div class="ib-label">📲 Web App</div>
-    <div class="ib-title">Install di perangkatmu</div>
-    <div class="ib-sub">Akses lebih cepat, bisa offline, dan tampil seperti aplikasi native.</div>
-    <span class="ib-btn">⬇ Install Sekarang</span>
-  </button>
-
-  <!-- Stats -->
-  <div class="rp-card">
-    <div class="rp-title">📊 Info Platform</div>
-    <div class="stat-grid">
-      <div class="stat-item hl"><div class="stat-num">2+</div><div class="stat-lbl">Fitur Aktif</div></div>
-      <div class="stat-item hl"><div class="stat-num">6</div><div class="stat-lbl">Kelas SD</div></div>
-      <div class="stat-item"><div class="stat-num" style="font-size:.9rem;">Gemini</div><div class="stat-lbl">2.5 Flash</div></div>
-      <div class="stat-item"><div class="stat-num" style="font-size:.9rem;color:var(--teal-1)">Free</div><div class="stat-lbl">Selamanya</div></div>
-    </div>
-    <a href="https://tiktok.com/@pak.choyy" target="_blank" class="shortcut-btn">
-      <div class="sc-icon">🎵</div>
-      @pak.choyy di TikTok
-    </a>
-    <a href="https://wa.me/6289530713597" target="_blank" class="shortcut-btn">
-      <div class="sc-icon">💬</div>
-      Chat WhatsApp
-    </a>
-  </div>
-
-  <!-- Update log -->
-  <div class="rp-card">
-    <div class="rp-title">📌 Update Terbaru</div>
-    <div class="update-list">
-      <div class="update-item">
-        <div class="udot d-blue" style="margin-top:4px;"></div>
-        <div>
-          <div class="ut-title">Export Word diperbaiki</div>
-          <div class="ut-sub">Kop surat rapi di Microsoft Word — April 2026</div>
-        </div>
-      </div>
-      <div class="update-item">
-        <div class="udot d-teal" style="margin-top:4px;"></div>
-        <div>
-          <div class="ut-title">Default Kelas 2 & B. Indonesia</div>
-          <div class="ut-sub">Form otomatis pilih kelas 2 saat buka</div>
-        </div>
-      </div>
-      <div class="update-item">
-        <div class="udot d-purple" style="margin-top:4px;"></div>
-        <div>
-          <div class="ut-title">Error handling lebih baik</div>
-          <div class="ut-sub">Pesan error lebih informatif ketika API gagal</div>
-        </div>
-      </div>
-      <div class="update-item">
-        <div class="udot d-amber" style="margin-top:4px;"></div>
-        <div>
-          <div class="ut-title">Dashboard baru diluncurkan</div>
-          <div class="ut-sub">Layout panel upgrade — April 2026</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</aside>
-
-<!-- ════ INSTALL POPUP ════ -->
-<div class="modal-bg" id="installModal" onclick="handleModalBgClick(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-app-icon">🎓</div>
-      <div class="modal-app-name">Bantu Guru Yuk</div>
-      <div class="modal-app-url">bantuguruyuk.web.id</div>
-    </div>
-    <div class="modal-body">
-      <div class="modal-title">Install Aplikasi Web</div>
-      <div class="modal-desc">Pasang Bantu Guru Yuk di layar utama perangkatmu — akses instan tanpa buka browser, terasa seperti aplikasi asli.</div>
-      <div class="modal-features">
-        <div class="modal-feat">
-          <div class="modal-feat-icon">⚡</div>
-          Akses lebih cepat dari layar utama
-        </div>
-        <div class="modal-feat">
-          <div class="modal-feat-icon">📴</div>
-          Bisa digunakan saat offline
-        </div>
-        <div class="modal-feat">
-          <div class="modal-feat-icon">🔔</div>
-          Notifikasi update fitur baru
-        </div>
-        <div class="modal-feat">
-          <div class="modal-feat-icon">📱</div>
-          Tampilan fullscreen seperti native app
-        </div>
-      </div>
-      <div class="modal-actions">
-        <button class="modal-btn-install" onclick="installPWA()">⬇ Install Sekarang</button>
-        <button class="modal-btn-later" onclick="closeInstallModal()">Nanti</button>
-      </div>
-      <div class="modal-note">Gratis selamanya · Tidak butuh Play Store atau App Store · Data tersimpan aman</div>
-    </div>
-  </div>
-</div>
-
 <script>
-/* ─── Theme ─── */
+/* ─── Sidebar mobile ─── */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('mobOverlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobOverlay').classList.remove('show');
+}
+
+/* ─── Dark mode ─── */
 const html = document.documentElement;
 const toggleBtn = document.getElementById('themeToggle');
-function applyTheme(t) {
-  html.setAttribute('data-theme', t);
-  toggleBtn.textContent = t === 'dark' ? '☀️' : '🌙';
-  localStorage.setItem('bgy-theme', t);
+
+function applyTheme(theme) {
+  html.setAttribute('data-theme', theme);
+  toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('bgy-theme', theme);
 }
+
+// Init on load
 (function(){
   const saved = localStorage.getItem('bgy-theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   applyTheme(saved || (prefersDark ? 'dark' : 'light'));
 })();
+
 function toggleTheme() {
-  applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  const current = html.getAttribute('data-theme');
+  applyTheme(current === 'dark' ? 'light' : 'dark');
 }
-
-/* ─── PWA Install ─── */
-let deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-});
-
-function showInstallModal() {
-  document.getElementById('installModal').classList.add('show');
-}
-function closeInstallModal() {
-  document.getElementById('installModal').classList.remove('show');
-}
-function handleModalBgClick(e) {
-  if (e.target === document.getElementById('installModal')) closeInstallModal();
-}
-async function installPWA() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    closeInstallModal();
-  } else {
-    // Fallback: show manual instruction
-    alert('Untuk menginstall:\n\n📱 Android/Chrome: Ketuk menu ⋮ → "Tambahkan ke layar utama"\n🍎 iOS/Safari: Ketuk ikon Share → "Tambahkan ke Layar Utama"\n💻 Desktop: Klik ikon install di address bar browser');
-    closeInstallModal();
-  }
-}
-
-/* ─── Auto-show install popup after 3s (first visit) ─── */
-(function(){
-  const shown = sessionStorage.getItem('install-shown');
-  if (!shown) {
-    setTimeout(() => {
-      showInstallModal();
-      sessionStorage.setItem('install-shown', '1');
-    }, 2800);
-  }
-})();
 </script>
+
 </body>
 </html>
