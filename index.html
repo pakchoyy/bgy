@@ -42,12 +42,15 @@
   --txt-3: #94A3B8;
 
   /* Sidebar */
-  --sb-bg:    linear-gradient(160deg, #1a6b4a 0%, #1a4d8f 60%, #1a3a7a 100%);
+  --sb-bg:    linear-gradient(160deg, rgba(219,234,254,.6) 0%, rgba(224,242,254,.5) 60%, rgba(240,249,255,.45) 100%);
   --sb-w:     256px;
-  --sb-txt:   rgba(255,255,255,.6);
-  --sb-txt-a: #FFFFFF;
-  --sb-item-a: rgba(56,189,248,.15);
-  --sb-item-h: rgba(255,255,255,.06);
+  --sb-txt:   rgba(30,64,175,.65);
+  --sb-txt-a: #1E40AF;
+  --sb-item-a: rgba(37,99,235,.12);
+  --sb-item-h: rgba(37,99,235,.07);
+
+  /* Sidebar brand header — matches soal page header (image 2) */
+  --sb-brand-bg: linear-gradient(135deg, #3B82C4 0%, #2a9d8f 100%);
 
   /* Misc */
   --r-sm: 10px;
@@ -70,8 +73,9 @@
   --shadow-sm: 0 1px 4px rgba(0,0,0,.3);
   --shadow-md: 0 4px 20px rgba(0,0,0,.35);
   --shadow-lg: 0 12px 40px rgba(0,0,0,.4);
-  --sb-bg:    linear-gradient(160deg, #0e4a30 0%, #0f3060 60%, #0a2050 100%);
-  --sb-item-a: rgba(56,189,248,.18);
+  --sb-bg:    linear-gradient(160deg, #1a3a6e 0%, #12305a 60%, #0e2548 100%);
+  --sb-item-a: rgba(96,165,250,.18);
+  --sb-brand-bg: linear-gradient(135deg, #2a6aaa 0%, #1e7a6e 100%);
 }
 
 /* ─── BASE ─── */
@@ -107,15 +111,7 @@ a { text-decoration: none; color: inherit; }
   transition: var(--trans);
 }
 
-/* Decorative glow */
-.sidebar::before {
-  content: '';
-  position: absolute;
-  top: -60px; left: -60px;
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(37,99,235,.25), transparent 70%);
-  pointer-events: none;
-}
+/* Decorative glow — only for body area, not brand */
 .sidebar::after {
   content: '';
   position: absolute;
@@ -125,18 +121,31 @@ a { text-decoration: none; color: inherit; }
   pointer-events: none;
 }
 
-/* Brand */
+/* Brand — warna header soal (gambar 2) */
 .sb-brand {
   padding: 22px 18px 18px;
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
+  background: var(--sb-brand-bg);
+  position: relative;
+  z-index: 1;
+  border-bottom: 1px solid rgba(255,255,255,.15);
 }
+
+/* subtle shine overlay on brand */
+.sb-brand::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.08) 0%, transparent 100%);
+  pointer-events: none;
+}
+
 .sb-logo {
   width: 42px; height: 42px;
   border-radius: 10px;
-  background: transparent;
+  background: rgba(255,255,255,.15);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
@@ -153,7 +162,7 @@ a { text-decoration: none; color: inherit; }
 }
 .sb-brand-text .sb-sub {
   font-size: .62rem;
-  color: rgba(255,255,255,.38);
+  color: rgba(255,255,255,.7);
   margin-top: 3px;
   line-height: 1.4;
   font-weight: 500;
@@ -166,7 +175,7 @@ a { text-decoration: none; color: inherit; }
   font-weight: 800;
   letter-spacing: 1.4px;
   text-transform: uppercase;
-  color: rgba(255,255,255,.22);
+  color: rgba(30,64,175,.35);
 }
 
 /* Nav item */
@@ -190,7 +199,7 @@ a { text-decoration: none; color: inherit; }
 }
 .nav-item.active {
   background: var(--sb-item-a);
-  color: #38BDF8;
+  color: #1D4ED8;
 }
 .nav-item.active::before {
   content: '';
@@ -198,23 +207,23 @@ a { text-decoration: none; color: inherit; }
   left: 0; top: 50%;
   transform: translateY(-50%);
   width: 3px; height: 60%;
-  background: #38BDF8;
+  background: #1D4ED8;
   border-radius: 0 3px 3px 0;
 }
 .nav-icon {
   width: 30px; height: 30px;
   border-radius: 8px;
-  background: rgba(255,255,255,.06);
+  background: rgba(37,99,235,.06);
   display: flex; align-items: center; justify-content: center;
   font-size: .95rem;
   flex-shrink: 0;
   transition: var(--trans);
 }
 .nav-item.active .nav-icon {
-  background: rgba(56,189,248,.15);
+  background: rgba(37,99,235,.1);
 }
 .nav-item:hover .nav-icon {
-  background: rgba(255,255,255,.1);
+  background: rgba(37,99,235,.1);
 }
 .nav-item.disabled {
   opacity: .45;
@@ -226,8 +235,8 @@ a { text-decoration: none; color: inherit; }
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 99px;
-  background: rgba(255,255,255,.07);
-  color: rgba(255,255,255,.3);
+  background: rgba(37,99,235,.07);
+  color: rgba(30,64,175,.4);
   letter-spacing: .3px;
 }
 
@@ -235,7 +244,7 @@ a { text-decoration: none; color: inherit; }
 .sb-footer {
   margin-top: auto;
   padding: 14px 16px;
-  border-top: 1px solid rgba(255,255,255,.05);
+  border-top: 1px solid rgba(37,99,235,.1);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -248,8 +257,8 @@ a { text-decoration: none; color: inherit; }
   font-size: .8rem; font-weight: 900;
   color: #fff; flex-shrink: 0;
 }
-.sb-footer-name { font-size: .76rem; font-weight: 800; color: rgba(255,255,255,.7); }
-.sb-footer-role { font-size: .62rem; color: rgba(255,255,255,.3); margin-top: 1px; }
+.sb-footer-name { font-size: .76rem; font-weight: 800; color: rgba(30,64,175,.7); }
+.sb-footer-role { font-size: .62rem; color: rgba(30,64,175,.4); margin-top: 1px; }
 
 /* ════════════════════════
    MAIN
@@ -466,7 +475,7 @@ a { text-decoration: none; color: inherit; }
 }
 .btn-hero-ghost:hover { background: rgba(255,255,255,.13); color: #fff; }
 
-/* Quote card */
+/* ─── QUOTE CARD — warna referensi gambar 2 (header soal), 60% opacity ─── */
 .hero-right {
   flex-shrink: 0;
   width: 240px;
@@ -474,34 +483,66 @@ a { text-decoration: none; color: inherit; }
   z-index: 1;
 }
 .quote-card {
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(59, 130, 196, 0.6); /* #3B82C4 at 60% */
+  /* gradient matching soal header at 60% opacity */
+  background: linear-gradient(135deg, rgba(59,130,196,.6) 0%, rgba(42,157,143,.6) 100%);
+  border: 1px solid rgba(255,255,255,.25);
   border-radius: var(--r-md);
   padding: 20px;
   position: relative;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
+
+/* Quote slider */
+.quote-slider {
+  position: relative;
+  min-height: 90px;
+  overflow: hidden;
+}
+.quote-slide {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .5s ease, transform .5s ease;
+  pointer-events: none;
+}
+.quote-slide.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  position: relative;
+}
+
 .quote-icon {
   font-size: 2rem;
   line-height: 1;
   margin-bottom: 10px;
-  opacity: .7;
+  opacity: .85;
+  color: #fff;
 }
 .quote-text {
   font-size: .82rem;
   font-weight: 600;
-  color: rgba(255,255,255,.78);
+  color: rgba(255,255,255,.92);
   line-height: 1.65;
   font-style: italic;
 }
 .quote-dot {
-  display: flex; gap: 4px; margin-top: 14px;
+  display: flex; gap: 5px; margin-top: 14px;
+  align-items: center;
 }
 .quote-dot span {
   width: 5px; height: 5px; border-radius: 50%;
-  background: rgba(255,255,255,.2);
+  background: rgba(255,255,255,.35);
+  transition: all .3s ease;
+  cursor: pointer;
 }
-.quote-dot span:first-child {
-  background: #38BDF8;
+.quote-dot span.dot-active {
+  background: #fff;
+  width: 14px;
+  border-radius: 3px;
 }
 
 /* ─── TOOLS GRID ─── */
@@ -670,7 +711,6 @@ a { text-decoration: none; color: inherit; }
   font-family: inherit;
   cursor: pointer;
   margin-bottom: 7px;
-  display: flex;
 }
 .social-btn:last-child { margin-bottom: 0; }
 .social-btn:hover { background: rgba(255,255,255,.13); color: #fff; }
@@ -838,14 +878,27 @@ a { text-decoration: none; color: inherit; }
       </div>
     </div>
 
+    <!-- Quote card kanan — auto slider 3 quotes -->
     <div class="hero-right">
       <div class="quote-card">
         <div class="quote-icon">"</div>
-        <div class="quote-text">
-          AI tidak menggantikan guru, tetapi membantu membuat pembelajaran lebih efektif.
+
+        <div class="quote-slider" id="quoteSlider">
+          <div class="quote-slide active" data-index="0">
+            <div class="quote-text">AI tidak menggantikan guru, tetapi membantu membuat pembelajaran lebih efektif.</div>
+          </div>
+          <div class="quote-slide" data-index="1">
+            <div class="quote-text">Bukan soal kerja lebih keras, tapi kerja lebih cerdas.</div>
+          </div>
+          <div class="quote-slide" data-index="2">
+            <div class="quote-text">Hemat waktu membuat soal, maksimalkan waktu mengajar.</div>
+          </div>
         </div>
-        <div class="quote-dot">
-          <span></span><span></span><span></span>
+
+        <div class="quote-dot" id="quoteDots">
+          <span class="dot-active" onclick="goToSlide(0)"></span>
+          <span onclick="goToSlide(1)"></span>
+          <span onclick="goToSlide(2)"></span>
         </div>
       </div>
     </div>
@@ -1034,7 +1087,6 @@ function applyTheme(theme) {
   localStorage.setItem('bgy-theme', theme);
 }
 
-// Init on load
 (function(){
   const saved = localStorage.getItem('bgy-theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1046,13 +1098,48 @@ function toggleTheme() {
   applyTheme(current === 'dark' ? 'light' : 'dark');
 }
 
+/* ─── Quote Auto Slider ─── */
+let currentSlide = 0;
+const totalSlides = 3;
+let slideTimer = null;
+
+function goToSlide(index) {
+  const slides = document.querySelectorAll('.quote-slide');
+  const dots = document.querySelectorAll('#quoteDots span');
+
+  // Hide current
+  slides[currentSlide].classList.remove('active');
+  dots[currentSlide].classList.remove('dot-active');
+
+  // Show new
+  currentSlide = index;
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('dot-active');
+
+  // Reset timer
+  clearInterval(slideTimer);
+  startSlideTimer();
+}
+
+function nextSlide() {
+  goToSlide((currentSlide + 1) % totalSlides);
+}
+
+function startSlideTimer() {
+  slideTimer = setInterval(nextSlide, 5000);
+}
+
+// Start auto-slide on load
+document.addEventListener('DOMContentLoaded', function() {
+  startSlideTimer();
+});
+
 /* ─── PWA Install ─── */
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  // Show popup after 3 seconds
   const dismissed = sessionStorage.getItem('install-dismissed');
   if (!dismissed) {
     setTimeout(() => {
