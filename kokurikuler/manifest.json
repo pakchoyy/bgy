@@ -1,0 +1,28 @@
+{
+  "name": "Bantu Guru Yuk | Modul Kokurikuler",
+  "short_name": "Bantu Guru Yuk",
+  "description": "Generator Modul Kokurikuler SD berbasis AI — sesuai Panduan Kokurikuler 2025 Kemendikdasmen",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d2b3e",
+  "theme_color": "#0d9488",
+  "lang": "id",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "../guru-cibisd2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../guru-cibisd2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "screenshots": []
+}
