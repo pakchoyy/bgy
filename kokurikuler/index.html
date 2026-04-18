@@ -50,24 +50,31 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .btn-install{background:#fff;color:#3b82f6;}
 .btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
 
-/* ══ NAVBAR ══ */
-.navbar{background:transparent;padding:6px 22px;display:flex;gap:6px;flex-wrap:wrap;}
-.navbar a{display:inline-block;padding:5px 14px;font-weight:600;cursor:pointer;border-radius:20px;background:rgba(255,255,255,.15);color:var(--text);font-size:.76rem;border:1px solid var(--border);transition:all .2s;text-decoration:none;}
-.navbar a.active{background:var(--grad);color:#fff;border-color:transparent;}
-body.dark .navbar a{background:rgba(255,255,255,.07);color:#cbd5e1;}
-body.dark .navbar a.active{background:var(--grad);color:#fff;}
-
 /* ══ HEADER ══ */
-header{position:sticky;top:0;z-index:100;background:var(--grad);padding:11px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.12);}
+header{position:sticky;top:0;z-index:100;background:var(--grad);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.12);position:relative;}
 body.dark header{background:linear-gradient(135deg,#1e3a5f,#1e293b);}
 .header-brand{display:flex;align-items:center;gap:10px;}
 .header-brand img{width:36px;height:36px;border-radius:10px;}
-.header-brand h1{font-size:1.15rem;font-weight:800;letter-spacing:-.5px;color:#fff;}
-.header-brand p{font-size:.68rem;color:rgba(255,255,255,.85);margin-top:1px;}
-.header-right{display:flex;align-items:center;gap:7px;}
-.version-badge{font-size:.64rem;background:rgba(255,255,255,.2);color:#fff;padding:3px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.3);font-weight:600;}
-#darkToggle{background:var(--gray-100);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:99px;cursor:pointer;font-size:.76rem;font-weight:600;transition:all .2s;}
-body.dark #darkToggle{background:#374151;color:#f1f5f9;border-color:#4b5563;}
+.header-brand h1{font-size:1.05rem;font-weight:800;letter-spacing:-.5px;color:#fff;}
+.header-brand p{font-size:.67rem;color:rgba(255,255,255,.85);margin-top:2px;}
+.header-right{display:flex;align-items:center;gap:5px;}
+
+/* ══ HEADER BUTTONS ══ */
+.hdr-btn{width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.18);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;font-size:16px;padding:0;flex-shrink:0;}
+.hdr-btn:hover{background:rgba(255,255,255,.3);}
+.bar{width:16px;height:2px;background:#fff;border-radius:2px;transition:all .25s;display:block;}
+#menuBtn{flex-direction:column;gap:4px;}
+#menuBtn.open .bar:nth-child(1){transform:translateY(6px) rotate(45deg);}
+#menuBtn.open .bar:nth-child(2){opacity:0;}
+#menuBtn.open .bar:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+
+/* ══ DROPDOWN MENU ══ */
+#dropMenu{position:absolute;top:60px;right:12px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18);overflow:hidden;min-width:170px;z-index:300;display:none;}
+#dropMenu.show{display:block;animation:fadeInDrop .15s ease;}
+@keyframes fadeInDrop{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.drop-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.84rem;font-weight:600;color:var(--text);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background .15s;border-bottom:1px solid var(--border);}
+.drop-item:last-child{border-bottom:none;}
+.drop-item:hover,.drop-item.active{background:rgba(59,130,246,.08);color:#3b82f6;}
 
 /* ══ MAIN ══ */
 main{max-width:800px;margin:0 auto;padding:22px;width:100%;flex:1;}
@@ -76,12 +83,6 @@ main{max-width:800px;margin:0 auto;padding:22px;width:100%;flex:1;}
 /* ══ CARD ══ */
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;transition:background .3s;margin-bottom:16px;}
 .card-title{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:13px;display:flex;align-items:center;gap:6px;}
-
-/* ══ BANNER TEMA ══ */
-.tema-banner{background:var(--grad);border-radius:var(--radius);padding:18px 22px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:14px;}
-.tema-banner .icon-big{font-size:2.2rem;}
-.tema-banner h2{font-size:1.05rem;font-weight:800;margin-bottom:2px;}
-.tema-banner p{font-size:.76rem;opacity:.9;}
 
 /* ══ FORM ══ */
 .form-group{margin-bottom:11px;}
@@ -110,7 +111,6 @@ body.dark .btn-pilih-semua{background:#374151;color:#f1f5f9;}
 .btn-primary:disabled{opacity:.65;cursor:not-allowed;transform:none;}
 .btn-secondary{background:var(--gray-100);color:var(--gray-700);border:1px solid var(--border);}
 body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
-.btn-chatgpt{background:#10a37f;color:#fff;width:100%;justify-content:center;padding:11px;font-size:.9rem;border-radius:12px;}
 .btn-gemini{background:linear-gradient(135deg,#4285f4,#34a853);color:#fff;width:100%;justify-content:center;padding:11px;font-size:.9rem;border-radius:12px;}
 .btn-claude{background:linear-gradient(135deg,#d97706,#b45309);color:#fff;width:100%;justify-content:center;padding:11px;font-size:.9rem;border-radius:12px;}
 .btn-copy{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:100%;justify-content:center;padding:11px;font-size:.9rem;border-radius:12px;}
@@ -150,9 +150,6 @@ body.dark .prompt-result{background:#111827;}
 /* ══ ERROR ══ */
 .error-box{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:9px 12px;border-radius:10px;font-size:.8rem;display:none;}
 
-/* ══ TAG BARU ══ */
-.new-tag{background:#fef3c7;color:#b45309;font-size:.62rem;font-weight:800;padding:1px 6px;border-radius:6px;margin-left:5px;vertical-align:middle;}
-
 /* ══ FOOTER ══ */
 footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
 footer .footer-title{font-size:.86rem;font-weight:700;margin-bottom:2px;}
@@ -182,21 +179,25 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     <img src="../guru-cibisd2.png" alt="Logo"/>
     <div>
       <h1>Bantu Guru Yuk | Modul Kokurikuler <span id="hBadge" class="badge-free">FREE</span></h1>
-      <p>Generator Prompt Modul P5 / Kokurikuler SD &bull; v26.5.0</p>
+      <p>Isi form → Generate prompt → Copy → Paste ke AI favoritmu</p>
     </div>
   </div>
   <div class="header-right">
-    <button id="darkToggle" onclick="toggleDark()">🌙 Dark</button>
+    <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Dark/Light">🌙</button>
+    <button id="menuBtn" class="hdr-btn" onclick="toggleMenu()" title="Menu">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+  </div>
+
+  <div id="dropMenu">
+    <button class="drop-item active" onclick="selectTab('home',this)">🏠 &nbsp;Home</button>
+    <button class="drop-item" onclick="selectTab('histori',this)">🕒 &nbsp;Histori <span id="historiBadge" style="background:#ef4444;color:#fff;border-radius:99px;padding:1px 6px;font-size:.65rem;font-weight:800;margin-left:4px;"></span></button>
+    <button class="drop-item" onclick="selectTab('tentang',this)">ℹ️ &nbsp;Tentang</button>
+    <button class="drop-item" onclick="selectTab('kontak',this)">📬 &nbsp;Kontak</button>
   </div>
 </header>
-
-<!-- NAVBAR -->
-<nav class="navbar">
-  <a onclick="showTab('home',this)" class="active">🏠 Home</a>
-  <a onclick="showTab('histori',this)">🕒 Histori <span id="historiBadge" style="background:#ef4444;color:#fff;border-radius:99px;padding:1px 6px;font-size:.65rem;font-weight:800;margin-left:2px;"></span></a>
-  <a onclick="showTab('tentang',this)">ℹ️ Tentang</a>
-  <a onclick="showTab('kontak',this)">📬 Kontak</a>
-</nav>
 
 <!-- ══ TAB TENTANG ══ -->
 <div id="tab-tentang" style="display:none;">
@@ -207,8 +208,8 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     <p style="font-size:.86rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Generator Modul Kokurikuler SD</b> membantu guru membuat prompt lengkap untuk menghasilkan Modul Ajar Kokurikuler (P5/Projek Penguatan Karakter) menggunakan ChatGPT, Gemini, atau Claude.</p>
     <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur</h4>
     <ul style="font-size:.82rem;color:var(--text);line-height:2;padding-left:18px;">
-      <li>Generate prompt modul kokurikuler SD lengkap & siap cetak</li>
-      <li>Sesuai Permendikdasmen 2026 & Kurikulum Merdeka</li>
+      <li>Generate prompt modul kokurikuler SD lengkap &amp; siap cetak</li>
+      <li>Sesuai Permendikdasmen 2026 &amp; Kurikulum Merdeka</li>
       <li>Pilih bagian modul yang ingin dihasilkan</li>
       <li>Kirim langsung ke ChatGPT, Gemini, atau Claude</li>
       <li>Histori 20 prompt terakhir</li>
@@ -247,22 +248,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 <!-- ══ TAB HOME ══ -->
 <div id="tab-home">
 <main>
-
-  <!-- BANNER -->
-  <div class="tema-banner">
-    <div class="icon-big">🌱</div>
-    <div>
-      <h2>Generator Modul Kokurikuler SD</h2>
-      <p>Isi form → Generate prompt → Copy → Paste ke AI favoritmu → Dapatkan modul lengkap!</p>
-    </div>
-  </div>
-
-  <!-- LIMIT BAR -->
-  <div class="limit-bar">
-    <div class="lb-count" id="limitCount">4 / 4</div>
-    <div class="lb-label">Generate tersisa hari ini &nbsp;|&nbsp; Reset tiap tengah malam</div>
-    <a id="upgradeBtn" class="upgrade-btn" href="https://wa.me/6289530713597?text=Halo+Pak+Choyy,+mau+aktivasi+Pro+BGY+Modul" target="_blank">💎 Upgrade ke Pro — Unlimited</a>
-  </div>
 
   <!-- ══ FORM ══ -->
   <div class="card">
@@ -306,17 +291,15 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
     <div class="form-group">
       <label>Dimensi Profil Pelajar Pancasila</label>
-      <select id="dimensiPPP" multiple style="min-height:90px;">
-        <option value="Beriman, Bertakwa kepada Tuhan YME, dan Berakhlak Mulia" selected>Beriman & Berakhlak Mulia</option>
-        <option value="Berkebhinekaan Global" selected>Berkebhinekaan Global</option>
-        <option value="Bergotong Royong">Bergotong Royong</option>
-        <option value="Mandiri">Mandiri</option>
-        <option value="Bernalar Kritis">Bernalar Kritis</option>
-        <option value="Kreatif">Kreatif</option>
-      </select>
-      <div style="font-size:.67rem;color:var(--text-light);margin-top:3px;">Tahan Ctrl/Cmd untuk pilih lebih dari satu</div>
-    </div>
-
+     <div class="section-checks" id="dimensiChecks">
+  <label class="sc-item"><input type="checkbox" class="cb-dimensi" value="Beriman, Bertakwa kepada Tuhan YME, dan Berakhlak Mulia" checked/><div class="sc-label">Beriman &amp; Berakhlak Mulia</div></label>
+  <label class="sc-item"><input type="checkbox" class="cb-dimensi" value="Berkebhinekaan Global" checked/><div class="sc-label">Berkebhinekaan Global</div></label>
+  <label class="sc-item"><input type="checkbox" class="cb-dimensi" value="Bergotong Royong"/><div class="sc-label">Bergotong Royong</div></label>
+  <label class="sc-item"><input type="checkbox" class="cb-dimensi" value="Mandiri"/><div class="sc-label">Mandiri</div></label>
+  <label class="sc-item"><input type="checkbox" class="cb-dimensi" value="Bernalar Kritis"/><div class="sc-label">Bernalar Kritis</div></label>
+  <label class="sc-item"><input type="checkbox" class="cb-dimensi" value="Kreatif"/><div class="sc-label">Kreatif</div></label>
+</div>
+      
     <div class="form-group">
       <label>Deskripsi Konteks / Latar Belakang (Opsional)</label>
       <textarea id="deskripsiKonteks" rows="3" placeholder="Contoh: Sekolah kami berlokasi di daerah pantai, banyak sampah plastik. Siswa diajak membuat kampanye kebersihan..."></textarea>
@@ -337,7 +320,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <label class="sc-item"><input type="checkbox" class="cb-bagian" value="G" checked/><div><div class="sc-label">G. Asesmen Kokurikuler</div><div class="sc-desc">Observasi sikap, jurnal refleksi, portofolio, rubrik</div></div></label>
       <label class="sc-item"><input type="checkbox" class="cb-bagian" value="H"><div><div class="sc-label">H. Media dan Sumber Belajar</div><div class="sc-desc">Media aman, kontekstual, sesuai dunia anak SD</div></div></label>
       <label class="sc-item"><input type="checkbox" class="cb-bagian" value="I"><div><div class="sc-label">I. Peran Guru dan Orang Tua</div><div class="sc-desc">Guru sebagai fasilitator, pelibatan orang tua</div></div></label>
-      <label class="sc-item"><input type="checkbox" class="cb-bagian" value="J"><div><div class="sc-label">J. Refleksi dan Tindak Lanjut</div><div class="sc-desc">Refleksi guru & siswa, rencana penguatan karakter</div></div></label>
+      <label class="sc-item"><input type="checkbox" class="cb-bagian" value="J"><div><div class="sc-label">J. Refleksi dan Tindak Lanjut</div><div class="sc-desc">Refleksi guru &amp; siswa, rencana penguatan karakter</div></div></label>
     </div>
   </div>
 
@@ -349,14 +332,14 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         <label>Gaya Bahasa</label>
         <select id="gayaBahasa">
           <option value="formal-edukatif, ramah anak">Formal-Edukatif (Rekomendasi)</option>
-          <option value="sederhana dan mudah dipahami siswa SD">Sederhana & Mudah Dipahami</option>
-          <option value="naratif dan kontekstual">Naratif & Kontekstual</option>
+          <option value="sederhana dan mudah dipahami siswa SD">Sederhana &amp; Mudah Dipahami</option>
+          <option value="naratif dan kontekstual">Naratif &amp; Kontekstual</option>
         </select>
       </div>
       <div class="form-group">
         <label>Format Output</label>
         <select id="formatOutput">
-          <option value="lengkap dengan semua bagian secara naratif dan siap cetak">Lengkap & Siap Cetak</option>
+          <option value="lengkap dengan semua bagian secara naratif dan siap cetak">Lengkap &amp; Siap Cetak</option>
           <option value="ringkas namun tetap mencakup komponen utama">Ringkas</option>
           <option value="hanya poin-poin utama per bagian">Poin-poin Saja</option>
         </select>
@@ -411,22 +394,16 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 </footer>
 
 <script>
-/* ════════════════════════════════════════════
-   CONFIG
-════════════════════════════════════════════ */
-const DAILY_LIMIT = 4;
-const WORKER_URL  = 'https://bgypro-soal.pulsachoy.workers.dev/'; // reuse same worker
+const DAILY_LIMIT = 2;
+const WORKER_URL  = 'https://bgypro-soal.pulsachoy.workers.dev/';
 
-/* ════════════════════════════════════════════
-   INIT
-════════════════════════════════════════════ */
 (function init(){
   window.addEventListener('load',()=>{
     const ls=document.getElementById('loadingScreen');
     if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>ls.remove(),400);}
   });
   const saved=localStorage.getItem('theme');
-  if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkToggle').textContent='☀️ Light';}
+  if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️';}
   updateLimitDisplay();
   updateHistoriBadge();
   restoreAutoSave();
@@ -437,40 +414,47 @@ const WORKER_URL  = 'https://bgypro-soal.pulsachoy.workers.dev/'; // reuse same 
       setTimeout(()=>document.getElementById('installPopup').classList.add('show'),2000);
     }
   });
+  // Close menu on outside click
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('header'))closeMenu();
+  });
 })();
 
-/* ════════════════════════════════════════════
-   DARK MODE
-════════════════════════════════════════════ */
+/* ══ DARK MODE ══ */
 function toggleDark(){
   document.body.classList.toggle('dark');
   const d=document.body.classList.contains('dark');
-  document.getElementById('darkToggle').textContent=d?'☀️ Light':'🌙 Dark';
+  document.getElementById('darkBtn').textContent=d?'☀️':'🌙';
   localStorage.setItem('theme',d?'dark':'light');
 }
 
-/* ════════════════════════════════════════════
-   PWA
-════════════════════════════════════════════ */
+/* ══ PWA ══ */
 function installApp(){if(window._dip){window._dip.prompt();window._dip=null;}closeInstall();}
 function closeInstall(){document.getElementById('installPopup').classList.remove('show');localStorage.setItem('installClosedAt',Date.now().toString());}
 
-/* ════════════════════════════════════════════
-   TABS
-════════════════════════════════════════════ */
-function showTab(tab,el){
+/* ══ HAMBURGER MENU ══ */
+function toggleMenu(){
+  document.getElementById('menuBtn').classList.toggle('open');
+  document.getElementById('dropMenu').classList.toggle('show');
+}
+function closeMenu(){
+  document.getElementById('menuBtn').classList.remove('open');
+  document.getElementById('dropMenu').classList.remove('show');
+}
+
+/* ══ TABS ══ */
+function selectTab(tab,el){
   ['home','histori','tentang','kontak'].forEach(t=>{
     const d=document.getElementById('tab-'+t);
     if(d)d.style.display=t===tab?'block':'none';
   });
-  document.querySelectorAll('.navbar a').forEach(a=>a.classList.remove('active'));
+  document.querySelectorAll('.drop-item').forEach(b=>b.classList.remove('active'));
   if(el)el.classList.add('active');
+  closeMenu();
   if(tab==='histori')renderHistoriList();
 }
 
-/* ════════════════════════════════════════════
-   BAGIAN PILIHAN
-════════════════════════════════════════════ */
+/* ══ BAGIAN PILIHAN ══ */
 function pilihSemuaBagian(){
   const all=[...document.querySelectorAll('.cb-bagian')].every(c=>c.checked);
   document.querySelectorAll('.cb-bagian').forEach(c=>c.checked=!all);
@@ -479,9 +463,7 @@ function getBagianTerpilih(){
   return [...document.querySelectorAll('.cb-bagian:checked')].map(c=>c.value);
 }
 
-/* ════════════════════════════════════════════
-   GENERATE PROMPT
-════════════════════════════════════════════ */
+/* ══ GENERATE PROMPT ══ */
 function generatePrompt(){
   const tema=document.getElementById('temaProjek').value.trim();
   const fase=document.getElementById('faseKelas').value;
@@ -491,12 +473,7 @@ function generatePrompt(){
   const konteks=document.getElementById('deskripsiKonteks').value.trim();
   const gayaBahasa=document.getElementById('gayaBahasa').value;
   const formatOutput=document.getElementById('formatOutput').value;
-
-  // Dimensi PPP
-  const dimensiOpts=[...document.getElementById('dimensiPPP').selectedOptions];
-  const dimensi=dimensiOpts.map(o=>o.value).join(', ');
-
-  // Bagian yang dipilih
+  const dimensi=[...document.querySelectorAll('.cb-dimensi:checked')].map(c=>c.value).join(', ');
   const bagianTerpilih=getBagianTerpilih();
 
   const errBox=document.getElementById('errorBox');
@@ -505,7 +482,6 @@ function generatePrompt(){
   if(!dimensi){errBox.textContent='⚠️ Pilih minimal satu dimensi PPP.';errBox.style.display='block';return;}
   errBox.style.display='none';
 
-  // Cek limit
   const lc=checkLimit();
   if(!lc.ok){
     errBox.textContent='⛔ Batas generate harian ('+DAILY_LIMIT+'x) sudah habis. Aktivasi Pro atau coba besok.';
@@ -513,7 +489,6 @@ function generatePrompt(){
     return;
   }
 
-  // Susun bagian yang diminta
   const DESKRIPSI_BAGIAN={
     A:`A. DESKRIPSI UMUM KEGIATAN KOKURIKULER\nJelaskan latar belakang kegiatan, tujuan umum, serta relevansinya dengan kebutuhan perkembangan karakter dan sosial peserta didik SD.`,
     B:`B. DIMENSI PROFIL PELAJAR PANCASILA\nUraikan dimensi yang dikembangkan (minimal 2), lengkapi dengan indikator perilaku nyata siswa SD.`,
@@ -544,37 +519,31 @@ IDENTITAS MODUL:
 - Tahun Ajaran : ${tahun}
 - Dimensi PPP : ${dimensi}`;
 
-  if(konteks){
-    prompt+=`\n\nKONTEKS SEKOLAH:\n${konteks}`;
-  }
+  if(konteks){prompt+=`\n\nKONTEKS SEKOLAH:\n${konteks}`;}
 
   prompt+=`\n\nFormat output: ${formatOutput}\n\nBagian yang harus dibuat:\n\n${bagianList}
 
 Susun modul ini sebagai MODUL AJAR KOKURIKULER SD yang siap digunakan di sekolah dan mendukung penguatan karakter peserta didik.`;
 
-  // Tampilkan hasil
   document.getElementById('hasilPrompt').textContent=prompt;
   document.getElementById('hasilCard').style.display='block';
   document.getElementById('hasilCard').scrollIntoView({behavior:'smooth',block:'start'});
 
-  // Simpan ke histori & update counter
   if(!isPro())incrementDaily();
   simpanHistori(prompt,tema,fase,jenis);
   updateLimitDisplay();
   updateHistoriBadge();
   autoSaveForm();
 
-  gaEvent('generate_modul_kokurikuler',{fase:fase,jenis:jenis,tema:tema,tipe_user:isPro()?'pro':'free'});
+  gaEvent('generate_modul_kokurikuler',{fase,jenis,tema,tipe_user:isPro()?'pro':'free'});
   document.getElementById('generateFeedback').textContent='✅ Prompt berhasil dibuat!';
   setTimeout(()=>document.getElementById('generateFeedback').textContent='',3000);
 }
 
-/* ════════════════════════════════════════════
-   COPY & OPEN AI
-════════════════════════════════════════════ */
+/* ══ COPY & OPEN AI ══ */
 function copyPrompt(){
   const txt=document.getElementById('hasilPrompt').textContent;
-  if(!txt){return;}
+  if(!txt)return;
   navigator.clipboard.writeText(txt).then(()=>{
     const n=document.getElementById('notifCopy');
     n.style.display='block';
@@ -588,16 +557,13 @@ function openAI(tipe){
   window.open(urls[tipe]||urls.chatgpt,'_blank');
 }
 
-/* ════════════════════════════════════════════
-   HISTORI
-════════════════════════════════════════════ */
+/* ══ HISTORI ══ */
 const MAX_HISTORI=20;
 function simpanHistori(prompt,tema,fase,jenis){
   try{
     const list=getHistoriList();
     list.unshift({id:Date.now(),tanggal:new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}),tema,fase,jenis,prompt});
-    const trimmed=list.slice(0,MAX_HISTORI);
-    localStorage.setItem('bgy_modul_histori',JSON.stringify(trimmed));
+    localStorage.setItem('bgy_modul_histori',JSON.stringify(list.slice(0,MAX_HISTORI)));
   }catch(e){console.warn(e);}
 }
 function getHistoriList(){try{return JSON.parse(localStorage.getItem('bgy_modul_histori')||'[]');}catch{return[];}}
@@ -617,21 +583,16 @@ function renderHistoriList(){
     </div>`).join('');
 }
 function loadHistoriItem(id){
-  const list=getHistoriList();
-  const item=list.find(h=>h.id==id);
+  const item=getHistoriList().find(h=>h.id==id);
   if(!item)return;
   document.getElementById('hasilPrompt').textContent=item.prompt;
   document.getElementById('hasilCard').style.display='block';
-  showTab('home',document.querySelector('.navbar a'));
-  document.querySelectorAll('.navbar a').forEach(a=>a.classList.remove('active'));
-  document.querySelector('.navbar a').classList.add('active');
+  selectTab('home',document.querySelector('.drop-item'));
   setTimeout(()=>document.getElementById('hasilCard').scrollIntoView({behavior:'smooth'}),200);
 }
 function hapusSemuaHistori(){if(!confirm('Hapus semua histori?'))return;localStorage.removeItem('bgy_modul_histori');updateHistoriBadge();renderHistoriList();}
 
-/* ════════════════════════════════════════════
-   LIMIT & PRO
-════════════════════════════════════════════ */
+/* ══ LIMIT & PRO ══ */
 function isPro(){try{const d=JSON.parse(localStorage.getItem('bgy_pro_modul')||'{}');return d.aktif===true;}catch{return false;}}
 function getTodayStr(){return new Date().toISOString().slice(0,10);}
 function getDailyUsage(){try{const r=localStorage.getItem('bgy_modul_daily');return r?JSON.parse(r):{date:'',count:0};}catch{return{date:'',count:0};}}
@@ -669,9 +630,7 @@ async function aktivasiPro(){
   }catch{msg.textContent='❌ Gagal terhubung.';msg.style.color='#dc2626';}
 }
 
-/* ════════════════════════════════════════════
-   AUTO SAVE / RESTORE FORM
-════════════════════════════════════════════ */
+/* ══ AUTO SAVE / RESTORE FORM ══ */
 function autoSaveForm(){
   try{
     const d={
