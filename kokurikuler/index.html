@@ -221,8 +221,8 @@ footer a{color:inherit;text-decoration:underline;}
     <div class="card-title">📬 Kontak</div>
     <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau aktivasi Pro:</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp</button>
-      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok</button>
+      <button onclick="gaEvent('klik_kontak',{platform:'whatsapp'});window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp</button>
+      <button onclick="gaEvent('klik_kontak',{platform:'tiktok'});window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok</button>
     </div>
   </div>
 </main>
@@ -342,7 +342,7 @@ footer a{color:inherit;text-decoration:underline;}
       <!-- AKTIVASI PRO -->
       <div class="aktivasi-box" id="aktivasiBox">
         <div class="ak-label">🔓 Aktivasi Pro — Generate Unlimited</div>
-        <div class="ak-sub"><a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk kode aktivasi.</div>
+        <div class="ak-sub"><a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank" onclick="gaEvent('klik_link_beli_pro',{})" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk kode aktivasi.</div>
         <div class="aktivasi-row">
           <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..."/>
           <button onclick="aktivasiPro()">Aktifkan</button>
@@ -454,13 +454,22 @@ function toggleDark(){
   const d=document.body.classList.contains('dark');
   document.getElementById('darkBtn').textContent=d?'☀️':'🌙';
   localStorage.setItem('theme',d?'dark':'light');
+  gaEvent('toggle_dark_mode',{mode:d?'dark':'light'});
 }
 
 // ============================================================
 // PWA
 // ============================================================
-function installApp(){if(window._dip){window._dip.prompt();window._dip=null;}closeInstall();}
-function closeInstall(){document.getElementById('installPopup').classList.remove('show');localStorage.setItem('installClosedAt',Date.now().toString());}
+function installApp(){
+  gaEvent('pwa_install_klik',{tipe_user:isPro()?'pro':'free'});
+  if(window._dip){window._dip.prompt();window._dip=null;}
+  closeInstall();
+}
+function closeInstall(){
+  gaEvent('pwa_install_tutup',{});
+  document.getElementById('installPopup').classList.remove('show');
+  localStorage.setItem('installClosedAt',Date.now().toString());
+}
 
 // ============================================================
 // MENU
@@ -481,6 +490,7 @@ function closeMenu(){
 // TABS
 // ============================================================
 function selectTab(tab){
+  gaEvent('navigasi_tab',{tab});
   ['home','histori','tentang','kontak'].forEach(t=>{
     const d=document.getElementById('tab-'+t);
     if(d)d.style.display=t===tab?'block':'none';
@@ -723,6 +733,7 @@ function renderHistoriList(){
 function loadHistoriItem(id){
   const item=getHistoriList().find(h=>h.id==id);
   if(!item)return;
+  gaEvent('buka_histori_item',{tema:item.tema||'',fase:item.fase||''});
   document.getElementById('hasilPrompt').textContent=item.prompt;
   document.getElementById('promptPlaceholder').style.display='none'; hidePreviewModul();
   document.getElementById('promptContent').style.display='block';
@@ -731,6 +742,7 @@ function loadHistoriItem(id){
 }
 function hapusSemuaHistori(){
   if(!confirm('Hapus semua histori?'))return;
+  gaEvent('hapus_semua_histori',{jumlah:getHistoriList().length});
   localStorage.removeItem('bgy_modul_histori');
   updateHistoriBadge();
   renderHistoriList();
@@ -941,10 +953,10 @@ function updatePreviewInfo() {
   if(el) el.textContent = 'Halaman ' + (_previewPage+1) + ' / ' + MODUL_PAGES.length;
 }
 function modulPrevPage() {
-  if(_previewPage > 0) { _previewPage--; document.getElementById('previewImg').src = MODUL_PAGES[_previewPage]; updatePreviewInfo(); }
+  if(_previewPage > 0) { _previewPage--; document.getElementById('previewImg').src = MODUL_PAGES[_previewPage]; updatePreviewInfo(); gaEvent('preview_modul_navigasi',{arah:'prev',halaman:_previewPage+1}); }
 }
 function modulNextPage() {
-  if(_previewPage < MODUL_PAGES.length-1) { _previewPage++; document.getElementById('previewImg').src = MODUL_PAGES[_previewPage]; updatePreviewInfo(); }
+  if(_previewPage < MODUL_PAGES.length-1) { _previewPage++; document.getElementById('previewImg').src = MODUL_PAGES[_previewPage]; updatePreviewInfo(); gaEvent('preview_modul_navigasi',{arah:'next',halaman:_previewPage+1}); }
 }
 function hidePreviewModul() {
   const el = document.getElementById('previewModul');
