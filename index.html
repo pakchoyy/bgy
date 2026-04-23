@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -14,74 +13,67 @@
 <title>Bantu Guru Yuk</title>
 <link rel="icon" href="guru-cibisd2.png" type="image/png"/>
 <link rel="manifest" href="./manifest.json"/>
-<meta name="theme-color" content="#3B82C4"/>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1D3B2A"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,600&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ─── TOKENS ─── */
 :root {
-  /* Brand */
-  --blue-1: #2563EB;
-  --blue-2: #3B82F6;
-  --teal-1: #0D9488;
-  --teal-2: #14B8A6;
-  --grad: linear-gradient(135deg, #2563EB 0%, #0D9488 100%);
-  --grad-soft: linear-gradient(135deg, rgba(37,99,235,.08) 0%, rgba(13,148,136,.08) 100%);
+  --green-dark:  #1D3B2A;
+  --green-mid:   #2A5040;
+  --green-light: #3D7A5C;
+  --gold:        #E8B84B;
+  --gold-light:  #F5D080;
+  --gold-dark:   #B8881B;
+  --cream:       #F5F0E8;
+  --cream-2:     #EDE8DF;
+  --cream-3:     #E2DACE;
+  --brown:       #5C4A2A;
+  --brown-light: #8B7A5A;
+  --brown-faint: #C9BFA8;
 
-  /* Surface */
-  --bg:       #F1F5F9;
+  --bg:       #F5F0E8;
   --surface:  #FFFFFF;
-  --surface-2:#F8FAFC;
-  --border:   #E2E8F0;
+  --surface-2:#FAF8F4;
+  --border:   #D4C9B0;
+  --border-2: #C9BFA8;
 
-  /* Text */
-  --txt-1: #0F172A;
-  --txt-2: #475569;
-  --txt-3: #94A3B8;
+  --txt-1: #1D3B2A;
+  --txt-2: #5C4A2A;
+  --txt-3: #8B7A5A;
 
-  /* Sidebar */
- --sb-bg: #FFFFFF;
-  --sb-w:     256px;
-  --sb-txt:   rgba(30,64,175,.65);
-  --sb-txt-a: #1E40AF;
-  --sb-item-a: rgba(37,99,235,.12);
-  --sb-item-h: rgba(37,99,235,.07);
+  --sb-w: 260px;
 
-  /* Sidebar brand header — matches soal page header (image 2) */
-  --sb-brand-bg: linear-gradient(135deg, #3B82C4 0%, #2a9d8f 100%);
-
-  /* Misc */
-  --r-sm: 10px;
-  --r-md: 14px;
-  --r-lg: 20px;
-  --shadow-sm: 0 1px 4px rgba(15,23,42,.06);
-  --shadow-md: 0 4px 20px rgba(15,23,42,.09);
-  --shadow-lg: 0 12px 40px rgba(15,23,42,.12);
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --shadow-sm: 0 1px 4px rgba(29,59,42,.06);
+  --shadow-md: 0 4px 20px rgba(29,59,42,.10);
+  --shadow-lg: 0 12px 40px rgba(29,59,42,.14);
   --trans: all .2s cubic-bezier(.4,0,.2,1);
 }
 
 [data-theme="dark"] {
-  --bg:       #0A1628;
-  --surface:  #112040;
-  --surface-2:#162850;
-  --border:   #1E3A5F;
-  --txt-1:    #E2E8F0;
-  --txt-2:    #94A3B8;
-  --txt-3:    #475569;
-  --shadow-sm: 0 1px 4px rgba(0,0,0,.3);
-  --shadow-md: 0 4px 20px rgba(0,0,0,.35);
-  --shadow-lg: 0 12px 40px rgba(0,0,0,.4);
-  --sb-bg:    linear-gradient(160deg, #1a3a6e 0%, #12305a 60%, #0e2548 100%);
-  --sb-item-a: rgba(96,165,250,.18);
-  --sb-brand-bg: linear-gradient(135deg, #2a6aaa 0%, #1e7a6e 100%);
+  --bg:       #0F1E14;
+  --surface:  #182A1E;
+  --surface-2:#1E3426;
+  --border:   #2A4035;
+  --border-2: #3D5A4A;
+  --txt-1:    #F5F0E8;
+  --txt-2:    #C9BFA8;
+  --txt-3:    #8B7A5A;
+  --cream:    #1E3426;
+  --cream-2:  #182A1E;
+  --cream-3:  #142218;
+  --brown-faint: #2A4035;
 }
 
 /* ─── BASE ─── */
 html, body { height: 100%; overflow: hidden; }
 body {
-  font-family: 'Nunito', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   background: var(--bg);
   color: var(--txt-1);
   display: flex;
@@ -89,93 +81,95 @@ body {
 }
 a { text-decoration: none; color: inherit; }
 
-/* ─── SCROLLBAR ─── */
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 
 /* ════════════════════════
-   SIDEBAR
+   SIDEBAR — Retro Dark Green
 ════════════════════════ */
 .sidebar {
   width: var(--sb-w);
   min-width: var(--sb-w);
   height: 100vh;
-  background: var(--sb-bg);
+  background: var(--green-dark);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   position: relative;
   z-index: 10;
   overflow: hidden;
-  transition: var(--trans);
 }
 
-/* Decorative glow — only for body area, not brand */
-.sidebar::after {
+/* Subtle grain texture overlay */
+.sidebar::before {
   content: '';
-  position: absolute;
-  bottom: -60px; right: -40px;
-  width: 160px; height: 160px;
-  background: radial-gradient(circle, rgba(13,148,136,.2), transparent 70%);
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(255,255,255,0.015)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(255,255,255,0.015)'/%3E%3C/svg%3E");
   pointer-events: none;
+  z-index: 0;
 }
 
-/* Brand — warna header soal (gambar 2) */
+.sidebar > * { position: relative; z-index: 1; }
+
+/* Brand */
 .sb-brand {
-  padding: 22px 18px 18px;
+  padding: 22px 20px 18px;
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--sb-brand-bg);
+  border-bottom: 1px solid rgba(232,184,75,.15);
   position: relative;
-  z-index: 1;
-  border-bottom: 1px solid rgba(255,255,255,.15);
 }
-
-/* subtle shine overlay on brand */
 .sb-brand::after {
-  content: '';
+  content: '✦';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,.08) 0%, transparent 100%);
-  pointer-events: none;
+  right: 18px; top: 50%; transform: translateY(-50%);
+  color: var(--gold);
+  font-size: .7rem;
+  opacity: .5;
 }
-
 .sb-logo {
-  width: 42px; height: 42px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.15);
+  width: 44px; height: 44px;
+  border-radius: var(--r-md);
+  background: rgba(232,184,75,.12);
+  border: 1.5px solid rgba(232,184,75,.2);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
 }
-.sb-logo img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-}
+.sb-logo img { width: 100%; height: 100%; object-fit: contain; }
 .sb-brand-text .sb-name {
-  font-size: .9rem; font-weight: 900;
-  color: #fff;
-  letter-spacing: -.2px;
+  font-family: 'Playfair Display', serif;
+  font-size: .95rem; font-weight: 700;
+  color: #F5F0E8;
   line-height: 1.2;
+  letter-spacing: .1px;
 }
 .sb-brand-text .sb-sub {
   font-size: .62rem;
-  color: rgba(255,255,255,.7);
+  color: rgba(232,184,75,.5);
   margin-top: 3px;
   line-height: 1.4;
   font-weight: 500;
+  letter-spacing: .4px;
+  text-transform: uppercase;
 }
 
 /* Section label */
 .sb-section {
-  padding: 20px 18px 6px;
-  font-size: .6rem;
-  font-weight: 800;
-  letter-spacing: 1.4px;
+  padding: 18px 20px 6px;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(30,64,175,.35);
+  color: rgba(232,184,75,.35);
+  display: flex; align-items: center; gap: 8px;
+}
+.sb-section::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: rgba(232,184,75,.1);
 }
 
 /* Nav item */
@@ -183,82 +177,81 @@ a { text-decoration: none; color: inherit; }
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 2px 10px;
-  padding: 10px 12px;
+  margin: 1px 12px;
+  padding: 9px 12px;
   border-radius: var(--r-sm);
-  color: var(--sb-txt);
-  font-size: .83rem;
-  font-weight: 700;
+  color: rgba(245,240,232,.5);
+  font-size: .82rem;
+  font-weight: 500;
   cursor: pointer;
   transition: var(--trans);
   position: relative;
 }
 .nav-item:hover {
-  background: var(--sb-item-h);
-  color: #fff;
+  background: rgba(232,184,75,.07);
+  color: rgba(245,240,232,.85);
 }
 .nav-item.active {
-  background: var(--sb-item-a);
-  color: #1D4ED8;
+  background: rgba(232,184,75,.12);
+  color: var(--gold);
+  font-weight: 700;
 }
 .nav-item.active::before {
   content: '';
   position: absolute;
   left: 0; top: 50%;
   transform: translateY(-50%);
-  width: 3px; height: 60%;
-  background: #1D4ED8;
+  width: 3px; height: 55%;
+  background: var(--gold);
   border-radius: 0 3px 3px 0;
 }
 .nav-icon {
-  width: 30px; height: 30px;
-  border-radius: 8px;
-  background: rgba(37,99,235,.06);
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: rgba(245,240,232,.05);
   display: flex; align-items: center; justify-content: center;
-  font-size: .95rem;
+  font-size: .9rem;
   flex-shrink: 0;
-  transition: var(--trans);
 }
-.nav-item.active .nav-icon {
-  background: rgba(37,99,235,.1);
-}
-.nav-item:hover .nav-icon {
-  background: rgba(37,99,235,.1);
-}
+.nav-item.active .nav-icon { background: rgba(232,184,75,.1); }
 .nav-item.disabled {
-  opacity: .45;
+  opacity: .35;
   pointer-events: none;
 }
 .nav-badge-soon {
   margin-left: auto;
-  font-size: .58rem;
-  font-weight: 800;
+  font-size: .55rem;
+  font-weight: 700;
   padding: 2px 7px;
-  border-radius: 99px;
-  background: rgba(37,99,235,.07);
-  color: rgba(30,64,175,.4);
-  letter-spacing: .3px;
+  border-radius: 3px;
+  background: rgba(232,184,75,.08);
+  color: rgba(232,184,75,.4);
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  border: 1px solid rgba(232,184,75,.1);
 }
 
 /* Sidebar footer */
 .sb-footer {
   margin-top: auto;
   padding: 14px 16px;
-  border-top: 1px solid rgba(37,99,235,.1);
+  border-top: 1px solid rgba(232,184,75,.1);
   display: flex;
   align-items: center;
   gap: 10px;
 }
 .sb-avatar {
-  width: 32px; height: 32px;
+  width: 34px; height: 34px;
   border-radius: 50%;
-  background: var(--grad);
+  background: rgba(232,184,75,.15);
+  border: 1.5px solid rgba(232,184,75,.25);
   display: flex; align-items: center; justify-content: center;
-  font-size: .8rem; font-weight: 900;
-  color: #fff; flex-shrink: 0;
+  font-size: .8rem; font-weight: 700;
+  color: var(--gold); flex-shrink: 0;
+  font-family: 'Playfair Display', serif;
 }
-.sb-footer-name { font-size: .76rem; font-weight: 800; color: rgba(30,64,175,.7); }
-.sb-footer-role { font-size: .62rem; color: rgba(30,64,175,.4); margin-top: 1px; }
+.sb-footer-name { font-size: .77rem; font-weight: 700; color: rgba(245,240,232,.7); }
+.sb-footer-role { font-size: .62rem; color: rgba(232,184,75,.4); margin-top: 1px; letter-spacing: .3px; }
 
 /* ════════════════════════
    MAIN
@@ -267,10 +260,10 @@ a { text-decoration: none; color: inherit; }
   flex: 1;
   overflow-y: auto;
   height: 100vh;
-  padding: 24px 28px 48px;
+  padding: 22px 26px 48px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
 }
 
 /* ─── TOPBAR ─── */
@@ -293,162 +286,161 @@ a { text-decoration: none; color: inherit; }
   color: var(--txt-2);
   transition: var(--trans);
 }
-.mob-toggle:hover { border-color: var(--blue-2); color: var(--blue-2); }
-
+.mob-toggle:hover { border-color: var(--green-dark); color: var(--green-dark); }
 .topbar-left { display: flex; align-items: center; }
-.topbar-lbl {
-  font-size: .72rem;
-  font-weight: 600;
-  color: var(--txt-3);
-}
-.topbar-title {
-  font-size: 1.15rem;
-  font-weight: 900;
+
+.topbar-wordmark {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
   color: var(--txt-1);
-  letter-spacing: -.3px;
-  margin-top: 1px;
+  letter-spacing: -.2px;
+  display: flex; align-items: baseline; gap: 5px;
+}
+.topbar-wordmark em {
+  font-style: italic;
+  color: var(--gold-dark);
+}
+.topbar-wordmark-tag {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--txt-3);
+  margin-left: 4px;
+  align-self: center;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
 }
 
 .topbar-right { display: flex; align-items: center; gap: 8px; }
 
-/* Dark mode toggle */
 .theme-toggle {
-  width: 38px; height: 38px;
+  width: 36px; height: 36px;
   border-radius: var(--r-sm);
   background: var(--surface);
   border: 1.5px solid var(--border);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: .95rem;
   color: var(--txt-2);
   transition: var(--trans);
-  flex-shrink: 0;
 }
-.theme-toggle:hover { border-color: var(--blue-2); color: var(--blue-2); }
+.theme-toggle:hover { border-color: var(--green-dark); color: var(--green-dark); }
 
 .btn-topbar {
   display: flex; align-items: center; gap: 6px;
   padding: 8px 14px;
   border-radius: var(--r-sm);
-  font-size: .78rem; font-weight: 800;
+  font-size: .77rem; font-weight: 700;
   border: none; cursor: pointer;
   font-family: inherit;
   transition: var(--trans);
   text-decoration: none;
+  letter-spacing: .2px;
 }
 .btn-outline {
   background: var(--surface);
   border: 1.5px solid var(--border);
   color: var(--txt-2);
 }
-.btn-outline:hover { border-color: var(--blue-2); color: var(--blue-2); }
+.btn-outline:hover { border-color: var(--green-dark); color: var(--green-dark); }
 .btn-primary {
-  background: var(--grad);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(37,99,235,.28);
+  background: var(--green-dark);
+  color: var(--gold);
+  border: 1.5px solid var(--green-dark);
 }
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,.36); }
+.btn-primary:hover { background: var(--green-mid); }
 
 /* ─── HERO ─── */
 .hero {
-  background: linear-gradient(135deg, #3B82C4 0%, #2a9d8f 100%);
+  background: var(--green-dark);
   border-radius: var(--r-lg);
-  padding: 32px 36px;
+  padding: 30px 32px;
   display: flex;
   align-items: center;
   gap: 28px;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
+  border: 1.5px solid rgba(232,184,75,.15);
 }
 
-/* mesh decorations */
+/* Grain texture */
 .hero::before {
   content: '';
-  position: absolute;
-  top: -80px; left: -60px;
-  width: 320px; height: 320px;
-  background: radial-gradient(circle, rgba(37,99,235,.18), transparent 65%);
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(255,255,255,0.015)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(255,255,255,0.015)'/%3E%3C/svg%3E");
   pointer-events: none;
+  z-index: 0;
 }
-.hero::after {
-  content: '';
+
+/* Decorative asterisks */
+.hero-ast {
   position: absolute;
-  bottom: -80px; right: 200px;
-  width: 280px; height: 280px;
-  background: radial-gradient(circle, rgba(13,148,136,.15), transparent 65%);
+  color: rgba(232,184,75,.2);
+  font-size: 1.4rem;
   pointer-events: none;
-}
-.hero-geo {
-  position: absolute;
-  top: 16px; right: 16px;
-  opacity: .06;
-  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+  z-index: 0;
 }
 
 .hero-left { flex: 1; position: relative; z-index: 1; }
+.hero-right { flex-shrink: 0; width: 210px; position: relative; z-index: 1; }
 
-.hero-greeting {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(56,189,248,.12);
-  border: 1px solid rgba(56,189,248,.2);
-  border-radius: 99px;
-  padding: 5px 12px;
-  font-size: .7rem;
-  font-weight: 800;
-  color: #38BDF8;
-  letter-spacing: .4px;
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(232,184,75,.1);
+  border: 1px solid rgba(232,184,75,.2);
+  border-radius: 3px;
+  padding: 4px 12px;
+  font-size: .65rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   margin-bottom: 14px;
 }
 
 .hero-title {
   font-family: 'Playfair Display', serif;
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: #fff;
-  line-height: 1.25;
-  margin-bottom: 6px;
+  color: #F5F0E8;
+  line-height: 1.18;
+  margin-bottom: 12px;
   letter-spacing: -.3px;
 }
 .hero-title em {
   font-style: italic;
-  background: linear-gradient(90deg, #38BDF8, #34D399);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-brand {
-  font-size: 1rem;
-  font-weight: 900;
-  color: rgba(255,255,255,.9);
-  margin-bottom: 10px;
-  letter-spacing: -.2px;
+  color: var(--gold);
 }
 
 .hero-desc {
   font-size: .8rem;
-  color: rgba(255,255,255,.48);
-  line-height: 1.7;
-  margin-bottom: 18px;
-  max-width: 340px;
+  color: rgba(245,240,232,.45);
+  line-height: 1.75;
+  margin-bottom: 22px;
+  max-width: 320px;
 }
 
 .hero-chips {
   display: flex; gap: 8px; flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 .hero-chip {
-  display: flex; align-items: center; gap: 5px;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 99px;
-  padding: 5px 12px;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(245,240,232,.05);
+  border: 1px solid rgba(245,240,232,.1);
+  border-radius: 3px;
+  padding: 5px 11px;
   font-size: .7rem;
-  font-weight: 700;
-  color: rgba(255,255,255,.65);
+  font-weight: 500;
+  color: rgba(245,240,232,.55);
+  letter-spacing: .2px;
 }
 
 .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -456,181 +448,190 @@ a { text-decoration: none; color: inherit; }
   display: inline-flex; align-items: center; gap: 7px;
   padding: 10px 20px;
   border-radius: var(--r-sm);
-  font-size: .82rem; font-weight: 800;
+  font-size: .82rem; font-weight: 700;
   border: none; cursor: pointer;
   font-family: inherit;
   transition: var(--trans);
   text-decoration: none;
+  letter-spacing: .2px;
 }
 .btn-hero-primary {
-  background: var(--grad);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(37,99,235,.35);
+  background: var(--gold);
+  color: var(--green-dark);
+  border: 2px solid var(--gold);
 }
-.btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(37,99,235,.45); }
+.btn-hero-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
 .btn-hero-ghost {
-  background: rgba(255,255,255,.08);
-  color: rgba(255,255,255,.75);
-  border: 1px solid rgba(255,255,255,.12);
+  background: transparent;
+  color: rgba(245,240,232,.65);
+  border: 1.5px solid rgba(245,240,232,.15);
 }
-.btn-hero-ghost:hover { background: rgba(255,255,255,.13); color: #fff; }
+.btn-hero-ghost:hover { border-color: rgba(245,240,232,.3); color: rgba(245,240,232,.9); }
 
-/* ─── QUOTE CARD — warna referensi gambar 2 (header soal), 60% opacity ─── */
-.hero-right {
-  flex-shrink: 0;
-  width: 240px;
-  position: relative;
-  z-index: 1;
-}
-.quote-card {
-  background: rgba(59, 130, 196, 0.6); /* #3B82C4 at 60% */
-  /* gradient matching soal header at 60% opacity */
-  background: linear-gradient(135deg, rgba(59,130,196,.6) 0%, rgba(42,157,143,.6) 100%);
-  border: 1px solid rgba(255,255,255,.25);
+/* Stamp card */
+.stamp-card {
+  background: rgba(232,184,75,.08);
+  border: 1.5px solid rgba(232,184,75,.2);
   border-radius: var(--r-md);
-  padding: 20px;
+  padding: 18px;
   position: relative;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+.stamp-card::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 90px; height: 90px;
+  border: 8px solid rgba(232,184,75,.08);
+  border-radius: 50%;
+}
+.stamp-new {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: var(--gold);
+  color: var(--green-dark);
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  transform: rotate(2deg);
+}
+.stamp-icon { font-size: 1.8rem; margin-bottom: 10px; }
+.stamp-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem; font-weight: 700;
+  color: #F5F0E8; line-height: 1;
+}
+.stamp-lbl {
+  font-size: .65rem;
+  color: rgba(232,184,75,.5);
+  margin-top: 4px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.stamp-hr {
+  border: none;
+  border-top: 1px dashed rgba(232,184,75,.15);
+  margin: 12px 0;
 }
 
 /* Quote slider */
-.quote-slider {
-  position: relative;
-  min-height: 90px;
-  overflow: hidden;
-}
+.quote-slider { position: relative; min-height: 56px; overflow: hidden; }
 .quote-slide {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  opacity: 0;
-  transform: translateY(10px);
+  position: absolute; top: 0; left: 0; right: 0;
+  opacity: 0; transform: translateY(8px);
   transition: opacity .5s ease, transform .5s ease;
   pointer-events: none;
 }
 .quote-slide.active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-  position: relative;
-}
-
-.quote-icon {
-  font-size: 2rem;
-  line-height: 1;
-  margin-bottom: 10px;
-  opacity: .85;
-  color: #fff;
+  opacity: 1; transform: translateY(0);
+  position: relative; pointer-events: auto;
 }
 .quote-text {
-  font-size: .82rem;
-  font-weight: 600;
-  color: rgba(255,255,255,.92);
-  line-height: 1.65;
+  font-size: .78rem;
   font-style: italic;
+  color: rgba(245,240,232,.55);
+  line-height: 1.6;
 }
-.quote-dot {
-  display: flex; gap: 5px; margin-top: 14px;
-  align-items: center;
+.quote-dots { display: flex; gap: 5px; margin-top: 12px; }
+.quote-dots span {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: rgba(232,184,75,.25);
+  cursor: pointer; transition: all .3s;
 }
-.quote-dot span {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: rgba(255,255,255,.35);
-  transition: all .3s ease;
-  cursor: pointer;
+.quote-dots span.dot-a {
+  background: var(--gold);
+  width: 14px; border-radius: 2px;
 }
-.quote-dot span.dot-active {
-  background: #fff;
-  width: 14px;
-  border-radius: 3px;
+
+/* ─── SECTION HEADER ─── */
+.sec-header {
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-label {
+  font-size: .62rem; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold-dark);
+  display: flex; align-items: center; gap: 6px;
 }
 
 /* ─── TOOLS GRID ─── */
 .tools-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-  gap: 14px;
+  gap: 12px;
   flex-shrink: 0;
 }
 
 .tool-card {
   background: var(--surface);
   border-radius: var(--r-md);
-  padding: 18px;
+  padding: 16px;
   border: 1.5px solid var(--border);
   cursor: pointer;
   text-decoration: none;
   color: inherit;
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column; gap: 8px;
   transition: var(--trans);
   position: relative;
   overflow: hidden;
 }
-.tool-card::after {
-  content: '';
-  position: absolute; inset: 0;
-  border-radius: var(--r-md);
-  opacity: 0;
-  transition: opacity .2s;
+.tool-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--green-dark);
+  box-shadow: 0 8px 28px rgba(29,59,42,.1);
 }
-.tool-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.tool-card.coming-soon { opacity: .5; pointer-events: none; }
 
-/* color variants */
-.c-blue:hover { border-color: rgba(37,99,235,.35); box-shadow: 0 8px 30px rgba(37,99,235,.1); }
-.c-teal:hover { border-color: rgba(13,148,136,.35); box-shadow: 0 8px 30px rgba(13,148,136,.1); }
-.c-purple:hover { border-color: rgba(124,58,237,.3); }
-.c-amber:hover { border-color: rgba(217,119,6,.3); }
-.c-rose:hover { border-color: rgba(225,29,72,.3); }
-.c-sky:hover { border-color: rgba(14,165,233,.3); }
-
+.tool-card-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 2px;
+}
 .tool-icon-wrap {
-  width: 42px; height: 42px;
-  border-radius: 11px;
+  width: 38px; height: 38px;
+  border-radius: var(--r-sm);
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  background: var(--cream-2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
 }
-.c-blue .tool-icon-wrap   { background: rgba(37,99,235,.1); }
-.c-teal .tool-icon-wrap   { background: rgba(13,148,136,.1); }
-.c-purple .tool-icon-wrap { background: rgba(124,58,237,.1); }
-.c-amber .tool-icon-wrap  { background: rgba(217,119,6,.1); }
-.c-rose .tool-icon-wrap   { background: rgba(225,29,72,.1); }
-.c-sky .tool-icon-wrap    { background: rgba(14,165,233,.1); }
+[data-theme="dark"] .tool-icon-wrap { background: rgba(232,184,75,.06); border-color: rgba(232,184,75,.1); }
+
+.tool-badge {
+  font-size: .58rem; font-weight: 800;
+  padding: 3px 8px; border-radius: 3px;
+  letter-spacing: .8px; text-transform: uppercase;
+}
+.badge-active { background: var(--green-dark); color: var(--gold); }
+.badge-soon { background: var(--cream-2); color: var(--txt-3); border: 1px solid var(--border); }
+[data-theme="dark"] .badge-active { background: rgba(232,184,75,.15); color: var(--gold); }
+[data-theme="dark"] .badge-soon { background: rgba(245,240,232,.05); border-color: var(--border); }
 
 .tool-name {
-  font-size: .86rem; font-weight: 900;
-  color: var(--txt-1);
-  line-height: 1.3;
+  font-size: .86rem; font-weight: 700;
+  color: var(--txt-1); line-height: 1.3;
 }
 .tool-desc {
-  font-size: .73rem; color: var(--txt-2);
+  font-size: .73rem; color: var(--txt-3);
   line-height: 1.55; flex: 1;
 }
-.tool-foot {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 2px;
-}
-.tool-status {
-  font-size: .6rem; font-weight: 800;
-  padding: 3px 8px; border-radius: 99px;
-  letter-spacing: .4px;
-}
-.status-soon {
-  background: var(--surface-2);
-  color: var(--txt-3);
-  border: 1px solid var(--border);
-}
 .tool-arrow {
-  font-size: .75rem; color: var(--txt-3);
-  transition: var(--trans);
+  font-size: .75rem; color: var(--brown-faint);
+  transition: var(--trans); margin-top: 4px;
 }
-.tool-card:hover .tool-arrow { transform: translateX(3px); color: var(--blue-2); }
-.tool-card.coming-soon { opacity: .6; pointer-events: none; cursor: default; }
+.tool-card:hover .tool-arrow { transform: translateX(3px); color: var(--green-dark); }
 
 /* ─── BOTTOM ROW ─── */
 .bottom-row {
   display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 16px;
+  grid-template-columns: 1fr 290px;
+  gap: 14px;
 }
 
 /* Update log */
@@ -641,95 +642,107 @@ a { text-decoration: none; color: inherit; }
   padding: 20px;
 }
 .card-title {
-  font-size: .88rem; font-weight: 900;
-  color: var(--txt-1);
+  font-size: .82rem; font-weight: 700;
+  color: var(--txt-2);
   margin-bottom: 16px;
   display: flex; align-items: center; gap: 7px;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+  font-size: .62rem;
+  letter-spacing: 1.5px;
 }
 
-.update-list { display: flex; flex-direction: column; gap: 12px; }
+.update-list { display: flex; flex-direction: column; gap: 13px; }
 .update-item { display: flex; gap: 12px; align-items: flex-start; }
-.update-line {
-  display: flex; flex-direction: column; align-items: center;
-  padding-top: 4px;
-  flex-shrink: 0;
-}
 .update-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
+  width: 7px; height: 7px; border-radius: 50%;
+  margin-top: 5px; flex-shrink: 0;
 }
-.dot-blue   { background: var(--blue-2); }
-.dot-teal   { background: var(--teal-2); }
-.dot-amber  { background: #F59E0B; }
-.dot-purple { background: #8B5CF6; }
-
-.ut-title { font-size: .8rem; font-weight: 800; color: var(--txt-1); }
+.dot-green  { background: var(--green-light); }
+.dot-gold   { background: var(--gold); }
+.dot-brown  { background: var(--brown-light); }
+.dot-dark   { background: var(--green-dark); }
+.ut-title { font-size: .81rem; font-weight: 700; color: var(--txt-1); }
 .ut-sub { font-size: .71rem; color: var(--txt-3); margin-top: 2px; line-height: 1.4; }
 
 /* Social card */
 .social-card {
-  background: linear-gradient(160deg, #1a6b4a 0%, #1a4d8f 60%, #1a3a7a 100%);
+  background: var(--green-dark);
   border-radius: var(--r-md);
   padding: 20px;
   position: relative;
   overflow: hidden;
+  border: 1.5px solid rgba(232,184,75,.15);
 }
 .social-card::before {
-  content: '';
-  position: absolute; top: -40px; right: -40px;
-  width: 150px; height: 150px;
-  background: radial-gradient(circle, rgba(37,99,235,.2), transparent 70%);
+  content: '✦';
+  position: absolute;
+  bottom: 14px; right: 18px;
+  font-size: 3rem;
+  color: rgba(232,184,75,.06);
   pointer-events: none;
 }
-.social-card .card-title { color: rgba(255,255,255,.7); }
+.social-card .card-title { color: rgba(232,184,75,.4); }
 
 .stat-grid {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 8px; margin-bottom: 14px;
 }
 .stat-item {
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.07);
+  background: rgba(232,184,75,.07);
+  border: 1px solid rgba(232,184,75,.1);
   border-radius: var(--r-sm);
   padding: 11px;
   text-align: center;
 }
-.stat-num { font-size: 1.3rem; font-weight: 900; color: #fff; }
-.stat-lbl { font-size: .62rem; color: rgba(255,255,255,.38); margin-top: 2px; font-weight: 600; }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--gold); line-height: 1;
+}
+.stat-lbl { font-size: .6rem; color: rgba(232,184,75,.35); margin-top: 3px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
 
 .social-btn {
   display: flex; align-items: center; justify-content: center; gap: 7px;
   padding: 9px;
   border-radius: var(--r-sm);
-  font-size: .77rem; font-weight: 800;
+  font-size: .77rem; font-weight: 700;
   text-decoration: none;
   transition: var(--trans);
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.09);
-  color: rgba(255,255,255,.65);
+  background: rgba(232,184,75,.07);
+  border: 1px solid rgba(232,184,75,.12);
+  color: rgba(245,240,232,.55);
   font-family: inherit;
   cursor: pointer;
   margin-bottom: 7px;
+  letter-spacing: .2px;
 }
 .social-btn:last-child { margin-bottom: 0; }
-.social-btn:hover { background: rgba(255,255,255,.13); color: #fff; }
+.social-btn:hover { background: rgba(232,184,75,.14); color: var(--gold); }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero       { animation: fadeUp .5s ease both; }
+.tools-grid { animation: fadeUp .5s .1s ease both; }
+.bottom-row { animation: fadeUp .5s .18s ease both; }
 
 /* ─── MOBILE OVERLAY ─── */
 .mob-overlay {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(0,0,0,.45);
+  background: rgba(0,0,0,.5);
   z-index: 190;
-  opacity: 0;
-  transition: opacity .3s;
+  opacity: 0; transition: opacity .3s;
 }
 .mob-overlay.show { display: block; opacity: 1; }
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 900px) {
   .sidebar {
-    position: fixed; left: -260px; top: 0;
+    position: fixed; left: -270px; top: 0;
     height: 100vh; z-index: 200;
     transition: left .3s cubic-bezier(.4,0,.2,1);
   }
@@ -745,17 +758,14 @@ a { text-decoration: none; color: inherit; }
   .tools-grid { grid-template-columns: 1fr; }
   .hero-btns { flex-direction: column; }
   .btn-hero { justify-content: center; }
-  .hero-title { font-size: 1.4rem; }
+  .hero-title { font-size: 1.6rem; }
 }
 
-/* ─── ANIMATIONS ─── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* ─── PWA INSTALL POPUP ─── */
+@keyframes slideUp {
+  from { opacity:0; transform:translateX(-50%) translateY(20px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
 }
-.hero       { animation: fadeUp .5s ease both; }
-.tools-grid { animation: fadeUp .5s .1s ease both; }
-.bottom-row { animation: fadeUp .5s .2s ease both; }
 </style>
 </head>
 <body>
@@ -765,10 +775,10 @@ a { text-decoration: none; color: inherit; }
 <!-- ════ SIDEBAR ════ -->
 <aside class="sidebar" id="sidebar">
   <div class="sb-brand">
-    <div class="sb-logo"><img src="guru-cibisd2.png" alt="Logo" /></div>
+    <div class="sb-logo"><img src="guru-cibisd2.png" alt="Logo BGY" /></div>
     <div class="sb-brand-text">
       <div class="sb-name">Bantu Guru Yuk</div>
-      <div class="sb-sub">Mempermudah kerja Bapak/Ibu<br>Guru hebat</div>
+      <div class="sb-sub">AI Tools untuk Guru SD</div>
     </div>
   </div>
 
@@ -784,7 +794,7 @@ a { text-decoration: none; color: inherit; }
   </a>
   <a href="/kokurikuler" class="nav-item">
     <div class="nav-icon">🎭</div>
-    Buat Prompt Modul Kokurikuler
+    Buat Prompt Kokurikuler
   </a>
   <a href="/soal" class="nav-item">
     <div class="nav-icon">📝</div>
@@ -835,8 +845,9 @@ a { text-decoration: none; color: inherit; }
   <div class="topbar">
     <div class="topbar-left">
       <button class="mob-toggle" id="mobMenu" onclick="openSidebar()">☰</button>
-      <div>
-        <div class="topbar-title" style="font-size:1.5rem;font-weight:900;letter-spacing:-.4px;">Bantu Guru <span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Yuk!</span></div>
+      <div class="topbar-wordmark">
+        Bantu Guru <em>Yuk!</em>
+        <span class="topbar-wordmark-tag">Dashboard</span>
       </div>
     </div>
     <div class="topbar-right">
@@ -848,59 +859,51 @@ a { text-decoration: none; color: inherit; }
 
   <!-- Hero -->
   <div class="hero">
-    <!-- Decorative SVG -->
-    <svg class="hero-geo" width="200" height="200" viewBox="0 0 200 200" fill="none">
-      <circle cx="100" cy="100" r="80" stroke="white" stroke-width="1"/>
-      <circle cx="100" cy="100" r="55" stroke="white" stroke-width="1"/>
-      <circle cx="100" cy="100" r="30" stroke="white" stroke-width="1"/>
-      <line x1="20" y1="100" x2="180" y2="100" stroke="white" stroke-width="1"/>
-      <line x1="100" y1="20" x2="100" y2="180" stroke="white" stroke-width="1"/>
-    </svg>
+    <!-- Decorative asterisks -->
+    <span class="hero-ast" style="top:18px;left:18px;font-size:1.2rem;">✦</span>
+    <span class="hero-ast" style="bottom:22px;left:260px;font-size:.9rem;">✶</span>
+    <span class="hero-ast" style="top:40px;right:260px;font-size:.75rem;">✦</span>
+    <span class="hero-ast" style="bottom:16px;right:240px;font-size:1.6rem;opacity:.07;">✦</span>
 
     <div class="hero-left">
-      <div class="hero-greeting">
-        <span>👋</span>
-        Selamat datang, Bapak/Ibu Guru Hebat
-      </div>
-
+      <div class="hero-eyebrow">✦ AI Tools untuk Guru SD Indonesia</div>
       <div class="hero-title">
-        Bantu Guru <em>Yuk!</em>
+        Selamat Datang,<br><em>Guru Hebat!</em>
       </div>
-
       <div class="hero-desc">
-        ✦ AI Tools untuk membantu Bapak/Ibu Guru SD dalam membuat perangkat pembelajaran yang berkualitas dan efektif.
+        Buat soal, LKPD, dan modul pembelajaran dengan bantuan AI — cepat, gratis, dan sesuai Kurikulum Merdeka.
       </div>
-
       <div class="hero-chips">
-        <div class="hero-chip">⚡ Cepat &amp; praktis</div>
-        <div class="hero-chip">🖱️ Mulai dalam 1 klik</div>
+        <div class="hero-chip">⚡ Cepat &amp; Praktis</div>
+        <div class="hero-chip">🖱️ Mulai dalam 1 Klik</div>
+        <div class="hero-chip">📋 Kurikulum Merdeka</div>
       </div>
-
       <div class="hero-btns">
         <a href="/soal" class="btn-hero btn-hero-primary">📝 Buat Soal Sekarang</a>
         <a href="/lkpd" class="btn-hero btn-hero-ghost">📘 Generator LKPD</a>
       </div>
     </div>
 
-    <!-- Quote card kanan — auto slider 3 quotes -->
     <div class="hero-right">
-      <div class="quote-card">
-        <div class="quote-icon">"</div>
-
+      <div class="stamp-card">
+        <div class="stamp-new">Baru</div>
+        <div class="stamp-icon">📚</div>
+        <div class="stamp-num">3+</div>
+        <div class="stamp-lbl">Fitur Aktif</div>
+        <hr class="stamp-hr">
         <div class="quote-slider" id="quoteSlider">
           <div class="quote-slide active" data-index="0">
-            <div class="quote-text">AI tidak menggantikan guru, tetapi membantu membuat pembelajaran lebih efektif.</div>
+            <div class="quote-text">AI tidak menggantikan guru — ia membantu guru bekerja lebih efektif.</div>
           </div>
           <div class="quote-slide" data-index="1">
-            <div class="quote-text">Bukan soal kerja lebih keras, tapi kerja lebih cerdas.</div>
+            <div class="quote-text">Hemat waktu membuat soal, maksimalkan waktu untuk mengajar.</div>
           </div>
           <div class="quote-slide" data-index="2">
-            <div class="quote-text">Hemat waktu membuat soal, maksimalkan waktu mengajar.</div>
+            <div class="quote-text">Bukan soal kerja lebih keras, tapi kerja lebih cerdas.</div>
           </div>
         </div>
-
-        <div class="quote-dot" id="quoteDots">
-          <span class="dot-active" onclick="goToSlide(0)"></span>
+        <div class="quote-dots" id="quoteDots">
+          <span class="dot-a" onclick="goToSlide(0)"></span>
           <span onclick="goToSlide(1)"></span>
           <span onclick="goToSlide(2)"></span>
         </div>
@@ -909,80 +912,82 @@ a { text-decoration: none; color: inherit; }
   </div>
 
   <!-- Section header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-    <div>
-      <div style="font-size:.95rem;font-weight:900;color:var(--txt-1);letter-spacing:-.2px;">🛠️ Fitur Tersedia</div>
-      <div style="font-size:.73rem;color:var(--txt-2);margin-top:2px;font-weight:500;">Klik untuk mulai menggunakan</div>
-    </div>
+  <div class="sec-header">
+    <div class="sec-line"></div>
+    <div class="sec-label">✦ Fitur Tersedia — Klik untuk mulai</div>
+    <div class="sec-line"></div>
   </div>
 
   <!-- Tools -->
   <div class="tools-grid">
-    <a href="/soal" class="tool-card c-blue">
-      <div class="tool-icon-wrap">📝</div>
-      <div class="tool-name">Buat Soal</div>
-      <div class="tool-desc">Generate soal PG, isian & uraian otomatis sesuai Kurikulum Merdeka. Ekspor ke Word & PDF.</div>
-      <div class="tool-foot">
-        <span class="tool-arrow">→</span>
+    <a href="/soal" class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">📝</div>
+        <span class="tool-badge badge-active">Aktif</span>
       </div>
+      <div class="tool-name">Buat Soal</div>
+      <div class="tool-desc">Generate soal PG, isian &amp; uraian otomatis sesuai Kurikulum Merdeka. Ekspor ke Word &amp; PDF.</div>
+      <div class="tool-arrow">→</div>
     </a>
 
-    <a href="/lkpd" class="tool-card c-teal">
-      <div class="tool-icon-wrap">📘</div>
+    <a href="/lkpd" class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">📘</div>
+        <span class="tool-badge badge-active">Aktif</span>
+      </div>
       <div class="tool-name">Generator Prompt LKPD</div>
       <div class="tool-desc">Buat Lembar Kerja Peserta Didik dengan prompt AI dan generate gambar media ajar.</div>
-      <div class="tool-foot">
-        <span class="tool-arrow">→</span>
-      </div>
+      <div class="tool-arrow">→</div>
     </a>
 
-    <a href="/kokurikuler" class="tool-card c-purple">
-      <div class="tool-icon-wrap">🎭</div>
-      <div class="tool-name">Buat Prompt Modul Kokurikuler</div>
+    <a href="/kokurikuler" class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">🎭</div>
+        <span class="tool-badge badge-active">Aktif</span>
+      </div>
+      <div class="tool-name">Buat Prompt Kokurikuler</div>
       <div class="tool-desc">Buat prompt modul kegiatan kokurikuler yang kreatif dan sesuai jenjang SD.</div>
-      <div class="tool-foot">
-        <span class="tool-arrow">→</span>
-      </div>
+      <div class="tool-arrow">→</div>
     </a>
 
-    <div class="tool-card c-indigo coming-soon">
-      <div class="tool-icon-wrap">🗓️</div>
+    <div class="tool-card coming-soon">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">🗓️</div>
+        <span class="tool-badge badge-soon">Segera</span>
+      </div>
       <div class="tool-name">RPP Generator</div>
       <div class="tool-desc">Buat Rencana Pelaksanaan Pembelajaran lengkap sesuai format Kurikulum Merdeka.</div>
-      <div class="tool-foot">
-        <span class="tool-status status-soon">SEGERA</span>
-        <span class="tool-arrow">→</span>
-      </div>
+      <div class="tool-arrow">→</div>
     </div>
 
-    <div class="tool-card c-amber coming-soon">
-      <div class="tool-icon-wrap">📊</div>
+    <div class="tool-card coming-soon">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">📊</div>
+        <span class="tool-badge badge-soon">Segera</span>
+      </div>
       <div class="tool-name">Rapor Otomatis</div>
       <div class="tool-desc">Input nilai siswa, sistem generate deskripsi rapor otomatis per mata pelajaran.</div>
-      <div class="tool-foot">
-        <span class="tool-status status-soon">SEGERA</span>
-        <span class="tool-arrow">→</span>
-      </div>
+      <div class="tool-arrow">→</div>
     </div>
 
-    <div class="tool-card c-rose coming-soon">
-      <div class="tool-icon-wrap">🏆</div>
+    <div class="tool-card coming-soon">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">🏆</div>
+        <span class="tool-badge badge-soon">Segera</span>
+      </div>
       <div class="tool-name">Bank Soal</div>
-      <div class="tool-desc">Simpan & kelola kumpulan soal yang sudah dibuat. Bisa digunakan ulang kapanpun.</div>
-      <div class="tool-foot">
-        <span class="tool-status status-soon">SEGERA</span>
-        <span class="tool-arrow">→</span>
-      </div>
+      <div class="tool-desc">Simpan &amp; kelola kumpulan soal yang sudah dibuat. Bisa digunakan ulang kapanpun.</div>
+      <div class="tool-arrow">→</div>
     </div>
 
-    <div class="tool-card c-sky coming-soon">
-      <div class="tool-icon-wrap">📋</div>
-      <div class="tool-name">Absensi Digital</div>
-      <div class="tool-desc">Kelola absensi siswa digital, rekap otomatis per bulan & unduh laporan.</div>
-      <div class="tool-foot">
-        <span class="tool-status status-soon">SEGERA</span>
-        <span class="tool-arrow">→</span>
+    <div class="tool-card coming-soon">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">📋</div>
+        <span class="tool-badge badge-soon">Segera</span>
       </div>
+      <div class="tool-name">Absensi Digital</div>
+      <div class="tool-desc">Kelola absensi siswa digital, rekap otomatis per bulan &amp; unduh laporan.</div>
+      <div class="tool-arrow">→</div>
     </div>
   </div>
 
@@ -990,44 +995,44 @@ a { text-decoration: none; color: inherit; }
   <div class="bottom-row">
 
     <div class="update-card">
-      <div class="card-title">📌 Update Terbaru</div>
+      <div class="card-title">✦ Update Terbaru</div>
       <div class="update-list">
         <div class="update-item">
-          <div class="update-line"><div class="update-dot dot-blue"></div></div>
+          <div class="update-dot dot-green"></div>
           <div>
             <div class="ut-title">Export Word diperbaiki</div>
             <div class="ut-sub">Kop surat kini tampil rapi di Microsoft Word — April 2026</div>
           </div>
         </div>
         <div class="update-item">
-          <div class="update-line"><div class="update-dot dot-teal"></div></div>
+          <div class="update-dot dot-gold"></div>
           <div>
-            <div class="ut-title">Default Kelas 2 & Bahasa Indonesia</div>
+            <div class="ut-title">Default Kelas 2 &amp; Bahasa Indonesia</div>
             <div class="ut-sub">Form Buat Soal otomatis pilih kelas 2 saat pertama buka</div>
           </div>
         </div>
         <div class="update-item">
-          <div class="update-line"><div class="update-dot dot-purple"></div></div>
+          <div class="update-dot dot-brown"></div>
           <div>
             <div class="ut-title">Error handling API lebih baik</div>
             <div class="ut-sub">Pesan error kini lebih informatif ketika API gagal</div>
           </div>
         </div>
         <div class="update-item">
-          <div class="update-line"><div class="update-dot dot-amber"></div></div>
+          <div class="update-dot dot-dark"></div>
           <div>
             <div class="ut-title">Dashboard baru diluncurkan</div>
-            <div class="ut-sub">Landing page upgrade dengan layout panel — April 2026</div>
+            <div class="ut-sub">Landing page upgrade dengan tampilan Edu-Retro — April 2026</div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="social-card">
-      <div class="card-title">📣 Info Platform</div>
-      <div class="stat-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="card-title">✦ Info Platform</div>
+      <div class="stat-grid">
         <div class="stat-item">
-          <div class="stat-num">2+</div>
+          <div class="stat-num">3+</div>
           <div class="stat-lbl">Fitur Aktif</div>
         </div>
         <div class="stat-item">
@@ -1048,36 +1053,31 @@ a { text-decoration: none; color: inherit; }
   display:none;
   position:fixed;
   bottom:24px; left:50%; transform:translateX(-50%);
-  background:linear-gradient(135deg,#1a6b4a,#1a4d8f);
-  color:#fff;
-  border-radius:16px;
+  background: var(--green-dark);
+  border: 1.5px solid rgba(232,184,75,.2);
+  color:#F5F0E8;
+  border-radius:12px;
   padding:16px 20px;
   box-shadow:0 8px 32px rgba(0,0,0,.35);
   z-index:9999;
   width:calc(100% - 32px);
   max-width:380px;
+  font-family:'DM Sans',sans-serif;
   animation: slideUp .4s cubic-bezier(.4,0,.2,1) both;
 ">
   <div style="display:flex;align-items:center;gap:12px;">
-    <img src="guru-cibisd2.png" alt="Logo" style="width:44px;height:44px;border-radius:10px;object-fit:contain;background:rgba(255,255,255,.15);padding:4px;flex-shrink:0;" />
+    <img src="guru-cibisd2.png" alt="Logo" style="width:44px;height:44px;border-radius:10px;object-fit:contain;background:rgba(232,184,75,.1);padding:4px;flex-shrink:0;border:1px solid rgba(232,184,75,.2);" />
     <div style="flex:1;">
-      <div style="font-weight:900;font-size:.92rem;line-height:1.2;">Install Bantu Guru Yuk</div>
-      <div style="font-size:.72rem;color:rgba(255,255,255,.7);margin-top:3px;">Pasang di HP untuk akses lebih cepat!</div>
+      <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:.95rem;line-height:1.2;color:#F5F0E8;">Install Bantu Guru Yuk</div>
+      <div style="font-size:.72rem;color:rgba(232,184,75,.5);margin-top:3px;">Pasang di HP untuk akses lebih cepat!</div>
     </div>
-    <button onclick="closeInstallPopup()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;">✕</button>
+    <button onclick="closeInstallPopup()" style="background:rgba(232,184,75,.1);border:1px solid rgba(232,184,75,.15);color:rgba(245,240,232,.6);width:28px;height:28px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit;">✕</button>
   </div>
   <div style="display:flex;gap:8px;margin-top:14px;">
-    <button onclick="closeInstallPopup()" style="flex:1;padding:9px;border-radius:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;">Nanti saja</button>
-    <button id="installBtn" onclick="doInstall()" style="flex:2;padding:9px;border-radius:10px;background:#fff;border:none;color:#1a4d8f;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit;">📲 Install Sekarang</button>
+    <button onclick="closeInstallPopup()" style="flex:1;padding:9px;border-radius:6px;background:rgba(232,184,75,.07);border:1px solid rgba(232,184,75,.12);color:rgba(245,240,232,.5);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;">Nanti saja</button>
+    <button id="installBtn" onclick="doInstall()" style="flex:2;padding:9px;border-radius:6px;background:var(--gold);border:none;color:#1D3B2A;font-size:.78rem;font-weight:800;cursor:pointer;font-family:inherit;">📲 Install Sekarang</button>
   </div>
 </div>
-
-<style>
-@keyframes slideUp {
-  from { opacity:0; transform:translateX(-50%) translateY(20px); }
-  to   { opacity:1; transform:translateX(-50%) translateY(0); }
-}
-</style>
 
 <script>
 /* ─── Sidebar mobile ─── */
@@ -1093,22 +1093,18 @@ function closeSidebar() {
 /* ─── Dark mode ─── */
 const html = document.documentElement;
 const toggleBtn = document.getElementById('themeToggle');
-
 function applyTheme(theme) {
   html.setAttribute('data-theme', theme);
   toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
   localStorage.setItem('bgy-theme', theme);
 }
-
 (function(){
   const saved = localStorage.getItem('bgy-theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   applyTheme(saved || (prefersDark ? 'dark' : 'light'));
 })();
-
 function toggleTheme() {
-  const current = html.getAttribute('data-theme');
-  applyTheme(current === 'dark' ? 'light' : 'dark');
+  applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 }
 
 /* ─── Quote Auto Slider ─── */
@@ -1119,65 +1115,41 @@ let slideTimer = null;
 function goToSlide(index) {
   const slides = document.querySelectorAll('.quote-slide');
   const dots = document.querySelectorAll('#quoteDots span');
-
-  // Hide current
   slides[currentSlide].classList.remove('active');
-  dots[currentSlide].classList.remove('dot-active');
-
-  // Show new
+  dots[currentSlide].classList.remove('dot-a');
   currentSlide = index;
   slides[currentSlide].classList.add('active');
-  dots[currentSlide].classList.add('dot-active');
-
-  // Reset timer
+  dots[currentSlide].classList.add('dot-a');
   clearInterval(slideTimer);
   startSlideTimer();
 }
-
-function nextSlide() {
-  goToSlide((currentSlide + 1) % totalSlides);
-}
-
 function startSlideTimer() {
-  slideTimer = setInterval(nextSlide, 5000);
+  slideTimer = setInterval(() => goToSlide((currentSlide + 1) % totalSlides), 5000);
 }
-
-// Start auto-slide on load
-document.addEventListener('DOMContentLoaded', function() {
-  startSlideTimer();
-});
+document.addEventListener('DOMContentLoaded', startSlideTimer);
 
 /* ─── PWA Install ─── */
 let deferredPrompt = null;
-
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  const dismissed = sessionStorage.getItem('install-dismissed');
-  if (!dismissed) {
-    setTimeout(() => {
-      document.getElementById('installPopup').style.display = 'block';
-    }, 3000);
+  if (!sessionStorage.getItem('install-dismissed')) {
+    setTimeout(() => { document.getElementById('installPopup').style.display = 'block'; }, 3000);
   }
 });
-
 function closeInstallPopup() {
   document.getElementById('installPopup').style.display = 'none';
   sessionStorage.setItem('install-dismissed', '1');
 }
-
 async function doInstall() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    await deferredPrompt.userChoice;
     deferredPrompt = null;
   }
   closeInstallPopup();
 }
-
-window.addEventListener('appinstalled', () => {
-  closeInstallPopup();
-});
+window.addEventListener('appinstalled', closeInstallPopup);
 </script>
 
 </body>
