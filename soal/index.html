@@ -331,8 +331,41 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   </div>
 </div>
 
-<!-- ══ TAB HOME ══ -->
-<div id="tab-home">
+<!-- ══ MODAL EDIT SOAL ══ -->
+<div id="editModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;overflow-y:auto;padding:20px;">
+  <div style="max-width:620px;margin:40px auto;background:var(--card-bg);border-radius:16px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <h3 style="font-size:1rem;font-weight:700;margin:0;" id="editModalTitle">✏️ Edit Soal</h3>
+      <button onclick="closeEditModal()" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text-light);">✕</button>
+    </div>
+    <div class="form-group">
+      <label>Teks Soal</label>
+      <textarea id="editSoalTeks" style="min-height:90px;resize:vertical;width:100%;padding:10px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:.9rem;background:var(--input-bg);color:var(--text);"></textarea>
+    </div>
+    <div id="editOpsiContainer"></div>
+    <div class="form-group" id="editJawabanGroup">
+      <label>Jawaban / Kunci</label>
+      <input type="text" id="editJawaban" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;background:var(--input-bg);color:var(--text);"/>
+    </div>
+    <div class="form-group">
+      <label>Level Bloom</label>
+      <select id="editLevel" style="width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);">
+        <option value="C1">C1 — Mengingat</option>
+        <option value="C2">C2 — Memahami</option>
+        <option value="C3">C3 — Menerapkan</option>
+        <option value="C4">C4 — Menganalisis</option>
+        <option value="C5">C5 — Mengevaluasi</option>
+        <option value="C6">C6 — Mencipta</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+      <button onclick="closeEditModal()" class="btn btn-secondary" style="padding:8px 18px;">Batal</button>
+      <button onclick="saveEditModal()" class="btn btn-primary" style="padding:8px 18px;">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+
 <main>
   <!-- ══ KOLOM KIRI ══ -->
   <div class="col-form">
@@ -493,11 +526,9 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           </div>
         </div>
         <button class="btn btn-secondary" onclick="exportWord()">📝 Download Word</button>
-        <button class="btn btn-secondary" onclick="copyContent()">📋 Copy Teks</button>
-        <button class="btn btn-secondary" onclick="shuffleSoal()" title="Acak urutan soal">🔀 Acak</button>
       </div>
       <div style="margin-top:8px;font-size:.72rem;color:var(--text-light);">
-        ✅ Kunci + kisi-kisi ada di halaman terakhir. &nbsp;|&nbsp; ⌨️ Shortcut: ← → ganti halaman, Ctrl+G generate.
+        ✅ Kunci + kisi-kisi ada di halaman terakhir. &nbsp;|&nbsp; ⌨️ ← → ganti halaman, Ctrl+G generate.
       </div>
     </div>
 
@@ -861,6 +892,7 @@ function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null
     const biOpt=[...mapelSel.options].find(o=>o.value==='Bahasa Indonesia');
     if(biOpt)mapelSel.value='Bahasa Indonesia';
     renderMateriChecklist();
+    autoSetBloom();
     restoreAutoSave();
     updateLimitDisplay();
     updateHistoriBadge(getHistoriList().length);
@@ -1031,9 +1063,27 @@ function hapusLogo(inputId,key,thumbId,hintId,btnId){
 /* ════════════════════════════════════════════
    FORM DINAMIS
 ════════════════════════════════════════════ */
-function onKelasChange(){updateOpsiNote();renderMapelOptions();renderMateriChecklist();}
+function onKelasChange(){updateOpsiNote();renderMapelOptions();renderMateriChecklist();autoSetBloom();}
 function onMapelChange(){renderMateriChecklist();}
 function onSemesterChange(){renderMateriChecklist();}
+
+// Set level Bloom otomatis sesuai kelas (tapi user tetap bisa ubah manual)
+function autoSetBloom(){
+  const kelas=parseInt(document.getElementById('kelas').value)||1;
+  const cbs=document.querySelectorAll('.cb-kesulitan');
+  // Reset semua
+  cbs.forEach(cb=>cb.checked=false);
+  if(kelas<=2){
+    // Fase A: C1, C2 saja
+    document.querySelectorAll('.cb-kesulitan[value^="C1"],  .cb-kesulitan[value^="C2"]').forEach(cb=>cb.checked=true);
+  }else if(kelas<=4){
+    // Fase B: C1, C2, C3
+    document.querySelectorAll('.cb-kesulitan[value^="C1"], .cb-kesulitan[value^="C2"], .cb-kesulitan[value^="C3"]').forEach(cb=>cb.checked=true);
+  }else{
+    // Fase C: C3, C4, C5
+    document.querySelectorAll('.cb-kesulitan[value^="C3"], .cb-kesulitan[value^="C4"], .cb-kesulitan[value^="C5"]').forEach(cb=>cb.checked=true);
+  }
+}
 function renderMapelOptions(){
   const kelas=parseInt(document.getElementById('kelas').value);
   document.getElementById('mataPelajaran').innerHTML=(DB_MAPEL[kelas]||[]).map(m=>`<option value="${m}">${m}</option>`).join('');
@@ -1202,9 +1252,10 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
     autoSaveForm();
     updateLimitDisplay();
 
-    // ── Generate gambar secara async untuk soal PG yang butuh
-    if(buatGambar&&jmlPG>0){
-      generateGambarAsync(data,kelas,mapel);
+    // ── Generate gambar: selalu jika ada soal yang butuh gambar
+    // Checkbox cbGambar hanya kontrol apakah AI diminta tambah butuhGambar=true
+    if(jmlPG>0){
+      generateGambarAsync(data,kelas,mapel,buatGambar);
     }
 
   }catch(e){
@@ -1218,9 +1269,13 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
 /* ════════════════════════════════════════════
    GENERATE GAMBAR ASYNC — tidak block UI
 ════════════════════════════════════════════ */
-async function generateGambarAsync(data,kelas,mapel){
+async function generateGambarAsync(data,kelas,mapel,cbAktif){
   const pg=data.pilihanGanda||[];
-  const soalButuhGambar=pg.filter(item=>item.butuhGambar||needsImage(item.soal));
+  // Jika checkbox aktif: generate semua yang butuhGambar/needsImage
+  // Jika checkbox tidak aktif: hanya generate yang AI sudah tandai butuhGambar:true (bukan auto-detect)
+  const soalButuhGambar=pg.filter(item=>
+    cbAktif?(item.butuhGambar||needsImage(item.soal)):item.butuhGambar===true
+  );
   if(!soalButuhGambar.length)return;
 
   showGenerateFeedback(`🎨 Membuat ${soalButuhGambar.length} gambar ilustrasi...`,0);
@@ -1597,6 +1652,9 @@ function exportWord(){
 
   gaEvent('download_word',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
 
+  const kelasNumW=parseInt(document.getElementById('kelas').value)||1;
+  const faseW=kelasNumW<=2?'A':kelasNumW<=4?'B':'C';
+
   const {
     Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,
     WidthType,BorderStyle,AlignmentType,HeadingLevel,
@@ -1679,7 +1737,7 @@ function exportWord(){
       borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideH:{style:BorderStyle.NONE},insideV:{style:BorderStyle.NONE}},
       rows:[
         baris('Mata Pelajaran',mapel,'Nama','______________________________'),
-        baris('Kelas / Semester',kelas+' / '+semStr,'No. Absen','_______________'),
+        baris('Kelas / Fase',kelas+' / Fase '+faseW,'No. Absen','_______________'),
         baris('Tanggal',tanggal,'Nilai','_______________'),
       ]
     });
@@ -1775,8 +1833,6 @@ function exportWord(){
   children.push(new Paragraph({children:[new PageBreak()]}));
   children.push(p('KUNCI JAWABAN',{bold:true,align:AlignmentType.CENTER,size:28,after:20}));
   children.push(p(`${judulUjian} — ${namaSekolah}`,{align:AlignmentType.CENTER,after:10}));
-  const kelasNumW=parseInt(document.getElementById('kelas').value)||1;
-  const faseW=kelasNumW<=2?'A':kelasNumW<=4?'B':'C';
   const bobotPGw=1,bobotIsianW=2,bobotUraianW=4;
   const totalSkorW=pg.length*bobotPGw+isian.length*bobotIsianW+uraian.length*bobotUraianW;
   children.push(p(`${mapel} | Kelas ${kelas} / Fase ${faseW}`,{align:AlignmentType.CENTER,after:6}));
@@ -1798,7 +1854,7 @@ function exportWord(){
   children.push(p(`Nilai = (Skor Diperoleh ÷ ${totalSkorW}) × 100`,{before:120,after:0,size:18,italic:true}));
 
   // ═══ HALAMAN KISI-KISI ═══
-  children.push(new PageBreak());
+  children.push(new Paragraph({children:[new PageBreak()]}));
   children.push(p('KISI-KISI SOAL',{bold:true,align:AlignmentType.CENTER,size:28,after:20}));
   children.push(p(`${judulUjian} — ${namaSekolah}`,{align:AlignmentType.CENTER,after:6}));
   children.push(p(`${mapel} | Kelas ${kelas} / Fase ${faseW} | Acuan: KepKaBSKAP No. 046/H/KR/2025`,{align:AlignmentType.CENTER,after:40,size:18}));
@@ -1909,9 +1965,8 @@ function buildDocHeader(){
   <div class="doc-header-line"></div>
   <table class="doc-identitas-table">
     <tr><td class="id-label">Mata Pelajaran</td><td class="id-sep">:</td><td class="id-value">${mapel}</td><td style="width:14px;"></td><td class="id-label">Nama</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
-    <tr><td class="id-label">Kelas / Fase</td><td class="id-sep">:</td><td class="id-value">${kelas} / Fase ${fase} (Kur. Merdeka)</td><td></td><td class="id-label">No. Absen</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
-    <tr><td class="id-label">Semester</td><td class="id-sep">:</td><td class="id-value">${semStr}</td><td></td><td class="id-label">Nilai</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
-    <tr><td class="id-label">Tanggal</td><td class="id-sep">:</td><td class="id-value">${escHtml(tanggal)}</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="id-label">Kelas / Fase</td><td class="id-sep">:</td><td class="id-value">${kelas} / Fase ${fase}</td><td></td><td class="id-label">No. Absen</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+    <tr><td class="id-label">Tanggal</td><td class="id-sep">:</td><td class="id-value">${escHtml(tanggal)}</td><td></td><td class="id-label">Nilai</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
   </table>
   <div class="doc-identitas-line"></div>`;
 }
@@ -1939,16 +1994,114 @@ function buildSoalRow(b){
     }else if(b.item.butuhGambar||needsImage(b.item.soal)){
       imgHtml=`<div class="soal-img-loading"><div class="mini-spin"></div> Gambar sedang dibuat...</div>`;
     }
-    return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks" data-type="pg" data-idx="${b.pgIdx!==undefined?b.pgIdx:0}">${escHtml(b.item.soal)}</span><div id="soal-img-${pgIdx}">${imgHtml}</div>${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
+    return `<tr><td class="soal-no">${b.no}.</td><td>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
+        <span class="soal-teks" data-type="pg" data-idx="${pgIdx}">${escHtml(b.item.soal)}</span>
+        <button onclick="openEditModal('pg',${pgIdx})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+      </div>
+      <div id="soal-img-${pgIdx}">${imgHtml}</div>${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
   }
-  if(b.type==='isian')return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks" data-type="isian" data-idx="${b.no-((soalData&&soalData.pilihanGanda?soalData.pilihanGanda.length:0))-1}">${escHtml(b.item.soal)}</span><br><span class="isian-garis">&nbsp;</span></td></tr><tr><td colspan="2" style="height:3px;"></td></tr>`;
-  if(b.type==='uraian'){const pgLen=(soalData&&soalData.pilihanGanda?soalData.pilihanGanda.length:0);const isLen=(soalData&&soalData.isian?soalData.isian.length:0);return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks" data-type="uraian" data-idx="${b.no-pgLen-isLen-1}">${escHtml(b.item.soal)}</span><div class="uraian-kotak"></div></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;}
+  if(b.type==='isian'){
+    const isIdx=b.no-((soalData&&soalData.pilihanGanda?soalData.pilihanGanda.length:0))-1;
+    return `<tr><td class="soal-no">${b.no}.</td><td>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
+        <span class="soal-teks" data-type="isian" data-idx="${isIdx}">${escHtml(b.item.soal)}</span>
+        <button onclick="openEditModal('isian',${isIdx})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+      </div>
+      <br><span class="isian-garis">&nbsp;</span></td></tr><tr><td colspan="2" style="height:3px;"></td></tr>`;
+  }
+  if(b.type==='uraian'){
+    const pgLen=(soalData&&soalData.pilihanGanda?soalData.pilihanGanda.length:0);
+    const isLen=(soalData&&soalData.isian?soalData.isian.length:0);
+    const urIdx=b.no-pgLen-isLen-1;
+    return `<tr><td class="soal-no">${b.no}.</td><td>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
+        <span class="soal-teks" data-type="uraian" data-idx="${urIdx}">${escHtml(b.item.soal)}</span>
+        <button onclick="openEditModal('uraian',${urIdx})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+      </div>
+      <div class="uraian-kotak"></div></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;
+  }
   return '';
 }
 
 /* ════════════════════════════════════════════
-   RESET FORM
+   MODAL EDIT SOAL
 ════════════════════════════════════════════ */
+let _editType=null,_editIdx=null;
+
+function openEditModal(type,idx){
+  if(!soalData)return;
+  _editType=type;_editIdx=idx;
+  let item=null;
+  if(type==='pg')item=(soalData.pilihanGanda||[])[idx];
+  if(type==='isian')item=(soalData.isian||[])[idx];
+  if(type==='uraian')item=(soalData.uraian||[])[idx];
+  if(!item)return;
+
+  const label=type==='pg'?'PG':type==='isian'?'Isian':'Uraian';
+  document.getElementById('editModalTitle').textContent=`✏️ Edit Soal ${label} No. ${idx+1}`;
+  document.getElementById('editSoalTeks').value=stripHtml(item.soal||'');
+  document.getElementById('editJawaban').value=stripHtml(item.jawaban||'');
+  document.getElementById('editLevel').value=item.level||'C2';
+
+  // Opsi PG
+  const opsiCont=document.getElementById('editOpsiContainer');
+  if(type==='pg'&&item.opsi&&item.opsi.length){
+    opsiCont.innerHTML='<div class="form-group"><label>Opsi Jawaban</label>'+
+      item.opsi.map((o,i)=>`<input type="text" data-opsi-idx="${i}" value="${escHtml(stripHtml(o))}" style="width:100%;padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;background:var(--input-bg);color:var(--text);margin-bottom:5px;display:block;"/>`).join('')+
+    '</div>';
+  }else{
+    opsiCont.innerHTML='';
+  }
+  document.getElementById('editJawabanGroup').style.display='block';
+  document.getElementById('editModal').style.display='block';
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('editSoalTeks').focus(),100);
+}
+
+function closeEditModal(){
+  document.getElementById('editModal').style.display='none';
+  document.body.style.overflow='';
+  _editType=null;_editIdx=null;
+}
+
+function saveEditModal(){
+  if(!soalData||_editType===null||_editIdx===null)return;
+  const soalBaru=document.getElementById('editSoalTeks').value.trim();
+  const jawabanBaru=document.getElementById('editJawaban').value.trim();
+  const levelBaru=document.getElementById('editLevel').value;
+  if(!soalBaru){alert('Teks soal tidak boleh kosong.');return;}
+
+  let arr=null;
+  if(_editType==='pg')arr=soalData.pilihanGanda;
+  if(_editType==='isian')arr=soalData.isian;
+  if(_editType==='uraian')arr=soalData.uraian;
+  if(!arr||!arr[_editIdx])return;
+
+  arr[_editIdx].soal=soalBaru;
+  arr[_editIdx].jawaban=jawabanBaru;
+  arr[_editIdx].level=levelBaru;
+
+  // Simpan opsi PG yang diedit
+  if(_editType==='pg'){
+    const inputs=document.querySelectorAll('#editOpsiContainer input[data-opsi-idx]');
+    if(inputs.length){arr[_editIdx].opsi=[...inputs].map(el=>el.value.trim());}
+  }
+
+  closeEditModal();
+  // Rebuild halaman, tetap di halaman yang sama
+  const savedPage=currentPage;
+  buildHalaman(soalData);
+  showPage(Math.min(savedPage,halamanSoal.length-1));
+  showGenerateFeedback('✅ Soal berhasil diedit!',2000);
+}
+
+// Tutup modal jika klik backdrop
+document.getElementById('editModal').addEventListener('click',function(e){
+  if(e.target===this)closeEditModal();
+});
+
+
 function resetForm(){
   if(!confirm('Reset form ke default?'))return;
   document.getElementById('namaSekolah').value='SDN Maju Jaya 01';
