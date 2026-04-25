@@ -1,9 +1,8 @@
 // /api/generate-image.js
-// Menggunakan Hugging Face Inference API — FLUX.1-schnell
+// Menggunakan Google Gemini 2.0 Flash — generate gambar GRATIS via AI Studio
 export const config = { api: { bodyParser: true } };
 
 export default async function handler(req, res) {
-  // Pengaturan Header agar bisa diakses dari web (CORS)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -13,17 +12,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method tidak diizinkan' });
   }
 
-  // 🔑 Ambil token dari Vercel Environment Variables
-  // Pastikan Anda sudah membuat variabel HF_TOKEN di Vercel Settings
-  const token = process.env.HF_TOKEN;
-  if (!token) {
-    return res.status(500).json({ error: 'HF_TOKEN belum diset di environment variables' });
+  // 🔑 Simpan API key di Vercel Environment Variables dengan nama GEMINI_API_KEY
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'GEMINI_API_KEY belum diset di environment variables' });
   }
 
   try {
     let body = req.body;
     if (typeof body === 'string') {
-      try { body = JSON.parse(body); } catch (e) {}
+      try { body = JSON.parse(body); } catch (e) {} 
     }
 
     const prompt = body?.prompt;
@@ -31,49 +29,52 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Prompt kosong' });
     }
 
-    // Prompt dioptimalkan untuk ilustrasi soal sekolah dasar
-    const fullPrompt = `${prompt}, cartoon illustration style, colorful, child-friendly, clean white background, no text, simple and clear`;
+    // Prompt dioptimalkan untuk ilustrasi soal SD Indonesia
+    const fullPrompt = `${prompt}, flat cartoon illustration style, bright colors, child-friendly, clean white background, no text, no letters, no numbers, simple and clear, Indonesian elementary school educational illustration`;
 
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell',
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`,
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          inputs: fullPrompt,
-          parameters: {
-            width: 512,
-            height: 384,
-            num_inference_steps: 4, // FLUX schnell optimal di 4 steps
+          contents: [{
+            parts: [{ text: fullPrompt }]
+          }],
+          generationConfig: {
+            responseModalities: ['IMAGE', 'TEXT'],
+            temperature: 1,
           }
         })
       }
     );
 
     if (!response.ok) {
-      // Jika model sedang loading (cold start)
-      if (response.status === 503) {
-        return res.status(503).json({
-          error: 'Model sedang pemanasan, silakan klik lagi dalam 20 detik',
-          loading: true
-        });
-      }
-
+      const errText = await response.text();
+      console.error('Gemini error:', response.status, errText);
       return res.status(500).json({
-        error: `Hugging Face error: ${response.status}`
+        error: `Gemini API error: ${response.status}`,
+        detail: errText
       });
     }
 
-    // Mengubah hasil gambar (binary) menjadi format Base64
-    const arrayBuffer = await response.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString('base64');
-    const contentType = response.headers.get('content-type') || 'image/png';
+    const data = await response.json();
 
+    // Ambil bagian image dari response Gemini
+    const parts = data?.candidates?.[0]?.content?.parts || [];
+    const imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));
+
+    if (!imagePart?.inlineData?.data) {
+      console.error('Gemini response tidak mengandung gambar:', JSON.stringify(data));
+      return res.status(500).json({ error: 'Gemini tidak menghasilkan gambar' });
+    }
+
+    const mimeType = imagePart.inlineData.mimeType || 'image/png';
+    const base64 = imagePart.inlineData.data;
+
+    // Kembalikan format sama seperti sebelumnya agar HTML tidak perlu diubah
     return res.status(200).json({
-      image: `data:${contentType};base64,${base64}`
+      image: `data:${mimeType};base64,${base64}`
     });
 
   } catch (err) {
