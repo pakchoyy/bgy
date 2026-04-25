@@ -860,10 +860,7 @@ let deferredInstallPrompt=null;
 let lastMateriTerpilih='';
 const DAILY_LIMIT=4;
 const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
-
-/* ════════════════════════════════════════════
-   (Gemini key dihapus — gambar pakai Pollinations gratis)
-════════════════════════════════════════════ */
+// Gambar: HuggingFace FLUX.1-schnell via /api/generate-image (Vercel + HF_TOKEN)
 
 /* ════════════════════════════════════════════
    HELPERS
@@ -1070,19 +1067,18 @@ function onSemesterChange(){renderMateriChecklist();}
 // Set level Bloom otomatis sesuai kelas (tapi user tetap bisa ubah manual)
 function autoSetBloom(){
   const kelas=parseInt(document.getElementById('kelas').value)||1;
-  const cbs=document.querySelectorAll('.cb-kesulitan');
-  // Reset semua
+  const cbs=[...document.querySelectorAll('.cb-kesulitan')];
+  // Uncheck semua dulu
   cbs.forEach(cb=>cb.checked=false);
-  if(kelas<=2){
-    // Fase A: C1, C2 saja
-    document.querySelectorAll('.cb-kesulitan[value^="C1"],  .cb-kesulitan[value^="C2"]').forEach(cb=>cb.checked=true);
-  }else if(kelas<=4){
-    // Fase B: C1, C2, C3
-    document.querySelectorAll('.cb-kesulitan[value^="C1"], .cb-kesulitan[value^="C2"], .cb-kesulitan[value^="C3"]').forEach(cb=>cb.checked=true);
-  }else{
-    // Fase C: C3, C4, C5
-    document.querySelectorAll('.cb-kesulitan[value^="C3"], .cb-kesulitan[value^="C4"], .cb-kesulitan[value^="C5"]').forEach(cb=>cb.checked=true);
-  }
+  // Ceklist otomatis sesuai kelas — semua C1-C6 tetap tampil, hanya default-nya berbeda
+  let aktif=[];
+  if(kelas<=2)      aktif=['C1','C2'];            // Fase A
+  else if(kelas<=4) aktif=['C1','C2','C3'];       // Fase B
+  else              aktif=['C2','C3','C4','C5'];  // Fase C
+  cbs.forEach(cb=>{
+    const lvl=cb.value.split('-')[0]; // "C1-Mengingat" → "C1"
+    if(aktif.includes(lvl)) cb.checked=true;
+  });
 }
 function renderMapelOptions(){
   const kelas=parseInt(document.getElementById('kelas').value);
@@ -1137,22 +1133,30 @@ function needsImage(soalText){
 ════════════════════════════════════════════ */
 async function generateGambarSoal(soalText,kelas,mapel){
   try{
-    // Pollinations.ai — gratis, tanpa API key
-    const prompt=`Ilustrasi kartun anak SD Indonesia, warna cerah, sederhana, tanpa teks, white background, ${soalText}`;
-    const encoded=encodeURIComponent(prompt);
-    const seed=Math.floor(Math.random()*99999);
-    const url=`https://image.pollinations.ai/prompt/${encoded}?width=400&height=300&nologo=true&seed=${seed}&model=flux-schnell`;
-    // Preload — pastikan gambar bisa diload
-    await new Promise((res,rej)=>{
-      const img=new Image();
-      img.onload=res;
-      img.onerror=rej;
-      img.src=url;
-      setTimeout(rej,20000); // timeout 20 detik
+    const prompt=`Ilustrasi soal SD kelas ${kelas} mapel ${mapel}: ${soalText}`;
+    const resp=await fetch('/api/generate-image',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt})
     });
-    return url;
+
+    if(!resp.ok){
+      const err=await resp.json().catch(()=>({}));
+      // Model masih pemanasan (cold start HuggingFace)
+      if(resp.status===503||err.loading){
+        console.warn('HF model cold start, skip gambar ini');
+        return null;
+      }
+      throw new Error('generate-image error '+resp.status);
+    }
+
+    const json=await resp.json();
+    // Backend kembalikan: { image: "data:image/png;base64,..." }
+    if(json.image) return json.image;
+    throw new Error('No image in response');
+
   }catch(e){
-    console.warn('Pollinations error:',e);
+    console.warn('Generate gambar gagal:',e);
     return null;
   }
 }
@@ -1252,10 +1256,9 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
     autoSaveForm();
     updateLimitDisplay();
 
-    // ── Generate gambar: selalu jika ada soal yang butuh gambar
-    // Checkbox cbGambar hanya kontrol apakah AI diminta tambah butuhGambar=true
-    if(jmlPG>0){
-      generateGambarAsync(data,kelas,mapel,buatGambar);
+    // ── Generate gambar: hanya jika checkbox dicentang
+    if(buatGambar && jmlPG>0){
+      generateGambarAsync(data, kelas, mapel);
     }
 
   }catch(e){
@@ -1269,16 +1272,13 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
 /* ════════════════════════════════════════════
    GENERATE GAMBAR ASYNC — tidak block UI
 ════════════════════════════════════════════ */
-async function generateGambarAsync(data,kelas,mapel,cbAktif){
+async function generateGambarAsync(data,kelas,mapel){
   const pg=data.pilihanGanda||[];
-  // Jika checkbox aktif: generate semua yang butuhGambar/needsImage
-  // Jika checkbox tidak aktif: hanya generate yang AI sudah tandai butuhGambar:true (bukan auto-detect)
-  const soalButuhGambar=pg.filter(item=>
-    cbAktif?(item.butuhGambar||needsImage(item.soal)):item.butuhGambar===true
-  );
+  // Hanya generate soal yang ditandai butuhGambar atau terdeteksi perlu gambar
+  const soalButuhGambar=pg.filter(item=>item.butuhGambar||needsImage(item.soal));
   if(!soalButuhGambar.length)return;
 
-  showGenerateFeedback(`🎨 Membuat ${soalButuhGambar.length} gambar ilustrasi...`,0);
+  showGenerateFeedback(`🎨 Membuat ${soalButuhGambar.length} gambar ilustrasi (FLUX)...`,0);
 
   // Proses satu per satu agar tidak rate limit
   for(const item of soalButuhGambar){
@@ -1296,7 +1296,7 @@ async function generateGambarAsync(data,kelas,mapel,cbAktif){
     // Delay antar request
     await new Promise(r=>setTimeout(r,1200));
   }
-  showGenerateFeedback('✅ Gambar ilustrasi selesai!',3000);
+  showGenerateFeedback('✅ Gambar selesai!',3000);
   // Rebuild pages dengan gambar terbaru
   buildHalaman(data);
   showPage(currentPage);
@@ -1660,6 +1660,8 @@ function exportWord(){
     WidthType,BorderStyle,AlignmentType,HeadingLevel,
     PageBreak,UnderlineType,ShadingType
   }=docx;
+  // VerticalAlign fallback untuk kompatibilitas versi docx
+  const VA=(docx.VerticalAlign||{CENTER:'center'});
 
   // Helper buat paragraph teks biasa
   function p(text,opts={}){
@@ -1865,9 +1867,19 @@ function exportWord(){
     ...isian.map((item,i)=>({no:pg.length+i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,80),level:item.level||'C1–C2',bentuk:'Isian',nomor:pg.length+i+1})),
     ...uraian.map((item,i)=>({no:pg.length+isian.length+i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,80),level:item.level||'C4–C6',bentuk:'Uraian',nomor:pg.length+isian.length+i+1}))
   ];
-  function mkCell(txt,w,bold){return new TableCell({width:{size:w,type:WidthType.DXA},children:[new Paragraph({children:[new TextRun({text:String(txt||''),size:16,bold:!!bold})],spacing:{before:40,after:40}})],verticalAlign:'center'});}
-  const kisiRows=[new TableRow({children:[mkCell('No',400,true),mkCell('Materi',1800,true),mkCell('Indikator Soal',3800,true),mkCell('Level',600,true),mkCell('Bentuk',700,true),mkCell('No.Soal',600,true)],tableHeader:true})];
-  allSoal.forEach(s=>kisiRows.push(new TableRow({children:[mkCell(s.no,400),mkCell(s.materi,1800),mkCell(s.indikator,3800),mkCell(s.level,600),mkCell(s.bentuk,700),mkCell(s.nomor,600)]})));
+  function mkCell(txt,w,isBold){
+    return new TableCell({
+      width:{size:w,type:WidthType.DXA},
+      verticalAlign:VA.CENTER,
+      children:[new Paragraph({
+        spacing:{before:40,after:40},
+        children:[new TextRun({text:String(txt||''),size:16,bold:!!isBold,font:'Times New Roman'})]
+      })]
+    });
+  }
+  const kisiHeaderCells=[mkCell('No',400,true),mkCell('Materi',1800,true),mkCell('Indikator Soal',3600,true),mkCell('Level',700,true),mkCell('Bentuk',700,true),mkCell('No.Soal',600,true)];
+  const kisiRows=[new TableRow({children:kisiHeaderCells})];
+  allSoal.forEach(s=>kisiRows.push(new TableRow({children:[mkCell(s.no,400),mkCell(s.materi,1800),mkCell(s.indikator,3600),mkCell(s.level,700),mkCell(s.bentuk,700),mkCell(s.nomor,600)]})));
   children.push(new Table({rows:kisiRows,width:{size:100,type:WidthType.PERCENTAGE}}));
   children.push(p('C1=Mengingat | C2=Memahami | C3=Menerapkan | C4=Menganalisis | C5=Mengevaluasi | C6=Mencipta',{before:120,after:0,size:16,italic:true}));
 
