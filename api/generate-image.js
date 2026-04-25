@@ -1,5 +1,5 @@
 // /api/generate-image.js
-// Menggunakan Google Gemini 2.0 Flash — generate gambar GRATIS via AI Studio
+// Google Gemini 2.0 Flash — generate gambar dengan key rotation (IMG_1/2/3)
 export const config = { api: { bodyParser: true } };
 
 export default async function handler(req, res) {
@@ -12,16 +12,21 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method tidak diizinkan' });
   }
 
-  // 🔑 Simpan API key di Vercel Environment Variables dengan nama GEMINI_API_KEY
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'GEMINI_API_KEY belum diset di environment variables' });
+  // 🔑 Key rotation — pakai GEMINI_IMG_1/2/3 bergantian
+  const keys = [
+    process.env.GEMINI_IMG_1,
+    process.env.GEMINI_IMG_2,
+    process.env.GEMINI_IMG_3,
+  ].filter(Boolean);
+
+  if (keys.length === 0) {
+    return res.status(500).json({ error: 'Tidak ada GEMINI_IMG key yang tersedia' });
   }
 
   try {
     let body = req.body;
     if (typeof body === 'string') {
-      try { body = JSON.parse(body); } catch (e) {} 
+      try { body = JSON.parse(body); } catch (e) {}
     }
 
     const prompt = body?.prompt;
@@ -29,53 +34,63 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Prompt kosong' });
     }
 
-    // Prompt dioptimalkan untuk ilustrasi soal SD Indonesia
     const fullPrompt = `${prompt}, flat cartoon illustration style, bright colors, child-friendly, clean white background, no text, no letters, no numbers, simple and clear, Indonesian elementary school educational illustration`;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: fullPrompt }]
-          }],
-          generationConfig: {
-            responseModalities: ['IMAGE', 'TEXT'],
-            temperature: 1,
+    // Coba key satu per satu sampai berhasil
+    let lastError = null;
+    for (const apiKey of keys) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: fullPrompt }] }],
+              generationConfig: {
+                responseModalities: ['IMAGE', 'TEXT'],
+                temperature: 1,
+              }
+            })
           }
-        })
+        );
+
+        // Quota habis / rate limit → coba key berikutnya
+        if (response.status === 429 || response.status === 403) {
+          lastError = `Key quota habis (${response.status})`;
+          continue;
+        }
+
+        if (!response.ok) {
+          const errText = await response.text();
+          lastError = `Gemini error ${response.status}: ${errText}`;
+          continue;
+        }
+
+        const data = await response.json();
+        const parts = data?.candidates?.[0]?.content?.parts || [];
+        const imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));
+
+        if (!imagePart?.inlineData?.data) {
+          lastError = 'Gemini tidak menghasilkan gambar';
+          continue;
+        }
+
+        const mimeType = imagePart.inlineData.mimeType || 'image/png';
+        const base64 = imagePart.inlineData.data;
+
+        return res.status(200).json({
+          image: `data:${mimeType};base64,${base64}`
+        });
+
+      } catch (err) {
+        lastError = err.message;
+        continue;
       }
-    );
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('Gemini error:', response.status, errText);
-      return res.status(500).json({
-        error: `Gemini API error: ${response.status}`,
-        detail: errText
-      });
     }
 
-    const data = await response.json();
-
-    // Ambil bagian image dari response Gemini
-    const parts = data?.candidates?.[0]?.content?.parts || [];
-    const imagePart = parts.find(p => p.inlineData?.mimeType?.startsWith('image/'));
-
-    if (!imagePart?.inlineData?.data) {
-      console.error('Gemini response tidak mengandung gambar:', JSON.stringify(data));
-      return res.status(500).json({ error: 'Gemini tidak menghasilkan gambar' });
-    }
-
-    const mimeType = imagePart.inlineData.mimeType || 'image/png';
-    const base64 = imagePart.inlineData.data;
-
-    // Kembalikan format sama seperti sebelumnya agar HTML tidak perlu diubah
-    return res.status(200).json({
-      image: `data:${mimeType};base64,${base64}`
-    });
+    console.error('Semua GEMINI_IMG key gagal:', lastError);
+    return res.status(500).json({ error: 'Semua key gagal: ' + lastError });
 
   } catch (err) {
     console.error('generate-image error:', err);
