@@ -858,9 +858,9 @@ let logos={logo1:null,logo2:null};
 let halamanSoal=[],currentPage=0;
 let deferredInstallPrompt=null;
 let lastMateriTerpilih='';
-const DAILY_LIMIT=4;
+const DAILY_LIMIT=1;
 const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
-// Gambar: HuggingFace FLUX.1-schnell via /api/generate-image (Vercel + HF_TOKEN)
+// Gambar: Gemini via /api/generate-image
 
 /* ════════════════════════════════════════════
    HELPERS
@@ -1275,10 +1275,11 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
 async function generateGambarAsync(data,kelas,mapel){
   const pg=data.pilihanGanda||[];
   // Hanya generate soal yang ditandai butuhGambar atau terdeteksi perlu gambar
-  const soalButuhGambar=pg.filter(item=>item.butuhGambar||needsImage(item.soal));
+  const MAX_GAMBAR=3;
+  const soalButuhGambar=pg.filter(item=>item.butuhGambar||needsImage(item.soal)).slice(0,MAX_GAMBAR);
   if(!soalButuhGambar.length)return;
 
-  showGenerateFeedback(`🎨 Membuat ${soalButuhGambar.length} gambar ilustrasi (FLUX)...`,0);
+  showGenerateFeedback(`🎨 Membuat ${soalButuhGambar.length} gambar ilustrasi...`,0);
 
   // Proses satu per satu agar tidak rate limit
   for(const item of soalButuhGambar){
@@ -1294,7 +1295,7 @@ async function generateGambarAsync(data,kelas,mapel){
       removeImageLoading(idx);
     }
     // Delay antar request
-    await new Promise(r=>setTimeout(r,1200));
+    await new Promise(r=>setTimeout(r,600));
   }
   showGenerateFeedback('✅ Gambar selesai!',3000);
   // Rebuild pages dengan gambar terbaru
