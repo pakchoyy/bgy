@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Katrol Nilai | Bantu Guru</title>
-<meta name="description" content="Aplikasi katrol nilai siswa otomatis untuk guru. Berbagai metode katrol, upload Excel, export hasil."/>
-<meta name="theme-color" content="#34d399"/>
-<link rel="icon" href="guru-cibisd2.png" sizes="192x192" type="image/png"/>
-<link rel="shortcut icon" href="guru-cibisd2.png" type="image/png"/>
-<link rel="apple-touch-icon" href="guru-cibisd2.png"/>
-
-<!-- Google Analytics -->
+<title>Bantu Guru Yuk | Katrol Nilai</title>
+<link rel="icon" href="../guru-cibisd2.png" sizes="192x192" type="image/png"/>
+<link rel="shortcut icon" href="../guru-cibisd2.png" type="image/png"/>
+<link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
+<meta name="theme-color" content="#0d9488"/>
+<meta name="description" content="Aplikasi katrol nilai siswa otomatis untuk guru. Upload Excel, berbagai metode katrol, export hasil."/>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
 <script>
   window.dataLayer=window.dataLayer||[];
@@ -19,195 +17,210 @@
   gtag('config','G-83WBBEE5BG');
   function gaEvent(n,p){if(typeof gtag==='function')gtag('event',n,p||{});}
 </script>
-
-<!-- XLSX Library -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --grad:linear-gradient(135deg,#4EB89D,#5BA8D4,#4A90C4);
-  --bg:#e8f0ef;--card-bg:#fff;--text:#334155;--text-light:#64748b;
-  --border:#e2e8f0;--input-bg:#f8fafc;--blue:#3b82f6;--green:#10b981;
-  --radius:16px;--shadow:0 4px 24px rgba(0,0,0,.10);
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
+  --white:#fff;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
+  --blue:#0ea5a0;--radius:12px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;
+  --text-light:#64748b;--border:#e2e8f0;--input-bg:#f8fafc;
 }
 body.dark{
-  --bg:#0f172a;--card-bg:#1f2937;--text:#f1f5f9;--text-light:#94a3b8;
-  --border:#374151;--input-bg:#111827;
+  --bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;
+  --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;}
 
-/* ══ LOADING ══ */
-#loadingScreen{position:fixed;inset:0;background:var(--grad);display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;z-index:99999;}
-#loadingScreen .ls-icon{font-size:52px;margin-bottom:12px;animation:pulse 1s ease-in-out infinite;}
-#loadingScreen .ls-title{font-size:1.3rem;font-weight:800;letter-spacing:1px;}
-#loadingScreen .ls-sub{font-size:.8rem;margin-top:6px;opacity:.85;}
-.ls-spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-top:18px;}
+/* LOADING */
+#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0d2b3e;display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;z-index:99999;}
+#loadingScreen::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);opacity:.85;}
+#loadingScreen img{width:80px;margin-bottom:16px;border-radius:18px;position:relative;z-index:1;box-shadow:0 4px 20px rgba(0,0,0,.35);}
+#loadingScreen .ls-title{font-size:1.5rem;font-weight:900;position:relative;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.4);}
+#loadingScreen .ls-sub{font-size:.85rem;margin-top:8px;opacity:1;position:relative;z-index:1;color:#e0f7f6;font-weight:600;}
+.ls-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-top:20px;position:relative;z-index:1;}
 @keyframes spin{to{transform:rotate(360deg);}}
-@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
 
-/* ══ HEADER ══ */
-header{position:sticky;top:0;z-index:100;background:var(--grad);padding:11px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.12);}
-body.dark header{background:linear-gradient(135deg,#1e3a5f,#1e293b);}
-.header-brand{display:flex;align-items:center;gap:10px;}
-.header-brand .hb-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:22px;}
-.header-brand h1{font-size:1.12rem;font-weight:800;letter-spacing:-.5px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.15);}
-.header-brand p{font-size:.67rem;color:rgba(255,255,255,.85);margin-top:1px;}
-.header-right{display:flex;align-items:center;gap:7px;}
-.version-badge{font-size:.63rem;background:rgba(255,255,255,.2);color:#fff;padding:3px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.3);font-weight:600;}
-#darkToggle{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 12px;border-radius:99px;cursor:pointer;font-size:.75rem;font-weight:600;transition:all .2s;}
-#darkToggle:hover{background:rgba(255,255,255,.25);}
+/* INSTALL POPUP */
+#installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+#installPopup.show{top:0;}
+#installPopup button{border:none;border-radius:8px;padding:5px 14px;font-weight:700;cursor:pointer;font-size:.8rem;}
+.btn-install{background:#fff;color:#0d7a8a;}
+.btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
 
-/* ══ NAVBAR ══ */
-.navbar{background:transparent;padding:6px 22px;display:flex;gap:6px;flex-wrap:wrap;}
-.navbar a{display:inline-block;padding:5px 14px;font-weight:600;cursor:pointer;border-radius:20px;background:rgba(255,255,255,.15);color:var(--text);font-size:.75rem;border:1px solid var(--border);transition:all .2s;text-decoration:none;}
-.navbar a:hover{background:rgba(78,184,157,.15);border-color:#4EB89D;}
-.navbar a.active{background:var(--grad);color:#fff;border-color:transparent;}
-body.dark .navbar a{background:rgba(255,255,255,.07);color:#cbd5e1;}
-body.dark .navbar a.active{background:var(--grad);color:#fff;}
+/* HEADER */
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
+.header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
+.header-brand-text h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;transition:background .2s;display:flex;align-items:center;justify-content:center;}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.hdr-menu-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:190px;overflow:hidden;display:none;z-index:400;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;}
+.dropdown-item:hover{background:var(--gray-100);}
+body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
+.dropdown-item.active{color:var(--blue);}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+#menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
+#menuOverlay.open{display:block;}
 
-/* ══ MAIN LAYOUT ══ */
-main{display:grid;grid-template-columns:365px 1fr;gap:20px;padding:20px;max-width:1440px;margin:0 auto;align-items:start;flex:1;width:100%;}
-@media(max-width:960px){main{grid-template-columns:1fr;padding:12px;gap:14px;}}
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:20px;width:100%;flex:1;}
+@media(max-width:640px){main{padding:10px;}}
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+.card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.two-col{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+.col-left{display:flex;flex-direction:column;gap:12px;}
+.col-right{position:sticky;top:80px;}
 
-/* ══ CARD ══ */
-.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;transition:background .3s;}
-.card-title{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px;border-bottom:1.5px solid var(--border);padding-bottom:11px;}
-
-/* ══ FORM ══ */
+/* FORM */
 .form-group{margin-bottom:10px;}
-.form-group label{display:block;font-size:.7rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:10px;font-size:.83rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue);}
-.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
+input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+textarea{resize:vertical;}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:500px){.row-2{grid-template-columns:1fr;}}
 
-/* ══ METODE GRID ══ */
-.metode-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-.mc{border:2px solid var(--border);border-radius:11px;padding:10px 11px;cursor:pointer;transition:all .2s;background:var(--input-bg);}
-.mc:hover{border-color:#5BA8D4;background:rgba(91,168,212,.07);}
-.mc.active{border-color:#4EB89D;background:linear-gradient(135deg,rgba(78,184,157,.1),rgba(91,168,212,.08));}
-.mc .mi{font-size:20px;margin-bottom:3px;}
-.mc .mn{font-size:.73rem;font-weight:700;color:var(--text);}
-.mc .md{font-size:.63rem;color:var(--text-light);margin-top:2px;line-height:1.35;}
+/* METODE */
+.metode-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.mc{border:1.5px solid var(--border);border-radius:10px;padding:9px 10px;cursor:pointer;transition:all .2s;background:var(--input-bg);}
+.mc:hover{border-color:var(--blue);background:rgba(14,165,160,.05);}
+.mc.active{border-color:var(--blue);background:rgba(14,165,160,.09);}
+.mc .mi{font-size:18px;margin-bottom:2px;}
+.mc .mn{font-size:.72rem;font-weight:700;color:var(--text);}
+.mc .md{font-size:.62rem;color:var(--text-light);margin-top:1px;line-height:1.3;}
 
-/* ══ PARAM BOX ══ */
-.param-box{background:linear-gradient(135deg,rgba(78,184,157,.08),rgba(91,168,212,.08));border:1.5px solid #b2e4d3;border-radius:10px;padding:10px 12px;margin-bottom:10px;display:none;font-size:.76rem;color:#0f6e56;line-height:1.5;}
-body.dark .param-box{color:#6ee7b7;border-color:#064e3b;background:rgba(16,185,129,.08);}
+/* PARAM BOX */
+.param-box{background:rgba(14,165,160,.06);border:1.5px solid rgba(14,165,160,.25);border-radius:9px;padding:10px 12px;margin-bottom:10px;display:none;font-size:.75rem;color:var(--text);line-height:1.5;}
 .param-box.show{display:block;}
-.param-box strong{display:block;font-size:.69rem;margin-bottom:6px;font-weight:700;}
-.param-box input{width:100%;padding:6px 9px;border:2px solid #b2e4d3;border-radius:8px;font-size:.82rem;color:var(--text);background:var(--card-bg);outline:none;font-family:inherit;}
-.param-box input:focus{border-color:#4EB89D;}
+.param-box strong{display:block;font-size:.69rem;font-weight:700;color:#0d7a8a;margin-bottom:5px;}
+body.dark .param-box strong{color:#5eead4;}
+.param-box input{width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:.81rem;color:var(--text);background:var(--card-bg);outline:none;font-family:inherit;}
+.param-box input:focus{border-color:var(--blue);}
 
-/* ══ UPLOAD AREA ══ */
-.upload-area{border:2px dashed var(--border);border-radius:11px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--input-bg);position:relative;margin-bottom:10px;}
-.upload-area:hover{border-color:#4EB89D;background:rgba(78,184,157,.05);}
+/* UPLOAD */
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:15px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--input-bg);position:relative;margin-bottom:10px;}
+.upload-area:hover{border-color:var(--blue);background:rgba(14,165,160,.04);}
 .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-area .ui{font-size:26px;margin-bottom:5px;}
-.upload-area .ut{font-size:.76rem;font-weight:700;color:var(--text);}
-.upload-area .us{font-size:.65rem;color:var(--text-light);margin-top:3px;line-height:1.4;}
-.upload-area.has-file{border-color:#10b981;background:rgba(16,185,129,.05);}
+.upload-area .ui{font-size:24px;margin-bottom:4px;}
+.upload-area .ut{font-size:.74rem;font-weight:700;color:var(--text);}
+.upload-area .us{font-size:.63rem;color:var(--text-light);margin-top:3px;line-height:1.4;}
+.upload-area.has-file{border-color:#10b981;background:rgba(16,185,129,.04);}
 .upload-area.has-file .ut{color:#10b981;}
 
-/* ══ DIVIDER ══ */
-.divider{display:flex;align-items:center;gap:8px;margin:11px 0;color:var(--text-light);font-size:.69rem;font-weight:600;}
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:8px;margin:10px 0;color:var(--text-light);font-size:.68rem;font-weight:600;}
 .divider::before,.divider::after{content:'';flex:1;border-top:1px solid var(--border);}
 
-/* ══ TEXTAREA SISWA ══ */
-.ta-siswa{border:2px solid var(--border);border-radius:10px;background:var(--input-bg);font-size:.8rem;color:var(--text);min-height:110px;padding:9px 11px;resize:vertical;font-family:'Courier New',monospace;width:100%;outline:none;transition:border-color .2s;}
-.ta-siswa:focus{border-color:var(--blue);}
-.hint{font-size:.65rem;color:var(--text-light);margin-top:3px;line-height:1.4;}
+/* HINT BAR */
+.hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.76rem;color:var(--text);line-height:1.8;}
+.hint-bar span{font-weight:700;color:#0d7a8a;}
+body.dark .hint-bar span{color:#5eead4;}
 
-/* ══ BATAS KATROL ══ */
-.max-box{background:rgba(245,158,11,.07);border:1.5px solid #fcd34d;border-radius:10px;padding:10px 12px;margin-bottom:10px;}
-.max-box .mb-label{font-size:.68rem;font-weight:700;color:#92400e;margin-bottom:5px;}
-body.dark .max-box{border-color:#78350f;background:rgba(245,158,11,.05);}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--grad);color:#fff;width:100%;justify-content:center;padding:12px;font-size:.9rem;border-radius:10px;box-shadow:0 4px 14px rgba(14,165,160,.25);}
+.btn-primary:hover{transform:translateY(-1px);opacity:.92;}
+.btn-row{display:flex;gap:7px;margin-top:9px;}
+.btn-sm{flex:1;padding:8px 7px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:8px;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-sm:hover{border-color:var(--blue);color:var(--blue);}
+.btn-sm.g{border-color:#10b981;color:#10b981;}
+.btn-sm.g:hover{background:rgba(16,185,129,.06);}
+.btn-sm.r{border-color:#ef4444;color:#ef4444;}
+.btn-sm.r:hover{background:rgba(239,68,68,.05);}
+
+/* TA SISWA */
+.ta-siswa{border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);font-size:.79rem;color:var(--text);min-height:110px;padding:9px 11px;resize:vertical;font-family:'Courier New',monospace;width:100%;outline:none;}
+.ta-siswa:focus{border-color:var(--blue);}
+.hint{font-size:.64rem;color:var(--text-light);margin-top:3px;line-height:1.4;}
+
+/* MAX BOX */
+.max-box{background:rgba(245,158,11,.07);border:1.5px solid rgba(245,158,11,.3);border-radius:9px;padding:9px 12px;margin-bottom:10px;font-size:.74rem;color:var(--text);}
+.max-box .mb-label{font-size:.68rem;font-weight:700;color:#92400e;margin-bottom:4px;}
 body.dark .max-box .mb-label{color:#fbbf24;}
 
-/* ══ BUTTONS ══ */
-.btn-primary{width:100%;padding:12px;background:var(--grad);color:#fff;border:none;border-radius:11px;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:.3px;margin-top:5px;}
-.btn-primary:hover{opacity:.88;}
-.btn-primary:active{transform:scale(.98);}
-.btn-row{display:flex;gap:7px;margin-top:9px;}
-.btn-sm{flex:1;padding:8px 7px;border:2px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:8px;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
-.btn-sm:hover{border-color:#5BA8D4;color:#1d5fa8;}
-.btn-sm.g{border-color:#10b981;color:#10b981;}
-.btn-sm.g:hover{background:rgba(16,185,129,.07);}
-.btn-sm.r{border-color:#ef4444;color:#ef4444;}
-.btn-sm.r:hover{background:rgba(239,68,68,.06);}
-
-/* ══ STATS ROW ══ */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px;}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
 @media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr);}}
-.stat-card{background:var(--card-bg);border-radius:12px;padding:13px 10px;text-align:center;box-shadow:var(--shadow);}
-.stat-card .sv{font-size:1.28rem;font-weight:800;color:var(--text);}
-.stat-card .sl{font-size:.62rem;color:var(--text-light);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+.stat-card{background:var(--card-bg);border-radius:11px;padding:12px 9px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border);}
+.stat-card .sv{font-size:1.2rem;font-weight:800;color:var(--text);}
+.stat-card .sl{font-size:.6rem;color:var(--text-light);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
 .stat-card.gr .sv{color:#10b981;}
-.stat-card.bl .sv{color:#3b82f6;}
+.stat-card.bl .sv{color:var(--blue);}
 .stat-card.or .sv{color:#f59e0b;}
 
-/* ══ TABLE ══ */
-.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
-table{width:100%;border-collapse:collapse;font-size:.81rem;}
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:9px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
 thead{background:var(--grad);}
-thead th{color:#fff;padding:10px 12px;text-align:left;font-size:.71rem;font-weight:700;letter-spacing:.3px;}
+thead th{color:#fff;padding:9px 11px;text-align:left;font-size:.7rem;font-weight:700;letter-spacing:.3px;}
 tbody tr:nth-child(even){background:var(--input-bg);}
-tbody tr:hover{background:rgba(91,168,212,.06);}
-td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);}
-.bnaik{background:#dcfce7;color:#166534;font-size:.67rem;padding:2px 8px;border-radius:99px;font-weight:700;}
-.bsama{background:#f1f5f9;color:#475569;font-size:.67rem;padding:2px 8px;border-radius:99px;font-weight:700;}
-.bturun{background:#fee2e2;color:#991b1b;font-size:.67rem;padding:2px 8px;border-radius:99px;font-weight:700;}
-.dp{color:#10b981;font-weight:700;}
-.dz{color:#94a3b8;}
-.dm{color:#ef4444;font-weight:700;}
-.nk{font-weight:700;color:#0f6e56;}
-.na{color:var(--text-light);}
-body.dark .nk{color:#34d399;}
+tbody tr:hover{background:rgba(14,165,160,.05);}
+td{padding:8px 11px;border-bottom:1px solid var(--border);color:var(--text);}
+.bnaik{background:#dcfce7;color:#166534;font-size:.66rem;padding:2px 8px;border-radius:99px;font-weight:700;}
+.bsama{background:#f1f5f9;color:#475569;font-size:.66rem;padding:2px 8px;border-radius:99px;font-weight:700;}
+.bturun{background:#fee2e2;color:#991b1b;font-size:.66rem;padding:2px 8px;border-radius:99px;font-weight:700;}
 body.dark .bnaik{background:rgba(16,185,129,.15);color:#6ee7b7;}
 body.dark .bsama{background:rgba(148,163,184,.1);color:#94a3b8;}
 body.dark .bturun{background:rgba(239,68,68,.12);color:#fca5a5;}
+.dp{color:#10b981;font-weight:700;}
+.dz{color:#94a3b8;}
+.dm{color:#ef4444;font-weight:700;}
+.nk{font-weight:700;color:#0d7a8a;}
+.na{color:var(--text-light);}
+body.dark .nk{color:#5eead4;}
 
-/* ══ BAR CHART ══ */
-.bar-wrap{margin-top:14px;padding:14px;background:var(--input-bg);border-radius:10px;border:1px solid var(--border);}
-.bar-wrap h4{font-size:.7rem;font-weight:700;color:var(--text-light);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;}
-.bar-item{margin-bottom:7px;}
-.bar-label{font-size:.71rem;color:var(--text);margin-bottom:3px;display:flex;justify-content:space-between;}
-.bar-track{height:9px;background:var(--border);border-radius:99px;overflow:hidden;}
+/* BAR CHART */
+.bar-wrap{margin-top:13px;padding:13px;background:var(--input-bg);border-radius:9px;border:1px solid var(--border);}
+.bar-wrap h4{font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px;}
+.bar-item{margin-bottom:6px;}
+.bar-label{font-size:.7rem;color:var(--text);margin-bottom:3px;display:flex;justify-content:space-between;}
+.bar-track{height:8px;background:var(--border);border-radius:99px;overflow:hidden;}
 .bar-fill{height:100%;border-radius:99px;background:var(--grad);transition:width .6s ease;}
 
-/* ══ EMPTY STATE ══ */
-.empty-state{text-align:center;padding:50px 20px;color:var(--text-light);}
-.empty-icon{font-size:44px;margin-bottom:11px;}
-.empty-title{font-size:.95rem;font-weight:700;margin-bottom:5px;color:var(--text);}
-.empty-sub{font-size:.78rem;line-height:1.6;}
+/* PLACEHOLDER */
+.prompt-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);gap:10px;}
+.prompt-placeholder .ph-icon{font-size:2.5rem;opacity:.35;}
+.prompt-placeholder p{font-size:.82rem;text-align:center;}
 
-/* ══ INFO PILL ══ */
-.info-pill{display:inline-block;background:rgba(59,130,246,.08);color:#1d5fa8;font-size:.66rem;padding:4px 11px;border-radius:99px;font-weight:600;border:1px solid #bfdbfe;margin-bottom:11px;}
-body.dark .info-pill{background:rgba(59,130,246,.15);color:#93c5fd;border-color:#1e40af;}
+/* INFO PILL */
+.info-pill{display:inline-block;background:rgba(14,165,160,.08);color:#0d7a8a;font-size:.65rem;padding:4px 11px;border-radius:99px;font-weight:600;border:1px solid rgba(14,165,160,.25);margin-bottom:11px;}
+body.dark .info-pill{background:rgba(14,165,160,.12);color:#5eead4;}
 
-/* ══ FEEDBACK / KRITIK SARAN ══ */
-#feedbackSection{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:0 20px 24px;max-width:1440px;margin-left:auto;margin-right:auto;}
-@media(max-width:960px){#feedbackSection{margin:0 12px 20px;}}
-.fb-title{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:7px;border-bottom:1.5px solid var(--border);padding-bottom:11px;}
-.fb-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start;}
-@media(max-width:700px){.fb-grid{grid-template-columns:1fr;}}
-.emoji-row{display:flex;gap:8px;margin-bottom:11px;flex-wrap:wrap;}
-.emoji-btn{font-size:24px;padding:6px 10px;border:2px solid var(--border);background:var(--input-bg);border-radius:10px;cursor:pointer;transition:all .2s;line-height:1;}
-.emoji-btn:hover{border-color:#4EB89D;transform:scale(1.12);}
-.emoji-btn.selected{border-color:#4EB89D;background:rgba(78,184,157,.12);transform:scale(1.1);}
-.fb-send{width:100%;padding:10px;background:var(--grad);color:#fff;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:5px;}
-.fb-send:hover{opacity:.88;}
-.fb-success{display:none;text-align:center;padding:16px;background:rgba(16,185,129,.08);border:1.5px solid #a7f3d0;border-radius:10px;color:#065f46;font-size:.83rem;font-weight:600;}
-body.dark .fb-success{background:rgba(16,185,129,.1);border-color:#064e3b;color:#6ee7b7;}
+/* FOOTER */
+footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
+footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
+footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
+footer a{color:inherit;text-decoration:underline;}
 
-/* ══ FOOTER ══ */
-footer{background:var(--card-bg);border-top:1px solid var(--border);padding:14px 22px;text-align:center;font-size:.72rem;color:var(--text-light);transition:background .3s;}
-footer strong{color:var(--text);}
-
-/* ══ TOAST ══ */
-#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#334155;color:#fff;padding:10px 22px;border-radius:99px;font-size:.82rem;font-weight:600;z-index:9999;opacity:0;transition:all .35s;white-space:nowrap;}
+/* TOAST */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:10px 22px;border-radius:99px;font-size:.81rem;font-weight:600;z-index:9999;opacity:0;transition:all .35s;white-space:nowrap;pointer-events:none;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+body.dark #toast{background:#f1f5f9;color:#1e293b;}
 
-/* ══ SCROLLBAR ══ */
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:8000;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--card-bg);border-radius:16px;box-shadow:var(--shadow-lg);padding:24px;width:100%;max-width:420px;position:relative;animation:modalIn .25s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-light);line-height:1;}
+.modal-title{font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:16px;}
+.emoji-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.emoji-btn{font-size:22px;padding:7px 10px;border:1.5px solid var(--border);background:var(--input-bg);border-radius:10px;cursor:pointer;transition:all .2s;line-height:1;}
+.emoji-btn:hover{border-color:var(--blue);transform:scale(1.12);}
+.emoji-btn.selected{border-color:var(--blue);background:rgba(14,165,160,.1);transform:scale(1.1);}
+.modal-send{width:100%;padding:11px;background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:6px;}
+.modal-send:hover{opacity:.9;}
+
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:#b2d8e0;border-radius:99px;}
@@ -215,499 +228,537 @@ footer strong{color:var(--text);}
 </head>
 <body>
 
-<!-- LOADING SCREEN -->
+<!-- LOADING -->
 <div id="loadingScreen">
-  <div class="ls-icon">🎯</div>
-  <div class="ls-title">Katrol Nilai</div>
-  <div class="ls-sub">Bantu Guru — CIBI SMP</div>
+  <img src="../guru-cibisd2.png" alt="Logo Guru CIBI"/>
+  <div class="ls-title">Bantu Guru Yuk</div>
+  <div class="ls-sub">Katrol Nilai</div>
   <div class="ls-spinner"></div>
+</div>
+
+<!-- INSTALL POPUP -->
+<div id="installPopup">
+  <span>📲 Install aplikasi Bantu Guru Yuk</span>
+  <button class="btn-install" onclick="installApp()">Install</button>
+  <button class="btn-install-close" onclick="closeInstall()">✕</button>
 </div>
 
 <!-- TOAST -->
 <div id="toast"></div>
 
-<!-- HEADER -->
-<header>
-  <div class="header-brand">
-    <div class="hb-icon">🎯</div>
-    <div>
-      <h1>Katrol Nilai</h1>
-      <p>Bantu Guru Yuk | CIBI SMP</p>
+<!-- MODAL KRITIK SARAN -->
+<div class="modal-overlay" id="modalFeedback">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">💬 Kritik &amp; Saran</div>
+    <div id="fbForm">
+      <div class="form-group">
+        <label>Nama (opsional)</label>
+        <input type="text" id="fbNama" placeholder="Nama Bapak/Ibu Guru..."/>
+      </div>
+      <div class="form-group">
+        <label>Perasaan setelah pakai</label>
+        <div class="emoji-row">
+          <button class="emoji-btn" onclick="pilihEmoji(this,'😍')" title="Sangat Puas">😍</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'😊')" title="Puas">😊</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'😐')" title="Biasa">😐</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'😕')" title="Kurang">😕</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'😤')" title="Tidak Puas">😤</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Pesan / Saran</label>
+        <textarea id="fbPesan" rows="3" placeholder="Tulis kritik, saran, atau permintaan fitur..."></textarea>
+      </div>
+      <button class="modal-send" onclick="kirimFeedback()">💬 Kirim via WhatsApp</button>
+    </div>
+    <div id="fbSuccess" style="display:none;text-align:center;padding:16px;background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.3);border-radius:10px;color:#0d7a8a;font-size:.84rem;font-weight:600;">
+      🎉 Terima kasih! WA sudah terbuka. Tinggal kirim pesannya ke Pak Choyy!
     </div>
   </div>
-  <div class="header-right">
-    <span class="version-badge">v2.0</span>
-    <button id="darkToggle" onclick="toggleDark()">🌙 Gelap</button>
+</div>
+
+<!-- MENU OVERLAY -->
+<div id="menuOverlay" onclick="closeMenu()"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="../guru-cibisd2.png" alt="Logo"/>
+      <div class="header-brand-text">
+        <h1>Bantu Guru Yuk | Katrol Nilai</h1>
+      </div>
+    </div>
+    <div class="header-right">
+      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang">🌙</button>
+      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu">☰</button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()">🏠 Home</button>
+        <button class="dropdown-item" id="mi-petunjuk" onclick="selectTab('petunjuk');closeMenu()">📖 Petunjuk Penggunaan</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
+        <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" onclick="openModal();closeMenu()">💬 Kritik &amp; Saran</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" onclick="window.open('https://bantuguruyuk.web.id','_blank')">🌐 bantuguruyuk.web.id</button>
+      </div>
+    </div>
   </div>
 </header>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <a class="active" href="#">🏠 Katrol Nilai</a>
-  <a href="https://bantugurusoal.vercel.app" target="_blank">📝 Buat Soal</a>
-  <a href="#feedbackSection" onclick="document.getElementById('feedbackSection').scrollIntoView({behavior:'smooth'});return false;">💬 Kritik &amp; Saran</a>
-</nav>
-
-<!-- MAIN -->
+<!-- TAB PETUNJUK -->
+<div id="tab-petunjuk" style="display:none;">
 <main>
-  <!-- PANEL KIRI -->
-  <div>
-    <div class="card">
-      <div class="card-title">⚙️ Pengaturan Katrol</div>
-
-      <div class="row-2">
-        <div class="form-group">
-          <label>Kelas</label>
-          <input type="text" id="kelas" placeholder="Misal: 8A"/>
-        </div>
-        <div class="form-group">
-          <label>Mata Pelajaran</label>
-          <input type="text" id="mapel" placeholder="Misal: IPA"/>
-        </div>
+  <div class="card">
+    <div class="card-title">📖 Petunjuk Penggunaan</div>
+    <div style="font-size:.84rem;color:var(--text);line-height:1.9;">
+      <div style="background:rgba(14,165,160,.08);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:16px;">
+        <b>Katrol Nilai</b> membantu guru mengolah nilai siswa dengan berbagai metode secara otomatis. Cukup input data, pilih metode, hasil langsung muncul!
       </div>
-
-      <div class="row-2">
-        <div class="form-group">
-          <label>KKM</label>
-          <input type="number" id="kkm" value="75" min="0" max="100"/>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
+          <div style="font-size:1.4rem;flex-shrink:0;">1️⃣</div>
+          <div><b style="color:var(--blue);">Isi Identitas</b><br/>Tulis nama kelas, mata pelajaran, KKM, dan batas nilai maksimal setelah dikatrol.</div>
         </div>
-        <div class="form-group">
-          <label>Nilai Maks Katrol</label>
-          <input type="number" id="maxKatrol" value="100" min="0" max="100"/>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Metode Katrol</label>
-        <div class="metode-grid">
-          <div class="mc active" onclick="pilihMetode('tambah',this)">
-            <div class="mi">➕</div>
-            <div class="mn">Tambah Poin</div>
-            <div class="md">Semua nilai ditambah angka tetap</div>
-          </div>
-          <div class="mc" onclick="pilihMetode('kkm',this)">
-            <div class="mi">🎯</div>
-            <div class="mn">Naik ke KKM</div>
-            <div class="md">Bawah KKM dinaikkan pas KKM</div>
-          </div>
-          <div class="mc" onclick="pilihMetode('akar',this)">
-            <div class="mi">√</div>
-            <div class="mn">Rumus Akar</div>
-            <div class="md">√nilai × 10 (rumus klasik)</div>
-          </div>
-          <div class="mc" onclick="pilihMetode('skala',this)">
-            <div class="mi">📊</div>
-            <div class="mn">Skala Proporsional</div>
-            <div class="md">Nilai tertinggi jadi 100</div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
+          <div style="font-size:1.4rem;flex-shrink:0;">2️⃣</div>
+          <div><b style="color:var(--blue);">Pilih Metode Katrol</b><br/>
+            <b>➕ Tambah Poin</b> — semua nilai ditambah angka tetap (misal +5)<br/>
+            <b>🎯 Naik ke KKM</b> — yang belum tuntas langsung dinaikkan ke KKM<br/>
+            <b>√ Rumus Akar</b> — √nilai × 10 (rumus klasik favorit guru)<br/>
+            <b>📊 Skala Proporsional</b> — nilai tertinggi dijadikan 100
           </div>
         </div>
-      </div>
-
-      <div class="param-box show" id="p-tambah">
-        <strong>Berapa poin ditambahkan ke semua siswa?</strong>
-        <input type="number" id="poin" value="5" min="0" max="50" placeholder="Contoh: 5"/>
-      </div>
-      <div class="param-box" id="p-kkm">Nilai di bawah KKM akan dinaikkan tepat ke nilai KKM. Nilai yang sudah tuntas tidak berubah.</div>
-      <div class="param-box" id="p-akar">Rumus: √nilai × 10. Contoh: nilai 64 → √64 × 10 = <strong style="display:inline;font-weight:700;">80</strong>. Nilai rendah naik lebih banyak.</div>
-      <div class="param-box" id="p-skala">Nilai tertinggi dijadikan 100, sisanya proporsional. Cocok jika soal terlalu sulit.</div>
-
-      <div class="max-box">
-        <div class="mb-label">🔒 Batas Atas Nilai Katrol</div>
-        <span style="font-size:.75rem;">Nilai katrol tidak akan melebihi <strong id="maxLabel">100</strong>. Atur di kolom "Nilai Maks Katrol" di atas.</span>
-      </div>
-
-      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;"/>
-
-      <div class="form-group">
-        <label>Upload File Excel / CSV</label>
-        <div class="upload-area" id="uploadArea">
-          <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFile(this)"/>
-          <div class="ui">📂</div>
-          <div class="ut" id="uploadText">Klik atau seret file ke sini</div>
-          <div class="us">Format Excel (.xlsx/.xls) atau CSV<br>Kolom A: Nama Siswa | Kolom B: Nilai</div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
+          <div style="font-size:1.4rem;flex-shrink:0;">3️⃣</div>
+          <div><b style="color:var(--blue);">Masukkan Data Siswa</b><br/>Upload file Excel/CSV (Kolom A: Nama, Kolom B: Nilai), atau ketik/paste manual format: <code style="background:var(--border);padding:1px 5px;border-radius:4px;">Nama, Nilai</code> — satu baris satu siswa.</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
+          <div style="font-size:1.4rem;flex-shrink:0;">4️⃣</div>
+          <div><b style="color:var(--blue);">Klik Katrol Nilai</b><br/>Hasil langsung muncul di panel kanan: tabel lengkap, statistik ketuntasan, dan grafik batang.</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
+          <div style="font-size:1.4rem;flex-shrink:0;">5️⃣</div>
+          <div><b style="color:var(--blue);">Download / Salin Hasil</b><br/>Unduh sebagai Excel (.xlsx) atau CSV. Bisa juga salin ke clipboard lalu paste ke Excel.</div>
         </div>
       </div>
-
-      <div class="divider">atau input manual</div>
-
-      <div class="form-group">
-        <label>Data Nilai Siswa</label>
-        <textarea class="ta-siswa" id="inputSiswa" placeholder="Format: Nama, Nilai&#10;Budi Santoso, 70&#10;Siti Rahma, 85&#10;Andi Putra, 60"></textarea>
-        <div class="hint">Satu baris = satu siswa. Pisah koma atau tab. Bisa paste langsung dari Excel.</div>
+      <div style="margin-top:14px;background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.3);border-radius:9px;padding:10px 13px;font-size:.78rem;color:#92400e;">
+        ⚠️ <b>Tips:</b> Gunakan kolom <b>Nilai Maks Katrol</b> agar nilai tidak melebihi batas tertentu (misal max 90). Nilai katrol tidak akan pernah melebihi angka ini.
       </div>
-
-      <div class="btn-row">
-        <button class="btn-sm" onclick="contohData()">📋 Isi Contoh</button>
-        <button class="btn-sm r" onclick="clearAll()">🗑️ Hapus Semua</button>
-      </div>
-
-      <button class="btn-primary" onclick="prosesKatrol()">✨ Katrol Nilai Sekarang</button>
-    </div>
-  </div>
-
-  <!-- PANEL KANAN -->
-  <div id="panelHasil">
-    <div class="empty-state">
-      <div class="empty-icon">📊</div>
-      <div class="empty-title">Hasil katrol akan muncul di sini</div>
-      <div class="empty-sub">Masukkan data nilai siswa di panel kiri,<br>lalu klik <strong>Katrol Nilai Sekarang</strong></div>
     </div>
   </div>
 </main>
+</div>
 
-<!-- KRITIK & SARAN -->
-<div id="feedbackSection">
-  <div class="fb-title">💬 Kritik &amp; Saran</div>
-  <div id="fbForm">
-    <div class="fb-grid">
-      <div>
-        <div class="form-group">
-          <label>Nama (opsional)</label>
-          <input type="text" id="fbNama" placeholder="Nama Bapak/Ibu Guru"/>
-        </div>
-        <div class="form-group">
-          <label>Perasaan setelah pakai</label>
-          <div class="emoji-row" id="emojiRow">
-            <button class="emoji-btn" onclick="pilihEmoji(this,'😍')" title="Sangat Puas">😍</button>
-            <button class="emoji-btn" onclick="pilihEmoji(this,'😊')" title="Puas">😊</button>
-            <button class="emoji-btn" onclick="pilihEmoji(this,'😐')" title="Biasa">😐</button>
-            <button class="emoji-btn" onclick="pilihEmoji(this,'😕')" title="Kurang">😕</button>
-            <button class="emoji-btn" onclick="pilihEmoji(this,'😤')" title="Tidak Puas">😤</button>
+<!-- TAB TENTANG -->
+<div id="tab-tentang" style="display:none;">
+<main>
+  <div class="card">
+    <div class="card-title">ℹ️ Tentang Aplikasi</div>
+    <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Katrol Nilai</p>
+    <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Aplikasi Katrol Nilai</b> hadir untuk membantu guru SMP mengolah nilai siswa secara otomatis, cepat, dan akurat menggunakan berbagai metode katrol.</p>
+    <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur Unggulan</h4>
+    <ul style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
+      <li>4 metode katrol: Tambah Poin, Naik ke KKM, Rumus Akar √×10, Skala Proporsional</li>
+      <li>Upload file Excel (.xlsx / .xls) dan CSV langsung</li>
+      <li>Tabel hasil lengkap dengan nilai asli, katrol, delta &amp; status</li>
+      <li>Visualisasi grafik batang per siswa</li>
+      <li>Export ke Excel &amp; CSV</li>
+      <li>Dark mode &amp; responsif di HP dan laptop</li>
+      <li>Kritik &amp; saran langsung ke WhatsApp Pak Choyy</li>
+    </ul>
+    <div style="margin-top:14px;font-size:.8rem;color:var(--text-light);">🏫 CIBI SMP &bull; <a href="https://bantuguruyuk.web.id" target="_blank" style="color:var(--blue);">bantuguruyuk.web.id</a></div>
+  </div>
+</main>
+</div>
+
+<!-- TAB KONTAK -->
+<div id="tab-kontak" style="display:none;">
+<main>
+  <div class="card">
+    <div class="card-title">📬 Kontak</div>
+    <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau kolaborasi:</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp Pak Choyy</button>
+      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok @pak.choyy</button>
+      <button onclick="window.open('https://bantuguruyuk.web.id')" style="background:var(--grad);color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🌐 Website</button>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- TAB HOME -->
+<div id="tab-home">
+<main>
+  <div class="hint-bar">
+    💡 <span>Isi Form</span> → <span>Pilih Metode Katrol</span> → <span>Input / Upload Nilai</span> → <span>Klik Katrol</span> → <span>Download Hasil 🎉</span>
+  </div>
+
+  <div class="two-col">
+    <div class="col-left">
+
+      <div class="card">
+        <div class="card-title">⚙️ Pengaturan Katrol</div>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Kelas</label>
+            <input type="text" id="kelas" placeholder="Misal: 8A"/>
+          </div>
+          <div class="form-group">
+            <label>Mata Pelajaran</label>
+            <input type="text" id="mapel" placeholder="Misal: IPA"/>
           </div>
         </div>
-      </div>
-      <div>
-        <div class="form-group">
-          <label>Pesan / Saran</label>
-          <textarea id="fbPesan" style="min-height:90px;" placeholder="Tulis kritik, saran, atau permintaan fitur di sini..."></textarea>
-        </div>
-      </div>
-      <div>
-        <div style="background:var(--input-bg);border:1.5px solid var(--border);border-radius:11px;padding:13px;margin-bottom:10px;">
-          <div style="font-size:.73rem;font-weight:700;color:var(--text-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">Info Aplikasi</div>
-          <div style="font-size:.78rem;color:var(--text);line-height:1.7;">
-            🎯 <strong>Katrol Nilai</strong> v2.0<br>
-            🏫 CIBI SMP — Bantu Guru Yuk<br>
-            📧 Hubungi Pak Choyy via WA<br>
-            🔄 Update rutin sesuai kebutuhan guru
+        <div class="row-2">
+          <div class="form-group">
+            <label>KKM</label>
+            <input type="number" id="kkm" value="75" min="0" max="100"/>
+          </div>
+          <div class="form-group">
+            <label>Nilai Maks Katrol</label>
+            <input type="number" id="maxKatrol" value="100" min="0" max="100"/>
           </div>
         </div>
-        <button class="fb-send" onclick="kirimFeedback()">📨 Kirim Saran</button>
+        <div class="form-group">
+          <label>Metode Katrol</label>
+          <div class="metode-grid">
+            <div class="mc active" onclick="pilihMetode('tambah',this)">
+              <div class="mi">➕</div><div class="mn">Tambah Poin</div>
+              <div class="md">Semua nilai ditambah angka tetap</div>
+            </div>
+            <div class="mc" onclick="pilihMetode('kkm',this)">
+              <div class="mi">🎯</div><div class="mn">Naik ke KKM</div>
+              <div class="md">Bawah KKM dinaikkan pas KKM</div>
+            </div>
+            <div class="mc" onclick="pilihMetode('akar',this)">
+              <div class="mi">√</div><div class="mn">Rumus Akar</div>
+              <div class="md">√nilai × 10 (rumus klasik)</div>
+            </div>
+            <div class="mc" onclick="pilihMetode('skala',this)">
+              <div class="mi">📊</div><div class="mn">Skala Proporsional</div>
+              <div class="md">Nilai tertinggi jadi 100</div>
+            </div>
+          </div>
+        </div>
+        <div class="param-box show" id="p-tambah">
+          <strong>Berapa poin ditambahkan ke semua siswa?</strong>
+          <input type="number" id="poin" value="5" min="0" max="50"/>
+        </div>
+        <div class="param-box" id="p-kkm">Nilai di bawah KKM akan dinaikkan tepat ke nilai KKM. Nilai yang sudah tuntas tidak berubah.</div>
+        <div class="param-box" id="p-akar">Rumus: √nilai × 10. Contoh: nilai 64 → √64 × 10 = <strong style="display:inline;font-weight:800;">80</strong>. Nilai rendah naik lebih banyak secara proporsional.</div>
+        <div class="param-box" id="p-skala">Nilai tertinggi dijadikan 100, sisanya proporsional. Cocok jika soal terlalu sulit.</div>
+        <div class="max-box">
+          <div class="mb-label">🔒 Batas Atas Nilai Katrol</div>
+          Nilai katrol tidak akan melebihi <strong id="maxLabel">100</strong>. Atur di kolom "Nilai Maks Katrol" di atas.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📂 Data Nilai Siswa</div>
+        <div class="form-group">
+          <label>Upload File Excel / CSV</label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFile(this)"/>
+            <div class="ui">📂</div>
+            <div class="ut" id="uploadText">Klik atau seret file ke sini</div>
+            <div class="us">Excel (.xlsx/.xls) atau CSV<br/>Kolom A: Nama | Kolom B: Nilai</div>
+          </div>
+        </div>
+        <div class="divider">atau input manual</div>
+        <div class="form-group">
+          <label>Ketik / Paste Nilai Siswa</label>
+          <textarea class="ta-siswa" id="inputSiswa" placeholder="Format: Nama, Nilai&#10;Budi Santoso, 70&#10;Siti Rahma, 85&#10;Andi Putra, 60"></textarea>
+          <div class="hint">Satu baris = satu siswa. Pisah koma atau tab. Bisa paste langsung dari Excel.</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-sm" onclick="contohData()">📋 Isi Contoh</button>
+          <button class="btn-sm r" onclick="clearAll()">🗑️ Hapus Semua</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="prosesKatrol()">✨ Katrol Nilai Sekarang</button>
+    </div>
+
+    <!-- KOLOM KANAN -->
+    <div class="col-right">
+      <div class="card">
+        <div class="card-title">📊 Hasil Katrol Nilai</div>
+        <div id="panelHasil">
+          <div class="prompt-placeholder">
+            <div class="ph-icon">📊</div>
+            <p>Isi form di kiri lalu klik<br/><b>Katrol Nilai Sekarang</b></p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="fb-success" id="fbSuccess">
-    🎉 Terima kasih! Kritik dan saran kamu sangat berarti untuk pengembangan aplikasi ini.
-  </div>
+</main>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  Dibuat dengan ❤️ untuk para guru | <strong>CIBI SMP</strong> — Bantu Guru Yuk &nbsp;|&nbsp; 
-  <a href="https://bantugurusoal.vercel.app" target="_blank" style="color:#4EB89D;text-decoration:none;">bantugurusoal.vercel.app</a>
+  <div class="footer-title">Katrol Nilai — CIBI SMP</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull;- v26.4.29 </a></div>
 </footer>
 
 <script>
-/* ══════════════ INIT ══════════════ */
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const ls = document.getElementById('loadingScreen');
-    ls.style.opacity = '0';
-    ls.style.transition = 'opacity .5s';
-    setTimeout(() => ls.remove(), 500);
-  }, 900);
-  loadDark();
-  document.getElementById('maxKatrol').addEventListener('input', function(){ document.getElementById('maxLabel').textContent = this.value; });
-});
+// INIT
+(function(){
+  window.addEventListener('load',()=>{
+    const ls=document.getElementById('loadingScreen');
+    if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>ls.remove(),400);}
+  });
+  const saved=localStorage.getItem('katrol_theme');
+  if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️';}
+  document.getElementById('maxKatrol').addEventListener('input',function(){document.getElementById('maxLabel').textContent=this.value;});
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();window._dip=e;
+    const last=localStorage.getItem('katrol_installClosed');
+    if(!last||Date.now()-parseInt(last)>86400000)setTimeout(()=>document.getElementById('installPopup').classList.add('show'),2500);
+  });
+})();
 
-/* ══════════════ DARK MODE ══════════════ */
-function loadDark(){
-  const d = localStorage.getItem('katrol_dark') === '1';
-  if(d){ document.body.classList.add('dark'); document.getElementById('darkToggle').textContent = '☀️ Terang'; }
-}
+// DARK MODE
 function toggleDark(){
-  const on = document.body.classList.toggle('dark');
-  document.getElementById('darkToggle').textContent = on ? '☀️ Terang' : '🌙 Gelap';
-  localStorage.setItem('katrol_dark', on ? '1' : '0');
-  gaEvent('dark_mode', {mode: on ? 'dark' : 'light'});
+  document.body.classList.toggle('dark');
+  const d=document.body.classList.contains('dark');
+  document.getElementById('darkBtn').textContent=d?'☀️':'🌙';
+  localStorage.setItem('katrol_theme',d?'dark':'light');
+  gaEvent('dark_mode',{mode:d?'dark':'light'});
 }
 
-/* ══════════════ METODE ══════════════ */
-let metode = 'tambah';
-function pilihMetode(m, el){
-  metode = m;
-  document.querySelectorAll('.mc').forEach(c => c.classList.remove('active'));
+// PWA
+function installApp(){if(window._dip){window._dip.prompt();window._dip=null;}closeInstall();}
+function closeInstall(){document.getElementById('installPopup').classList.remove('show');localStorage.setItem('katrol_installClosed',Date.now().toString());}
+
+// MENU
+let _menuOpen=false;
+function toggleMenu(){
+  _menuOpen=!_menuOpen;
+  document.getElementById('dropdownMenu').classList.toggle('open',_menuOpen);
+  document.getElementById('menuOverlay').classList.toggle('open',_menuOpen);
+}
+function closeMenu(){
+  _menuOpen=false;
+  document.getElementById('dropdownMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+
+// TABS
+function selectTab(tab){
+  ['home','petunjuk','tentang','kontak'].forEach(t=>{
+    const d=document.getElementById('tab-'+t);if(d)d.style.display=t===tab?'block':'none';
+    const mi=document.getElementById('mi-'+t);if(mi)mi.classList.toggle('active',t===tab);
+  });
+  window.scrollTo(0,0);
+  gaEvent('tab_'+tab);
+}
+
+// MODAL
+let selectedEmoji='';
+function openModal(){
+  document.getElementById('modalFeedback').classList.add('open');
+  document.getElementById('fbForm').style.display='block';
+  document.getElementById('fbSuccess').style.display='none';
+  selectedEmoji='';
+  document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected'));
+}
+function closeModal(){document.getElementById('modalFeedback').classList.remove('open');}
+document.getElementById('modalFeedback').addEventListener('click',function(e){if(e.target===this)closeModal();});
+function pilihEmoji(el,emoji){
+  document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');selectedEmoji=emoji;
+}
+function kirimFeedback(){
+  const nama=document.getElementById('fbNama').value.trim()||'Anonim';
+  const pesan=document.getElementById('fbPesan').value.trim();
+  if(!pesan&&!selectedEmoji){showToast('Tulis pesan atau pilih emoji dulu ya!');return;}
+  const emoji=selectedEmoji||'-';
+  const teks=`*Kritik & Saran — Katrol Nilai*\n\n👤 Nama: ${nama}\n${emoji} Perasaan: ${emoji}\n💬 Pesan: ${pesan||'-'}\n\n_Dikirim dari bantuguruyuk.web.id_`;
+  window.open('https://wa.me/6289530713597?text='+encodeURIComponent(teks),'_blank');
+  gaEvent('feedback_kirim',{emoji,panjang:pesan.length});
+  document.getElementById('fbForm').style.display='none';
+  document.getElementById('fbSuccess').style.display='block';
+}
+
+// METODE
+let metode='tambah';
+function pilihMetode(m,el){
+  metode=m;
+  document.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  document.querySelectorAll('.param-box').forEach(b => b.classList.remove('show'));
-  const pb = document.getElementById('p-' + m);
-  if(pb) pb.classList.add('show');
-  gaEvent('pilih_metode', {metode: m});
+  document.querySelectorAll('.param-box').forEach(b=>b.classList.remove('show'));
+  const pb=document.getElementById('p-'+m);if(pb)pb.classList.add('show');
+  gaEvent('pilih_metode',{metode:m});
 }
 
-/* ══════════════ FILE UPLOAD ══════════════ */
+// FILE UPLOAD
 function handleFile(input){
-  const file = input.files[0];
-  if(!file) return;
-  const area = document.getElementById('uploadArea');
-  const txt = document.getElementById('uploadText');
-  const reader = new FileReader();
-
+  const file=input.files[0];if(!file)return;
+  const area=document.getElementById('uploadArea'),txt=document.getElementById('uploadText');
+  const reader=new FileReader();
   if(file.name.endsWith('.csv')){
-    reader.onload = e => {
-      const rows = e.target.result.split('\n').filter(r => r.trim());
-      document.getElementById('inputSiswa').value = rows.map(r => r.split(',').slice(0,2).join(',')).join('\n');
-      area.classList.add('has-file');
-      txt.textContent = '✅ ' + file.name + ' berhasil dibaca';
-      showToast('File CSV berhasil diimport!');
-      gaEvent('upload_file', {type:'csv', rows: rows.length});
-    };
-    reader.readAsText(file);
-  } else {
-    reader.onload = e => {
-      try {
-        const wb = XLSX.read(e.target.result, {type:'array'});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws, {header:1});
-        const lines = data
-          .filter(r => r.length >= 2 && r[0] && !isNaN(parseFloat(r[1])))
-          .map(r => r[0] + ',' + r[1]).join('\n');
-        document.getElementById('inputSiswa').value = lines;
-        area.classList.add('has-file');
-        txt.textContent = '✅ ' + file.name + ' (' + data.length + ' baris)';
-        showToast('File Excel berhasil diimport!');
-        gaEvent('upload_file', {type:'xlsx', rows: data.length});
-      } catch(err){
-        txt.textContent = '❌ Gagal membaca. Coba format CSV.';
-        showToast('Gagal baca file, coba CSV.');
-      }
-    };
-    reader.readAsArrayBuffer(file);
+    reader.onload=e=>{
+      const rows=e.target.result.split('\n').filter(r=>r.trim());
+      document.getElementById('inputSiswa').value=rows.map(r=>r.split(',').slice(0,2).join(',')).join('\n');
+      area.classList.add('has-file');txt.textContent='✅ '+file.name;
+      showToast('File CSV berhasil diimport!');gaEvent('upload_file',{type:'csv'});
+    };reader.readAsText(file);
+  }else{
+    reader.onload=e=>{
+      try{
+        const wb=XLSX.read(e.target.result,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        const data=XLSX.utils.sheet_to_json(ws,{header:1});
+        const lines=data.filter(r=>r.length>=2&&r[0]&&!isNaN(parseFloat(r[1]))).map(r=>r[0]+','+r[1]).join('\n');
+        document.getElementById('inputSiswa').value=lines;
+        area.classList.add('has-file');txt.textContent='✅ '+file.name+' ('+data.length+' baris)';
+        showToast('File Excel berhasil diimport!');gaEvent('upload_file',{type:'xlsx'});
+      }catch(err){txt.textContent='❌ Gagal membaca. Coba CSV.';showToast('Gagal baca file.');}
+    };reader.readAsArrayBuffer(file);
   }
 }
 
-/* ══════════════ PARSE SISWA ══════════════ */
+// PARSE
 function parseSiswa(raw){
-  return raw.trim().split('\n').filter(b => b.trim()).map(b => {
-    const p = b.split(/[,\t]/);
-    if(p.length < 2) return null;
-    const nama = p[0].trim();
-    const nilai = parseFloat(p[p.length-1].trim());
-    if(!nama || isNaN(nilai)) return null;
-    return {nama, nilai};
+  return raw.trim().split('\n').filter(b=>b.trim()).map(b=>{
+    const p=b.split(/[,\t]/);if(p.length<2)return null;
+    const nama=p[0].trim(),nilai=parseFloat(p[p.length-1].trim());
+    if(!nama||isNaN(nilai))return null;return{nama,nilai};
   }).filter(Boolean);
 }
 
-/* ══════════════ HITUNG KATROL ══════════════ */
-function hitungKatrol(nilai, maxNilai){
-  const kkm = parseFloat(document.getElementById('kkm').value) || 75;
-  const maxK = parseFloat(document.getElementById('maxKatrol').value) || 100;
-  const poin = parseFloat(document.getElementById('poin') ? document.getElementById('poin').value : 5) || 5;
+// HITUNG
+function hitungKatrol(nilai,maxNilai){
+  const kkm=parseFloat(document.getElementById('kkm').value)||75;
+  const maxK=parseFloat(document.getElementById('maxKatrol').value)||100;
+  const poin=parseFloat(document.getElementById('poin')?document.getElementById('poin').value:5)||5;
   let h;
   switch(metode){
-    case 'tambah': h = nilai + poin; break;
-    case 'kkm':    h = nilai < kkm ? kkm : nilai; break;
-    case 'akar':   h = Math.sqrt(nilai) * 10; break;
-    case 'skala':  h = maxNilai > 0 ? (nilai / maxNilai) * 100 : nilai; break;
-    default:       h = nilai;
+    case 'tambah':h=nilai+poin;break;
+    case 'kkm':h=nilai<kkm?kkm:nilai;break;
+    case 'akar':h=Math.sqrt(nilai)*10;break;
+    case 'skala':h=maxNilai>0?(nilai/maxNilai)*100:nilai;break;
+    default:h=nilai;
   }
-  return Math.min(maxK, Math.round(h * 10) / 10);
+  return Math.min(maxK,Math.round(h*10)/10);
 }
 
-/* ══════════════ PROSES KATROL ══════════════ */
+// PROSES
 function prosesKatrol(){
-  const raw = document.getElementById('inputSiswa').value;
-  if(!raw.trim()){ showToast('Data siswa belum diisi!'); return; }
-  const siswa = parseSiswa(raw);
-  if(!siswa.length){ showToast('Format tidak dikenali. Gunakan: Nama, Nilai'); return; }
-
-  const kkm = parseFloat(document.getElementById('kkm').value) || 75;
-  const maxNilai = Math.max(...siswa.map(s => s.nilai));
-  const kelas = document.getElementById('kelas').value.trim();
-  const mapel = document.getElementById('mapel').value.trim();
-
-  const hasil = siswa.map((s, i) => {
-    const katrol = hitungKatrol(s.nilai, maxNilai);
-    return {no: i+1, nama: s.nama, asli: s.nilai, katrol, delta: Math.round((katrol - s.nilai)*10)/10};
+  const raw=document.getElementById('inputSiswa').value;
+  if(!raw.trim()){showToast('Data siswa belum diisi!');return;}
+  const siswa=parseSiswa(raw);
+  if(!siswa.length){showToast('Format tidak dikenali. Gunakan: Nama, Nilai');return;}
+  const kkm=parseFloat(document.getElementById('kkm').value)||75;
+  const maxNilai=Math.max(...siswa.map(s=>s.nilai));
+  const kelas=document.getElementById('kelas').value.trim();
+  const mapel=document.getElementById('mapel').value.trim();
+  const hasil=siswa.map((s,i)=>{
+    const katrol=hitungKatrol(s.nilai,maxNilai);
+    return{no:i+1,nama:s.nama,asli:s.nilai,katrol,delta:Math.round((katrol-s.nilai)*10)/10};
   });
-
-  const rataAsli  = Math.round(hasil.reduce((a,b)=>a+b.asli,0)/hasil.length*10)/10;
-  const rataKatrol= Math.round(hasil.reduce((a,b)=>a+b.katrol,0)/hasil.length*10)/10;
-  const tA = hasil.filter(h=>h.asli>=kkm).length;
-  const tK = hasil.filter(h=>h.katrol>=kkm).length;
-  const pct = Math.round(tK/hasil.length*100);
-  const judulKelas = [kelas?'Kelas '+kelas:'', mapel].filter(Boolean).join(' — ');
-  const mLabel = {tambah:`+${document.getElementById('poin')?document.getElementById('poin').value:5} Poin`,kkm:'Naik ke KKM',akar:'Akar √×10',skala:'Skala Prop.'};
-
-  let rows = '';
-  hasil.forEach(h => {
-    const dc   = h.delta>0?'dp':h.delta===0?'dz':'dm';
-    const ds   = h.delta>0?'+'+h.delta:h.delta;
-    const badge= h.delta>0?'<span class="bnaik">Naik</span>':h.delta===0?'<span class="bsama">Sama</span>':'<span class="bturun">Turun</span>';
-    const sA   = h.asli>=kkm?'✅':'❌';
-    const sK   = h.katrol>=kkm?'✅':'❌';
-    rows += `<tr><td style="color:var(--text-light);font-size:.75rem;">${h.no}</td>
-      <td style="font-weight:600;">${h.nama}</td>
-      <td class="na">${h.asli} ${sA}</td>
-      <td class="nk">${h.katrol} ${sK}</td>
-      <td class="${dc}">${ds}</td>
-      <td>${badge}</td></tr>`;
+  const rataAsli=Math.round(hasil.reduce((a,b)=>a+b.asli,0)/hasil.length*10)/10;
+  const rataKatrol=Math.round(hasil.reduce((a,b)=>a+b.katrol,0)/hasil.length*10)/10;
+  const tA=hasil.filter(h=>h.asli>=kkm).length;
+  const tK=hasil.filter(h=>h.katrol>=kkm).length;
+  const pct=Math.round(tK/hasil.length*100);
+  const judulKelas=[kelas?'Kelas '+kelas:'',mapel].filter(Boolean).join(' — ');
+  const mLabel={tambah:`+${document.getElementById('poin')?document.getElementById('poin').value:5} Poin`,kkm:'Naik ke KKM',akar:'Akar √×10',skala:'Skala Prop.'};
+  let rows='';
+  hasil.forEach(h=>{
+    const dc=h.delta>0?'dp':h.delta===0?'dz':'dm';
+    const ds=h.delta>0?'+'+h.delta:h.delta;
+    const badge=h.delta>0?'<span class="bnaik">Naik</span>':h.delta===0?'<span class="bsama">Sama</span>':'<span class="bturun">Turun</span>';
+    const sA=h.asli>=kkm?'✅':'❌',sK=h.katrol>=kkm?'✅':'❌';
+    rows+=`<tr><td style="color:var(--text-light);font-size:.74rem;">${h.no}</td><td style="font-weight:600;">${h.nama}</td><td class="na">${h.asli} ${sA}</td><td class="nk">${h.katrol} ${sK}</td><td class="${dc}">${ds}</td><td>${badge}</td></tr>`;
   });
-
-  const barSiswa = hasil.slice(0,15);
-  let bars = '';
-  barSiswa.forEach(h => {
-    bars += `<div class="bar-item">
-      <div class="bar-label"><span>${h.nama}</span>
-      <span style="color:var(--text-light);">${h.asli} → <strong style="color:#0f6e56;">${h.katrol}</strong></span></div>
-      <div class="bar-track"><div class="bar-fill" style="width:${h.katrol}%"></div></div>
-    </div>`;
+  const barSiswa=hasil.slice(0,15);
+  let bars='';
+  barSiswa.forEach(h=>{
+    bars+=`<div class="bar-item"><div class="bar-label"><span>${h.nama}</span><span style="color:var(--text-light);">${h.asli}→<strong style="color:#0d7a8a;">${h.katrol}</strong></span></div><div class="bar-track"><div class="bar-fill" style="width:${h.katrol}%"></div></div></div>`;
   });
-
-  document.getElementById('panelHasil').innerHTML = `
-    <div style="margin-bottom:13px;">
-      ${judulKelas?`<div class="info-pill">📚 ${judulKelas} | KKM: ${kkm} | Metode: ${mLabel[metode]}</div>`:`<div class="info-pill">KKM: ${kkm} | Metode: ${mLabel[metode]}</div>`}
-      <div class="stats-row">
-        <div class="stat-card"><div class="sv">${hasil.length}</div><div class="sl">Total Siswa</div></div>
-        <div class="stat-card bl"><div class="sv">${rataAsli}→<span style="color:#10b981;">${rataKatrol}</span></div><div class="sl">Rata-rata</div></div>
-        <div class="stat-card gr"><div class="sv">${tA}→${tK}</div><div class="sl">Tuntas KKM</div></div>
-        <div class="stat-card or"><div class="sv">${pct}%</div><div class="sl">% Ketuntasan</div></div>
-      </div>
+  document.getElementById('panelHasil').innerHTML=`
+    ${judulKelas?`<div class="info-pill">📚 ${judulKelas} | KKM: ${kkm} | ${mLabel[metode]}</div>`:`<div class="info-pill">KKM: ${kkm} | ${mLabel[metode]}</div>`}
+    <div class="stats-row">
+      <div class="stat-card"><div class="sv">${hasil.length}</div><div class="sl">Total Siswa</div></div>
+      <div class="stat-card bl"><div class="sv">${rataAsli}→<span style="color:#10b981;">${rataKatrol}</span></div><div class="sl">Rata-rata</div></div>
+      <div class="stat-card gr"><div class="sv">${tA}→${tK}</div><div class="sl">Tuntas KKM</div></div>
+      <div class="stat-card or"><div class="sv">${pct}%</div><div class="sl">% Ketuntasan</div></div>
     </div>
-    <div class="card">
-      <div class="card-title">📋 Tabel Hasil Katrol</div>
-      <div class="tbl-wrap">
-        <table>
-          <thead><tr><th>No</th><th>Nama Siswa</th><th>Nilai Asli</th><th>Nilai Katrol</th><th>Delta</th><th>Status</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-      <div class="bar-wrap">
-        <h4>Visualisasi Nilai Katrol${barSiswa.length<hasil.length?' (15 siswa pertama)':''}</h4>
-        ${bars}
-      </div>
-      <div class="btn-row" style="margin-top:13px;">
-        <button class="btn-sm g" onclick="exportCSV()">📥 CSV</button>
-        <button class="btn-sm g" onclick="exportExcel()">📊 Excel</button>
-        <button class="btn-sm" onclick="copyTabel()">📋 Copy ke Excel</button>
-      </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>No</th><th>Nama Siswa</th><th>Nilai Asli</th><th>Nilai Katrol</th><th>Delta</th><th>Status</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="bar-wrap">
+      <h4>Visualisasi Nilai${barSiswa.length<hasil.length?' (15 siswa pertama)':''}</h4>
+      ${bars}
+    </div>
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn-sm g" onclick="exportCSV()">📥 CSV</button>
+      <button class="btn-sm g" onclick="exportExcel()">📊 Excel</button>
+      <button class="btn-sm" onclick="copyTabel()">📋 Copy ke Excel</button>
     </div>
   `;
-
-  window._hasil = hasil;
-  window._kkm   = kkm;
-  window._judulKelas = judulKelas;
-  window._mLabel = mLabel[metode];
-  gaEvent('katrol_nilai', {metode, siswa: hasil.length, pct_tuntas: pct});
+  window._hasil=hasil;window._kkm=kkm;window._judulKelas=judulKelas;window._mLabel=mLabel[metode];
+  gaEvent('katrol_nilai',{metode,siswa:hasil.length,pct});
   showToast('Nilai berhasil dikatrol! 🎉');
 }
 
-/* ══════════════ EXPORT ══════════════ */
+// EXPORT
 function exportCSV(){
-  if(!window._hasil) return;
-  let csv = `Katrol Nilai${window._judulKelas?' — '+window._judulKelas:''}\nKKM: ${window._kkm} | Metode: ${window._mLabel}\n\nNo,Nama,Nilai Asli,Nilai Katrol,Delta,Keterangan\n`;
-  window._hasil.forEach(h => {
-    csv += `${h.no},"${h.nama}",${h.asli},${h.katrol},${h.delta>0?'+'+h.delta:h.delta},${h.katrol>=window._kkm?'Tuntas':'Belum Tuntas'}\n`;
-  });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
-  a.download = 'katrol_nilai.csv'; a.click();
-  gaEvent('export_csv');
+  if(!window._hasil)return;
+  let csv=`Katrol Nilai${window._judulKelas?' — '+window._judulKelas:''}\nKKM: ${window._kkm} | Metode: ${window._mLabel}\n\nNo,Nama,Nilai Asli,Nilai Katrol,Delta,Keterangan\n`;
+  window._hasil.forEach(h=>{csv+=`${h.no},"${h.nama}",${h.asli},${h.katrol},${h.delta>0?'+'+h.delta:h.delta},${h.katrol>=window._kkm?'Tuntas':'Belum Tuntas'}\n`;});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='katrol_nilai.csv';a.click();
+  gaEvent('export_csv');showToast('File CSV berhasil didownload!');
 }
-
 function exportExcel(){
-  if(!window._hasil){ showToast('Belum ada data untuk diexport.'); return; }
-  if(typeof XLSX === 'undefined'){ showToast('Library belum siap, coba lagi.'); return; }
-  const data = [
-    ['No','Nama Siswa','Nilai Asli','Nilai Katrol','Delta','Keterangan'],
-    ...window._hasil.map(h=>[h.no, h.nama, h.asli, h.katrol, h.delta>0?'+'+h.delta:h.delta, h.katrol>=window._kkm?'Tuntas':'Belum Tuntas'])
-  ];
-  const ws = XLSX.utils.aoa_to_sheet(data);
-  ws['!cols'] = [{wch:5},{wch:26},{wch:12},{wch:13},{wch:8},{wch:15}];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Katrol Nilai');
-  XLSX.writeFile(wb, 'katrol_nilai.xlsx');
-  showToast('File Excel berhasil didownload!');
-  gaEvent('export_excel');
+  if(!window._hasil){showToast('Belum ada data.');return;}
+  if(typeof XLSX==='undefined'){showToast('Library belum siap, coba lagi.');return;}
+  const data=[['No','Nama Siswa','Nilai Asli','Nilai Katrol','Delta','Keterangan'],...window._hasil.map(h=>[h.no,h.nama,h.asli,h.katrol,h.delta>0?'+'+h.delta:h.delta,h.katrol>=window._kkm?'Tuntas':'Belum Tuntas'])];
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:5},{wch:26},{wch:12},{wch:13},{wch:8},{wch:15}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Katrol Nilai');
+  XLSX.writeFile(wb,'katrol_nilai.xlsx');
+  gaEvent('export_excel');showToast('File Excel berhasil didownload!');
 }
-
 function copyTabel(){
-  if(!window._hasil){ showToast('Belum ada data.'); return; }
-  let txt = 'No\tNama\tNilai Asli\tNilai Katrol\tDelta\tKeterangan\n';
-  window._hasil.forEach(h => {
-    txt += `${h.no}\t${h.nama}\t${h.asli}\t${h.katrol}\t${h.delta>0?'+'+h.delta:h.delta}\t${h.katrol>=window._kkm?'Tuntas':'Belum Tuntas'}\n`;
-  });
-  navigator.clipboard.writeText(txt).then(() => showToast('Berhasil dicopy! Paste langsung ke Excel.'));
+  if(!window._hasil){showToast('Belum ada data.');return;}
+  let txt='No\tNama\tNilai Asli\tNilai Katrol\tDelta\tKeterangan\n';
+  window._hasil.forEach(h=>{txt+=`${h.no}\t${h.nama}\t${h.asli}\t${h.katrol}\t${h.delta>0?'+'+h.delta:h.delta}\t${h.katrol>=window._kkm?'Tuntas':'Belum Tuntas'}\n`;});
+  navigator.clipboard.writeText(txt).then(()=>showToast('Berhasil dicopy! Paste ke Excel.'));
   gaEvent('copy_tabel');
 }
 
-/* ══════════════ CONTOH & CLEAR ══════════════ */
+// CONTOH & CLEAR
 function contohData(){
-  document.getElementById('kelas').value = '8A';
-  document.getElementById('mapel').value = 'IPA';
-  document.getElementById('inputSiswa').value =
-`Andi Firmansyah,68
-Budi Santoso,72
-Citra Dewi,80
-Dian Pratiwi,55
-Eko Wahyudi,74
-Fitri Amalia,90
-Galih Nugroho,48
-Hana Puspita,77
-Ilham Saputra,63
-Joko Prabowo,85
-Kartika Sari,58
-Lina Marlina,70
-Mega Wulandari,65
-Nanda Putra,79
-Oki Setiawan,52`;
-  showToast('Data contoh berhasil diisi!');
-  gaEvent('contoh_data');
+  document.getElementById('kelas').value='8A';
+  document.getElementById('mapel').value='IPA';
+  document.getElementById('inputSiswa').value='Andi Firmansyah,68\nBudi Santoso,72\nCitra Dewi,80\nDian Pratiwi,55\nEko Wahyudi,74\nFitri Amalia,90\nGalih Nugroho,48\nHana Puspita,77\nIlham Saputra,63\nJoko Prabowo,85\nKartika Sari,58\nLina Marlina,70';
+  showToast('Data contoh berhasil diisi!');gaEvent('contoh_data');
 }
-
 function clearAll(){
   document.getElementById('inputSiswa').value='';
-  document.getElementById('kelas').value='';
-  document.getElementById('mapel').value='';
-  const area=document.getElementById('uploadArea');
-  area.classList.remove('has-file');
+  document.getElementById('kelas').value='';document.getElementById('mapel').value='';
+  document.getElementById('uploadArea').classList.remove('has-file');
   document.getElementById('uploadText').textContent='Klik atau seret file ke sini';
-  document.getElementById('panelHasil').innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Hasil katrol akan muncul di sini</div><div class="empty-sub">Masukkan data nilai siswa di panel kiri,<br>lalu klik <strong>Katrol Nilai Sekarang</strong></div></div>`;
-  window._hasil=null;
-  showToast('Data berhasil dihapus.');
+  document.getElementById('panelHasil').innerHTML='<div class="prompt-placeholder"><div class="ph-icon">📊</div><p>Isi form di kiri lalu klik<br/><b>Katrol Nilai Sekarang</b></p></div>';
+  window._hasil=null;showToast('Data berhasil dihapus.');
 }
 
-/* ══════════════ TOAST ══════════════ */
-let toastTimer;
+// TOAST
+let _toastTimer;
 function showToast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
-}
-
-/* ══════════════ FEEDBACK ══════════════ */
-let selectedEmoji = '';
-function pilihEmoji(el, emoji){
-  document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedEmoji = emoji;
-}
-
-function kirimFeedback(){
-  const nama  = document.getElementById('fbNama').value.trim();
-  const pesan = document.getElementById('fbPesan').value.trim();
-  if(!pesan && !selectedEmoji){ showToast('Tulis pesan atau pilih emoji dulu ya!'); return; }
-  
-  // Kirim ke GA sebagai event
-  gaEvent('feedback_submit',{
-    fb_nama: nama || '(anonim)',
-    fb_emoji: selectedEmoji || '-',
-    fb_pesan: pesan ? pesan.substring(0,100) : '-'
-  });
-
-  document.getElementById('fbForm').style.display='none';
-  document.getElementById('fbSuccess').style.display='block';
-  showToast('Terima kasih atas masukannya! 🙏');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
 }
 </script>
 </body>
