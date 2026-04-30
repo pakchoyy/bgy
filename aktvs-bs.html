@@ -80,7 +80,7 @@
 
 <div class="header-logo">
   <div class="badge">Bantu Guru Yuk!</div>
-  <h2>🎓 Aktivasi PRO Soal</h2>
+  <h2>🎓 AktivasiBGY-Buat Soal Pro</h2>
 </div>
 
 <div class="box">
@@ -142,7 +142,19 @@
       if (fetchError) throw fetchError;
 
       if (data) {
-        tampilKode(data.code);
+        // ✅ Sudah pernah aktivasi PRO — jangan generate kode baru
+        if (data.is_pro) {
+          hasil.className = "kode";
+          hasil.innerHTML = `
+            <div style="margin:16px 0 0;padding:12px 14px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;text-align:left;">
+              <div style="font-size:12px;font-weight:700;color:#15803d;margin-bottom:4px;">✅ Email ini sudah aktif PRO!</div>
+              <div style="font-size:11px;color:#166534;">Buka halaman Buat Soal dan masukkan email ini untuk login langsung.</div>
+            </div>`;
+          console.log("🔒 Sudah PRO:", email);
+          return;
+        }
+        // Belum PRO tapi sudah punya kode — tampilkan kode lama
+        tampilKode(data.code, email);
         console.log("♻️ Kode lama:", data.code);
         return;
       }
@@ -156,7 +168,7 @@
 
       if (insertError) throw insertError;
 
-      tampilKode(kode);
+      tampilKode(kode, email);
       console.log("✅ Tersimpan:", kode);
 
     } catch (err) {
@@ -168,7 +180,7 @@
     }
   });
 
-  function tampilKode(kode) {
+  function tampilKode(kode, email) {
     const hasil = document.getElementById("hasil");
     hasil.innerHTML = `
       <!-- Step 2 header -->
