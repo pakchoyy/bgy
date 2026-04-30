@@ -182,12 +182,12 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .page-nav button:disabled{opacity:.3;cursor:not-allowed;}
 .page-info{font-size:.78rem;color:var(--text-light);font-weight:600;min-width:72px;text-align:center;}
 
-.preview-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;justify-content:center;background:var(--gray-100);border-radius:8px;padding:12px 0;}
+.preview-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:12px 8px;}
 #previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:380px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;height:auto;position:relative;display:flex;align-items:flex-start;}
 #previewBox.has-content{min-height:1123px;display:block;}
-@media(max-width:600px){
-  .preview-scroll-wrapper{padding:8px 0;background:var(--gray-100);}
-  #previewBox{width:540px!important;min-width:540px!important;padding:8mm 8mm 8mm 10mm!important;font-size:9.5pt!important;min-height:auto!important;}
+@media(max-width:700px){
+  .preview-scroll-wrapper{padding:6px 0;}
+  #previewBox{width:680px!important;min-width:680px!important;padding:7mm 8mm 7mm 9mm!important;font-size:9.5pt!important;min-height:auto!important;}
   .doc-school-name{font-size:11pt!important;}
   .doc-ujian-title{font-size:9.5pt!important;}
   .opsi-table td{font-size:9pt!important;}
@@ -1850,365 +1850,329 @@ async function exportPDF(mode){
 ════════════════════════════════════════════ */
 async function exportWord(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  // Tunggu docx library siap (maks 8 detik)
-  if(typeof window.docx === 'undefined'){
+
+  // Tunggu docx library siap (maks 10 detik)
+  if(typeof window.docx==='undefined'){
     const btn=document.querySelector('[onclick="exportWord()"]');
-    const origTxt=btn?btn.textContent:'';
+    const origTxtW=btn?btn.textContent:'';
     if(btn){btn.textContent='⏳ Memuat library...';btn.disabled=true;}
     let waited=0;
-    while(typeof window.docx==='undefined'&&waited<8000){
+    while(typeof window.docx==='undefined'&&waited<10000){
       await new Promise(r=>setTimeout(r,300));waited+=300;
     }
-    if(btn){btn.textContent=origTxt;btn.disabled=false;}
+    if(btn){btn.textContent=origTxtW;btn.disabled=false;}
     if(typeof window.docx==='undefined'){alert('Library Word gagal dimuat. Coba refresh halaman.');return;}
   }
 
-  const docxLib = window.docx;
-  const Document    = docxLib.Document;
-  const Packer      = docxLib.Packer;
-  const Paragraph   = docxLib.Paragraph;
-  const TextRun     = docxLib.TextRun;
-  const Table       = docxLib.Table;
-  const TableRow    = docxLib.TableRow;
-  const TableCell   = docxLib.TableCell;
-  const AlignmentType = docxLib.AlignmentType;
-  const BorderStyle = docxLib.BorderStyle;
-  const WidthType   = docxLib.WidthType;
-  const PageBreak   = docxLib.PageBreak;
-  const VerticalAlign = docxLib.VerticalAlign;
-  const ShadingType = docxLib.ShadingType;
-  const ImageRun    = docxLib.ImageRun;
-  // UnderlineType: v7 pakai string langsung, v8 pakai enum
-  const UnderlineType = docxLib.UnderlineType || {SINGLE:'single'};
+  const D = window.docx;
 
-  const pg    = soalData.pilihanGanda||[];
-  const isian = soalData.isian||[];
-  const uraian= soalData.uraian||[];
+  // Pastikan semua yang dibutuhkan ada
+  if(!D.Document||!D.Packer||!D.Paragraph||!D.TextRun){
+    alert('Library Word tidak lengkap. Coba refresh halaman.');return;
+  }
+
+  const pg     = soalData.pilihanGanda||[];
+  const isian  = soalData.isian||[];
+  const uraian = soalData.uraian||[];
   const mapel       = document.getElementById('mataPelajaran').value;
   const kelas       = document.getElementById('kelas').value;
+  const kelasNum    = parseInt(kelas)||1;
+  const fase        = kelasNum<=2?'A':kelasNum<=4?'B':'C';
   const namaSekolah = document.getElementById('namaSekolah').value||'SDN ---';
   const tahun       = document.getElementById('tahunPelajaran').value||'2025/2026';
   const judulUjian  = getJudulUjian();
   const tanggal     = document.getElementById('tanggal').value
     ? new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
     : '.....................';
-  const kelasNum = parseInt(kelas)||1;
-  const fase     = kelasNum<=2?'A':kelasNum<=4?'B':'C';
-  const bobotPG=1, bobotIsian=2, bobotUraian=4;
-  const totalSkor = pg.length*bobotPG + isian.length*bobotIsian + uraian.length*bobotUraian;
+  const bobotPG=1,bobotIsian=2,bobotUraian=4;
+  const totalSkor=pg.length*bobotPG+isian.length*bobotIsian+uraian.length*bobotUraian;
 
   gaEvent('download_word',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
 
-  // ── Helper ──
-  const TNR = 'Times New Roman';
-  const W   = 9026; // A4 content width DXA (margins 3cm kiri, 2.5cm lainnya)
-  const borderBlack = { style: BorderStyle.SINGLE, size: 6, color: '000000' };
-  const noBorder    = { style: BorderStyle.NONE,   size: 0, color: 'FFFFFF' };
-  const cellBorder  = { style: BorderStyle.SINGLE, size: 4, color: '000000' };
+  const TNR='Times New Roman';
+  const W=9026;
+  // Gunakan string literal — hindari enum yang mungkin undefined di versi tertentu
+  const bSingle={style:'single',size:6,color:'000000'};
+  const bNone  ={style:'none',  size:0,color:'FFFFFF'};
+  const bCell  ={style:'single',size:4,color:'000000'};
+  const bThick ={style:'single',size:24,color:'000000'};
 
-  function txt(t, opts={}){
-    return new TextRun({ text: String(t||''), font: TNR, size: opts.size||22,
-      bold: opts.bold||false, italics: opts.italic||false,
-      underline: opts.underline ? { type: UnderlineType.SINGLE } : undefined });
-  }
-  function para(children, opts={}){
-    return new Paragraph({
-      alignment: opts.align||AlignmentType.LEFT,
-      spacing: { before: opts.before||0, after: opts.after||80 },
-      indent: opts.indent ? { left: opts.indent } : undefined,
-      children: Array.isArray(children)?children:[children]
+  function P(runs,opts={}){
+    return new D.Paragraph({
+      alignment:opts.align||'left',
+      spacing:{before:opts.before||0,after:opts.after||80},
+      indent:opts.indent?{left:opts.indent}:undefined,
+      children:Array.isArray(runs)?runs:[runs]
     });
   }
-  function garisTebal(){
-    const thickBorder = { style: BorderStyle.THICK||'thick', size: 18, color: '000000', space: 1 };
-    return new Paragraph({
-      border: {
-        top: thickBorder,
-        bottom: thickBorder
-      },
-      spacing: { before: 60, after: 60 },
-      children: [new TextRun({ text: '' })]
+  function T(text,opts={}){
+    const run={text:String(text||''),font:TNR,size:opts.size||22};
+    if(opts.bold)   run.bold=true;
+    if(opts.italic) run.italics=true;
+    if(opts.underline) run.underline={type:'single'};
+    return new D.TextRun(run);
+  }
+  function HR(){
+    // Garis tebal pakai paragraph dengan border atas & bawah
+    return new D.Paragraph({
+      border:{top:bThick,bottom:bThick},
+      spacing:{before:80,after:80},
+      children:[new D.TextRun({text:'',font:TNR,size:4})]
     });
   }
-  function pageBreak(){
-    return new Paragraph({ children: [new PageBreak()] });
+  function PB(){ return new D.Paragraph({children:[new D.PageBreak()]}); }
+
+  function noCell(content,w){
+    return new D.TableCell({
+      width:{size:w,type:'dxa'},
+      borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
+      children:Array.isArray(content)?content:[content]
+    });
+  }
+  function tblCell(content,w,align){
+    return new D.TableCell({
+      width:{size:w,type:'dxa'},
+      borders:{top:bCell,bottom:bCell,left:bCell,right:bCell},
+      margins:{top:60,bottom:60,left:80,right:80},
+      children:[P(Array.isArray(content)?content:[content],{align:align||'left'})]
+    });
+  }
+  function tblRow(cells){ return new D.TableRow({children:cells}); }
+  function noTable(rows,colWidths){
+    return new D.Table({
+      width:{size:W,type:'dxa'},
+      columnWidths:colWidths,
+      borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
+      rows:rows
+    });
   }
 
-  // ── Header soal (mirip preview: logo kiri, judul tengah, logo kanan, garis tebal, identitas) ──
-  function headerSoal(){
-    const rows = [];
+  // ── Header Soal ──
+  const headerRows=[];
+  const logoW=800, titleW=W-logoW*2;
 
-    // Helper: konversi base64 data URL ke Uint8Array untuk ImageRun
-    function b64ToUint8(dataUrl){
-      const b64=dataUrl.split(',')[1];
-      const bin=atob(b64);
-      const arr=new Uint8Array(bin.length);
-      for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
-      return arr;
+  // Baris judul (3 kolom: logo kiri | teks tengah | logo kanan)
+  const logoCell=(side)=>{
+    const logoData=logos&&logos[side];
+    if(logoData&&D.ImageRun){
+      try{
+        const b64=logoData.split(',')[1];
+        const bin=atob(b64);
+        const arr=new Uint8Array(bin.length);
+        for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+        return new D.TableCell({
+          width:{size:logoW,type:'dxa'},
+          borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
+          verticalAlign:'center',
+          children:[new D.Paragraph({alignment:'center',spacing:{before:0,after:0},children:[
+            new D.ImageRun({data:arr,transformation:{width:56,height:56}})
+          ]})]
+        });
+      }catch(e){}
     }
+    return new D.TableCell({
+      width:{size:logoW,type:'dxa'},
+      borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
+      children:[new D.Paragraph({children:[new D.TextRun({text:'',font:TNR,size:22})]})]
+    });
+  };
 
-    // Tabel header 3 kolom: logo kiri | judul | logo kanan
-    const logoW=700; // DXA ~1.2cm
-    const titleW=W-logoW*2;
-
-    function makeLogoCell(logoDataUrl){
-      if(logoDataUrl && typeof ImageRun !== 'undefined'){
-        try{
-          const imgData=b64ToUint8(logoDataUrl);
-          return new TableCell({
-            width:{size:logoW,type:WidthType.DXA},
-            borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder},
-            verticalAlign:VerticalAlign.CENTER,
-            children:[new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[
-              new ImageRun({data:imgData,transformation:{width:56,height:56}})
-            ]})]
-          });
-        }catch(e){}
-      }
-      return new TableCell({
-        width:{size:logoW,type:WidthType.DXA},
-        borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder},
-        children:[new Paragraph({children:[new TextRun({text:''})]})]
-      });
-    }
-
-    rows.push(new Table({
-      width:{size:W,type:WidthType.DXA},
-      columnWidths:[logoW,titleW,logoW],
-      borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder,insideH:noBorder,insideV:noBorder},
-      rows:[new TableRow({children:[
-        makeLogoCell(logos&&logos.logo1),
-        new TableCell({
-          width:{size:titleW,type:WidthType.DXA},
-          borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder},
-          verticalAlign:VerticalAlign.CENTER,
-          children:[
-            para([txt(judulUjian,{bold:true,size:20})],{align:AlignmentType.CENTER,after:20}),
-            para([txt(namaSekolah,{bold:true,size:28})],{align:AlignmentType.CENTER,after:20}),
-            para([txt('Tahun Pelajaran '+tahun,{size:20})],{align:AlignmentType.CENTER,after:0}),
-          ]
-        }),
-        makeLogoCell(logos&&logos.logo2),
-      ]})]
-    }));
-
-    rows.push(garisTebal());
-
-    // Tabel identitas siswa (2 kolom)
-    const identW = Math.floor(W/2);
-    rows.push(new Table({
-      width: { size: W, type: WidthType.DXA },
-      columnWidths: [identW, identW],
-      borders: { top:noBorder,bottom:noBorder,left:noBorder,right:noBorder,insideH:noBorder,insideV:noBorder },
-      rows: [
-        new TableRow({ children: [
-          new TableCell({ width:{size:identW,type:WidthType.DXA}, borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder}, children:[para([txt('Mata Pelajaran',{size:22}),txt(' : ',{size:22}),txt(mapel,{size:22})])] }),
-          new TableCell({ width:{size:identW,type:WidthType.DXA}, borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder}, children:[para([txt('Nama',{size:22}),txt(' : _______________________',{size:22})])] }),
-        ]}),
-        new TableRow({ children: [
-          new TableCell({ width:{size:identW,type:WidthType.DXA}, borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder}, children:[para([txt('Kelas / Fase',{size:22}),txt(' : ',{size:22}),txt(kelas+' / Fase '+fase,{size:22})])] }),
-          new TableCell({ width:{size:identW,type:WidthType.DXA}, borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder}, children:[para([txt('No. Absen',{size:22}),txt(' : ___________',{size:22})])] }),
-        ]}),
-        new TableRow({ children: [
-          new TableCell({ width:{size:identW,type:WidthType.DXA}, borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder}, children:[para([txt('Tanggal',{size:22}),txt(' : ',{size:22}),txt(tanggal,{size:22})])] }),
-          new TableCell({ width:{size:identW,type:WidthType.DXA}, borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder}, children:[para([txt('Nilai',{size:22}),txt(' : ___________',{size:22})])] }),
-        ]}),
+  headerRows.push(noTable([tblRow([
+    logoCell('logo1'),
+    new D.TableCell({
+      width:{size:titleW,type:'dxa'},
+      borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
+      verticalAlign:'center',
+      children:[
+        P([T(judulUjian,{bold:true,size:20})],{align:'center',after:20}),
+        P([T(namaSekolah,{bold:true,size:28})],{align:'center',after:20}),
+        P([T('Tahun Pelajaran '+tahun,{size:20})],{align:'center',after:0}),
       ]
-    }));
-    rows.push(garisTebal());
-    return rows;
-  }
+    }),
+    logoCell('logo2'),
+  ])],[logoW,titleW,logoW]));
+  headerRows.push(HR());
+
+  // Identitas siswa
+  const hW=Math.floor(W/2);
+  headerRows.push(noTable([
+    tblRow([
+      noCell(P([T('Mata Pelajaran',{size:22}),T(' : ',{size:22}),T(mapel,{size:22})]),hW),
+      noCell(P([T('Nama : _________________________',{size:22})]),hW),
+    ]),
+    tblRow([
+      noCell(P([T('Kelas / Fase',{size:22}),T(' : ',{size:22}),T(kelas+' / Fase '+fase,{size:22})]),hW),
+      noCell(P([T('No. Absen : __________',{size:22})]),hW),
+    ]),
+    tblRow([
+      noCell(P([T('Tanggal',{size:22}),T(' : ',{size:22}),T(tanggal,{size:22})]),hW),
+      noCell(P([T('Nilai : __________',{size:22})]),hW),
+    ]),
+  ],[hW,hW]));
+  headerRows.push(HR());
 
   // ── Soal PG ──
-  const pgParagraphs = [];
+  const pgP=[];
   if(pg.length>0){
-    pgParagraphs.push(para([txt('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:200,after:60}));
-    pgParagraphs.push(para([txt('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,size:20})],{after:80}));
+    pgP.push(P([T('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:200,after:60}));
+    pgP.push(P([T('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,size:20})],{after:80}));
+    const labels=['A','B','C','D'];
     pg.forEach((item,i)=>{
-      const soalTeks = stripHtml(item.soal||'');
-      pgParagraphs.push(para([txt(`${i+1}. `,{bold:true,size:22}), txt(soalTeks,{size:22})],{before:80,after:40}));
-      // Opsi 2 kolom pakai tabel
-      const opsi = item.opsi||[];
-      const labels = ['A','B','C','D','E'];
-      const opsiRows = [];
+      pgP.push(P([T((i+1)+'. ',{bold:true}),T(stripHtml(item.soal||''))],{before:80,after:40}));
+      const opsi=item.opsi||[];
+      const colW=Math.floor(W/2);
+      const opsiRows=[];
       for(let r=0;r<Math.ceil(opsi.length/2);r++){
-        const c0 = r*2, c1 = r*2+1;
-        const colW = Math.floor(W/2);
-        opsiRows.push(new TableRow({ children: [
-          new TableCell({ width:{size:colW,type:WidthType.DXA}, borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder},
-            margins:{top:40,bottom:40,left:360,right:100},
-            children:[para([txt(`${labels[c0]||''}. `,{size:22}), txt(stripHtml(opsi[c0]||''),{size:22})])] }),
-          new TableCell({ width:{size:colW,type:WidthType.DXA}, borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder},
-            margins:{top:40,bottom:40,left:100,right:100},
-            children:[c1<opsi.length?para([txt(`${labels[c1]||''}. `,{size:22}), txt(stripHtml(opsi[c1]||''),{size:22})]):para([txt('')])] }),
-        ]}));
+        const i0=r*2,i1=r*2+1;
+        opsiRows.push(tblRow([
+          noCell(P([T((labels[i0]||'')+'. '),T(stripHtml(opsi[i0]||''))],{indent:360}),colW),
+          noCell(i1<opsi.length?P([T((labels[i1]||'')+'. '),T(stripHtml(opsi[i1]||''))]):P([T('')]),colW),
+        ]));
       }
       if(opsiRows.length){
-        pgParagraphs.push(new Table({ width:{size:W,type:WidthType.DXA}, columnWidths:[Math.floor(W/2),Math.floor(W/2)],
-          borders:{top:noBorder,bottom:noBorder,left:noBorder,right:noBorder,insideH:noBorder,insideV:noBorder},
-          rows: opsiRows }));
+        pgP.push(noTable(opsiRows,[colW,colW]));
       }
     });
   }
 
   // ── Soal Isian ──
-  const isianParagraphs = [];
+  const isP=[];
   if(isian.length>0){
-    isianParagraphs.push(para([txt('II. Isian Singkat',{bold:true,underline:true,size:22})],{before:240,after:60}));
-    isianParagraphs.push(para([txt('Isilah titik-titik berikut dengan jawaban yang tepat!',{italic:true,size:20})],{after:80}));
+    isP.push(P([T('II. Isian Singkat',{bold:true,underline:true,size:22})],{before:240,after:60}));
+    isP.push(P([T('Isilah titik-titik berikut dengan jawaban yang tepat!',{italic:true,size:20})],{after:80}));
     isian.forEach((item,i)=>{
-      isianParagraphs.push(para([txt(`${pg.length+i+1}. `,{bold:true,size:22}), txt(stripHtml(item.soal||''),{size:22})],{before:80,after:20}));
-      isianParagraphs.push(para([txt('Jawab : ___________________________________________',{size:22})],{indent:360,after:80}));
+      isP.push(P([T((pg.length+i+1)+'. ',{bold:true}),T(stripHtml(item.soal||''))],{before:80,after:20}));
+      isP.push(P([T('Jawab : ___________________________________________')],{indent:360,after:80}));
     });
   }
 
   // ── Soal Uraian ──
-  const uraianParagraphs = [];
+  const urP=[];
   if(uraian.length>0){
-    uraianParagraphs.push(para([txt('III. Uraian',{bold:true,underline:true,size:22})],{before:240,after:60}));
-    uraianParagraphs.push(para([txt('Jawablah pertanyaan berikut dengan lengkap dan benar!',{italic:true,size:20})],{after:80}));
+    urP.push(P([T('III. Uraian',{bold:true,underline:true,size:22})],{before:240,after:60}));
+    urP.push(P([T('Jawablah pertanyaan berikut dengan lengkap dan benar!',{italic:true,size:20})],{after:80}));
     uraian.forEach((item,i)=>{
-      uraianParagraphs.push(para([txt(`${pg.length+isian.length+i+1}. `,{bold:true,size:22}), txt(stripHtml(item.soal||''),{size:22})],{before:80,after:20}));
-      uraianParagraphs.push(para([txt('________________________________________________________________________',{size:22})],{indent:360,after:20}));
-      uraianParagraphs.push(para([txt('________________________________________________________________________',{size:22})],{indent:360,after:20}));
-      uraianParagraphs.push(para([txt('________________________________________________________________________',{size:22})],{indent:360,after:80}));
+      urP.push(P([T((pg.length+isian.length+i+1)+'. ',{bold:true}),T(stripHtml(item.soal||''))],{before:80,after:20}));
+      urP.push(P([T('Jawab :')],{indent:360,after:20}));
+      for(let l=0;l<3;l++) urP.push(P([T('_____________________________________________')],{indent:360,after:12}));
+      urP.push(P([T('')],{after:60}));
     });
   }
 
-  // ── Halaman Kunci ──
-  const kunciParagraphs = [];
-  kunciParagraphs.push(para([txt('KUNCI JAWABAN',{bold:true,size:28})],{align:AlignmentType.CENTER,after:40}));
-  kunciParagraphs.push(para([txt(judulUjian+' — '+namaSekolah,{size:22})],{align:AlignmentType.CENTER,after:40}));
-  kunciParagraphs.push(para([txt(mapel+' | Kelas '+kelas+' / Fase '+fase,{size:22})],{align:AlignmentType.CENTER,after:40}));
-  kunciParagraphs.push(para([txt(`Bobot: PG=${bobotPG}pt | Isian=${bobotIsian}pt | Uraian=${bobotUraian}pt | Total Maks: ${totalSkor} poin`,{size:20,italic:true})],{align:AlignmentType.CENTER,after:80}));
-  kunciParagraphs.push(garisTebal());
-
+  // ── Kunci Jawaban ──
+  const kP=[];
+  kP.push(P([T('KUNCI JAWABAN',{bold:true,size:28})],{align:'center',after:40}));
+  kP.push(P([T(judulUjian+' — '+namaSekolah,{size:22})],{align:'center',after:20}));
+  kP.push(P([T(mapel+' | Kelas '+kelas+' / Fase '+fase,{size:20})],{align:'center',after:20}));
+  kP.push(P([T('Bobot: PG='+bobotPG+'pt | Isian='+bobotIsian+'pt | Uraian='+bobotUraian+'pt | Total Skor Maks: '+totalSkor,{size:18,italic:true})],{align:'center',after:80}));
+  kP.push(HR());
   if(pg.length>0){
-    kunciParagraphs.push(para([txt('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:120,after:60}));
-    const cols=5; const colW=Math.floor(W/cols);
-    const pgKisiRows=[];
-    for(let r=0;r<Math.ceil(pg.length/cols);r++){
+    kP.push(P([T('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:120,after:60}));
+    // Grid 5 kolom
+    const kCW=Math.floor(W/5);
+    const kRows=[];
+    for(let r=0;r<Math.ceil(pg.length/5);r++){
       const cells=[];
-      for(let c=0;c<cols;c++){
-        const idx=r*cols+c;
-        const isi = idx<pg.length ? `${idx+1}. ${pg[idx].jawaban||'—'}` : '';
-        cells.push(new TableCell({ width:{size:colW,type:WidthType.DXA},
-          borders:{top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder},
-          margins:{top:60,bottom:60,left:80,right:80},
-          verticalAlign:VerticalAlign.CENTER,
-          children:[para([txt(isi,{size:20})],{align:AlignmentType.CENTER})] }));
+      for(let c=0;c<5;c++){
+        const idx=r*5+c;
+        cells.push(tblCell(idx<pg.length?[T((idx+1)+'. ',{bold:true,size:20}),T(stripHtml(pg[idx].jawaban||'—'),{bold:true,size:20})]:[T('')],kCW,'center'));
       }
-      pgKisiRows.push(new TableRow({children:cells}));
+      kRows.push(tblRow(cells));
     }
-    kunciParagraphs.push(new Table({ width:{size:W,type:WidthType.DXA}, columnWidths:Array(cols).fill(colW), rows:pgKisiRows }));
+    kP.push(new D.Table({width:{size:W,type:'dxa'},columnWidths:[kCW,kCW,kCW,kCW,kCW],rows:kRows}));
   }
   if(isian.length>0){
-    kunciParagraphs.push(para([txt('II. Isian Singkat',{bold:true,underline:true,size:22})],{before:120,after:60}));
+    kP.push(P([T('II. Isian Singkat',{bold:true,underline:true,size:22})],{before:160,after:60}));
     isian.forEach((item,i)=>{
-      kunciParagraphs.push(para([txt(`${pg.length+i+1}. `,{bold:true,size:22}), txt(stripHtml(item.jawaban||'—'),{size:22})],{after:40}));
+      kP.push(P([T((pg.length+i+1)+'. ',{bold:true,size:20}),T(stripHtml(item.jawaban||'—'),{size:20})],{after:40}));
     });
   }
   if(uraian.length>0){
-    kunciParagraphs.push(para([txt('III. Uraian',{bold:true,underline:true,size:22})],{before:120,after:60}));
+    kP.push(P([T('III. Uraian',{bold:true,underline:true,size:22})],{before:160,after:60}));
     uraian.forEach((item,i)=>{
-      kunciParagraphs.push(para([txt(`${pg.length+isian.length+i+1}. `,{bold:true,size:22}), txt(stripHtml(item.jawaban||'—'),{size:22})],{after:40}));
+      kP.push(P([T((pg.length+isian.length+i+1)+'. ',{bold:true,size:20}),T(stripHtml(item.jawaban||'—'),{size:20})],{after:40}));
     });
   }
-  kunciParagraphs.push(para([txt(`Nilai = (Skor Diperoleh ÷ ${totalSkor}) × 100`,{italic:true,size:20})],{before:160}));
+  kP.push(P([T('Nilai = (Skor Diperoleh ÷ '+totalSkor+') × 100',{italic:true,size:20})],{before:160}));
 
-  // ── Halaman Kisi-kisi ──
-  const kisiParagraphs = [];
-  kisiParagraphs.push(para([txt('KISI-KISI SOAL',{bold:true,size:28})],{align:AlignmentType.CENTER,after:40}));
-  kisiParagraphs.push(para([txt(judulUjian+' — '+namaSekolah,{size:22})],{align:AlignmentType.CENTER,after:40}));
-  kisiParagraphs.push(para([txt(mapel+' | Kelas '+kelas+' / Fase '+fase+' | Acuan: KepKaBSKAP No. 046/H/KR/2025',{size:20})],{align:AlignmentType.CENTER,after:80}));
-  kisiParagraphs.push(garisTebal());
+  // ── Kisi-kisi ──
+  const kkP=[];
+  const materiArr=(lastMateriTerpilih||mapel).split(',').map(s=>s.trim()).filter(Boolean);
+  function getMs(idx,total){return materiArr[Math.floor((idx/Math.max(total,1))*materiArr.length)]||materiArr[0]||mapel;}
 
-  const kisiColW=[360,1200,5000,700,700,600]; // DXA per kolom (total ~8560)
-  const kisiHeader = new TableRow({ tableHeader:true, children:[
-    ['No','Materi','Indikator Soal','Level','Bentuk','No.Soal'].map((h,ci)=>
-      new TableCell({ width:{size:kisiColW[ci],type:WidthType.DXA},
-        shading:{fill:'D9D9D9'},
-        borders:{top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder},
-        margins:{top:60,bottom:60,left:80,right:80},
-        children:[para([txt(h,{bold:true,size:18})],{align:AlignmentType.CENTER})] })
-    )
-  ]});
+  kkP.push(P([T('KISI-KISI SOAL',{bold:true,size:28})],{align:'center',after:40}));
+  kkP.push(P([T(judulUjian+' — '+namaSekolah,{size:22})],{align:'center',after:20}));
+  kkP.push(P([T(mapel+' | Kelas '+kelas+' / Fase '+fase,{size:20})],{align:'center',after:80}));
+  kkP.push(HR());
 
-  const allSoalK=[
-    ...pg.map((item,i)=>({no:i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,90),level:item.level||'C1',bentuk:'PG',nomor:i+1})),
-    ...isian.map((item,i)=>({no:pg.length+i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,90),level:item.level||'C2',bentuk:'Isian',nomor:pg.length+i+1})),
-    ...uraian.map((item,i)=>({no:pg.length+isian.length+i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,90),level:item.level||'C4',bentuk:'Uraian',nomor:pg.length+isian.length+i+1}))
+  const kkCW=[360,1200,4800,800,800,700];
+  const kkHeader=tblRow(['No','Materi','Indikator Soal','Level','Bentuk','No.Soal'].map((h,ci)=>
+    tblCell([T(h,{bold:true,size:18})],kkCW[ci],'center')
+  ));
+  const allSoal=[
+    ...pg.map((s,i)=>({no:i+1,mat:getMs(i,pg.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C1',bnt:'PG',nom:i+1})),
+    ...isian.map((s,i)=>({no:pg.length+i+1,mat:getMs(i,isian.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C2',bnt:'Isian',nom:pg.length+i+1})),
+    ...uraian.map((s,i)=>({no:pg.length+isian.length+i+1,mat:getMs(i,uraian.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C4',bnt:'Uraian',nom:pg.length+isian.length+i+1})),
   ];
-  const kisiDataRows = allSoalK.map(s=>new TableRow({children:[
-    new TableCell({width:{size:kisiColW[0],type:WidthType.DXA},borders:{top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder},margins:{top:40,bottom:40,left:60,right:60},children:[para([txt(String(s.no),{size:18})],{align:AlignmentType.CENTER})]}),
-    new TableCell({width:{size:kisiColW[1],type:WidthType.DXA},borders:{top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder},margins:{top:40,bottom:40,left:60,right:60},children:[para([txt(s.materi,{size:18})])]}),
-    new TableCell({width:{size:kisiColW[2],type:WidthType.DXA},borders:{top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder},margins:{top:40,bottom:40,left:60,right:60},children:[para([txt(s.indikator,{size:18})])]}),
-    new TableCell({width:{size:kisiColW[3],type:WidthType.DXA},borders:{top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder},margins:{top:40,bottom:40,left:60,right:60},children:[para([txt(s.level,{size:18})],{align:AlignmentType.CENTER})]}),
-    new TableCell({width:{size:kisiColW[4],type:WidthType.DXA},borders:{top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder},margins:{top:40,bottom:40,left:60,right:60},children:[para([txt(s.bentuk,{size:18})],{align:AlignmentType.CENTER})]}),
-    new TableCell({width:{size:kisiColW[5],type:WidthType.DXA},borders:{top:cellBorder,bottom:cellBorder,left:cellBorder,right:cellBorder},margins:{top:40,bottom:40,left:60,right:60},children:[para([txt(String(s.nomor),{size:18})],{align:AlignmentType.CENTER})]}),
-  ]}));
-  kisiParagraphs.push(new Table({width:{size:W,type:WidthType.DXA},columnWidths:kisiColW,rows:[kisiHeader,...kisiDataRows]}));
-  kisiParagraphs.push(para([txt('C1=Mengingat | C2=Memahami | C3=Menerapkan | C4=Menganalisis | C5=Mengevaluasi | C6=Mencipta',{italic:true,size:18})],{before:120}));
+  const kkDataRows=allSoal.map(s=>tblRow([
+    tblCell([T(String(s.no),{size:18})],kkCW[0],'center'),
+    tblCell([T(s.mat,{size:18})],kkCW[1]),
+    tblCell([T(s.ind,{size:18})],kkCW[2]),
+    tblCell([T(s.lvl,{size:18})],kkCW[3],'center'),
+    tblCell([T(s.bnt,{size:18})],kkCW[4],'center'),
+    tblCell([T(String(s.nom),{size:18})],kkCW[5],'center'),
+  ]));
+  kkP.push(new D.Table({width:{size:W,type:'dxa'},columnWidths:kkCW,rows:[kkHeader,...kkDataRows]}));
+  kkP.push(P([T('C1=Mengingat | C2=Memahami | C3=Menerapkan | C4=Menganalisis | C5=Mengevaluasi | C6=Mencipta',{italic:true,size:16})],{before:120}));
 
-  // ── Buat Document ── (kompatibel v7 & v8)
-  const docConfig = {
-    styles:{
-      default:{
-        document:{ run:{ font:TNR, size:22 } }
-      }
-    },
+  // ── Buat Dokumen ──
+  const doc = new D.Document({
+    styles:{default:{document:{run:{font:TNR,size:22}}}},
     sections:[{
-      properties:{ page:{ size:{width:11906,height:16838},
-        margin:{top:1418,right:1418,bottom:1418,left:1701} } },
+      properties:{page:{size:{width:11906,height:16838},margin:{top:1418,right:1418,bottom:1418,left:1701}}},
       children:[
-        ...headerSoal(),
-        ...pgParagraphs,
-        ...isianParagraphs,
-        ...uraianParagraphs,
-        pageBreak(),
-        ...kunciParagraphs,
-        pageBreak(),
-        ...kisiParagraphs,
+        ...headerRows,
+        ...pgP,
+        ...isP,
+        ...urP,
+        PB(),
+        ...kP,
+        PB(),
+        ...kkP,
       ]
     }]
-  };
-  const doc = new Document(docConfig);
+  });
 
-  const btn = document.querySelector('[onclick="exportWord()"]');
-  const origTxt = btn ? btn.textContent : '';
-  if(btn){ btn.textContent='⏳ Menyiapkan...'; btn.disabled=true; }
+  const btn=document.querySelector('[onclick="exportWord()"]');
+  const origTxt=btn?btn.textContent:'';
+  if(btn){btn.textContent='⏳ Menyiapkan...';btn.disabled=true;}
 
-  try {
-    // Browser: gunakan toBlob (v7) atau toBuffer (v8)
+  try{
     let blob;
-    if(typeof Packer.toBlob === 'function'){
-      blob = await Packer.toBlob(doc);
-    } else if(typeof Packer.toBuffer === 'function'){
-      const buffer = await Packer.toBuffer(doc);
-      blob = new Blob([buffer], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-    } else if(typeof Packer.toBase64String === 'function'){
-      const base64 = await Packer.toBase64String(doc);
-      // Gunakan fetch trick agar tidak ada korupsi base64
-      const dataUri = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,'+base64;
-      const res = await fetch(dataUri);
-      blob = await res.blob();
-    } else {
+    if(typeof D.Packer.toBlob==='function'){
+      blob=await D.Packer.toBlob(doc);
+    }else if(typeof D.Packer.toBuffer==='function'){
+      const buf=await D.Packer.toBuffer(doc);
+      blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    }else if(typeof D.Packer.toBase64String==='function'){
+      const b64=await D.Packer.toBase64String(doc);
+      const res=await fetch('data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,'+b64);
+      blob=await res.blob();
+    }else{
       throw new Error('Packer API tidak ditemukan. Coba refresh halaman.');
     }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Soal_${mapel}_Kelas${kelas}.docx`;
-    document.body.appendChild(a); a.click();
-    setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); },300);
-  } catch(e) {
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='Soal_'+mapel+'_Kelas'+kelas+'.docx';
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+  }catch(e){
     console.error('exportWord error:',e);
     alert('Gagal membuat file Word: '+e.message);
-  } finally {
-    if(btn){ btn.textContent=origTxt; btn.disabled=false; }
+  }finally{
+    if(btn){btn.textContent=origTxt;btn.disabled=false;}
   }
 }
-
 /* ════════════════════════════════════════════
    COPY
 ════════════════════════════════════════════ */
