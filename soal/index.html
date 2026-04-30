@@ -22,16 +22,17 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --grad:linear-gradient(135deg,#4EB89D,#5BA8D4,#4A90C4);
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
   --white:#fff;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
-  --gray-700:#334155;--blue:#3b82f6;--radius:16px;
-  --shadow:0 4px 24px rgba(0,0,0,.10);--shadow-lg:0 8px 40px rgba(0,0,0,.15);
-  --bg:#e8f0ef;--card-bg:#fff;--text:#334155;
+  --gray-700:#334155;--blue:#0ea5a0;--radius:12px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;
   --text-light:#64748b;--border:#e2e8f0;--input-bg:#f8fafc;
+  --accent:#f59e0b;
 }
 body.dark{
-  --bg:#0f172a;--card-bg:#1f2937;--text:#f1f5f9;
-  --text-light:#94a3b8;--border:#374151;--input-bg:#111827;
+  --bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;
+  --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;}
 
@@ -50,32 +51,41 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .btn-install{background:#fff;color:#3b82f6;}
 .btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
 
-/* ══ NAVBAR ══ */
-.navbar{background:transparent;padding:6px 22px;display:flex;gap:6px;}
-.navbar a{display:inline-block;padding:5px 14px;font-weight:600;cursor:pointer;border-radius:20px;background:rgba(255,255,255,.15);color:var(--text);font-size:.76rem;border:1px solid var(--border);transition:all .2s;text-decoration:none;}
-.navbar a.active{background:var(--grad);color:#fff;border-color:transparent;}
-body.dark .navbar a{background:rgba(255,255,255,.07);color:#cbd5e1;}
-body.dark .navbar a.active{background:var(--grad);color:#fff;}
-
 /* ══ HEADER ══ */
-header{position:sticky;top:0;z-index:100;background:var(--grad);padding:11px 22px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(0,0,0,.12);}
-body.dark header{background:linear-gradient(135deg,#1e3a5f,#1e293b);}
-.header-brand{display:flex;align-items:center;gap:10px;}
-.header-brand img{width:36px;height:36px;border-radius:10px;}
-.header-brand h1{font-size:1.15rem;font-weight:800;letter-spacing:-.5px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.15);}
-.header-brand p{font-size:.68rem;color:rgba(255,255,255,.85);margin-top:1px;}
-.header-right{display:flex;align-items:center;gap:7px;}
-.version-badge{font-size:.64rem;background:rgba(255,255,255,.2);color:#fff;padding:3px 10px;border-radius:99px;border:1px solid rgba(255,255,255,.3);font-weight:600;}
-#darkToggle{background:var(--gray-100);border:1px solid var(--border);color:var(--text);padding:5px 12px;border-radius:99px;cursor:pointer;font-size:.76rem;font-weight:600;transition:all .2s;}
-body.dark #darkToggle{background:#374151;color:#f1f5f9;border-color:#4b5563;}
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
+.header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
+.header-brand-text h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{height:32px;min-width:36px;padding:0 8px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:.8rem;font-weight:600;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.hdr-menu-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;position:relative;}
+.hdr-menu-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:99px;padding:0 4px;font-size:.55rem;font-weight:800;line-height:14px;min-width:14px;text-align:center;display:none;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:190px;overflow:hidden;display:none;z-index:400;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;text-decoration:none;}
+.dropdown-item:hover{background:var(--gray-100);}
+body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
+.dropdown-item.active{color:var(--blue);}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+.dropdown-badge{background:#ef4444;color:#fff;border-radius:99px;padding:0 5px;font-size:.6rem;font-weight:800;line-height:16px;display:inline-block;min-width:16px;text-align:center;margin-left:auto;}
+#menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
+#menuOverlay.open{display:block;}
+
+/* ══ HINT BAR ══ */
+.hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.76rem;color:var(--text);line-height:1.8;}
+.hint-bar span{font-weight:700;color:#0d7a8a;}
+body.dark .hint-bar span{color:#5eead4;}
 
 /* ══ MAIN ══ */
 main{display:grid;grid-template-columns:375px 1fr;gap:22px;padding:22px;max-width:1440px;margin:0 auto;align-items:start;flex:1;width:100%;}
 @media(max-width:960px){main{grid-template-columns:1fr;padding:12px;gap:14px;}}
 
 /* ══ CARD ══ */
-.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;transition:background .3s;}
-.card-title{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:13px;display:flex;align-items:center;gap:6px;}
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--border);transition:background .3s;}
+.card-title{font-size:.84rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:8px;}
 
 /* ══ FORM ══ */
 .form-group{margin-bottom:11px;}
@@ -118,14 +128,19 @@ body.dark .btn-pilih-semua{background:#374151;color:#f1f5f9;}
 
 /* Tingkat kesulitan */
 .kesulitan-grid{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px;}
-.kesulitan-grid label{display:flex;align-items:center;gap:3px;font-size:.73rem;color:var(--text);font-weight:normal;text-transform:none;letter-spacing:0;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:3px 7px;cursor:pointer;transition:all .2s;}
+.kesulitan-grid label{display:flex;align-items:center;gap:3px;font-size:.73rem;color:var(--text);font-weight:600;text-transform:none;letter-spacing:0;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:3px 8px;cursor:pointer;transition:all .2s;flex-direction:column;align-items:center;gap:1px;min-width:52px;text-align:center;}
+.kesulitan-grid label:has(input:checked){background:#cff0ef;border-color:#0ea5a0;color:#0d6e6a;}
+body.dark .kesulitan-grid label:has(input:checked){background:#0d3a47;color:#5eead4;border-color:#0ea5a0;}
 .kesulitan-grid label:hover{border-color:var(--blue);}
-.kesulitan-grid input[type=checkbox]{width:12px;height:12px;padding:0;accent-color:var(--blue);}
+.kesulitan-grid label small{font-size:.58rem;font-weight:400;color:var(--text-light);line-height:1.1;}
+.kesulitan-grid label:has(input:checked) small{color:#0d7a8a;}
+body.dark .kesulitan-grid label:has(input:checked) small{color:#5eead4;}
+.kesulitan-grid input[type=checkbox]{width:12px;height:12px;padding:0;accent-color:#0ea5a0;}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:10px;border:none;font-weight:600;font-size:.79rem;cursor:pointer;transition:all .2s;}
-.btn-primary{background:var(--grad);color:#fff;width:100%;justify-content:center;padding:11px;font-size:.92rem;border-radius:12px;box-shadow:0 4px 16px rgba(59,130,246,.25);}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.35);}
+.btn-primary{background:var(--grad);color:#fff;width:100%;justify-content:center;padding:11px;font-size:.92rem;border-radius:12px;box-shadow:0 4px 16px rgba(14,165,160,.25);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(14,165,160,.35);}
 .btn-primary:disabled{opacity:.7;cursor:not-allowed;transform:none;}
 .btn-secondary{background:var(--gray-100);color:var(--gray-700);border:1px solid var(--border);}
 body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
@@ -177,7 +192,7 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 /* Gambar soal */
 .soal-img{display:block;max-width:220px;max-height:160px;object-fit:contain;margin:5px 0 6px 0;border:1px solid #ddd;border-radius:4px;}
 .soal-img-loading{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;color:#64748b;font-family:'Segoe UI',sans-serif;padding:6px 10px;background:#f1f5f9;border-radius:6px;margin:4px 0 6px;}
-.soal-img-loading .mini-spin{width:12px;height:12px;border:2px solid #cbd5e1;border-top-color:#3b82f6;border-radius:50%;animation:spin .6s linear infinite;}
+.soal-img-loading .mini-spin{width:12px;height:12px;border:2px solid #cbd5e1;border-top-color:#0ea5a0;border-radius:50%;animation:spin .6s linear infinite;}
 
 /* Kunci halaman preview */
 .kunci-page-header{font-size:14pt;font-weight:bold;text-align:center;text-transform:uppercase;font-family:'Times New Roman',serif;margin-bottom:4px;}
@@ -244,7 +259,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   /* Reset margin halaman agar header/footer browser hilang */
   @page{margin-top:15mm;margin-bottom:15mm;margin-left:22mm;margin-right:20mm;}
   html,body{margin:0!important;padding:0!important;}
-  header,footer,.col-form,.export-bar,.page-nav,.navbar,#installPopup{display:none!important;}
+  header,footer,.col-form,.export-bar,.page-nav,#installPopup,#menuOverlay{display:none!important;}
   main{display:block;padding:0;}
   #previewBox{box-shadow:none;padding:0;max-width:100%;border-radius:0;width:100%!important;}
   body{background:#fff!important;}
@@ -271,26 +286,35 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 </div>
 
 <!-- ══ HEADER ══ -->
+<div id="menuOverlay" onclick="closeMenu()"></div>
 <header>
-  <div class="header-brand">
-    <img src="guru-cibisd2.png" alt="Logo"/>
-    <div>
-      <h1>Bantu Guru Yuk | Buat Soal</h1>
-      <p>Kurikulum Merdeka Based &bull; Powered by AI</p>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="guru-cibisd2.png" alt="Logo"/>
+      <div class="header-brand-text">
+        <h1>Bantu Guru Yuk | Buat Soal</h1>
+      </div>
+    </div>
+    <div class="header-right">
+      <button id="darkToggle" class="hdr-btn" onclick="toggleDark()">🌙</button>
+      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu">
+        ☰
+        <span id="menuBadge" class="hdr-menu-badge"></span>
+      </button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item active" id="mi-home" onclick="showTab('home');closeMenu()">🏠 Home</button>
+        <button class="dropdown-item" id="mi-histori" onclick="showTab('histori');closeMenu()">
+          🕒 Histori
+          <span id="historiBadge" class="dropdown-badge" style="display:none;"></span>
+        </button>
+        <button class="dropdown-item" id="mi-tentang" onclick="showTab('tentang');closeMenu()">ℹ️ Tentang</button>
+        <button class="dropdown-item" id="mi-kontak" onclick="showTab('kontak');closeMenu()">📬 Kontak</button>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="https://bantuguruyuk.web.id" target="_blank">🌐 BantuGuruYuk<span style="font-size:.68rem;color:var(--text-light);font-weight:400;margin-left:4px;">(Website utama)</span></a>
+      </div>
     </div>
   </div>
-  <div class="header-right">
-    <button id="darkToggle" onclick="toggleDark()">🌙 Dark</button>
-  </div>
 </header>
-
-<!-- ══ NAVBAR ══ -->
-<nav class="navbar">
-  <a onclick="showTab('home',this)" class="active">🏠 Home</a>
-  <a onclick="showTab('tentang',this)">ℹ️ Tentang</a>
-  <a onclick="showTab('histori',this)">🕒 Histori <span id="historiBadge" style="background:#ef4444;color:#fff;border-radius:99px;padding:1px 6px;font-size:.65rem;font-weight:800;margin-left:2px;"></span></a>
-  <a onclick="showTab('kontak',this)">📬 Kontak</a>
-</nav>
 
 <!-- ══ TAB TENTANG ══ -->
 <div id="tab-tentang" style="display:none;max-width:760px;margin:20px auto;background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;">
@@ -366,13 +390,17 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 </div>
 
 
+<!-- ══ TAB HOME ══ -->
+<div id="tab-home">
 <main>
-  <!-- ══ KOLOM KIRI ══ -->
   <div class="col-form">
+    <div class="hint-bar">
+      💡 <span>Isi Form</span> → <span>Pilih Materi</span> → <span>Generate Soal</span> → <span>Preview</span> → <span>Download PDF / Word 🎉</span>
+    </div>
     <div class="card">
 
       <div class="school-info">
-        <h3>📋 Info Lembar Soal</h3>
+        <div class="card-title">📋 Info Lembar Soal</div>
         <div class="row-2" style="margin-bottom:8px;">
           <div class="form-group" style="margin-bottom:0;">
             <label>Logo Sekolah (Kiri)</label>
@@ -429,7 +457,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       </div>
 
       <div class="card-title"><span>⚙️</span> Pengaturan Soal</div>
-
       <div class="form-group">
         <label>Kelas</label>
         <select id="kelas" onchange="onKelasChange()">
@@ -460,12 +487,12 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <div class="form-group">
         <label>Tingkat Kesulitan (Taksonomi Bloom)</label>
         <div class="kesulitan-grid">
-          <label><input type="checkbox" class="cb-kesulitan" value="C1-Mengingat" checked/> C1</label>
-          <label><input type="checkbox" class="cb-kesulitan" value="C2-Memahami" checked/> C2</label>
-          <label><input type="checkbox" class="cb-kesulitan" value="C3-Mengaplikasikan" checked/> C3</label>
-          <label><input type="checkbox" class="cb-kesulitan" value="C4-Menganalisis"/> C4</label>
-          <label><input type="checkbox" class="cb-kesulitan" value="C5-Mengevaluasi"/> C5</label>
-          <label><input type="checkbox" class="cb-kesulitan" value="C6-Mencipta"/> C6</label>
+          <label><input type="checkbox" class="cb-kesulitan" value="C1-Mengingat" checked/> C1 <small>Mengingat</small></label>
+          <label><input type="checkbox" class="cb-kesulitan" value="C2-Memahami" checked/> C2 <small>Memahami</small></label>
+          <label><input type="checkbox" class="cb-kesulitan" value="C3-Mengaplikasikan" checked/> C3 <small>Menerapkan</small></label>
+          <label><input type="checkbox" class="cb-kesulitan" value="C4-Menganalisis"/> C4 <small>Menganalisis</small></label>
+          <label><input type="checkbox" class="cb-kesulitan" value="C5-Mengevaluasi"/> C5 <small>Mengevaluasi</small></label>
+          <label><input type="checkbox" class="cb-kesulitan" value="C6-Mencipta"/> C6 <small>Mencipta</small></label>
         </div>
       </div>
 
@@ -473,7 +500,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         <label>Jumlah Soal per Tipe</label>
         <div class="row-3">
           <div>
-            <label>PG <span id="opsiNote" style="font-size:.67rem;color:#3b82f6;">(A–D)</span></label>
+            <label>PG <span id="opsiNote" style="font-size:.67rem;color:#0ea5a0;">(A–D)</span></label>
             <input type="number" id="jmlPG" min="0" max="40" value="10"/>
           </div>
           <div><label>Isian</label><input type="number" id="jmlIsian" min="0" max="20" value="5"/></div>
@@ -483,11 +510,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
       <div id="errorBox" class="error-box"></div>
 
-      <!-- ══ CHECKBOX GAMBAR — tepat di atas tombol Generate ══ -->
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 12px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;">
-        <input type="checkbox" id="cbGambar" style="width:15px;height:15px;min-width:15px;accent-color:#3b82f6;cursor:pointer;" checked/>
-        <label for="cbGambar" style="font-size:.8rem;color:var(--text);text-transform:none;letter-spacing:0;font-weight:600;margin:0;cursor:pointer;">🖼️ Pakai gambar di soal pilihan ganda</label>
-      </div>
 
       <button class="btn btn-primary" id="btnGenerate" onclick="handleGenerate()">
         <div class="spinner" id="spinner"></div>
@@ -550,11 +572,11 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     </div>
   </div>
 </main>
-</div>
+</div><!-- end tab-home -->
 
 <footer>
-  <div class="footer-title">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" style="color:inherit;text-decoration:none;">Pak.Choyy</a></div>
-  <div class="footer-sub">Kurikulum Merdeka — CP KepKaBSKAP 046/2025 &bull; Powered by AI &bull; <span class="app-version">v26.5.1</span></div>
+  <div class="footer-title">Buat Soal</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">Pak.Choyy</a> &bull; <span class="app-version">v26.5.1</span></div>
 </footer>
 
 <script>
@@ -860,7 +882,6 @@ let deferredInstallPrompt=null;
 let lastMateriTerpilih='';
 const DAILY_LIMIT=1;
 const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
-// Gambar: Gemini via /api/generate-image
 
 /* ════════════════════════════════════════════
    HELPERS
@@ -880,7 +901,7 @@ function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null
       if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>{try{ls.remove();}catch(e){}},400);}
     });
     const saved=safeGet('theme');
-    if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkToggle').textContent='☀️ Light';}
+    if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkToggle').textContent='☀️';}
     document.getElementById('tanggal').valueAsDate=new Date();
     // Inject APP_VERSION ke semua elemen .app-version
     document.querySelectorAll('.app-version').forEach(el=>el.textContent=APP_VERSION);
@@ -921,15 +942,29 @@ function installApp(){if(deferredInstallPrompt){deferredInstallPrompt.prompt();d
 function closeInstall(){document.getElementById('installPopup').classList.remove('show');safeSet('installClosedAt',Date.now().toString());}
 
 /* ════════════════════════════════════════════
-   NAVBAR TABS
+   MENU & TABS
 ════════════════════════════════════════════ */
-function showTab(tab,el){
-  document.getElementById('tab-home').style.display=tab==='home'?'block':'none';
-  document.getElementById('tab-tentang').style.display=tab==='tentang'?'block':'none';
-  document.getElementById('tab-histori').style.display=tab==='histori'?'block':'none';
-  document.getElementById('tab-kontak').style.display=tab==='kontak'?'block':'none';
-  document.querySelectorAll('.navbar a').forEach(a=>a.classList.remove('active'));
-  if(el)el.classList.add('active');
+function toggleMenu(){
+  const dm=document.getElementById('dropdownMenu');
+  const ov=document.getElementById('menuOverlay');
+  dm.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('dropdownMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+function showTab(tab){
+  ['home','tentang','histori','kontak'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el)el.style.display=t===tab?'block':'none';
+  });
+  ['mi-home','mi-histori','mi-tentang','mi-kontak'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.remove('active');
+  });
+  const active=document.getElementById('mi-'+tab);
+  if(active)active.classList.add('active');
   if(tab==='histori')renderHistoriList();
 }
 
@@ -971,7 +1006,12 @@ function simpanHistori(data){
   }catch(e){console.warn('Gagal simpan histori:',e);}
 }
 function getHistoriList(){try{return JSON.parse(safeGet('bgy_histori')||'[]');}catch{return [];}}
-function updateHistoriBadge(n){const el=document.getElementById('historiBadge');if(el)el.textContent=n>0?n:'';}
+function updateHistoriBadge(n){
+  const el=document.getElementById('historiBadge');
+  if(el){el.textContent=n>0?n:'';el.style.display=n>0?'inline-block':'none';}
+  const mb=document.getElementById('menuBadge');
+  if(mb){mb.textContent=n>0?n:'';mb.style.display=n>0?'block':'none';}
+}
 function renderHistoriList(){
   const list=getHistoriList();
   const container=document.getElementById('historiList');
@@ -1015,9 +1055,7 @@ function loadHistori(id){
     soalData=JSON.parse(item.data);
     buildHalaman(soalData);
     currentPage=0;showPage(0);
-    showTab('home',document.querySelector('.navbar a'));
-    document.querySelectorAll('.navbar a').forEach(a=>a.classList.remove('active'));
-    document.querySelector('.navbar a').classList.add('active');
+    showTab('home');
   }catch(e){alert('Gagal load histori: '+e.message);}
 }
 function hapusHistori(id){if(!confirm('Hapus histori ini?'))return;let list=getHistoriList().filter(h=>h.id!==id);safeSet('bgy_histori',JSON.stringify(list));updateHistoriBadge(list.length);renderHistoriList();}
@@ -1031,7 +1069,7 @@ function regenerateHistori(id){const list=getHistoriList();const item=list.find(
 function toggleDark(){
   document.body.classList.toggle('dark');
   const d=document.body.classList.contains('dark');
-  document.getElementById('darkToggle').textContent=d?'☀️ Light':'🌙 Dark';
+  document.getElementById('darkToggle').textContent=d?'☀️':'🌙';
   localStorage.setItem('theme',d?'dark':'light');
 }
 
@@ -1106,62 +1144,6 @@ function getJudulUjian(){
 }
 
 /* ════════════════════════════════════════════
-   DETEKSI SOAL YANG BUTUH GAMBAR
-   Hanya soal PG yang berkaitan visual/objek nyata
-════════════════════════════════════════════ */
-const KATA_BUTUH_GAMBAR=[
-  'gambar','bentuk','warna','bangun','segitiga','persegi','lingkaran','persegi panjang',
-  'hewan','binatang','kucing','anjing','burung','ikan','katak','sapi','ayam','kambing',
-  'tumbuhan','bunga','daun','pohon','buah','sayuran','wortel','tomat','apel','mangga',
-  'benda','alat','perlengkapan','peralatan','perkakas','mainan',
-  'peta','denah','arah','mata angin','kompas',
-  'bangun ruang','kubus','balok','tabung','kerucut','bola',
-  'jam','waktu','jarum jam','dompet','uang','koin',
-  'tubuh','organ','bagian','anggota','rangka','otot',
-  'tata surya','planet','bulan','matahari','bintang',
-  'jenis','macam','contoh dari','perhatikan','berikut ini'
-];
-
-function needsImage(soalText){
-  const lower=soalText.toLowerCase();
-  return KATA_BUTUH_GAMBAR.some(k=>lower.includes(k));
-}
-
-/* ════════════════════════════════════════════
-   GENERATE GAMBAR VIA POLLINATIONS.AI — GRATIS
-   Tidak butuh API key, tidak butuh billing
-════════════════════════════════════════════ */
-async function generateGambarSoal(soalText,kelas,mapel){
-  try{
-    const prompt=`Ilustrasi soal SD kelas ${kelas} mapel ${mapel}: ${soalText}`;
-    const resp=await fetch('/api/generate-image',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt})
-    });
-
-    if(!resp.ok){
-      const err=await resp.json().catch(()=>({}));
-      // Model masih pemanasan (cold start HuggingFace)
-      if(resp.status===503||err.loading){
-        console.warn('HF model cold start, skip gambar ini');
-        return null;
-      }
-      throw new Error('generate-image error '+resp.status);
-    }
-
-    const json=await resp.json();
-    // Backend kembalikan: { image: "data:image/png;base64,..." }
-    if(json.image) return json.image;
-    throw new Error('No image in response');
-
-  }catch(e){
-    console.warn('Generate gambar gagal:',e);
-    return null;
-  }
-}
-
-/* ════════════════════════════════════════════
    GENERATE
 ════════════════════════════════════════════ */
 async function handleGenerate(){
@@ -1179,7 +1161,6 @@ async function handleGenerate(){
   const jmlIsian=parseInt(document.getElementById('jmlIsian').value)||0;
   const jmlUraian=parseInt(document.getElementById('jmlUraian').value)||0;
   const opsiPG=kelas<=2?'3 opsi (A, B, C)':'4 opsi (A, B, C, D)';
-  const buatGambar=document.getElementById('cbGambar').checked;
 
   const limitCheck=checkLimit();
   if(!limitCheck.ok){
@@ -1205,11 +1186,10 @@ Aturan:
 - Gunakan Bahasa Indonesia yang baik dan benar
 - Sesuaikan tingkat kesulitan dengan kelas ${kelas} SD
 - Kalimat soal harus jelas dan tidak ambigu
-- Untuk soal PG yang memerlukan gambar/ilustrasi (misal soal tentang hewan, benda, bangun datar, tumbuhan, dll), tambahkan field "butuhGambar": true
 
 Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
 {
-  "pilihanGanda":[{"soal":"...","opsi":["A. ...","B. ...","C. ...","D. ..."],"jawaban":"A","butuhGambar":false,"indikator":"Siswa dapat ...","level":"C2"}],
+  "pilihanGanda":[{"soal":"...","opsi":["A. ...","B. ...","C. ...","D. ..."],"jawaban":"A","indikator":"Siswa dapat ...","level":"C2"}],
   "isian":[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C1"}],
   "uraian":[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C4"}]
 }
@@ -1245,7 +1225,6 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
     saveToBank(kelas,mapel,materi,data);
     gaEvent('generate_soal',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,jumlah_pg:jmlPG,jumlah_isian:jmlIsian,jumlah_uraian:jmlUraian,tipe_user:isPro()?'pro':'free'});
 
-    // ── Build preview dulu tanpa gambar
     buildHalaman(soalData);
     currentPage=0;showPage(0);
     simpanHistori(data);
@@ -1256,11 +1235,6 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
     autoSaveForm();
     updateLimitDisplay();
 
-    // ── Generate gambar: hanya jika checkbox dicentang
-    if(buatGambar && jmlPG>0){
-      generateGambarAsync(data, kelas, mapel);
-    }
-
   }catch(e){
     showGenerateFeedback('',0);
     showError(e.message||'Terjadi kesalahan. Coba lagi.');
@@ -1269,60 +1243,6 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
   }
 }
 
-/* ════════════════════════════════════════════
-   GENERATE GAMBAR ASYNC — tidak block UI
-════════════════════════════════════════════ */
-async function generateGambarAsync(data,kelas,mapel){
-  const pg=data.pilihanGanda||[];
-  // Hanya generate soal yang ditandai butuhGambar atau terdeteksi perlu gambar
-  const MAX_GAMBAR=3;
-  const soalButuhGambar=pg.filter(item=>item.butuhGambar||needsImage(item.soal)).slice(0,MAX_GAMBAR);
-  if(!soalButuhGambar.length)return;
-
-  showGenerateFeedback(`🎨 Membuat ${soalButuhGambar.length} gambar ilustrasi...`,0);
-
-  // Proses satu per satu agar tidak rate limit
-  for(const item of soalButuhGambar){
-    if(item.gambar)continue; // skip yang sudah ada
-    const idx=pg.indexOf(item);
-    // Tandai loading di preview
-    markImageLoading(idx);
-    const b64=await generateGambarSoal(item.soal,kelas,mapel);
-    if(b64){
-      item.gambar=b64;
-      updateImageInPreview(idx,b64);
-    }else{
-      removeImageLoading(idx);
-    }
-    // Delay antar request
-    await new Promise(r=>setTimeout(r,600));
-  }
-  showGenerateFeedback('✅ Gambar selesai!',3000);
-  // Rebuild pages dengan gambar terbaru
-  buildHalaman(data);
-  showPage(currentPage);
-  // Update histori dengan gambar terbaru
-  try{
-    const list=getHistoriList();
-    if(list.length>0){list[0].data=JSON.stringify(data);safeSet('bgy_histori',JSON.stringify(list));}
-  }catch(e){console.warn('Gagal update histori gambar:',e);}
-}
-
-/* ════════════════════════════════════════════
-   UPDATE GAMBAR DI PREVIEW LANGSUNG
-════════════════════════════════════════════ */
-function markImageLoading(pgIdx){
-  const el=document.getElementById(`soal-img-${pgIdx}`);
-  if(el)el.innerHTML='<div class="soal-img-loading"><div class="mini-spin"></div> Membuat gambar...</div>';
-}
-function updateImageInPreview(pgIdx,src){
-  const el=document.getElementById(`soal-img-${pgIdx}`);
-  if(el)el.innerHTML=`<img class="soal-img" src="${src}" alt="Ilustrasi soal"/>`;
-}
-function removeImageLoading(pgIdx){
-  const el=document.getElementById(`soal-img-${pgIdx}`);
-  if(el)el.innerHTML='';
-}
 
 function setLoading(s){
   document.getElementById('btnGenerate').disabled=s;
@@ -1351,7 +1271,6 @@ function buildHalaman(data){
   const HEADER_H=140;
   const SECTION_H=45;
   const PG_H=75;
-  const PG_IMG_H=200; // lebih tinggi jika ada gambar
   const ISIAN_H=52;
   const URAIAN_H=95;
 
@@ -1385,8 +1304,7 @@ function buildHalaman(data){
   if(pg.length>0){
     addBlock({type:'section',label:'I. Pilihan Ganda',petunjuk:'Berilah tanda silang (X) pada huruf jawaban yang paling benar!'},SECTION_H);
     pg.forEach((item,i)=>{
-      const hasImg=item.butuhGambar||needsImage(item.soal)||item.gambar;
-      addBlock({type:'pg',item,no:i+1,pgIdx:i},hasImg?PG_IMG_H:PG_H);
+      addBlock({type:'pg',item,no:i+1,pgIdx:i},PG_H);
     });
   }
   if(isian.length>0){
@@ -1999,20 +1917,14 @@ function buildSoalRow(b){
       opsiHtml+=`<tr><td class="opsi-label">${escHtml(o1.h)}</td><td class="opsi-teks">${escHtml(o1.t)}</td><td class="opsi-label">${escHtml(o2.h)}</td><td>${escHtml(o2.t)}</td></tr>`;
     }
     opsiHtml+='</table>';
-    // Gambar: tampil jika ada, atau loading placeholder jika soal butuh gambar
+    // Gambar: dimatikan
     const pgIdx=b.pgIdx!==undefined?b.pgIdx:0;
-    let imgHtml='';
-    if(b.item.gambar){
-      imgHtml=`<img class="soal-img" src="${b.item.gambar}" alt="Ilustrasi soal"/>`;
-    }else if(b.item.butuhGambar||needsImage(b.item.soal)){
-      imgHtml=`<div class="soal-img-loading"><div class="mini-spin"></div> Gambar sedang dibuat...</div>`;
-    }
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="pg" data-idx="${pgIdx}">${escHtml(b.item.soal)}</span>
         <button onclick="openEditModal('pg',${pgIdx})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
       </div>
-      <div id="soal-img-${pgIdx}">${imgHtml}</div>${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
+      ${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
   }
   if(b.type==='isian'){
     const isIdx=b.no-((soalData&&soalData.pilihanGanda?soalData.pilihanGanda.length:0))-1;
@@ -2197,7 +2109,7 @@ function saveToBank(kelas,mapel,materi,data){try{localStorage.setItem(getBankKey
 function enableInlineEdit(){
   document.querySelectorAll('.soal-teks').forEach(el=>{
     el.setAttribute('contenteditable','true');el.style.cursor='text';el.style.outline='none';
-    el.addEventListener('focus',()=>el.style.background='rgba(59,130,246,.07)');
+    el.addEventListener('focus',()=>el.style.background='rgba(14,165,160,.07)');
     el.addEventListener('blur',()=>{
       el.style.background='';
       // Simpan perubahan kembali ke soalData
