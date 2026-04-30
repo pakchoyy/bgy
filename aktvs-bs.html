@@ -5,35 +5,101 @@
   <title>Aktivasi BGY-Buat Soal Pro</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { font-family: Arial; background: #f5f7f9; padding: 20px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe, #f0fdf4);
+      min-height: 100vh; padding: 30px 16px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .header-logo {
+      text-align: center; margin-bottom: 20px;
+    }
+    .header-logo .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #0d7a8a, #059669);
+      color: white; font-size: 11px; font-weight: 800;
+      padding: 3px 10px; border-radius: 99px; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 6px;
+    }
+    .header-logo h2 {
+      font-size: 1.1rem; font-weight: 800; color: #0f172a;
+    }
     .box {
-      max-width: 400px; margin: auto; background: white;
-      padding: 20px; border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      width: 100%; max-width: 420px; background: white;
+      padding: 24px 22px; border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+      border: 1px solid #e0f2fe;
     }
-    h3 { text-align: center; margin-bottom: 15px; }
-    input {
-      width: 100%; padding: 10px; margin-bottom: 10px;
-      border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;
+    .box-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1rem; font-weight: 800; color: #0f172a;
+      margin-bottom: 18px; padding-bottom: 14px;
+      border-bottom: 2px solid #f0f9ff;
     }
-    button {
-      width: 100%; padding: 10px; background: teal; color: white;
-      border: none; border-radius: 8px; cursor: pointer; font-size: 15px;
+    .box-title .icon-wrap {
+      width: 36px; height: 36px; background: linear-gradient(135deg,#0d7a8a,#059669);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
     }
-    button:disabled { background: #aaa; cursor: not-allowed; }
-    .kode { margin-top: 15px; font-size: 20px; font-weight: bold; color: green; text-align: center; }
-    .info { font-size: 13px; text-align: center; margin-top: 10px; color: #666; }
-    .error { color: red; }
+    label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: #64748b; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 5px;
+    }
+    input[type=email] {
+      width: 100%; padding: 11px 13px; margin-bottom: 14px;
+      border-radius: 10px; border: 2px solid #e2e8f0;
+      font-size: 14px; color: #1e293b; background: #f8fafc;
+      outline: none; transition: border-color .2s;
+    }
+    input[type=email]:focus { border-color: #0d7a8a; background: white; }
+    .btn-primary {
+      width: 100%; padding: 12px; font-size: 15px; font-weight: 700;
+      background: linear-gradient(135deg, #0d7a8a, #059669);
+      color: white; border: none; border-radius: 10px; cursor: pointer;
+      box-shadow: 0 3px 12px rgba(13,122,138,.3);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(13,122,138,.4); }
+    .btn-primary:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }
+    .kode { margin-top: 16px; text-align: center; }
+    .info {
+      font-size: 12px; text-align: center; margin-top: 14px;
+      color: #94a3b8; padding-top: 14px; border-top: 1px solid #f1f5f9;
+    }
+    .error { color: #ef4444; font-size: 13px; text-align: center; margin-top: 10px; }
+    .step-hint {
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 10px; padding: 10px 13px; margin-bottom: 16px;
+      font-size: 12px; color: #166534; line-height: 1.6;
+    }
+    .step-hint strong { color: #15803d; }
   </style>
 </head>
 <body>
 
+<div class="header-logo">
+  <div class="badge">Bantu Guru Yuk!</div>
+  <h2>🎓 Aktivasi PRO Soal</h2>
+</div>
+
 <div class="box">
-  <h3>🔓 Aktivasi PRO Soal</h3>
-  <input type="email" id="email" placeholder="Masukkan email kamu">
-  <button id="btnDapat">Dapatkan Kode</button>
+  <div class="box-title">
+    <div class="icon-wrap">🔓</div>
+    <div>
+      <div style="font-size:.75rem;font-weight:600;color:#64748b;">Langkah 1 dari 2</div>
+      <div>Daftarkan Email Kamu</div>
+    </div>
+  </div>
+  <div class="step-hint">
+    Masukkan email yang kamu gunakan saat pembelian.<br>
+    <strong>Kode aktivasi akan digenerate otomatis.</strong>
+  </div>
+  <label>Email Pembelian</label>
+  <input type="email" id="email" placeholder="contoh: guru@sekolah.com">
+  <button class="btn-primary" id="btnDapat">🔑 Dapatkan Kode Aktivasi</button>
   <div id="hasil" class="kode"></div>
-  <div class="info">Simpan kode ini. Gunakan di halaman soal untuk unlock PRO.</div>
+  <div class="info">Kode ini hanya untuk kamu. Jangan bagikan ke orang lain.</div>
 </div>
 
 <script>
@@ -105,13 +171,27 @@
   function tampilKode(kode) {
     const hasil = document.getElementById("hasil");
     hasil.innerHTML = `
-      <div style="font-size:22px;font-weight:bold;color:#0d7a8a;margin-bottom:10px;">Kode kamu: <span id="kodeText">${kode}</span></div>
-      <button id="btnSalin" style="width:100%;padding:10px;background:#0d7a8a;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;margin-bottom:8px;">
+      <!-- Step 2 header -->
+      <div style="margin:16px 0 12px;padding:12px 14px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;text-align:left;">
+        <div style="font-size:11px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;">✅ Langkah 2 dari 2 — Kode berhasil!</div>
+        <div style="font-size:11px;color:#166534;">Gunakan tombol di bawah untuk langsung aktivasi, atau salin kode dulu.</div>
+      </div>
+
+      <!-- Kode box -->
+      <div style="background:linear-gradient(135deg,#0d7a8a,#059669);border-radius:12px;padding:16px;margin-bottom:12px;text-align:center;">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Kode Aktivasi Kamu</div>
+        <div style="font-size:26px;font-weight:900;color:white;letter-spacing:4px;font-family:monospace;">${kode}</div>
+      </div>
+
+      <!-- Tombol salin — warna abu/slate -->
+      <button id="btnSalin" style="width:100%;padding:11px;background:#f1f5f9;color:#334155;border:2px solid #e2e8f0;border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;margin-bottom:8px;">
         📋 Salin Kode
       </button>
+
+      <!-- Tombol aktivasi — warna amber/kuning supaya beda -->
       <a href="https://bantuguruyuk.web.id/?email=${encodeURIComponent(email)}&kode=${encodeURIComponent(kode)}"
-        style="display:block;width:100%;padding:10px;background:linear-gradient(135deg,#059669,#0d7a8a);color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;text-decoration:none;text-align:center;box-sizing:border-box;">
-        🔓 Aktivasi BGY-Buat Soal Pro
+        style="display:block;width:100%;padding:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:white;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:800;text-decoration:none;text-align:center;box-sizing:border-box;box-shadow:0 3px 12px rgba(245,158,11,.35);letter-spacing:.3px;">
+        🚀 Klik Disini untuk Aktivasi Pro
       </a>
     `;
     document.getElementById("btnSalin").addEventListener("click", function() {
