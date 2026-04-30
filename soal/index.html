@@ -2269,14 +2269,23 @@ async function verifikasiKode(){
   if(!sb){ msg.innerText="❌ Gagal terhubung, refresh."; msg.style.color="red"; return; }
 
   try {
-    // Cek email + kode cocok di Supabase
+    // Cek email + kode cocok di Supabase (pakai ilike supaya case-insensitive)
+    console.log("🔍 Query:", email, "|", kode);
     const { data, error } = await sb
       .from("users").select("id,email,code,is_pro")
-      .eq("email", email).eq("code", kode).eq("access","soal")
+      .ilike("email", email.toLowerCase())
+      .eq("code", kode.trim().toUpperCase())
+      .eq("access","soal")
       .maybeSingle();
 
+    console.log("📦 Result:", data, error);
     if(error) throw error;
-    if(!data){ msg.innerText="❌ Email/kode tidak cocok. Cek kembali."; msg.style.color="red"; return; }
+    if(!data){
+      // Coba query tanpa filter access untuk debug
+      const {data:d2} = await sb.from("users").select("email,code,access").ilike("email", email.toLowerCase()).maybeSingle();
+      console.log("🔎 Row ditemukan (tanpa filter access):", d2);
+      msg.innerText="❌ Email/kode tidak cocok. Cek kembali."; msg.style.color="red"; return;
+    }
 
     // Update is_pro = true
     if(!data.is_pro){
