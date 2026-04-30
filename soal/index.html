@@ -526,7 +526,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <button class="btn btn-secondary" id="btnReset" onclick="resetForm()" style="margin-top:6px;width:100%;font-size:.8rem;">🔄 Reset Form</button>
 
       <!-- AKTIVASI PRO -->
-     <div id="aktivasiBox" style="margin-top:12px;border:1.5px dashed #0ea5a0;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(14,165,160,.06),rgba(45,106,127,.06));">
+   <div id="aktivasiBox" style="margin-top:12px;border:1.5px dashed #0ea5a0;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(14,165,160,.06),rgba(45,106,127,.06));">
   
   <div style="font-size:.78rem;font-weight:700;color:#0d7a8a;margin-bottom:4px;">
     🔓 Aktivasi Pro — Generate Unlimited
@@ -539,7 +539,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   </div>
 
   <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;">
-    Cek apakah email kamu sudah terdaftar BGY-Buat Soal PRO
+    Cek apakah email kamu sudah terdaftar BGY-Buat Soal PRO?
   </div>
 
   <div style="display:flex;gap:6px;">
@@ -2115,6 +2115,77 @@ async function aktivasiPro(){
       msgEl.textContent='✅ Aktivasi berhasil! Selamat, kamu sekarang Pro 🎉';msgEl.style.color='#059669';updateLimitDisplay();
     }else{msgEl.textContent='❌ Kode tidak valid. Hubungi Pak Choyy via WA.';msgEl.style.color='#dc2626';}
   }catch(e){msgEl.textContent='❌ Gagal terhubung ke server verifikasi.';msgEl.style.color='#dc2626';}
+}
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://xtmpiqpmwirsrcsphsto.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 🔍 CEK AKSES
+async function cekAksesPro(){
+  const email = document.getElementById("inputEmailPro").value.trim();
+  const msg = document.getElementById("aktivasiMsg");
+
+  if(!email){
+    msg.innerText = "Masukkan email dulu";
+    msg.style.color = "red";
+    return;
+  }
+
+  msg.innerText = "Mengecek...";
+  msg.style.color = "#555";
+
+  const { data } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", email)
+    .eq("is_pro", true)
+    .single();
+
+  if(data){
+    msg.innerText = "✅ PRO aktif — selamat!";
+    msg.style.color = "green";
+
+    localStorage.setItem("pro_email", email);
+
+    unlockPro();
+  } else {
+    msg.innerText = "❌ Belum terdaftar — silakan beli dulu";
+    msg.style.color = "red";
+  }
+}
+
+// 🔁 AUTO LOGIN
+window.addEventListener("load", async ()=>{
+  const email = localStorage.getItem("pro_email");
+  if(!email) return;
+
+  const { data } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", email)
+    .eq("is_pro", true)
+    .single();
+
+  if(data){
+    unlockPro();
+  }
+});
+
+// 🔓 UNLOCK PRO (EDIT SESUAI WEBMU)
+function unlockPro(){
+  console.log("PRO AKTIF");
+
+  // contoh:
+  const badge = document.getElementById("hBadge");
+  if(badge) badge.innerText = "PRO";
+
+  // TODO:
+  // hilangkan limit generate di sini
 }
 </script>
 </body>
