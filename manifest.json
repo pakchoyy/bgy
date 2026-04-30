@@ -1,0 +1,27 @@
+{
+  "name": "Bantu Guru Yuk!",
+  "short_name": "BantuGuru",
+  "description": "AI Tools untuk Guru SD Indonesia — buat soal, LKPD, dan modul Kurikulum Merdeka.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d2b3e",
+  "theme_color": "#0ea5a0",
+  "icons": [
+    {
+      "src": "/guru-cibisd2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/guru-cibisd2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "id"
+}
