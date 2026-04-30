@@ -528,61 +528,72 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <button class="btn btn-secondary" id="btnReset" onclick="resetForm()" style="margin-top:6px;width:100%;font-size:.8rem;">🔄 Reset Form</button>
 
       <!-- AKTIVASI PRO -->
-   <div id="aktivasiBox" style="margin-top:12px;border:2px solid #f59e0b;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(14,165,160,.07));box-shadow:0 2px 12px rgba(245,158,11,.15);">
-  
-  <div style="font-size:.78rem;font-weight:700;color:#d97706;margin-bottom:4px;display:flex;align-items:center;gap:5px;">
-    🔓 <span>Aktivasi Pro</span> <span style="font-size:.65rem;background:#fef3c7;color:#d97706;padding:1px 7px;border-radius:99px;border:1px solid #fcd34d;">UNLIMITED</span>
-  </div>
+  <div id="aktivasiBox" style="margin-top:12px;border:2px solid #f59e0b;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(245,158,11,.15);">
 
-  <!-- MODE 1: Kode aktivasi (redirect dari aktvs-bs.html) -->
-  <div id="modeKode" style="display:none;">
-    <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;">
-      Masukkan email pembelian + kode aktivasi:
-    </div>
-    <div style="display:flex;flex-direction:column;gap:6px;">
-      <input type="email" id="inputEmailKode"
-        placeholder="Email pembelian..."
-        style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;"/>
-      <div style="display:flex;gap:6px;">
-        <input type="text" id="inputKodeAktivasi"
-          placeholder="Kode (BGY-XXXXX)..."
-          style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;letter-spacing:1px;"/>
-        <button onclick="verifikasiKode()"
-          style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(245,158,11,.35);">
-          🔑 Aktivasi
-        </button>
+    <!-- Header kotak -->
+    <div style="background:linear-gradient(135deg,#f59e0b,#d97706);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:.8rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;">
+        🔓 <span>Aktivasi Pro</span>
+        <span style="background:rgba(255,255,255,.25);font-size:.6rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
       </div>
+      <a href="http://lynk.id/kreacy/mplxqygkqj36" target="_blank"
+        style="font-size:.65rem;font-weight:700;color:#fff;background:rgba(255,255,255,.2);padding:3px 9px;border-radius:99px;text-decoration:none;border:1px solid rgba(255,255,255,.4);">
+        Beli Pro →
+      </a>
     </div>
-    <div style="font-size:.68rem;color:var(--text-light);margin-top:6px;text-align:center;">
-      Sudah pernah aktivasi? <a href="#" onclick="tampilModeEmail();return false;" style="color:#0d7a8a;font-weight:700;">Cek pakai email</a>
+
+    <!-- Body -->
+    <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(14,165,160,.04));">
+
+      <!-- MODE 1: Input kode (dari redirect aktvs-bs) -->
+      <div id="modeKode" style="display:none;">
+        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;font-weight:600;">
+          ✉️ Masukkan email + kode aktivasi kamu:
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <input type="email" id="inputEmailKode"
+            placeholder="Email pembelian..."
+            style="width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;transition:border-color .2s;"
+            onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='var(--border)'"/>
+          <div style="display:flex;gap:6px;">
+            <input type="text" id="inputKodeAktivasi"
+              placeholder="BGY-XXXXX"
+              style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.85rem;font-weight:700;font-family:monospace;letter-spacing:2px;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;transition:border-color .2s;"
+              onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='var(--border)'"/>
+            <button onclick="verifikasiKode()"
+              style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:9px;padding:8px 15px;font-size:.82rem;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(245,158,11,.35);">
+              🔑 Aktifkan
+            </button>
+          </div>
+        </div>
+        <div style="font-size:.67rem;color:var(--text-light);margin-top:7px;text-align:center;">
+          Sudah pernah aktivasi? <a href="#" onclick="tampilModeEmail();return false;" style="color:#d97706;font-weight:700;">Cek pakai email</a>
+        </div>
+      </div>
+
+      <!-- MODE 2: Cek email (default) -->
+      <div id="modeEmail" style="display:block;">
+        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:7px;">
+          Sudah beli? Masukkan email pembelian untuk cek status:
+        </div>
+        <div style="display:flex;gap:6px;">
+          <input type="email" id="inputEmailPro"
+            placeholder="Email pembelian..."
+            style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;transition:border-color .2s;"
+            onfocus="this.style.borderColor='#0ea5a0'" onblur="this.style.borderColor='var(--border)'"/>
+          <button onclick="cekAksesPro()"
+            style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border:none;border-radius:9px;padding:8px 14px;font-size:.82rem;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(14,165,160,.3);">
+            Cek
+          </button>
+        </div>
+        <div style="font-size:.67rem;color:var(--text-light);margin-top:7px;text-align:center;">
+          Punya kode aktivasi? <a href="#" onclick="tampilModeKode();return false;" style="color:#d97706;font-weight:700;">Masukkan kode</a>
+        </div>
+      </div>
+
+      <div id="aktivasiMsg" style="font-size:.73rem;margin-top:8px;min-height:14px;font-weight:600;"></div>
     </div>
   </div>
-
-  <!-- MODE 2: Cek email (default / ganti device) -->
-  <div id="modeEmail" style="display:block;">
-    <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;">
-      <a href="http://lynk.id/kreacy/mplxqygkqj36" target="_blank" style="color:#0d7a8a;font-weight:700;">Klik disini</a> untuk membuka fitur pro.
-    </div>
-    <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;">
-      Sudah beli? Cek email kamu:
-    </div>
-    <div style="display:flex;gap:6px;">
-      <input type="email" id="inputEmailPro"
-        placeholder="Masukkan email pembelian..."
-        style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;"/>
-      <button onclick="cekAksesPro()"
-        style="background:linear-gradient(135deg,#0ea5a0,#2d6a7f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;">
-        Cek
-      </button>
-    </div>
-    <div style="font-size:.68rem;color:var(--text-light);margin-top:6px;text-align:center;">
-      Punya kode aktivasi? <a href="#" onclick="tampilModeKode();return false;" style="color:#0d7a8a;font-weight:700;">Masukkan kode</a>
-    </div>
-  </div>
-
-  <div id="aktivasiMsg" style="font-size:.72rem;margin-top:6px;min-height:14px;"></div>
-
-</div>
 
     </div>
   </div>
@@ -2269,23 +2280,17 @@ async function verifikasiKode(){
   if(!sb){ msg.innerText="❌ Gagal terhubung, refresh."; msg.style.color="red"; return; }
 
   try {
-    // Cek email + kode cocok di Supabase (pakai ilike supaya case-insensitive)
-    console.log("🔍 Query:", email, "|", kode);
+    console.log("🔍 Verifikasi:", email, "|", kode);
     const { data, error } = await sb
       .from("users").select("id,email,code,is_pro")
       .ilike("email", email.toLowerCase())
       .eq("code", kode.trim().toUpperCase())
-      .eq("access","soal")
+      .eq("access", "soal")
       .maybeSingle();
 
-    console.log("📦 Result:", data, error);
+    console.log("📦 Result:", JSON.stringify(data), error);
     if(error) throw error;
-    if(!data){
-      // Coba query tanpa filter access untuk debug
-      const {data:d2} = await sb.from("users").select("email,code,access").ilike("email", email.toLowerCase()).maybeSingle();
-      console.log("🔎 Row ditemukan (tanpa filter access):", d2);
-      msg.innerText="❌ Email/kode tidak cocok. Cek kembali."; msg.style.color="red"; return;
-    }
+    if(!data){ msg.innerText="❌ Email/kode tidak cocok. Cek kembali."; msg.style.color="red"; return; }
 
     // Update is_pro = true
     if(!data.is_pro){
@@ -2335,23 +2340,28 @@ async function cekAksesPro(){
 
 // ── AUTO LOGIN + deteksi ?kode= dari URL ──
 document.addEventListener("DOMContentLoaded", async ()=>{
-  // Cek URL param ?kode=BGY-XXXXX
   const urlParams = new URLSearchParams(window.location.search);
-  const kodeUrl   = urlParams.get("kode");
+  const kodeUrl  = urlParams.get("kode");
+  const emailUrl = urlParams.get("email");
+
   if(kodeUrl){
-    // Tampilkan mode kode, isi otomatis kode + email dari URL
+    // Tampilkan modeKode, isi email + kode dari URL
     tampilModeKode();
-    const inputKode = document.getElementById("inputKodeAktivasi");
-    if(inputKode) inputKode.value = kodeUrl.toUpperCase();
-    const emailUrl = urlParams.get("email");
-    if(emailUrl){
-      const inputEmail = document.getElementById("inputEmailKode");
-      if(inputEmail) inputEmail.value = emailUrl.trim().toLowerCase();
+    const inputKode  = document.getElementById("inputKodeAktivasi");
+    const inputEmail = document.getElementById("inputEmailKode");
+    if(inputKode)  inputKode.value  = kodeUrl.trim().toUpperCase();
+    if(inputEmail && emailUrl) inputEmail.value = emailUrl.trim().toLowerCase();
+
+    // Highlight kotak aktivasi + scroll ke sana
+    const box = document.getElementById("aktivasiBox");
+    if(box){
+      box.style.transition = "box-shadow .3s";
+      box.style.boxShadow  = "0 0 0 3px #f59e0b, 0 4px 20px rgba(245,158,11,.4)";
+      setTimeout(()=>{ box.style.boxShadow = "0 2px 12px rgba(245,158,11,.15)"; }, 2500);
+      setTimeout(()=>{ box.scrollIntoView({behavior:"smooth", block:"center"}); }, 350);
     }
-    // Scroll ke aktivasi box
-    const aktBox = document.getElementById("aktivasiBox");
-    if(aktBox) setTimeout(()=>aktBox.scrollIntoView({behavior:"smooth",block:"center"}), 400);
-    // Bersihkan URL tanpa reload
+
+    // Bersihkan URL
     window.history.replaceState({}, document.title, window.location.pathname);
     return;
   }
@@ -2364,9 +2374,9 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   try {
     const { data } = await sb
       .from("users").select("id")
-      .eq("email", email).eq("is_pro",true).maybeSingle();
+      .eq("email", email).eq("is_pro", true).maybeSingle();
     if(data) unlockPro();
-    else localStorage.removeItem("pro_email"); // hapus kalau sudah tidak aktif
+    else localStorage.removeItem("pro_email");
   } catch(e){}
 });
 </script>
