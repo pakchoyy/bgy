@@ -595,7 +595,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       </button>
       <div id="generateFeedback" style="font-size:.78rem;margin-top:6px;min-height:18px;text-align:center;color:var(--text-light);"></div>
       <div id="limitInfo" style="font-size:.75rem;text-align:center;margin-top:4px;color:#64748b;"></div>
-      <div style="font-size:.68rem;text-align:center;color:var(--text-light);margin-top:2px;font-style:italic;">(reset tiap tengah malam)</div>
+      <div id="limitReset" style="font-size:.68rem;text-align:center;color:var(--text-light);margin-top:2px;font-style:italic;">(reset tiap tengah malam)</div>
       <button class="btn btn-secondary" id="btnReset" onclick="resetForm()" style="margin-top:6px;width:100%;font-size:.8rem;">🔄 Reset Form</button>
 
       <!-- AKTIVASI PRO -->
@@ -2111,17 +2111,18 @@ async function exportWord(){
   if(btn){ btn.textContent='⏳ Menyiapkan...'; btn.disabled=true; }
 
   try {
-    // Packer.toBuffer (v7) atau toBase64String (v8)
+    // Browser: gunakan toBlob (v7) atau toBase64String (v8)
     let blob;
-    if(typeof Packer.toBuffer === 'function'){
-      const buffer = await Packer.toBuffer(doc);
-      blob = new Blob([buffer], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
-    } else {
+    if(typeof Packer.toBlob === 'function'){
+      blob = await Packer.toBlob(doc);
+    } else if(typeof Packer.toBase64String === 'function'){
       const base64 = await Packer.toBase64String(doc);
       const byteChars = atob(base64);
       const byteNums = new Uint8Array(byteChars.length);
       for(let i=0;i<byteChars.length;i++) byteNums[i]=byteChars.charCodeAt(i);
       blob = new Blob([byteNums], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    } else {
+      throw new Error('Packer API tidak ditemukan. Coba refresh halaman.');
     }
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -2468,10 +2469,16 @@ function incrementDaily(){const today=getTodayStr();let u=getDailyUsage();if(u.d
 function checkLimit(){if(isPro())return{ok:true,remaining:999};const today=getTodayStr();const u=getDailyUsage();if(u.date!==today)return{ok:true,remaining:DAILY_LIMIT};const rem=DAILY_LIMIT-u.count;return{ok:rem>0,remaining:Math.max(0,rem)};}
 function updateLimitDisplay(){
   const el=document.getElementById('limitInfo');if(!el)return;
-  if(isPro()){el.textContent='⭐ Pro Aktif — Generate Unlimited';el.style.color='#059669';document.getElementById('aktivasiBox').style.display='none';document.getElementById('btnLabel').textContent='✨ Generate Soal';
+  const lr=document.getElementById('limitReset');
+  if(isPro()){
+    el.textContent='⭐ Pro Aktif — Generate Unlimited';el.style.color='#059669';
+    document.getElementById('aktivasiBox').style.display='none';
+    document.getElementById('btnLabel').textContent='✨ Generate Soal';
+    if(lr)lr.style.display='none';
     const b=document.getElementById('hBadge');if(b){b.textContent='PRO';b.className='badge-pro';}
     return;
   }
+  if(lr)lr.style.display='';
   const b=document.getElementById('hBadge');if(b){b.textContent='FREE';b.className='badge-free';}
   const{ok,remaining}=checkLimit();
   el.textContent=ok?`🔢 Sisa generate hari ini: ${remaining}x`:'⛔ Batas harian habis. Aktivasi Pro atau coba besok.';
