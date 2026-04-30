@@ -19,7 +19,7 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1874,8 +1874,13 @@ async function exportWord(){
   if(btn){ btn.textContent='⏳ Menyiapkan...'; btn.disabled=true; }
 
   try {
-    const buffer = await window.docx.Packer.toBlob(doc);
-    const url = URL.createObjectURL(buffer);
+    const base64 = await window.docx.Packer.toBase64String(doc);
+    const byteChars = atob(base64);
+    const byteNums = new Array(byteChars.length);
+    for(let i=0;i<byteChars.length;i++) byteNums[i]=byteChars.charCodeAt(i);
+    const buffer = new Uint8Array(byteNums);
+    const blob = new Blob([buffer], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `Soal_${mapel}_Kelas${kelas}.docx`;
