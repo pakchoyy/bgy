@@ -528,10 +528,10 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <button class="btn btn-secondary" id="btnReset" onclick="resetForm()" style="margin-top:6px;width:100%;font-size:.8rem;">🔄 Reset Form</button>
 
       <!-- AKTIVASI PRO -->
-   <div id="aktivasiBox" style="margin-top:12px;border:1.5px dashed #0ea5a0;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(14,165,160,.06),rgba(45,106,127,.06));">
+   <div id="aktivasiBox" style="margin-top:12px;border:2px solid #f59e0b;border-radius:12px;padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(14,165,160,.07));box-shadow:0 2px 12px rgba(245,158,11,.15);">
   
-  <div style="font-size:.78rem;font-weight:700;color:#0d7a8a;margin-bottom:4px;">
-    🔓 Aktivasi Pro — Generate Unlimited
+  <div style="font-size:.78rem;font-weight:700;color:#d97706;margin-bottom:4px;display:flex;align-items:center;gap:5px;">
+    🔓 <span>Aktivasi Pro</span> <span style="font-size:.65rem;background:#fef3c7;color:#d97706;padding:1px 7px;border-radius:99px;border:1px solid #fcd34d;">UNLIMITED</span>
   </div>
 
   <!-- MODE 1: Kode aktivasi (redirect dari aktvs-bs.html) -->
@@ -548,8 +548,8 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           placeholder="Kode (BGY-XXXXX)..."
           style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;letter-spacing:1px;"/>
         <button onclick="verifikasiKode()"
-          style="background:linear-gradient(135deg,#059669,#0d7a8a);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;">
-          Aktivasi
+          style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(245,158,11,.35);">
+          🔑 Aktivasi
         </button>
       </div>
     </div>
@@ -2330,10 +2330,18 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   const urlParams = new URLSearchParams(window.location.search);
   const kodeUrl   = urlParams.get("kode");
   if(kodeUrl){
-    // Tampilkan mode kode, isi otomatis kode-nya
+    // Tampilkan mode kode, isi otomatis kode + email dari URL
     tampilModeKode();
     const inputKode = document.getElementById("inputKodeAktivasi");
     if(inputKode) inputKode.value = kodeUrl.toUpperCase();
+    const emailUrl = urlParams.get("email");
+    if(emailUrl){
+      const inputEmail = document.getElementById("inputEmailKode");
+      if(inputEmail) inputEmail.value = emailUrl.trim().toLowerCase();
+    }
+    // Scroll ke aktivasi box
+    const aktBox = document.getElementById("aktivasiBox");
+    if(aktBox) setTimeout(()=>aktBox.scrollIntoView({behavior:"smooth",block:"center"}), 400);
     // Bersihkan URL tanpa reload
     window.history.replaceState({}, document.title, window.location.pathname);
     return;
