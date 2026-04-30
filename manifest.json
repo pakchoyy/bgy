@@ -1,7 +1,7 @@
 {
-  "name": "Bantu Guru Yuk!",
-  "short_name": "BantuGuru",
-  "description": "AI Tools untuk Guru SD Indonesia — buat soal, LKPD, dan modul Kurikulum Merdeka.",
+  "name": "Bantu Guru Yuk",
+  "short_name": "BantuGuruYuk",
+  "description": "Membantu memudahkan kerja Bapak Ibu Guru Hebat",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
