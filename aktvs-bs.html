@@ -3,140 +3,106 @@
 <head>
   <meta charset="UTF-8">
   <title>Aktivasi BGY-Buat Soal Pro</title>
-
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
-    body {
-      font-family: Arial;
-      background: #f5f7f9;
-      padding: 20px;
-    }
-
+    body { font-family: Arial; background: #f5f7f9; padding: 20px; }
     .box {
-      max-width: 400px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
+      max-width: 400px; margin: auto; background: white;
+      padding: 20px; border-radius: 12px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
-
-    h3 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
+    h3 { text-align: center; margin-bottom: 15px; }
     input {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      width: 100%; padding: 10px; margin-bottom: 10px;
+      border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box;
     }
-
     button {
-      width: 100%;
-      padding: 10px;
-      background: teal;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      width: 100%; padding: 10px; background: teal; color: white;
+      border: none; border-radius: 8px; cursor: pointer; font-size: 15px;
     }
-
-    .kode {
-      margin-top: 15px;
-      font-size: 20px;
-      font-weight: bold;
-      color: green;
-      text-align: center;
-    }
-
-    .info {
-      font-size: 13px;
-      text-align: center;
-      margin-top: 10px;
-      color: #666;
-    }
+    button:disabled { background: #aaa; cursor: not-allowed; }
+    .kode { margin-top: 15px; font-size: 20px; font-weight: bold; color: green; text-align: center; }
+    .info { font-size: 13px; text-align: center; margin-top: 10px; color: #666; }
+    .error { color: red; }
   </style>
 </head>
-
 <body>
 
 <div class="box">
   <h3>🔓 Aktivasi PRO Soal</h3>
-
   <input type="email" id="email" placeholder="Masukkan email kamu">
-
-  <button onclick="buatKode()">Dapatkan Kode</button>
-
+  <button id="btnDapat">Dapatkan Kode</button>
   <div id="hasil" class="kode"></div>
-
-  <div class="info">
-    Simpan kode ini. Gunakan di halaman soal untuk unlock PRO.
-  </div>
+  <div class="info">Simpan kode ini. Gunakan di halaman soal untuk unlock PRO.</div>
 </div>
 
 <script>
-const supabase = window.supabase.createClient(
-  "https://xtmpiqpmwirsrcsphsto.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w"
-);
+  // ✅ Pakai sbClient — hindari bentrok dengan window.supabase
+  const sbClient = window.supabase.createClient(
+    "https://xtmpiqpmwirsrcsphsto.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w"
+  );
+  console.log("✅ Supabase client siap");
 
-// 🔐 generate kode BGY
-function generateKode() {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let result = "";
-  for (let i = 0; i < 5; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return "BGY-" + result;
-}
-
-// 🚀 fungsi utama
-async function buatKode() {
-  const email = document.getElementById("email").value.trim();
-  const hasil = document.getElementById("hasil");
-
-  if (!email) {
-    hasil.innerText = "Masukkan email dulu ❗";
-    return;
+  function generateKode() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let result = "";
+    for (let i = 0; i < 5; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+    return "BGY-" + result;
   }
 
-  hasil.innerText = "Memproses...";
+  // ✅ addEventListener — tidak bergantung pada scope global seperti onclick=""
+  document.getElementById("btnDapat").addEventListener("click", async function () {
+    const email = document.getElementById("email").value.trim();
+    const hasil = document.getElementById("hasil");
+    const btn = document.getElementById("btnDapat");
 
-  // cek sudah ada?
-  const { data } = await supabase
-    .from("users")
-    .select("*")
-    .eq("email", email)
-    .eq("access", "soal")
-    .maybeSingle();
+    hasil.className = "kode";
+    if (!email) { hasil.innerText = "Masukkan email dulu ❗"; return; }
 
-  if (data) {
-    hasil.innerText = "Kode kamu: " + data.code;
-    return;
-  }
+    btn.disabled = true;
+    hasil.innerText = "Memproses...";
+    console.log("📧 Cek email:", email);
 
-  // buat kode baru
-  const kode = generateKode();
+    try {
+      const { data, error: fetchError } = await sbClient
+        .from("users")
+        .select("*")
+        .eq("email", email)
+        .eq("access", "soal")
+        .maybeSingle();
 
-  const { error } = await supabase.from("users").insert({
-    email: email,
-    code: kode,
-    access: "soal",
-    is_pro: false
+      console.log("🔍 Hasil cek:", data, fetchError);
+      if (fetchError) throw fetchError;
+
+      if (data) {
+        hasil.innerText = "Kode kamu: " + data.code;
+        console.log("♻️ Kode lama:", data.code);
+        return;
+      }
+
+      const kode = generateKode();
+      console.log("🆕 Kode baru:", kode);
+
+      const { error: insertError } = await sbClient.from("users").insert({
+        email: email, code: kode, access: "soal", is_pro: false
+      });
+
+      if (insertError) throw insertError;
+
+      hasil.innerText = "Kode kamu: " + kode;
+      console.log("✅ Tersimpan:", kode);
+
+    } catch (err) {
+      hasil.className = "kode error";
+      hasil.innerText = "Gagal: " + (err.message || "coba lagi ❌");
+      console.error("❌ Error:", err);
+    } finally {
+      btn.disabled = false;
+    }
   });
 
-  if (error) {
-    hasil.innerText = "Gagal, coba lagi ❌";
-    return;
-  }
-
-  hasil.innerText = "Kode kamu: " + kode;
-}
+  console.log("✅ Event listener aktif");
 </script>
 
 </body>
