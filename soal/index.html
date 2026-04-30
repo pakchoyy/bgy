@@ -18,7 +18,7 @@
   function gaEvent(eventName,params){if(typeof gtag==='function')gtag('event',eventName,params||{});}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+<!-- docx library removed: export Word now uses native HTML Blob -->
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -161,7 +161,8 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .page-nav button:disabled{opacity:.3;cursor:not-allowed;}
 .page-info{font-size:.78rem;color:var(--text-light);font-weight:600;min-width:72px;text-align:center;}
 
-#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-height:1123px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;height:auto;}
+.preview-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;display:flex;justify-content:center;background:var(--gray-100);border-radius:8px;padding:12px 0;}
+#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:1123px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;height:auto;position:relative;}
 
 /* Dokumen styles */
 .doc-header-table{width:100%;border-collapse:collapse;margin-bottom:0;}
@@ -565,8 +566,9 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <button id="btnNext" onclick="nextPage()" disabled>▶</button>
     </div>
 
+    <div class="preview-scroll-wrapper">
     <div id="previewBox" style="position:relative;">
-      <div id="previewLoading" style="display:none;position:absolute;inset:0;z-index:50;background:var(--card-bg);border-radius:12px;border:2px dashed var(--blue);flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:280px;">
+      <div id="previewLoading" style="display:none;position:absolute;inset:0;z-index:50;background:rgba(255,255,255,.95);border-radius:4px;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:400px;">
         <div style="width:52px;height:52px;border:5px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;"></div>
         <div style="font-size:.95rem;font-weight:700;color:var(--blue);">Sedang membuat soal...</div>
         <div style="font-size:.78rem;color:var(--text-light);">AI sedang bekerja, mohon tunggu 🙏</div>
@@ -575,6 +577,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         <div class="icon">📄</div>
         <p>Lembar soal tampil di sini setelah Generate Soal.</p>
       </div>
+    </div>
     </div>
     <div id="userFeedbackBox" style="display:none;margin-top:10px;padding:12px 16px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);text-align:center;font-size:.82rem;color:var(--text-light);">
       💡 Ada saran atau perbaikan soal?
@@ -586,7 +589,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
 <footer>
   <div class="footer-title">Buat Soal</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by Pak.Choyy &bull; <span class="app-version">v26.5.1</span></div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;font-weight:700;">Pak.Choyy</a> &bull; <span class="app-version">v26.5.1</span></div>
 </footer>
 
 <script>
@@ -1566,11 +1569,10 @@ function exportPDF(mode){
 }
 
 /* ════════════════════════════════════════════
-   EXPORT WORD RTF — persis seperti preview
+   EXPORT WORD — HTML-based, tanpa library eksternal
 ════════════════════════════════════════════ */
 function exportWord(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  if(typeof docx==='undefined'){alert('Library Word belum siap. Pastikan koneksi internet aktif, lalu refresh halaman.');return;}
 
   const pg=soalData.pilihanGanda||[];
   const isian=soalData.isian||[];
@@ -1578,270 +1580,167 @@ function exportWord(){
   const mapel=document.getElementById('mataPelajaran').value;
   const kelas=document.getElementById('kelas').value;
   const semester=document.getElementById('semester').value;
-  const semStr=semester==='1'?'Ganjil':'Genap';
   const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
   const tahun=document.getElementById('tahunPelajaran').value||'2025/2026';
   const judulUjian=getJudulUjian();
   const tanggal=document.getElementById('tanggal').value
     ?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
     :'.....................';
+  const kelasNum=parseInt(kelas)||1;
+  const fase=kelasNum<=2?'A':kelasNum<=4?'B':'C';
 
   gaEvent('download_word',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
 
-  const kelasNumW=parseInt(document.getElementById('kelas').value)||1;
-  const faseW=kelasNumW<=2?'A':kelasNumW<=4?'B':'C';
+  const bobotPG=1,bobotIsian=2,bobotUraian=4;
+  const totalSkor=pg.length*bobotPG+isian.length*bobotIsian+uraian.length*bobotUraian;
 
-  const {
-    Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,
-    WidthType,BorderStyle,AlignmentType,HeadingLevel,
-    PageBreak,UnderlineType,ShadingType
-  }=docx;
-  // VerticalAlign fallback untuk kompatibilitas versi docx
-  const VA=(docx.VerticalAlign||{CENTER:'center'});
-
-  // Helper buat paragraph teks biasa
-  function p(text,opts={}){
-    return new Paragraph({
-      spacing:{before:opts.before||0,after:opts.after||60},
-      alignment:opts.align||AlignmentType.LEFT,
-      indent:opts.indent?{left:opts.indent}:undefined,
-      children:[new TextRun({
-        text:String(text||''),
-        bold:opts.bold||false,
-        italics:opts.italic||false,
-        underline:opts.underline?{type:UnderlineType.SINGLE}:undefined,
-        size:opts.size||22,
-        font:'Times New Roman',
-      })]
-    });
-  }
-
-  // Helper buat runs campuran
-  function pRuns(runs,opts={}){
-    return new Paragraph({
-      spacing:{before:opts.before||0,after:opts.after||60},
-      alignment:opts.align||AlignmentType.LEFT,
-      indent:opts.indent?{left:opts.indent}:undefined,
-      children:runs.map(r=>new TextRun({
-        text:String(r.text||''),
-        bold:r.bold||false,
-        italics:r.italic||false,
-        underline:r.underline?{type:UnderlineType.SINGLE}:undefined,
-        size:r.size||22,
-        font:'Times New Roman',
-      }))
-    });
-  }
-
-  // Garis tebal (border atas+bawah)
-  function garisTebal(){
-    return new Paragraph({
-      spacing:{before:40,after:40},
-      border:{
-        top:{style:BorderStyle.THICK,size:18,color:'000000'},
-        bottom:{style:BorderStyle.THICK,size:18,color:'000000'},
-      },
-      children:[new TextRun({text:''})]
-    });
-  }
-
-  // Sel tabel tanpa border
-  function cell(text,opts={}){
-    return new TableCell({
-      width:opts.width?{size:opts.width,type:WidthType.DXA}:undefined,
-      borders:{top:{style:BorderStyle.NONE},bottom:opts.underline?{style:BorderStyle.SINGLE,size:4,color:'000000'}:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},
-      children:[new Paragraph({
-        spacing:{before:0,after:0},
-        children:[new TextRun({text:String(text||''),size:22,font:'Times New Roman',bold:opts.bold||false})]
-      })]
-    });
-  }
-
-  // Tabel identitas
-  function tabelIdentitas(){
-    function baris(l1,v1,l2,v2){
-      return new TableRow({children:[
-        cell(l1,{width:1800}),
-        cell(':',{width:200}),
-        cell(v1,{width:2800,underline:false}),
-        cell('',{width:400}),
-        cell(l2,{width:1600}),
-        cell(':',{width:200}),
-        cell(v2,{width:2000,underline:true}),
-      ]});
+  // Build opsi PG rows — 2 kolom
+  function opsiRows(opsiArr){
+    let rows='';
+    for(let i=0;i<opsiArr.length;i+=2){
+      rows+=`<tr><td style="width:50%;padding:1px 4px 1px 24px;">${opsiArr[i]||''}</td><td style="width:50%;padding:1px 4px;">${opsiArr[i+1]||''}</td></tr>`;
     }
-    return new Table({
-      width:{size:100,type:WidthType.PERCENTAGE},
-      borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideH:{style:BorderStyle.NONE},insideV:{style:BorderStyle.NONE}},
-      rows:[
-        baris('Mata Pelajaran',mapel,'Nama','______________________________'),
-        baris('Kelas / Fase',kelas+' / Fase '+faseW,'No. Absen','_______________'),
-        baris('Tanggal',tanggal,'Nilai','_______________'),
-      ]
+    return `<table style="width:100%;border-collapse:collapse;">${rows}</table>`;
+  }
+
+  // Soal PG
+  let pgHtml='';
+  if(pg.length>0){
+    pgHtml=`<p style="margin-top:18pt;margin-bottom:4pt;"><strong><u>I. Pilihan Ganda</u></strong></p>
+<p style="margin-bottom:6pt;font-style:italic;">Berilah tanda silang (X) pada huruf jawaban yang paling benar!</p>`;
+    pg.forEach((item,i)=>{
+      pgHtml+=`<p style="margin:6pt 0 2pt;"><strong>${i+1}.</strong> ${escHtml(item.soal)}</p>${opsiRows(item.opsi||[])}`;
     });
   }
 
-  // Tabel opsi PG — 2 kolom tanpa border
-  function tabelOpsi(opsiArr){
-    const rows=[];
-    for(let x=0;x<opsiArr.length;x+=2){
-      rows.push(new TableRow({children:[
-        new TableCell({
-          width:{size:50,type:WidthType.PERCENTAGE},
-          borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},
-          children:[new Paragraph({spacing:{before:0,after:20},indent:{left:360},children:[new TextRun({text:opsiArr[x]||'',size:22,font:'Times New Roman'})]})]
-        }),
-        new TableCell({
-          width:{size:50,type:WidthType.PERCENTAGE},
-          borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE}},
-          children:[new Paragraph({spacing:{before:0,after:20},children:[new TextRun({text:opsiArr[x+1]||'',size:22,font:'Times New Roman'})]})]
-        }),
-      ]}));
-    }
-    return new Table({
-      width:{size:100,type:WidthType.PERCENTAGE},
-      borders:{top:{style:BorderStyle.NONE},bottom:{style:BorderStyle.NONE},left:{style:BorderStyle.NONE},right:{style:BorderStyle.NONE},insideH:{style:BorderStyle.NONE},insideV:{style:BorderStyle.NONE}},
-      rows
+  // Soal Isian
+  let isianHtml='';
+  if(isian.length>0){
+    isianHtml=`<p style="margin-top:18pt;margin-bottom:4pt;page-break-before:avoid;"><strong><u>II. Isian Singkat</u></strong></p>
+<p style="margin-bottom:6pt;font-style:italic;">Isilah titik-titik berikut dengan jawaban yang tepat!</p>`;
+    isian.forEach((item,i)=>{
+      isianHtml+=`<p style="margin:6pt 0 2pt;"><strong>${pg.length+i+1}.</strong> ${escHtml(item.soal)}</p>
+<p style="margin:0 0 6pt 24pt;">Jawab : ___________________________________________</p>`;
     });
   }
 
-  // Tabel kunci PG — 5 kolom dengan border
-  function tabelKunciPG(){
-    const rows=[];
+  // Soal Uraian
+  let uraianHtml='';
+  if(uraian.length>0){
+    uraianHtml=`<p style="margin-top:18pt;margin-bottom:4pt;"><strong><u>III. Uraian</u></strong></p>
+<p style="margin-bottom:6pt;font-style:italic;">Jawablah pertanyaan berikut dengan lengkap dan benar!</p>`;
+    uraian.forEach((item,i)=>{
+      uraianHtml+=`<p style="margin:6pt 0 2pt;"><strong>${pg.length+isian.length+i+1}.</strong> ${escHtml(item.soal)}</p>
+<p style="margin:0 0 0 24pt;">_____________________________________________________________________________</p>
+<p style="margin:0 0 0 24pt;">_____________________________________________________________________________</p>
+<p style="margin:0 0 8pt 24pt;">_____________________________________________________________________________</p>`;
+    });
+  }
+
+  // Kunci Jawaban
+  let kunciPGtable='';
+  if(pg.length>0){
+    let cells='';
+    pg.forEach((item,i)=>{cells+=`<td style="border:1px solid #000;padding:4px 8px;text-align:center;">${i+1}. ${item.jawaban||'—'}</td>`;});
+    // bagi per baris 5 item
+    let rows='';
     for(let r=0;r<Math.ceil(pg.length/5);r++){
-      const cells=[];
+      rows+='<tr>';
       for(let c=0;c<5;c++){
         const idx=r*5+c;
-        const val=idx<pg.length?`${idx+1}. ${pg[idx].jawaban||'—'}` :'';
-        cells.push(new TableCell({
-          width:{size:20,type:WidthType.PERCENTAGE},
-          children:[new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:40,after:40},children:[new TextRun({text:val,size:22,font:'Times New Roman'})]})]
-        }));
+        rows+=`<td style="border:1px solid #000;padding:4px 8px;text-align:center;width:20%;">${idx<pg.length?`${idx+1}. ${pg[idx].jawaban||'—'}`:''}</td>`;
       }
-      rows.push(new TableRow({children:cells}));
+      rows+='</tr>';
     }
-    return new Table({width:{size:100,type:WidthType.PERCENTAGE},rows});
+    kunciPGtable=`<p style="margin-top:12pt;margin-bottom:4pt;"><strong><u>I. Pilihan Ganda</u></strong></p>
+<table style="width:100%;border-collapse:collapse;">${rows}</table>`;
   }
-
-  // ═══ SUSUN KONTEN DOKUMEN ═══
-  const children=[];
-
-  // Header
-  children.push(p(judulUjian.toUpperCase(),{bold:true,align:AlignmentType.CENTER,size:22,after:20}));
-  children.push(p(namaSekolah.toUpperCase(),{bold:true,align:AlignmentType.CENTER,size:28,after:20}));
-  children.push(p('Tahun Pelajaran '+tahun,{align:AlignmentType.CENTER,size:20,after:40}));
-  children.push(garisTebal());
-  children.push(tabelIdentitas());
-  children.push(garisTebal());
-  children.push(p(''));
-
-  // Pilihan Ganda
-  if(pg.length>0){
-    children.push(pRuns([{text:'I. Pilihan Ganda',bold:true,underline:true}],{before:120,after:40}));
-    children.push(p('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,after:60}));
-    pg.forEach((item,i)=>{
-      children.push(p(`${i+1}. ${item.soal}`,{before:60,after:20}));
-      children.push(tabelOpsi(item.opsi||[]));
-    });
-  }
-
-  // Isian Singkat
+  let kunciIsian='';
   if(isian.length>0){
-    children.push(pRuns([{text:'II. Isian Singkat',bold:true,underline:true}],{before:160,after:40}));
-    children.push(p('Isilah titik-titik berikut dengan jawaban yang tepat!',{italic:true,after:60}));
-    isian.forEach((item,i)=>{
-      children.push(p(`${pg.length+i+1}. ${item.soal}`,{before:60,after:10}));
-      children.push(p('Jawab : _____________________________________________',{indent:360,after:60}));
-    });
+    kunciIsian=`<p style="margin-top:12pt;margin-bottom:4pt;"><strong><u>II. Isian Singkat</u></strong></p>`;
+    isian.forEach((item,i)=>{kunciIsian+=`<p style="margin:3pt 0;">${pg.length+i+1}. ${escHtml(stripHtml(item.jawaban||'—'))}</p>`;});
   }
-
-  // Uraian
+  let kunciUraian='';
   if(uraian.length>0){
-    children.push(pRuns([{text:'III. Uraian',bold:true,underline:true}],{before:160,after:40}));
-    children.push(p('Jawablah pertanyaan berikut dengan lengkap dan benar!',{italic:true,after:60}));
-    uraian.forEach((item,i)=>{
-      children.push(p(`${pg.length+isian.length+i+1}. ${item.soal}`,{before:60,after:10}));
-      children.push(p('___________________________________________________________________________',{indent:360,after:5}));
-      children.push(p('___________________________________________________________________________',{indent:360,after:5}));
-      children.push(p('___________________________________________________________________________',{indent:360,after:60}));
-    });
+    kunciUraian=`<p style="margin-top:12pt;margin-bottom:4pt;"><strong><u>III. Uraian</u></strong></p>`;
+    uraian.forEach((item,i)=>{kunciUraian+=`<p style="margin:3pt 0;">${pg.length+isian.length+i+1}. ${escHtml(stripHtml(item.jawaban||'—'))}</p>`;});
   }
 
-  // ═══ HALAMAN KUNCI ═══
-  children.push(new Paragraph({children:[new PageBreak()]}));
-  children.push(p('KUNCI JAWABAN',{bold:true,align:AlignmentType.CENTER,size:28,after:20}));
-  children.push(p(`${judulUjian} — ${namaSekolah}`,{align:AlignmentType.CENTER,after:10}));
-  const bobotPGw=1,bobotIsianW=2,bobotUraianW=4;
-  const totalSkorW=pg.length*bobotPGw+isian.length*bobotIsianW+uraian.length*bobotUraianW;
-  children.push(p(`${mapel} | Kelas ${kelas} / Fase ${faseW}`,{align:AlignmentType.CENTER,after:6}));
-  children.push(p(`Bobot: PG=${bobotPGw}pt | Isian=${bobotIsianW}pt | Uraian=${bobotUraianW}pt | Total Maks: ${totalSkorW} poin`,{align:AlignmentType.CENTER,after:40,size:18}));
-  children.push(garisTebal());children.push(p(''));
-
-  if(pg.length>0){
-    children.push(pRuns([{text:`I. Pilihan Ganda (${pg.length} × ${bobotPGw} = ${pg.length*bobotPGw} poin)`,bold:true,underline:true}],{before:80,after:60}));
-    children.push(tabelKunciPG());
-  }
-  if(isian.length>0){
-    children.push(pRuns([{text:`II. Isian Singkat (${isian.length} × ${bobotIsianW} = ${isian.length*bobotIsianW} poin)`,bold:true,underline:true}],{before:120,after:60}));
-    isian.forEach((item,i)=>{children.push(p(`${pg.length+i+1}. ${stripHtml(item.jawaban||'—')}`,{before:40,after:20}));});
-  }
-  if(uraian.length>0){
-    children.push(pRuns([{text:`III. Uraian (${uraian.length} × ${bobotUraianW} = ${uraian.length*bobotUraianW} poin)`,bold:true,underline:true}],{before:120,after:60}));
-    uraian.forEach((item,i)=>{children.push(p(`${pg.length+isian.length+i+1}. ${stripHtml(item.jawaban||'—')}`,{before:40,after:20}));});
-  }
-  children.push(p(`Nilai = (Skor Diperoleh ÷ ${totalSkorW}) × 100`,{before:120,after:0,size:18,italic:true}));
-
-  // ═══ HALAMAN KISI-KISI ═══
-  children.push(new Paragraph({children:[new PageBreak()]}));
-  children.push(p('KISI-KISI SOAL',{bold:true,align:AlignmentType.CENTER,size:28,after:20}));
-  children.push(p(`${judulUjian} — ${namaSekolah}`,{align:AlignmentType.CENTER,after:6}));
-  children.push(p(`${mapel} | Kelas ${kelas} / Fase ${faseW} | Acuan: KepKaBSKAP No. 046/H/KR/2025`,{align:AlignmentType.CENTER,after:40,size:18}));
-  children.push(garisTebal());children.push(p(''));
-  // Baris kisi-kisi sebagai tabel Word
-  const allSoal=[
-    ...pg.map((item,i)=>({no:i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,80),level:item.level||'C1–C3',bentuk:'PG',nomor:i+1})),
-    ...isian.map((item,i)=>({no:pg.length+i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,80),level:item.level||'C1–C2',bentuk:'Isian',nomor:pg.length+i+1})),
-    ...uraian.map((item,i)=>({no:pg.length+isian.length+i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,80),level:item.level||'C4–C6',bentuk:'Uraian',nomor:pg.length+isian.length+i+1}))
+  // Kisi-kisi
+  let kisiRows='';
+  const allSoalK=[
+    ...pg.map((item,i)=>({no:i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,100),level:item.level||'C1–C3',bentuk:'PG',nomor:i+1})),
+    ...isian.map((item,i)=>({no:pg.length+i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,100),level:item.level||'C1–C2',bentuk:'Isian',nomor:pg.length+i+1})),
+    ...uraian.map((item,i)=>({no:pg.length+isian.length+i+1,materi:item.materi||mapel,indikator:item.indikator||stripHtml(item.soal).substring(0,100),level:item.level||'C4–C6',bentuk:'Uraian',nomor:pg.length+isian.length+i+1}))
   ];
-  function mkCell(txt,w,isBold){
-    return new TableCell({
-      width:{size:w,type:WidthType.DXA},
-      verticalAlign:VA.CENTER,
-      children:[new Paragraph({
-        spacing:{before:40,after:40},
-        children:[new TextRun({text:String(txt||''),size:16,bold:!!isBold,font:'Times New Roman'})]
-      })]
-    });
-  }
-  const kisiHeaderCells=[mkCell('No',400,true),mkCell('Materi',1800,true),mkCell('Indikator Soal',3600,true),mkCell('Level',700,true),mkCell('Bentuk',700,true),mkCell('No.Soal',600,true)];
-  const kisiRows=[new TableRow({children:kisiHeaderCells})];
-  allSoal.forEach(s=>kisiRows.push(new TableRow({children:[mkCell(s.no,400),mkCell(s.materi,1800),mkCell(s.indikator,3600),mkCell(s.level,700),mkCell(s.bentuk,700),mkCell(s.nomor,600)]})));
-  children.push(new Table({rows:kisiRows,width:{size:100,type:WidthType.PERCENTAGE}}));
-  children.push(p('C1=Mengingat | C2=Memahami | C3=Menerapkan | C4=Menganalisis | C5=Mengevaluasi | C6=Mencipta',{before:120,after:0,size:16,italic:true}));
+  allSoalK.forEach(s=>{kisiRows+=`<tr><td style="border:1px solid #000;padding:3px 5px;text-align:center;">${s.no}</td><td style="border:1px solid #000;padding:3px 5px;">${escHtml(s.materi)}</td><td style="border:1px solid #000;padding:3px 5px;">${escHtml(s.indikator)}</td><td style="border:1px solid #000;padding:3px 5px;text-align:center;">${s.level}</td><td style="border:1px solid #000;padding:3px 5px;text-align:center;">${s.bentuk}</td><td style="border:1px solid #000;padding:3px 5px;text-align:center;">${s.nomor}</td></tr>`;});
 
-  // ═══ BUAT & DOWNLOAD ═══
-  const doc=new Document({
-    sections:[{
-      properties:{
-        page:{
-          margin:{top:1134,bottom:1134,left:1587,right:1134}
-        }
-      },
-      children
-    }]
-  });
+  const garis=`<div style="border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:6pt 0;"></div>`;
 
-  Packer.toBlob(doc).then(blob=>{
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;
-    a.download=`Soal_${mapel}_Kelas${kelas}.docx`;
-    document.body.appendChild(a);a.click();
-    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
-  }).catch(err=>{
-    console.error('docx error:',err);
-    alert('Gagal export Word: '+err.message);
-  });
+  const html=`
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8">
+<style>
+  body{font-family:'Times New Roman',Times,serif;font-size:12pt;margin:0;padding:0;}
+  @page{margin:2.5cm 2.5cm 2.5cm 3cm;}
+  p{margin:0;padding:0;}
+  .page-break{page-break-before:always;}
+</style>
+</head>
+<body>
+
+<!-- ═══ SOAL ═══ -->
+<p style="text-align:center;font-size:12pt;font-weight:bold;text-transform:uppercase;margin-bottom:4pt;">${escHtml(judulUjian)}</p>
+<p style="text-align:center;font-size:14pt;font-weight:bold;text-transform:uppercase;margin-bottom:4pt;">${escHtml(namaSekolah)}</p>
+<p style="text-align:center;font-size:11pt;margin-bottom:8pt;">Tahun Pelajaran ${tahun}</p>
+${garis}
+<table style="width:100%;border-collapse:collapse;font-size:12pt;">
+  <tr><td style="width:45%;padding:2px 4px;">Mata Pelajaran</td><td style="width:5%;padding:2px 0;">:</td><td style="width:50%;padding:2px 4px;">${escHtml(mapel)}</td></tr>
+  <tr><td style="padding:2px 4px;">Kelas / Fase</td><td style="padding:2px 0;">:</td><td style="padding:2px 4px;">${kelas} / Fase ${fase}</td><td style="padding:2px 4px;width:20%;">Nama</td><td style="padding:2px 0;">:</td><td style="border-bottom:1px solid #000;padding:2px 4px;width:30%;">&nbsp;</td></tr>
+  <tr><td style="padding:2px 4px;">Tanggal</td><td style="padding:2px 0;">:</td><td style="padding:2px 4px;">${tanggal}</td><td style="padding:2px 4px;">No. Absen</td><td style="padding:2px 0;">:</td><td style="border-bottom:1px solid #000;padding:2px 4px;">&nbsp;</td></tr>
+  <tr><td></td><td></td><td></td><td style="padding:2px 4px;">Nilai</td><td style="padding:2px 0;">:</td><td style="border-bottom:1px solid #000;padding:2px 4px;">&nbsp;</td></tr>
+</table>
+${garis}
+${pgHtml}${isianHtml}${uraianHtml}
+
+<!-- ═══ KUNCI ═══ -->
+<div class="page-break"></div>
+<p style="text-align:center;font-size:14pt;font-weight:bold;text-transform:uppercase;margin-bottom:4pt;">KUNCI JAWABAN</p>
+<p style="text-align:center;font-size:11pt;margin-bottom:4pt;">${escHtml(judulUjian)} — ${escHtml(namaSekolah)}</p>
+<p style="text-align:center;font-size:11pt;margin-bottom:4pt;">${escHtml(mapel)} | Kelas ${kelas} / Fase ${fase}</p>
+<p style="text-align:center;font-size:10pt;margin-bottom:8pt;">Bobot: PG=${bobotPG}pt | Isian=${bobotIsian}pt | Uraian=${bobotUraian}pt | Total Maks: ${totalSkor} poin</p>
+${garis}
+${kunciPGtable}${kunciIsian}${kunciUraian}
+<p style="margin-top:16pt;font-style:italic;font-size:10pt;">Nilai = (Skor Diperoleh ÷ ${totalSkor}) × 100</p>
+
+<!-- ═══ KISI-KISI ═══ -->
+<div class="page-break"></div>
+<p style="text-align:center;font-size:14pt;font-weight:bold;text-transform:uppercase;margin-bottom:4pt;">KISI-KISI SOAL</p>
+<p style="text-align:center;font-size:11pt;margin-bottom:4pt;">${escHtml(judulUjian)} — ${escHtml(namaSekolah)}</p>
+<p style="text-align:center;font-size:10pt;margin-bottom:8pt;">${escHtml(mapel)} | Kelas ${kelas} / Fase ${fase} | Acuan: KepKaBSKAP No. 046/H/KR/2025</p>
+${garis}
+<table style="width:100%;border-collapse:collapse;font-size:10pt;">
+  <tr style="background:#ddd;">
+    <th style="border:1px solid #000;padding:4px;width:5%;text-align:center;">No</th>
+    <th style="border:1px solid #000;padding:4px;width:18%;">Materi</th>
+    <th style="border:1px solid #000;padding:4px;">Indikator Soal</th>
+    <th style="border:1px solid #000;padding:4px;width:9%;text-align:center;">Level</th>
+    <th style="border:1px solid #000;padding:4px;width:9%;text-align:center;">Bentuk</th>
+    <th style="border:1px solid #000;padding:4px;width:8%;text-align:center;">No.Soal</th>
+  </tr>
+  ${kisiRows}
+</table>
+<p style="margin-top:10pt;font-style:italic;font-size:9pt;">C1=Mengingat | C2=Memahami | C3=Menerapkan | C4=Menganalisis | C5=Mengevaluasi | C6=Mencipta</p>
+
+</body></html>`;
+
+  const blob=new Blob(['\ufeff'+html],{type:'application/msword;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`Soal_${mapel}_Kelas${kelas}.doc`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
 }
 
 /* ════════════════════════════════════════════
