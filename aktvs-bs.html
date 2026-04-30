@@ -76,7 +76,7 @@
       if (fetchError) throw fetchError;
 
       if (data) {
-        hasil.innerText = "Kode kamu: " + data.code;
+        tampilKode(data.code);
         console.log("♻️ Kode lama:", data.code);
         return;
       }
@@ -90,7 +90,7 @@
 
       if (insertError) throw insertError;
 
-      hasil.innerText = "Kode kamu: " + kode;
+      tampilKode(kode);
       console.log("✅ Tersimpan:", kode);
 
     } catch (err) {
@@ -101,6 +101,33 @@
       btn.disabled = false;
     }
   });
+
+  function tampilKode(kode) {
+    const hasil = document.getElementById("hasil");
+    hasil.innerHTML = `
+      <div style="font-size:22px;font-weight:bold;color:#0d7a8a;margin-bottom:10px;">Kode kamu: <span id="kodeText">${kode}</span></div>
+      <button id="btnSalin" style="width:100%;padding:10px;background:#0d7a8a;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;margin-bottom:8px;">
+        📋 Salin Kode
+      </button>
+      <a href="https://bantuguruyuk.web.id/soal?kode=${encodeURIComponent(kode)}"
+        style="display:block;width:100%;padding:10px;background:linear-gradient(135deg,#059669,#0d7a8a);color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;text-decoration:none;text-align:center;box-sizing:border-box;">
+        🔓 Aktivasi BGY-Buat Soal Pro
+      </a>
+    `;
+    document.getElementById("btnSalin").addEventListener("click", function() {
+      navigator.clipboard.writeText(kode).then(() => {
+        this.textContent = "✅ Tersalin!";
+        setTimeout(() => this.textContent = "📋 Salin Kode", 2000);
+      }).catch(() => {
+        // fallback
+        const el = document.createElement("textarea");
+        el.value = kode; document.body.appendChild(el);
+        el.select(); document.execCommand("copy"); document.body.removeChild(el);
+        this.textContent = "✅ Tersalin!";
+        setTimeout(() => this.textContent = "📋 Salin Kode", 2000);
+      });
+    });
+  }
 
   console.log("✅ Event listener aktif");
 </script>
