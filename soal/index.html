@@ -20,7 +20,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
+<script>
+// Load docx dengan fallback
+(function(){
+  const urls=[
+    'https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.js',
+    'https://unpkg.com/docx@7.8.2/build/index.js',
+    'https://cdn.jsdelivr.net/npm/docx@8.2.4/build/index.js',
+  ];
+  let idx=0;
+  function tryLoad(){
+    if(idx>=urls.length)return;
+    const s=document.createElement('script');
+    s.src=urls[idx++];
+    s.onerror=()=>tryLoad();
+    document.head.appendChild(s);
+  }
+  tryLoad();
+})();
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -1780,9 +1798,23 @@ async function exportWord(){
     if(typeof window.docx==='undefined'){alert('Library Word gagal dimuat. Coba refresh halaman.');return;}
   }
 
-  const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
-          AlignmentType, BorderStyle, WidthType, PageBreak, UnderlineType,
-          VerticalAlign, ShadingType, ImageRun } = window.docx;
+  const docxLib = window.docx;
+  const Document    = docxLib.Document;
+  const Packer      = docxLib.Packer;
+  const Paragraph   = docxLib.Paragraph;
+  const TextRun     = docxLib.TextRun;
+  const Table       = docxLib.Table;
+  const TableRow    = docxLib.TableRow;
+  const TableCell   = docxLib.TableCell;
+  const AlignmentType = docxLib.AlignmentType;
+  const BorderStyle = docxLib.BorderStyle;
+  const WidthType   = docxLib.WidthType;
+  const PageBreak   = docxLib.PageBreak;
+  const VerticalAlign = docxLib.VerticalAlign;
+  const ShadingType = docxLib.ShadingType;
+  const ImageRun    = docxLib.ImageRun;
+  // UnderlineType: v7 pakai string langsung, v8 pakai enum
+  const UnderlineType = docxLib.UnderlineType || {SINGLE:'single'};
 
   const pg    = soalData.pilihanGanda||[];
   const isian = soalData.isian||[];
@@ -1823,12 +1855,11 @@ async function exportWord(){
     });
   }
   function garisTebal(){
-    // Garis tebal atas-bawah: pakai paragraph dengan border top saja, lalu satu lagi border bottom
-    // Di docx@8, paragraph border pakai struktur {top:{style,size,color}}
+    const thickBorder = { style: BorderStyle.THICK||'thick', size: 18, color: '000000', space: 1 };
     return new Paragraph({
       border: {
-        top: { style: BorderStyle.THICK, size: 18, color: '000000', space: 1 },
-        bottom: { style: BorderStyle.THICK, size: 18, color: '000000', space: 1 }
+        top: thickBorder,
+        bottom: thickBorder
       },
       spacing: { before: 60, after: 60 },
       children: [new TextRun({ text: '' })]
@@ -2054,12 +2085,11 @@ async function exportWord(){
   kisiParagraphs.push(new Table({width:{size:W,type:WidthType.DXA},columnWidths:kisiColW,rows:[kisiHeader,...kisiDataRows]}));
   kisiParagraphs.push(para([txt('C1=Mengingat | C2=Memahami | C3=Menerapkan | C4=Menganalisis | C5=Mengevaluasi | C6=Mencipta',{italic:true,size:18})],{before:120}));
 
-  // ── Buat Document ──
-  const doc = new Document({
-    styles:{ default:{ document:{ run:{ font:TNR, size:22 } } } },
+  // ── Buat Document ── (kompatibel v7 & v8)
+  const docConfig = {
     sections:[{
       properties:{ page:{ size:{width:11906,height:16838},
-        margin:{top:1418,right:1418,bottom:1418,left:1701} } }, // A4, margin 3cm kiri, 2.5cm lain
+        margin:{top:1418,right:1418,bottom:1418,left:1701} } },
       children:[
         ...headerSoal(),
         ...pgParagraphs,
@@ -2071,19 +2101,28 @@ async function exportWord(){
         ...kisiParagraphs,
       ]
     }]
-  });
+  };
+  // v7 pakai styles.default.document, v8 juga support — coba tambahkan
+  try{ docConfig.styles={ default:{ document:{ run:{ font:TNR, size:22 } } } }; }catch(e){}
+  const doc = new Document(docConfig);
 
   const btn = document.querySelector('[onclick="exportWord()"]');
   const origTxt = btn ? btn.textContent : '';
   if(btn){ btn.textContent='⏳ Menyiapkan...'; btn.disabled=true; }
 
   try {
-    const base64 = await window.docx.Packer.toBase64String(doc);
-    const byteChars = atob(base64);
-    const byteNums = new Array(byteChars.length);
-    for(let i=0;i<byteChars.length;i++) byteNums[i]=byteChars.charCodeAt(i);
-    const buffer = new Uint8Array(byteNums);
-    const blob = new Blob([buffer], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    // Packer.toBuffer (v7) atau toBase64String (v8)
+    let blob;
+    if(typeof Packer.toBuffer === 'function'){
+      const buffer = await Packer.toBuffer(doc);
+      blob = new Blob([buffer], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    } else {
+      const base64 = await Packer.toBase64String(doc);
+      const byteChars = atob(base64);
+      const byteNums = new Uint8Array(byteChars.length);
+      for(let i=0;i<byteChars.length;i++) byteNums[i]=byteChars.charCodeAt(i);
+      blob = new Blob([byteNums], {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+    }
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -2091,7 +2130,7 @@ async function exportWord(){
     document.body.appendChild(a); a.click();
     setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); },300);
   } catch(e) {
-    console.error(e);
+    console.error('exportWord error:',e);
     alert('Gagal membuat file Word: '+e.message);
   } finally {
     if(btn){ btn.textContent=origTxt; btn.disabled=false; }
