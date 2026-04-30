@@ -802,22 +802,58 @@ a { text-decoration: none; color: inherit; }
   background: linear-gradient(135deg, var(--surface), rgba(14,165,160,.06));
 }
 
-/* Install button in topbar */
-.btn-install-topbar {
-  display: flex; align-items: center; gap: 6px;
-  padding: 8px 14px;
+/* ─── INSTALL BANNER ─── */
+.install-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--surface);
+  border: 1.5px solid rgba(14,165,160,.25);
+  border-left: 4px solid var(--teal,#0ea5a0);
+  border-radius: var(--r-md);
+  padding: 14px 18px;
+  flex-shrink: 0;
+  animation: fadeUp .4s ease both;
+}
+.install-banner.hidden { display: none !important; }
+.install-banner-left { display: flex; align-items: center; gap: 12px; }
+.install-banner-icon {
+  font-size: 1.6rem;
+  width: 42px; height: 42px;
+  background: rgba(14,165,160,.08);
   border-radius: var(--r-sm);
-  font-size: .77rem; font-weight: 800;
-  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.install-banner-title { font-size: .85rem; font-weight: 700; color: var(--txt-1); }
+.install-banner-sub { font-size: .72rem; color: var(--txt-3); margin-top: 2px; }
+.install-banner-btns { display: flex; gap: 8px; flex-shrink: 0; }
+.install-banner-btn-yes {
+  padding: 8px 18px;
+  border-radius: var(--r-sm);
+  background: var(--grad);
+  color: #fff;
+  border: none;
+  font-size: .8rem; font-weight: 700;
+  cursor: pointer;
   font-family: inherit;
   transition: var(--trans);
-  background: var(--accent,#f59e0b);
-  color: #fff;
-  letter-spacing: .2px;
   white-space: nowrap;
 }
-.btn-install-topbar:hover { background: #d97706; transform: translateY(-1px); }
-.btn-install-topbar.hidden { display: none !important; }
+.install-banner-btn-yes:hover { opacity: .88; transform: translateY(-1px); }
+.install-banner-btn-no {
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--txt-3);
+  border: 1.5px solid var(--border);
+  font-size: .8rem; font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: var(--trans);
+}
+.install-banner-btn-no:hover { border-color: var(--txt-3); }
 </style>
 </head>
 <body>
@@ -906,7 +942,6 @@ a { text-decoration: none; color: inherit; }
     </div>
     <div class="topbar-right">
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti tema">🌙</button>
-      <button id="installTopbarBtn" class="btn-install-topbar hidden" onclick="doInstall()" title="Install aplikasi">📲 Install</button>
       <a href="https://wa.me/6289530713597" target="_blank" class="btn-topbar btn-icon-only" title="Hubungi via WhatsApp">💬</a>
     </div>
   </div>
@@ -1055,6 +1090,21 @@ a { text-decoration: none; color: inherit; }
     </div>
   </div>
 
+  <!-- Install App Banner — muncul kalau belum install -->
+  <div id="installBanner" class="install-banner hidden">
+    <div class="install-banner-left">
+      <div class="install-banner-icon">📲</div>
+      <div>
+        <div class="install-banner-title">Install Bantu Guru Yuk!</div>
+        <div class="install-banner-sub">Akses lebih cepat langsung dari home screen</div>
+      </div>
+    </div>
+    <div class="install-banner-btns">
+      <button onclick="doInstall()" class="install-banner-btn-yes">Install</button>
+      <button onclick="dismissBanner()" class="install-banner-btn-no">Nanti</button>
+    </div>
+  </div>
+
   <!-- Bottom row -->
   <div class="bottom-row">
 
@@ -1194,29 +1244,38 @@ document.addEventListener('DOMContentLoaded', startSlideTimer);
 
 /* ─── PWA Install ─── */
 let deferredPrompt = null;
+
+function showInstallBanner() {
+  if (!sessionStorage.getItem('install-dismissed')) {
+    const banner = document.getElementById('installBanner');
+    if (banner) banner.classList.remove('hidden');
+  }
+}
+
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  // Show topbar install button
-  const topBtn = document.getElementById('installTopbarBtn');
-  if (topBtn) topBtn.classList.remove('hidden');
-  if (!sessionStorage.getItem('install-dismissed')) {
-    setTimeout(() => { document.getElementById('installPopup').style.display = 'block'; }, 3000);
-  }
+  setTimeout(showInstallBanner, 1200);
 });
-function closeInstallPopup() {
-  document.getElementById('installPopup').style.display = 'none';
+
+function dismissBanner() {
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.classList.add('hidden');
   sessionStorage.setItem('install-dismissed', '1');
 }
+
 async function doInstall() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
+    const { outcome } = await deferredPrompt.userChoice;
     deferredPrompt = null;
+    if (outcome === 'accepted') dismissBanner();
+  } else {
+    dismissBanner();
   }
-  closeInstallPopup();
 }
-window.addEventListener('appinstalled', closeInstallPopup);
+
+window.addEventListener('appinstalled', dismissBanner);
 
 /* ─── Register Service Worker ─── */
 if ('serviceWorker' in navigator) {
