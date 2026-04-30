@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Aktivasi BGY-Buat Soal Pro</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f7f9;
+      padding: 20px;
+    }
+
+    .box {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: teal;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .kode {
+      margin-top: 15px;
+      font-size: 20px;
+      font-weight: bold;
+      color: green;
+      text-align: center;
+    }
+
+    .info {
+      font-size: 13px;
+      text-align: center;
+      margin-top: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h3>🔓 Aktivasi PRO Soal</h3>
+
+  <input type="email" id="email" placeholder="Masukkan email kamu">
+
+  <button onclick="buatKode()">Dapatkan Kode</button>
+
+  <div id="hasil" class="kode"></div>
+
+  <div class="info">
+    Simpan kode ini. Gunakan di halaman soal untuk unlock PRO.
+  </div>
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://xtmpiqpmwirsrcsphsto.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w"
+);
+
+// 🔐 generate kode BGY
+function generateKode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let result = "";
+  for (let i = 0; i < 5; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return "BGY-" + result;
+}
+
+// 🚀 fungsi utama
+async function buatKode() {
+  const email = document.getElementById("email").value.trim();
+  const hasil = document.getElementById("hasil");
+
+  if (!email) {
+    hasil.innerText = "Masukkan email dulu ❗";
+    return;
+  }
+
+  hasil.innerText = "Memproses...";
+
+  // cek sudah ada?
+  const { data } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", email)
+    .eq("access", "soal")
+    .maybeSingle();
+
+  if (data) {
+    hasil.innerText = "Kode kamu: " + data.code;
+    return;
+  }
+
+  // buat kode baru
+  const kode = generateKode();
+
+  const { error } = await supabase.from("users").insert({
+    email: email,
+    code: kode,
+    access: "soal",
+    is_pro: false
+  });
+
+  if (error) {
+    hasil.innerText = "Gagal, coba lagi ❌";
+    return;
+  }
+
+  hasil.innerText = "Kode kamu: " + kode;
+}
+</script>
+
+</body>
+</html>
