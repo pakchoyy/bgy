@@ -284,6 +284,58 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   <div class="ls-spinner"></div>
 </div>
 
+<!-- ══ GENERATE LOADING OVERLAY ══ -->
+<div id="generateOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 50%,#0d2137 100%);flex-direction:column;align-items:center;justify-content:center;gap:0;">
+  <style>
+    #generateOverlay .go-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:goOrb 4s ease-in-out infinite;}
+    @keyframes goOrb{0%,100%{transform:scale(1) translate(0,0);opacity:.5;}50%{transform:scale(1.2) translate(10px,-10px);opacity:.8;}}
+    #generateOverlay .go-orb1{width:300px;height:300px;background:radial-gradient(circle,#0ea5a066,transparent);top:-80px;left:-80px;animation-delay:0s;}
+    #generateOverlay .go-orb2{width:250px;height:250px;background:radial-gradient(circle,#f59e0b44,transparent);bottom:-60px;right:-60px;animation-delay:1.5s;}
+    #generateOverlay .go-orb3{width:180px;height:180px;background:radial-gradient(circle,#3b82f644,transparent);bottom:30%;right:15%;animation-delay:.8s;}
+    #generateOverlay .go-logo{width:72px;height:72px;border-radius:20px;margin-bottom:24px;box-shadow:0 0 40px rgba(14,165,160,.5);}
+    #generateOverlay .go-ring-wrap{position:relative;width:110px;height:110px;margin-bottom:28px;}
+    #generateOverlay .go-ring{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;}
+    #generateOverlay .go-ring1{border-top-color:#0ea5a0;border-right-color:#0ea5a0;animation:goSpin1 1.2s linear infinite;}
+    #generateOverlay .go-ring2{inset:12px;border-top-color:#f59e0b;border-left-color:#f59e0b;animation:goSpin2 1.8s linear infinite reverse;}
+    #generateOverlay .go-ring3{inset:24px;border-top-color:#fff;animation:goSpin1 2.4s linear infinite;}
+    #generateOverlay .go-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;}
+    @keyframes goSpin1{to{transform:rotate(360deg);}}
+    @keyframes goSpin2{to{transform:rotate(360deg);}}
+    #generateOverlay .go-title{font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:.5px;text-align:center;margin-bottom:8px;}
+    #generateOverlay .go-sub{font-size:.9rem;color:rgba(255,255,255,.7);text-align:center;margin-bottom:32px;font-style:italic;}
+    #generateOverlay .go-msgs{min-height:28px;text-align:center;}
+    #generateOverlay .go-msg{font-size:.82rem;color:#5eead4;font-weight:700;letter-spacing:.3px;animation:goMsgFade .5s ease;}
+    @keyframes goMsgFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+    #generateOverlay .go-dots{display:flex;gap:8px;margin-top:24px;align-items:center;justify-content:center;}
+    #generateOverlay .go-dot{width:8px;height:8px;border-radius:50%;background:#0ea5a0;animation:goDot 1.4s ease-in-out infinite;}
+    #generateOverlay .go-dot:nth-child(2){background:#f59e0b;animation-delay:.2s;}
+    #generateOverlay .go-dot:nth-child(3){background:#3b82f6;animation-delay:.4s;}
+    @keyframes goDot{0%,80%,100%{transform:scale(.7);opacity:.5;}40%{transform:scale(1.2);opacity:1;}}
+    #generateOverlay .go-bar-wrap{width:260px;height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:20px;}
+    #generateOverlay .go-bar{height:100%;background:linear-gradient(90deg,#0ea5a0,#f59e0b,#3b82f6);border-radius:99px;animation:goBar 2.5s ease-in-out infinite;}
+    @keyframes goBar{0%{width:0%;margin-left:0;}50%{width:70%;margin-left:0;}100%{width:0%;margin-left:100%;};}
+  </style>
+  <div class="go-orb go-orb1"></div>
+  <div class="go-orb go-orb2"></div>
+  <div class="go-orb go-orb3"></div>
+  <img src="guru-cibisd2.png" alt="Logo" class="go-logo" onerror="this.style.display='none'"/>
+  <div class="go-ring-wrap">
+    <div class="go-ring go-ring1"></div>
+    <div class="go-ring go-ring2"></div>
+    <div class="go-ring go-ring3"></div>
+    <div class="go-icon">✨</div>
+  </div>
+  <div class="go-title">Sedang Membuat Soal</div>
+  <div class="go-sub">Sabarrr ya... AI lagi kerja keras nih! 🧠</div>
+  <div class="go-msgs"><div class="go-msg" id="goMsg">Menyiapkan pertanyaan terbaik...</div></div>
+  <div class="go-dots">
+    <div class="go-dot"></div>
+    <div class="go-dot"></div>
+    <div class="go-dot"></div>
+  </div>
+  <div class="go-bar-wrap"><div class="go-bar"></div></div>
+</div>
+
 <!-- ══ INSTALL POPUP ══ -->
 <div id="installPopup">
   <span>📲 Install aplikasi Bantu Guru Yuk</span>
@@ -627,11 +679,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
     <div class="preview-scroll-wrapper">
     <div id="previewBox" style="position:relative;">
-      <div id="previewLoading" style="display:none;position:absolute;inset:0;z-index:50;background:rgba(255,255,255,.95);border-radius:4px;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:400px;">
-        <div style="width:52px;height:52px;border:5px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;"></div>
-        <div style="font-size:.95rem;font-weight:700;color:var(--blue);">Sedang membuat soal...</div>
-        <div style="font-size:.78rem;color:var(--text-light);">AI sedang bekerja, mohon tunggu 🙏</div>
-      </div>
       <div class="empty-state" id="watermarkState">
         <div class="icon">📄</div>
         <p>Lembar soal tampil di sini setelah Generate Soal.</p>
@@ -1316,11 +1363,40 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
 }
 
 
+const _goMessages=[
+  'Menyiapkan pertanyaan terbaik... 📝',
+  'AI lagi mikir keras nih, bentar ya! 🧠',
+  'Lagi milih soal yang paling cucok... 🎯',
+  'Sabarrrrr, hampir jadi! ⏳',
+  'Ngeracik soal sesuai kurikulum... 📚',
+  'Mastiin soal nggak terlalu susah... 😅',
+  'Ngecek kunci jawaban dulu... 🔑',
+  'Dikiiit lagi, ditunggu ya Bu/Pak Guru! 🙏',
+  'AI-nya lagi semangat bikin soal! 💪',
+  'Proses... sambil ngopi dulu boleh nih ☕',
+];
+let _goMsgTimer=null,_goMsgIdx=0;
+function _startGoMessages(){
+  _goMsgIdx=0;
+  const el=document.getElementById('goMsg');
+  function rotate(){
+    if(el){el.style.animation='none';el.offsetHeight;el.style.animation='';el.textContent=_goMessages[_goMsgIdx%_goMessages.length];_goMsgIdx++;}
+    _goMsgTimer=setTimeout(rotate,2800);
+  }
+  rotate();
+}
+function _stopGoMessages(){clearTimeout(_goMsgTimer);}
+
 function setLoading(s){
   document.getElementById('btnGenerate').disabled=s;
   document.getElementById('spinner').style.display=s?'block':'none';
-  const pl=document.getElementById('previewLoading');
-  if(pl){pl.style.display=s?'flex':'none';}
+  // Full-screen overlay
+  const ov=document.getElementById('generateOverlay');
+  if(ov){
+    ov.style.display=s?'flex':'none';
+    if(s){_startGoMessages();document.body.style.overflow='hidden';}
+    else{_stopGoMessages();document.body.style.overflow='';}
+  }
   if(s){
     document.getElementById('btnLabel').textContent='Membuat soal...';
     const ws=document.getElementById('watermarkState');
@@ -1691,7 +1767,18 @@ async function exportPDF(mode){
 ════════════════════════════════════════════ */
 async function exportWord(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  if(typeof window.docx === 'undefined'){alert('Library docx belum siap, tunggu sebentar lalu coba lagi.');return;}
+  // Tunggu docx library siap (maks 8 detik)
+  if(typeof window.docx === 'undefined'){
+    const btn=document.querySelector('[onclick="exportWord()"]');
+    const origTxt=btn?btn.textContent:'';
+    if(btn){btn.textContent='⏳ Memuat library...';btn.disabled=true;}
+    let waited=0;
+    while(typeof window.docx==='undefined'&&waited<8000){
+      await new Promise(r=>setTimeout(r,300));waited+=300;
+    }
+    if(btn){btn.textContent=origTxt;btn.disabled=false;}
+    if(typeof window.docx==='undefined'){alert('Library Word gagal dimuat. Coba refresh halaman.');return;}
+  }
 
   const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
           AlignmentType, BorderStyle, WidthType, PageBreak, UnderlineType,
