@@ -534,32 +534,53 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     🔓 Aktivasi Pro — Generate Unlimited
   </div>
 
-  <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;">
-    <a href="http://lynk.id/kreacy/mplxqygkqj36" target="_blank" style="color:#0d7a8a;font-weight:700;">
-      Klik disini
-    </a> untuk membuka fitur pro.
+  <!-- MODE 1: Kode aktivasi (redirect dari aktvs-bs.html) -->
+  <div id="modeKode" style="display:none;">
+    <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;">
+      Masukkan email pembelian + kode aktivasi:
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <input type="email" id="inputEmailKode"
+        placeholder="Email pembelian..."
+        style="padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;"/>
+      <div style="display:flex;gap:6px;">
+        <input type="text" id="inputKodeAktivasi"
+          placeholder="Kode (BGY-XXXXX)..."
+          style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;letter-spacing:1px;"/>
+        <button onclick="verifikasiKode()"
+          style="background:linear-gradient(135deg,#059669,#0d7a8a);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;">
+          Aktivasi
+        </button>
+      </div>
+    </div>
+    <div style="font-size:.68rem;color:var(--text-light);margin-top:6px;text-align:center;">
+      Sudah pernah aktivasi? <a href="#" onclick="tampilModeEmail();return false;" style="color:#0d7a8a;font-weight:700;">Cek pakai email</a>
+    </div>
   </div>
 
-  <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;">
-    Cek, email kamu sudah terdaftar BGY-Buat Soal PRO?
-  </div>
-
-  <div style="display:flex;gap:6px;">
-    <input type="email" id="inputEmailPro"
-      placeholder="Masukkan email pembelian..."
-      style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;"/>
-
-    <button onclick="cekAksesPro()"
-      style="background:linear-gradient(135deg,#0ea5a0,#2d6a7f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;">
-      Cek
-    </button>
+  <!-- MODE 2: Cek email (default / ganti device) -->
+  <div id="modeEmail" style="display:block;">
+    <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;">
+      <a href="http://lynk.id/kreacy/mplxqygkqj36" target="_blank" style="color:#0d7a8a;font-weight:700;">Klik disini</a> untuk membuka fitur pro.
+    </div>
+    <div style="font-size:.72rem;color:var(--text-light);margin-bottom:6px;">
+      Sudah beli? Cek email kamu:
+    </div>
+    <div style="display:flex;gap:6px;">
+      <input type="email" id="inputEmailPro"
+        placeholder="Masukkan email pembelian..."
+        style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;"/>
+      <button onclick="cekAksesPro()"
+        style="background:linear-gradient(135deg,#0ea5a0,#2d6a7f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;">
+        Cek
+      </button>
+    </div>
+    <div style="font-size:.68rem;color:var(--text-light);margin-top:6px;text-align:center;">
+      Punya kode aktivasi? <a href="#" onclick="tampilModeKode();return false;" style="color:#0d7a8a;font-weight:700;">Masukkan kode</a>
+    </div>
   </div>
 
   <div id="aktivasiMsg" style="font-size:.72rem;margin-top:6px;min-height:14px;"></div>
-
-  <div style="font-size:.68rem;color:var(--text-light);margin-top:4px;text-align:center;">
-    Gunakan email yang sama saat pembelian
-  </div>
 
 </div>
 
@@ -2199,63 +2220,137 @@ function updateLimitDisplay(){
   const btnLbl=document.getElementById('btnLabel');
   if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1)btnLbl.textContent=ok?`✨ Generate Soal (${remaining}x)`:'⛔ Limit Habis';
 }
-// ════ SUPABASE PRO ════
+// ════════════════════════════════════════════
+//  SUPABASE PRO SYSTEM
+// ════════════════════════════════════════════
 const SUPABASE_URL = "https://xtmpiqpmwirsrcsphsto.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w";
 
 let supabaseClient = null;
 function getSupabase(){
   if(!supabaseClient){
-    if(typeof window.supabase === 'undefined'){console.warn('Supabase belum load');return null;}
+    if(typeof window.supabase==='undefined'){console.warn('Supabase belum load');return null;}
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
   return supabaseClient;
 }
 
-// 🔓 UNLOCK PRO
+// ── Toggle mode UI ──
+function tampilModeKode(){
+  document.getElementById('modeKode').style.display='block';
+  document.getElementById('modeEmail').style.display='none';
+  document.getElementById('aktivasiMsg').innerText='';
+}
+function tampilModeEmail(){
+  document.getElementById('modeKode').style.display='none';
+  document.getElementById('modeEmail').style.display='block';
+  document.getElementById('aktivasiMsg').innerText='';
+}
+
+// ── Unlock lokal ──
 function unlockPro(){
   localStorage.setItem('bgy_pro', JSON.stringify({aktif:true, tgl:getTodayStr()}));
   const badge = document.getElementById("hBadge");
-  if(badge){ badge.innerText = "PRO"; badge.className = "badge-pro"; }
+  if(badge){ badge.innerText="PRO"; badge.className="badge-pro"; }
   updateLimitDisplay();
 }
 
-// 🔍 CEK AKSES (dipanggil dari tombol onclick)
-async function cekAksesPro(){
-  const emailEl = document.getElementById("inputEmailPro");
-  const msg = document.getElementById("aktivasiMsg");
-  const email = (emailEl ? emailEl.value : '').trim();
+// ── MODE 1: Verifikasi kode aktivasi (dari aktvs-bs.html) ──
+async function verifikasiKode(){
+  const msg   = document.getElementById("aktivasiMsg");
+  const email = (document.getElementById("inputEmailKode")?.value||'').trim();
+  const kode  = (document.getElementById("inputKodeAktivasi")?.value||'').trim().toUpperCase();
 
-  if(!email){ msg.innerText = "⚠️ Masukkan email dulu"; msg.style.color = "red"; return; }
-  msg.innerText = "⏳ Mengecek..."; msg.style.color = "#555";
+  if(!email){ msg.innerText="⚠️ Masukkan email dulu"; msg.style.color="red"; return; }
+  if(!kode)  { msg.innerText="⚠️ Masukkan kode aktivasi"; msg.style.color="red"; return; }
 
+  msg.innerText="⏳ Memverifikasi..."; msg.style.color="#555";
   const sb = getSupabase();
-  if(!sb){ msg.innerText = "❌ Gagal terhubung, refresh halaman."; msg.style.color = "red"; return; }
+  if(!sb){ msg.innerText="❌ Gagal terhubung, refresh."; msg.style.color="red"; return; }
 
   try {
-    const { data } = await sb.from("users").select("*").eq("email", email).eq("is_pro", true).single();
-    if(data){
-      msg.innerText = "✅ PRO aktif — selamat! 🎉"; msg.style.color = "green";
-      localStorage.setItem("pro_email", email);
-      unlockPro();
-    } else {
-      msg.innerText = "❌ Belum terdaftar — silakan beli dulu"; msg.style.color = "red";
+    // Cek email + kode cocok di Supabase
+    const { data, error } = await sb
+      .from("users").select("id,email,code,is_pro")
+      .eq("email", email).eq("code", kode).eq("access","soal")
+      .maybeSingle();
+
+    if(error) throw error;
+    if(!data){ msg.innerText="❌ Email/kode tidak cocok. Cek kembali."; msg.style.color="red"; return; }
+
+    // Update is_pro = true
+    if(!data.is_pro){
+      const { error: updErr } = await sb.from("users").update({is_pro:true}).eq("id", data.id);
+      if(updErr) throw updErr;
     }
-  } catch(e) {
-    msg.innerText = "❌ Gagal cek server. Coba lagi."; msg.style.color = "red";
+
+    msg.innerText="✅ Aktivasi berhasil! Selamat menikmati Pro 🎉"; msg.style.color="green";
+    localStorage.setItem("pro_email", email);
+    unlockPro();
+
+  } catch(e){
+    msg.innerText="❌ Gagal: "+(e.message||'coba lagi'); msg.style.color="red";
+    console.error(e);
   }
 }
 
-// 🔁 AUTO LOGIN saat halaman load
+// ── MODE 2: Cek email saja (ganti device / user lama) ──
+async function cekAksesPro(){
+  const msg   = document.getElementById("aktivasiMsg");
+  const email = (document.getElementById("inputEmailPro")?.value||'').trim();
+
+  if(!email){ msg.innerText="⚠️ Masukkan email dulu"; msg.style.color="red"; return; }
+  msg.innerText="⏳ Mengecek..."; msg.style.color="#555";
+
+  const sb = getSupabase();
+  if(!sb){ msg.innerText="❌ Gagal terhubung, refresh."; msg.style.color="red"; return; }
+
+  try {
+    const { data, error } = await sb
+      .from("users").select("id,is_pro")
+      .eq("email", email).eq("access","soal").eq("is_pro",true)
+      .maybeSingle();
+
+    if(error) throw error;
+    if(data){
+      msg.innerText="✅ PRO aktif — selamat datang kembali! 🎉"; msg.style.color="green";
+      localStorage.setItem("pro_email", email);
+      unlockPro();
+    } else {
+      msg.innerText="❌ Belum terdaftar Pro. Beli dulu atau masukkan kode."; msg.style.color="red";
+    }
+  } catch(e){
+    msg.innerText="❌ Gagal cek server. Coba lagi."; msg.style.color="red";
+  }
+}
+
+// ── AUTO LOGIN + deteksi ?kode= dari URL ──
 document.addEventListener("DOMContentLoaded", async ()=>{
+  // Cek URL param ?kode=BGY-XXXXX
+  const urlParams = new URLSearchParams(window.location.search);
+  const kodeUrl   = urlParams.get("kode");
+  if(kodeUrl){
+    // Tampilkan mode kode, isi otomatis kode-nya
+    tampilModeKode();
+    const inputKode = document.getElementById("inputKodeAktivasi");
+    if(inputKode) inputKode.value = kodeUrl.toUpperCase();
+    // Bersihkan URL tanpa reload
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return;
+  }
+
+  // Auto-login dari localStorage
   const email = localStorage.getItem("pro_email");
   if(!email) return;
   const sb = getSupabase();
   if(!sb) return;
   try {
-    const { data } = await sb.from("users").select("*").eq("email", email).eq("is_pro", true).single();
+    const { data } = await sb
+      .from("users").select("id")
+      .eq("email", email).eq("is_pro",true).maybeSingle();
     if(data) unlockPro();
-  } catch(e) {}
+    else localStorage.removeItem("pro_email"); // hapus kalau sudah tidak aktif
+  } catch(e){}
 });
 </script>
 </body>
