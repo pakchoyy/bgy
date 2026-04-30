@@ -269,15 +269,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   /* Paksa semua warna tercetak */
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
-  #aktivasiBox {
-  position: relative;
-  z-index: 10;
-}
 
-#aktivasiBox button {
-  position: relative;
-  z-index: 11;
-}
 </style>
 </head>
 <body>
@@ -927,7 +919,7 @@ let halamanSoal=[],currentPage=0;
 let deferredInstallPrompt=null;
 let lastMateriTerpilih='';
 const DAILY_LIMIT=1;
-const WORKER_URL='https://bgypro-soal.pulsachoy.workers.dev/';
+
 
 /* ════════════════════════════════════════════
    HELPERS
@@ -2093,7 +2085,14 @@ function validateForm(){
 /* ════════════════════════════════════════════
    DAILY LIMIT & PRO
 ════════════════════════════════════════════ */
-function isPro(){try{const d=JSON.parse(localStorage.getItem('bgy_pro')||'{}');return d.aktif===true;}catch{return false;}}
+function isPro(){
+  try{
+    const d=JSON.parse(localStorage.getItem('bgy_pro')||'{}');
+    if(d.aktif===true) return true;
+  }catch{}
+  // fallback: kalau pro_email ada (sudah pernah cek Supabase sebelumnya)
+  return !!localStorage.getItem('pro_email');
+}
 function getTodayStr(){return new Date().toISOString().slice(0,10);}
 function getDailyUsage(){try{const r=localStorage.getItem('bgy_daily_usage');return r?JSON.parse(r):{date:'',count:0};}catch{return{date:'',count:0};}}
 function incrementDaily(){const today=getTodayStr();let u=getDailyUsage();if(u.date!==today)u={date:today,count:0};u.count++;localStorage.setItem('bgy_daily_usage',JSON.stringify(u));return u.count;}
@@ -2111,20 +2110,7 @@ function updateLimitDisplay(){
   const btnLbl=document.getElementById('btnLabel');
   if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1)btnLbl.textContent=ok?`✨ Generate Soal (${remaining}x)`:'⛔ Limit Habis';
 }
-async function aktivasiPro(){
-  const kode=document.getElementById('inputKodeAktivasi').value.trim();
-  const msgEl=document.getElementById('aktivasiMsg');
-  if(!kode){msgEl.textContent='⚠️ Masukkan kode aktivasi dulu.';msgEl.style.color='#dc2626';return;}
-  msgEl.textContent='⏳ Memverifikasi...';msgEl.style.color='#64748b';
-  try{
-    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'verify',kode})});
-    const json=await res.json();
-    if(json.valid){
-      localStorage.setItem('bgy_pro',JSON.stringify({aktif:true,kode,tgl:getTodayStr()}));
-      msgEl.textContent='✅ Aktivasi berhasil! Selamat, kamu sekarang Pro 🎉';msgEl.style.color='#059669';updateLimitDisplay();
-    }else{msgEl.textContent='❌ Kode tidak valid. Hubungi Pak Choyy via WA.';msgEl.style.color='#dc2626';}
-  }catch(e){msgEl.textContent='❌ Gagal terhubung ke server verifikasi.';msgEl.style.color='#dc2626';}
-}
+// fungsi aktivasiPro lama (Cloudflare Worker) sudah dihapus — sekarang pakai Supabase
 </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -2185,16 +2171,17 @@ window.addEventListener("load", async ()=>{
   }
 });
 
-// 🔓 UNLOCK PRO (EDIT SESUAI WEBMU)
+// 🔓 UNLOCK PRO
 function unlockPro(){
-  console.log("PRO AKTIF");
+  // Simpan status pro ke localStorage supaya isPro() terbaca
+  localStorage.setItem('bgy_pro', JSON.stringify({aktif:true, tgl:getTodayStr()}));
 
-  // contoh:
+  // Update badge header
   const badge = document.getElementById("hBadge");
-  if(badge) badge.innerText = "PRO";
+  if(badge){ badge.innerText = "PRO"; badge.className = "badge-pro"; }
 
-  // TODO:
-  // hilangkan limit generate di sini
+  // Update tampilan limit & sembunyikan aktivasiBox
+  updateLimitDisplay();
 }
 </script>
 </body>
