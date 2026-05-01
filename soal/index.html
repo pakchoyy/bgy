@@ -182,10 +182,10 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .page-nav button:disabled{opacity:.3;cursor:not-allowed;}
 .page-info{font-size:.78rem;color:var(--text-light);font-weight:600;min-width:72px;text-align:center;}
 
-.preview-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:10px 6px;text-align:center;}
-#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:300px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;position:relative;display:inline-block;vertical-align:top;text-align:left;}
+.preview-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:10px 6px;display:flex;justify-content:center;}
+#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:300px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;position:relative;display:block;text-align:left;}
 #previewBox.has-content{min-height:1123px;}
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;color:var(--text-light);padding:40px 20px;width:100%;}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;color:var(--text-light);padding:40px 20px;width:100%;box-sizing:border-box;}
 @media(max-width:700px){
   .preview-scroll-wrapper{padding:6px 2px;}
   #previewBox{width:700px!important;min-width:700px!important;padding:7mm 8mm 7mm 9mm!important;font-size:9.5pt!important;}
@@ -1914,11 +1914,11 @@ async function exportWord(){
     return new D.TextRun(run);
   }
   function HR(){
-    // Garis tebal pakai paragraph dengan border atas & bawah
+    // Double line — sama dengan preview: border-top + border-bottom (3px black)
     return new D.Paragraph({
       border:{top:bThick,bottom:bThick},
-      spacing:{before:80,after:80},
-      children:[new D.TextRun({text:'',font:TNR,size:4})]
+      spacing:{before:60,after:80},
+      children:[new D.TextRun({text:'',font:TNR,size:8})]
     });
   }
   function PB(){ return new D.Paragraph({children:[new D.PageBreak()]}); }
@@ -1994,22 +1994,63 @@ async function exportWord(){
   ])],[logoW,titleW,logoW]));
   headerRows.push(HR());
 
-  // Identitas siswa
-  const hW=Math.floor(W/2);
-  headerRows.push(noTable([
+  // Identitas siswa — struktur 6 kolom persis seperti preview
+  // Kolom: label_kiri | sep | value_kiri | spacer | label_kanan | sep | value_kanan
+  const labelW=1500, sepW=200, valueW=2700, spacerW=200, labelRW=1200, sepRW=200, valueRW=2026;
+  const totalCols=[labelW,sepW,valueW,spacerW,labelRW,sepRW,valueRW];
+
+  function idCell(text,w,underline){
+    return new D.TableCell({
+      width:{size:w,type:'dxa'},
+      borders:{top:bNone,bottom:underline?bCell:bNone,left:bNone,right:bNone},
+      margins:{top:40,bottom:40,left:60,right:60},
+      children:[P([T(text,{size:22})],{after:0})]
+    });
+  }
+  function sepCell(){
+    return new D.TableCell({
+      width:{size:sepW,type:'dxa'},
+      borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
+      margins:{top:40,bottom:40,left:0,right:0},
+      children:[P([T(':',{size:22})],{align:'center',after:0})]
+    });
+  }
+
+  const identRows=[
     tblRow([
-      noCell(P([T('Mata Pelajaran',{size:22}),T(' : ',{size:22}),T(mapel,{size:22})]),hW),
-      noCell(P([T('Nama : _________________________',{size:22})]),hW),
+      idCell('Mata Pelajaran',labelW,false),
+      sepCell(),
+      idCell(mapel,valueW,true),
+      idCell('',spacerW,false),
+      idCell('Nama',labelRW,false),
+      sepCell(),
+      idCell('',valueRW,true),
     ]),
     tblRow([
-      noCell(P([T('Kelas / Fase',{size:22}),T(' : ',{size:22}),T(kelas+' / Fase '+fase,{size:22})]),hW),
-      noCell(P([T('No. Absen : __________',{size:22})]),hW),
+      idCell('Kelas / Fase',labelW,false),
+      sepCell(),
+      idCell(kelas+' / Fase '+fase,valueW,true),
+      idCell('',spacerW,false),
+      idCell('No. Absen',labelRW,false),
+      sepCell(),
+      idCell('',valueRW,true),
     ]),
     tblRow([
-      noCell(P([T('Tanggal',{size:22}),T(' : ',{size:22}),T(tanggal,{size:22})]),hW),
-      noCell(P([T('Nilai : __________',{size:22})]),hW),
+      idCell('Tanggal',labelW,false),
+      sepCell(),
+      idCell(tanggal,valueW,true),
+      idCell('',spacerW,false),
+      idCell('Nilai',labelRW,false),
+      sepCell(),
+      idCell('',valueRW,true),
     ]),
-  ],[hW,hW]));
+  ];
+  headerRows.push(new D.Table({
+    width:{size:W,type:'dxa'},
+    columnWidths:totalCols,
+    borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
+    rows:identRows
+  }));
   headerRows.push(HR());
 
   // ── Soal PG ──
