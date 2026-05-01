@@ -154,15 +154,14 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .page-nav button:disabled{opacity:.3;cursor:not-allowed;}
 .page-info{font-size:.78rem;color:var(--text-light);font-weight:600;min-width:72px;text-align:center;}
 
-.preview-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:10px 6px;}
-#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:300px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;position:relative;display:block;text-align:left;transform-origin:top left;}
+.preview-scroll-wrapper{overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:10px 6px;}
+#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:300px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;position:relative;display:block;text-align:left;transform-origin:top center;}
 #previewBox.has-content{min-height:1123px;}
 /* Empty state: absolute center di dalam previewBox */
 #previewBox:not(.has-content){display:flex;align-items:center;justify-content:center;}
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--text-light);padding:40px 20px;width:100%;box-sizing:border-box;}
 @media(max-width:700px){
-  .preview-scroll-wrapper{padding:4px 2px;overflow-x:hidden;}
-  #previewBox{width:700px!important;min-width:700px!important;padding:7mm 8mm 7mm 9mm!important;font-size:9.5pt!important;}
+  .preview-scroll-wrapper{padding:4px 2px;}
   .doc-school-name{font-size:11pt!important;}
   .doc-ujian-title{font-size:9.5pt!important;}
   .opsi-table td{font-size:9pt!important;}
@@ -271,7 +270,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   html,body{margin:0!important;padding:0!important;}
   header,footer,.col-form,.export-bar,.page-nav,#installPopup,#menuOverlay{display:none!important;}
   main{display:block;padding:0;}
-  #previewBox{box-shadow:none;padding:0;max-width:100%;border-radius:0;width:100%!important;}
+  #previewBox{box-shadow:none;padding:0;max-width:100%;border-radius:0;width:794px!important;transform:none!important;}
   body{background:#fff!important;}
   /* Paksa semua warna tercetak */
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
@@ -706,6 +705,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           </div>
         </div>
         <button class="btn btn-secondary" onclick="exportWord()">📝 Download Word</button>
+        <span title="Disarankan Download PDF untuk hasil terbaik!" style="display:inline-flex;align-items:center;justify-content:center;background:#fef9c3;border:1.5px solid #fde047;border-radius:8px;padding:4px 10px;font-size:.72rem;color:#854d0e;font-weight:700;cursor:default;gap:4px;white-space:nowrap;">💡 PDF lebih rapi</span>
       </div>
       <div style="margin-top:8px;font-size:.72rem;color:var(--text-light);">
         ✅ Kunci + kisi-kisi ada di halaman terakhir. &nbsp;|&nbsp; ⌨️ ← → ganti halaman, Ctrl+G generate.
@@ -1424,7 +1424,7 @@ Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi ka
     buildHalaman(soalData);
     currentPage=0;showPage(0);
     simpanHistori(data);
-    setTimeout(()=>{ document.getElementById('previewBox').scrollIntoView({behavior:'smooth',block:'start'}); scalePreview(); },200);
+    setTimeout(()=>{document.getElementById('previewBox').scrollIntoView({behavior:'smooth',block:'start'});scalePreview();},200);
     setTimeout(()=>enableInlineEdit(),400);
     showGenerateFeedback('✅ Soal berhasil dibuat!',3000);
     document.getElementById('userFeedbackBox').style.display='block';
@@ -1712,6 +1712,7 @@ function showPage(idx){
   pb.innerHTML=halamanSoal[currentPage];
   pb.classList.add('has-content');
   updatePageNav();
+  setTimeout(scalePreview,50);
 }
 function prevPage(){showPage(currentPage-1);}
 function nextPage(){showPage(currentPage+1);}
@@ -1924,16 +1925,16 @@ async function exportWord(){
   }
   // HR: 2 paragraf tipis dgn border-bottom = double line persis seperti preview
   function HR(){
-    const line={style:'single',size:12,color:'000000'};
+    const line={style:'single',size:18,color:'000000'};
     return [
       new D.Paragraph({
         border:{bottom:line},
-        spacing:{before:60,after:0},
+        spacing:{before:20,after:0},
         children:[new D.TextRun({text:'',size:2})]
       }),
       new D.Paragraph({
         border:{bottom:line},
-        spacing:{before:0,after:60},
+        spacing:{before:20,after:0},
         children:[new D.TextRun({text:'',size:2})]
       }),
     ];
@@ -2004,9 +2005,9 @@ async function exportWord(){
       borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
       verticalAlign:'center',
       children:[
-        P([T(judulUjian,{bold:true,size:20})],{align:'center',after:20}),
-        P([T(namaSekolah,{bold:true,size:28})],{align:'center',after:20}),
-        P([T('Tahun Pelajaran '+tahun,{size:20})],{align:'center',after:0}),
+        P([T(judulUjian,{bold:true,size:20})],{align:'center',before:0,after:10}),
+        P([T(namaSekolah,{bold:true,size:28})],{align:'center',before:0,after:10}),
+        P([T('Tahun Pelajaran '+tahun,{size:20})],{align:'center',before:0,after:0}),
       ]
     }),
     logoCell('logo2'),
@@ -2021,17 +2022,17 @@ async function exportWord(){
   function idCell(text,w,underline){
     return new D.TableCell({
       width:{size:w,type:'dxa'},
-      borders:{top:bNone,bottom:underline?bCell:bNone,left:bNone,right:bNone},
-      margins:{top:40,bottom:40,left:60,right:60},
-      children:[P([T(text,{size:22})],{after:0})]
+      borders:{top:bNone,bottom:underline?{style:'single',size:6,color:'000000'}:bNone,left:bNone,right:bNone},
+      margins:{top:20,bottom:20,left:60,right:60},
+      children:[new D.Paragraph({spacing:{before:0,after:0},children:[T(text,{size:22})]})]
     });
   }
   function sepCell(){
     return new D.TableCell({
       width:{size:sepW,type:'dxa'},
       borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
-      margins:{top:40,bottom:40,left:0,right:0},
-      children:[P([T(':',{size:22})],{align:'center',after:0})]
+      margins:{top:20,bottom:20,left:0,right:0},
+      children:[new D.Paragraph({spacing:{before:0,after:0},alignment:'center',children:[T(':',{size:22})]})]
     });
   }
 
@@ -2078,26 +2079,14 @@ async function exportWord(){
     pgP.push(P([T('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:200,after:60}));
     pgP.push(P([T('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,size:20})],{after:80}));
     pg.forEach((item,i)=>{
-      // Soal PG: nomor di kolom kiri (440 dxa), teks di kolom kanan — baris ke-2 otomatis rata
-      const noW=440, txtW=W-noW;
-      pgP.push(new D.Table({
-        width:{size:W,type:'dxa'},
-        layout:'fixed',
-        columnWidths:[noW,txtW],
+      const noW=380,txtW=W-noW;
+      pgP.push(new D.Table({width:{size:W,type:'dxa'},layout:'fixed',columnWidths:[noW,txtW],
         borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
         rows:[new D.TableRow({children:[
-          new D.TableCell({
-            width:{size:noW,type:'dxa'},
-            borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
-            margins:{top:40,bottom:0,left:0,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((i+1)+'.',{bold:true,size:22})]})]
-          }),
-          new D.TableCell({
-            width:{size:txtW,type:'dxa'},
-            borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
-            margins:{top:40,bottom:0,left:60,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:30},children:[T(stripHtml(item.soal||''),{size:22})]})]
-          }),
+          new D.TableCell({width:{size:noW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:0,right:0},
+            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((i+1)+'.',{bold:true,size:22})]})]}),
+          new D.TableCell({width:{size:txtW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:80,right:0},
+            children:[new D.Paragraph({spacing:{before:80,after:30},children:[T(stripHtml(item.soal||''),{size:22})]})]}),
         ]})]
       }));
       const opsi=item.opsi||[];
@@ -2141,28 +2130,17 @@ async function exportWord(){
     isP.push(P([T('II. Isian Singkat',{bold:true,underline:true,size:22})],{before:240,after:60}));
     isP.push(P([T('Isilah titik-titik berikut dengan jawaban yang tepat!',{italic:true,size:20})],{after:80}));
     isian.forEach((item,i)=>{
-      const noW=440, txtW=W-noW;
-      isP.push(new D.Table({
-        width:{size:W,type:'dxa'},
-        layout:'fixed',
-        columnWidths:[noW,txtW],
+      const noW=380,txtW=W-noW;
+      isP.push(new D.Table({width:{size:W,type:'dxa'},layout:'fixed',columnWidths:[noW,txtW],
         borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
         rows:[new D.TableRow({children:[
-          new D.TableCell({
-            width:{size:noW,type:'dxa'},
-            borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
-            margins:{top:40,bottom:0,left:0,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((pg.length+i+1)+'.',{bold:true,size:22})]})]
-          }),
-          new D.TableCell({
-            width:{size:txtW,type:'dxa'},
-            borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
-            margins:{top:40,bottom:0,left:60,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:20},children:[T(stripHtml(item.soal||''),{size:22})]})]
-          }),
+          new D.TableCell({width:{size:noW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:0,right:0},
+            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((pg.length+i+1)+'.',{bold:true,size:22})]})]}),
+          new D.TableCell({width:{size:txtW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:80,right:0},
+            children:[new D.Paragraph({spacing:{before:80,after:10},children:[T(stripHtml(item.soal||''),{size:22})]})]}),
         ]})]
       }));
-      isP.push(P([T('Jawab : ___________________________________________')],{indent:360,after:80}));
+      isP.push(P([T('Jawab : ___________________________________________')],{indent:460,after:80}));
     });
   }
 
@@ -2172,29 +2150,18 @@ async function exportWord(){
     urP.push(P([T('III. Uraian',{bold:true,underline:true,size:22})],{before:240,after:60}));
     urP.push(P([T('Jawablah pertanyaan berikut dengan lengkap dan benar!',{italic:true,size:20})],{after:80}));
     uraian.forEach((item,i)=>{
-      const noW=440, txtW=W-noW;
-      urP.push(new D.Table({
-        width:{size:W,type:'dxa'},
-        layout:'fixed',
-        columnWidths:[noW,txtW],
+      const noW=380,txtW=W-noW;
+      urP.push(new D.Table({width:{size:W,type:'dxa'},layout:'fixed',columnWidths:[noW,txtW],
         borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
         rows:[new D.TableRow({children:[
-          new D.TableCell({
-            width:{size:noW,type:'dxa'},
-            borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
-            margins:{top:40,bottom:0,left:0,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((pg.length+isian.length+i+1)+'.',{bold:true,size:22})]})]
-          }),
-          new D.TableCell({
-            width:{size:txtW,type:'dxa'},
-            borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
-            margins:{top:40,bottom:0,left:60,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:20},children:[T(stripHtml(item.soal||''),{size:22})]})]
-          }),
+          new D.TableCell({width:{size:noW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:0,right:0},
+            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((pg.length+isian.length+i+1)+'.',{bold:true,size:22})]})]}),
+          new D.TableCell({width:{size:txtW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:80,right:0},
+            children:[new D.Paragraph({spacing:{before:80,after:10},children:[T(stripHtml(item.soal||''),{size:22})]})]}),
         ]})]
       }));
-      urP.push(P([T('Jawab :')],{indent:360,after:20}));
-      for(let l=0;l<3;l++) urP.push(P([T('_____________________________________________')],{indent:360,after:12}));
+      urP.push(P([T('Jawab :')],{indent:460,after:20}));
+      for(let l=0;l<3;l++) urP.push(P([T('_____________________________________________')],{indent:460,after:12}));
       urP.push(P([T('')],{after:60}));
     });
   }
@@ -2874,28 +2841,25 @@ if('serviceWorker' in navigator){
 }
 
 
-/* ── Preview Scale: A4 proporsional di semua layar ── */
+/* ── Scale preview A4 proporsional di semua layar ── */
 function scalePreview(){
-  const box = document.getElementById('previewBox');
-  if(!box) return;
-  const wrapper = box.closest('.preview-scroll-wrapper');
-  if(!wrapper) return;
-  const available = wrapper.clientWidth - 20; // padding
-  const boxW = 794; // lebar A4 asli
-  if(available < boxW){
-    const scale = available / boxW;
-    box.style.transform = 'scale(' + scale + ')';
-    box.style.marginBottom = '-' + Math.round(boxW * (1 - scale)) + 'px';
-    wrapper.style.overflowX = 'hidden';
-  } else {
-    box.style.transform = '';
-    box.style.marginBottom = '';
-    wrapper.style.overflowX = 'auto';
+  const box=document.getElementById('previewBox');
+  if(!box)return;
+  const wrapper=box.closest('.preview-scroll-wrapper');
+  if(!wrapper)return;
+  const avail=wrapper.clientWidth-12;
+  const boxW=794;
+  if(avail<boxW){
+    const s=avail/boxW;
+    box.style.transform='scale('+s+')';
+    box.style.marginBottom=Math.round(boxW*(s-1))+'px';
+  }else{
+    box.style.transform='';
+    box.style.marginBottom='';
   }
 }
-window.addEventListener('resize', scalePreview);
-// Jalankan setelah render selesai
-document.addEventListener('DOMContentLoaded', ()=>{ setTimeout(scalePreview, 300); });
+window.addEventListener('resize',scalePreview);
+document.addEventListener('DOMContentLoaded',()=>setTimeout(scalePreview,400));
 
 </script>
 </body>
