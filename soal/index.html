@@ -182,12 +182,13 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .page-nav button:disabled{opacity:.3;cursor:not-allowed;}
 .page-info{font-size:.78rem;color:var(--text-light);font-weight:600;min-width:72px;text-align:center;}
 
-.preview-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:12px 8px;}
-#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:380px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;height:auto;position:relative;display:flex;align-items:flex-start;}
-#previewBox.has-content{min-height:1123px;display:block;}
+.preview-scroll-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:10px 6px;text-align:center;}
+#previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:300px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;position:relative;display:inline-block;vertical-align:top;text-align:left;}
+#previewBox.has-content{min-height:1123px;}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;color:var(--text-light);padding:40px 20px;width:100%;}
 @media(max-width:700px){
-  .preview-scroll-wrapper{padding:6px 0;}
-  #previewBox{width:680px!important;min-width:680px!important;padding:7mm 8mm 7mm 9mm!important;font-size:9.5pt!important;min-height:auto!important;}
+  .preview-scroll-wrapper{padding:6px 2px;}
+  #previewBox{width:700px!important;min-width:700px!important;padding:7mm 8mm 7mm 9mm!important;font-size:9.5pt!important;}
   .doc-school-name{font-size:11pt!important;}
   .doc-ujian-title{font-size:9.5pt!important;}
   .opsi-table td{font-size:9pt!important;}
@@ -396,8 +397,8 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           <span id="historiBadge" class="dropdown-badge" style="display:none;"></span>
         </button>
         <button class="dropdown-item" id="mi-tentang" onclick="showTab('tentang');closeMenu()">ℹ️ Tentang</button>
-        <button class="dropdown-item" onclick="installApp();closeMenu()">📲 Install BGY</button>
         <button class="dropdown-item" id="mi-kontak" onclick="showTab('kontak');closeMenu()">📬 Kontak</button>
+        <button class="dropdown-item" onclick="installApp();closeMenu()">📲 Install BGY</button>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="https://bantuguruyuk.web.id" target="_blank" rel="noopener" onclick="event.stopPropagation()">
           🌐 BantuGuruYuk
@@ -2016,7 +2017,6 @@ async function exportWord(){
   if(pg.length>0){
     pgP.push(P([T('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:200,after:60}));
     pgP.push(P([T('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,size:20})],{after:80}));
-    const labels=['A','B','C','D'];
     pg.forEach((item,i)=>{
       pgP.push(P([T((i+1)+'. ',{bold:true}),T(stripHtml(item.soal||''))],{before:80,after:40}));
       const opsi=item.opsi||[];
@@ -2024,9 +2024,12 @@ async function exportWord(){
       const opsiRows=[];
       for(let r=0;r<Math.ceil(opsi.length/2);r++){
         const i0=r*2,i1=r*2+1;
+        // Opsi dari AI sudah include label (A. ...) — jangan tambah lagi
+        const txt0=stripHtml(opsi[i0]||'');
+        const txt1=i1<opsi.length?stripHtml(opsi[i1]||''):'';
         opsiRows.push(tblRow([
-          noCell(P([T((labels[i0]||'')+'. '),T(stripHtml(opsi[i0]||''))],{indent:360}),colW),
-          noCell(i1<opsi.length?P([T((labels[i1]||'')+'. '),T(stripHtml(opsi[i1]||''))]):P([T('')]),colW),
+          noCell(P([T(txt0)],{indent:360}),colW),
+          noCell(txt1?P([T(txt1)]):P([T('')]),colW),
         ]));
       }
       if(opsiRows.length){
