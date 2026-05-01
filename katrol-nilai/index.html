@@ -80,6 +80,8 @@ main{max-width:1200px;margin:0 auto;padding:20px;width:100%;flex:1;}
 @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
 .col-left{display:flex;flex-direction:column;gap:12px;}
 .col-right{position:sticky;top:80px;}
+/* A4 preview panel */
+.col-right .card{min-height:297mm;width:210mm;max-width:100%;margin-left:auto;margin-right:auto;}
 
 /* FORM */
 .form-group{margin-bottom:10px;}
@@ -137,6 +139,16 @@ body.dark .hint-bar span{color:#5eead4;}
 .btn-sm.g:hover{background:rgba(16,185,129,.06);}
 .btn-sm.r{border-color:#ef4444;color:#ef4444;}
 .btn-sm.r:hover{background:rgba(239,68,68,.05);}
+/* Tombol export berbeda warna */
+.btn-csv{border-color:#f59e0b!important;color:#b45309!important;background:rgba(245,158,11,.07)!important;}
+.btn-csv:hover{background:rgba(245,158,11,.14)!important;}
+.btn-excel{border-color:#10b981!important;color:#065f46!important;background:rgba(16,185,129,.07)!important;}
+.btn-excel:hover{background:rgba(16,185,129,.14)!important;}
+.btn-copy{border-color:#6366f1!important;color:#4338ca!important;background:rgba(99,102,241,.07)!important;}
+.btn-copy:hover{background:rgba(99,102,241,.14)!important;}
+body.dark .btn-csv{color:#fbbf24!important;}
+body.dark .btn-excel{color:#6ee7b7!important;}
+body.dark .btn-copy{color:#a5b4fc!important;}
 
 /* TA SISWA */
 .ta-siswa{border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);font-size:.79rem;color:var(--text);min-height:110px;padding:9px 11px;resize:vertical;font-family:'Courier New',monospace;width:100%;outline:none;}
@@ -300,7 +312,7 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
         <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
         <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" onclick="openModal();closeMenu()">💬 Kritik &amp; Saran</button>
+        <button class="dropdown-item" onclick="installBGY();closeMenu()">📲 Install BGY</button>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item" onclick="window.open('https://bantuguruyuk.web.id','_blank')">🌐 bantuguruyuk.web.id</button>
       </div>
@@ -384,6 +396,7 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
       <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp Pak Choyy</button>
       <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok @pak.choyy</button>
       <button onclick="window.open('https://bantuguruyuk.web.id')" style="background:var(--grad);color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🌐 Website</button>
+      <button onclick="installBGY()" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">📲 Install BGY</button>
     </div>
   </div>
 </main>
@@ -532,6 +545,11 @@ function toggleDark(){
 // PWA
 function installApp(){if(window._dip){window._dip.prompt();window._dip=null;}closeInstall();}
 function closeInstall(){document.getElementById('installPopup').classList.remove('show');localStorage.setItem('katrol_installClosed',Date.now().toString());}
+function installBGY(){
+  if(window._dip){window._dip.prompt();window._dip=null;}
+  else{window.open('https://bantuguruyuk.web.id','_blank');showToast('Buka bantuguruyuk.web.id → Install di browser!');}
+  gaEvent('install_bgy');
+}
 
 // MENU
 let _menuOpen=false;
@@ -694,14 +712,10 @@ function prosesKatrol(){
         <tbody>${rows}</tbody>
       </table>
     </div>
-    <div class="bar-wrap">
-      <h4>Visualisasi Nilai${barSiswa.length<hasil.length?' (15 siswa pertama)':''}</h4>
-      ${bars}
-    </div>
     <div class="btn-row" style="margin-top:12px;">
-      <button class="btn-sm g" onclick="exportCSV()">📥 CSV</button>
-      <button class="btn-sm g" onclick="exportExcel()">📊 Excel</button>
-      <button class="btn-sm" onclick="copyTabel()">📋 Copy ke Excel</button>
+      <button class="btn-sm btn-csv" onclick="exportCSV()">📥 CSV</button>
+      <button class="btn-sm btn-excel" onclick="exportExcel()">📊 Download Excel</button>
+      <button class="btn-sm btn-copy" onclick="copyTabel()">📋 Copy ke Excel</button>
     </div>
   `;
   window._hasil=hasil;window._kkm=kkm;window._judulKelas=judulKelas;window._mLabel=mLabel[metode];
