@@ -468,12 +468,25 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
         <div class="card-title">⚙️ Pengaturan Katrol</div>
         <div class="row-2">
           <div class="form-group">
-            <label>Kelas</label>
-            <input type="text" id="kelas" placeholder="Misal: 8A"/>
+            <label>Kelas SD</label>
+            <select id="kelasSelect" onchange="onKelasChange()">
+              <option value="">— Pilih Kelas —</option>
+              <option value="1">Kelas 1</option>
+              <option value="2">Kelas 2</option>
+              <option value="3">Kelas 3</option>
+              <option value="4">Kelas 4</option>
+              <option value="5">Kelas 5</option>
+              <option value="6">Kelas 6</option>
+              <option value="custom">✏️ Isi Sendiri</option>
+            </select>
+            <input type="text" id="kelasCustom" placeholder="Tulis kelas / jenjang lain..." style="display:none;margin-top:5px;"/>
           </div>
           <div class="form-group">
             <label>Mata Pelajaran</label>
-            <input type="text" id="mapel" placeholder="Misal: IPA"/>
+            <select id="mapelSelect" onchange="onMapelChange()">
+              <option value="">— Pilih kelas dulu —</option>
+            </select>
+            <input type="text" id="mapelCustom" placeholder="Tulis mapel..." style="display:none;margin-top:5px;"/>
           </div>
         </div>
         <div class="row-2">
@@ -817,8 +830,8 @@ function prosesKatrol(){
     try {
       const kkm = parseFloat(document.getElementById('kkm').value)||75;
       const maxNilai = Math.max(...siswa.map(s=>s.nilai));
-      const kelas = document.getElementById('kelas').value.trim();
-      const mapel = document.getElementById('mapel').value.trim();
+      const kelas = getKelasValue();
+      const mapel = getMapelValue();
       const mLabel = {tambah:`+${document.getElementById('poin')?document.getElementById('poin').value:5} Poin`,kkm:'Naik ke KKM',akar:'Akar √×10',skala:'Skala Prop.'};
 
       const hasil = siswa.map((s,i) => {
@@ -920,20 +933,91 @@ function copyTabel(){
    CONTOH & CLEAR
 ═══════════════════════ */
 function contohData(){
-  document.getElementById('kelas').value = '8A';
-  document.getElementById('mapel').value = 'IPA';
+  document.getElementById('kelasSelect').value = '5';
+  onKelasChange();
+  setTimeout(()=>{
+    const ms = document.getElementById('mapelSelect');
+    for(let o of ms.options){ if(o.value.includes('IPAS')){ ms.value=o.value; break; } }
+    onMapelChange();
+  }, 50);
   document.getElementById('inputSiswa').value = 'Andi Firmansyah,68\nBudi Santoso,72\nCitra Dewi,80\nDian Pratiwi,55\nEko Wahyudi,74\nFitri Amalia,90\nGalih Nugroho,48\nHana Puspita,77\nIlham Saputra,63\nJoko Prabowo,85\nKartika Sari,58\nLina Marlina,70';
   showToast('Data contoh berhasil diisi!');
 }
 function clearAll(){
   document.getElementById('inputSiswa').value = '';
-  document.getElementById('kelas').value = '';
-  document.getElementById('mapel').value = '';
+  document.getElementById('kelasSelect').value = '';
+  document.getElementById('kelasCustom').style.display='none';
+  document.getElementById('mapelSelect').innerHTML = '<option value="">— Pilih kelas dulu —</option>';
+  document.getElementById('mapelSelect').style.display='';
+  document.getElementById('mapelCustom').style.display='none';
   document.getElementById('uploadArea').classList.remove('has-file');
   document.getElementById('uploadText').textContent = 'Klik atau seret file ke sini';
   document.getElementById('panelHasil').innerHTML = '<div class="prompt-placeholder"><div class="ph-icon">📊</div><p>Isi form di kiri lalu klik<br/><b>Katrol Nilai Sekarang</b></p></div>';
   window._hasil = null;
   showToast('Data berhasil dihapus.');
+}
+
+
+/* ═══════════════════════
+   DB MAPEL SD (Kurikulum Merdeka)
+═══════════════════════ */
+const DB_MAPEL_SD = {
+  1: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
+  2: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
+  3: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
+  4: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
+  5: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','KKA / Koding','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
+  6: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','KKA / Koding','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
+};
+
+function onKelasChange(){
+  const sel = document.getElementById('kelasSelect');
+  const kc = document.getElementById('kelasCustom');
+  const ms = document.getElementById('mapelSelect');
+  const mc = document.getElementById('mapelCustom');
+
+  if(sel.value === 'custom'){
+    kc.style.display = 'block';
+    kc.focus();
+    ms.innerHTML = '<option value="custom">✏️ Isi Sendiri</option>';
+    mc.style.display = 'block';
+    mc.focus();
+  } else {
+    kc.style.display = 'none';
+    const kelas = parseInt(sel.value);
+    const mapels = DB_MAPEL_SD[kelas] || [];
+    ms.innerHTML = '<option value="">— Pilih Mapel —</option>' +
+      mapels.map(m => m.startsWith('✏️')
+        ? `<option value="custom">${m}</option>`
+        : `<option value="${m}">${m}</option>`
+      ).join('');
+    ms.style.display = '';
+    mc.style.display = 'none';
+  }
+}
+
+function onMapelChange(){
+  const ms = document.getElementById('mapelSelect');
+  const mc = document.getElementById('mapelCustom');
+  if(ms.value === 'custom'){
+    mc.style.display = 'block';
+    mc.focus();
+  } else {
+    mc.style.display = 'none';
+  }
+}
+
+function getKelasValue(){
+  const sel = document.getElementById('kelasSelect');
+  if(sel.value === 'custom') return document.getElementById('kelasCustom').value.trim();
+  if(sel.value) return 'Kelas ' + sel.value;
+  return '';
+}
+
+function getMapelValue(){
+  const ms = document.getElementById('mapelSelect');
+  if(ms.value === 'custom') return document.getElementById('mapelCustom').value.trim();
+  return ms.value || '';
 }
 
 /* ═══════════════════════
