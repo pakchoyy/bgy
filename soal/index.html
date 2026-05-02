@@ -240,13 +240,13 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 /* Responsive */
 @media(max-width:960px){
   main{grid-template-columns:1fr;padding:12px;gap:13px;}
-  #previewBox{padding:7mm 7mm 7mm 9mm;font-size:10pt;width:100%;box-sizing:border-box;}
+  #previewBox{padding:8mm 8mm 8mm 10mm;font-size:10.5pt;width:794px;box-sizing:border-box;}
   .btn{padding:6px 10px;font-size:.76rem;}
   .doc-school-name{font-size:12pt;}.doc-ujian-title{font-size:10pt;}
   .col-preview{overflow-x:auto;}
 }
 @media(max-width:480px){
-  #previewBox{padding:3mm;font-size:9pt;width:100%;min-height:unset;}
+  #previewBox{padding:6mm 6mm 6mm 8mm;font-size:9.5pt;width:794px;min-height:unset;}
   header{padding:8px 12px;}.header-brand h1{font-size:.95rem;}
   .header-brand p{display:none;}
   .version-badge{font-size:.58rem;padding:2px 7px;}
@@ -1712,7 +1712,11 @@ function showPage(idx){
   pb.innerHTML=halamanSoal[currentPage];
   pb.classList.add('has-content');
   updatePageNav();
-  requestAnimationFrame(()=>requestAnimationFrame(scalePreview));
+  // Double rAF: tunggu browser selesai paint baru scale
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    scalePreview();
+    setTimeout(scalePreview,150); // fallback jika ada image/font delay
+  }));
 }
 function prevPage(){showPage(currentPage-1);}
 function nextPage(){showPage(currentPage+1);}
@@ -1923,18 +1927,36 @@ async function exportWord(){
     if(opts.underline) run.underline={type:'single'};
     return new D.TextRun(run);
   }
-  // HR: 1 paragraf dengan border top+bottom = efek double line tipis
+  // HR-top: garis di atas (border-top paragraf)
+  function HRtop(){
+    const line={style:'single',size:12,color:'000000'};
+    return new D.Paragraph({
+      border:{top:line},
+      spacing:{before:60,after:0},
+      children:[new D.TextRun({text:'',size:2})]
+    });
+  }
+  // HR-bottom: garis di bawah (border-bottom paragraf)
+  function HRbottom(){
+    const line={style:'single',size:12,color:'000000'};
+    return new D.Paragraph({
+      border:{bottom:line},
+      spacing:{before:0,after:60},
+      children:[new D.TextRun({text:'',size:2})]
+    });
+  }
+  // HR: 1 garis bawah saja (untuk kunci/kisi)
   function HR(){
     const lineThick={style:'single',size:12,color:'000000'};
     return [
       new D.Paragraph({
-        border:{top:lineThick,bottom:lineThick},
-        spacing:{before:60,after:60},
-        children:[new D.TextRun({text:'',size:4})]
+        border:{bottom:lineThick},
+        spacing:{before:40,after:0},
+        children:[new D.TextRun({text:'',size:2})]
       }),
     ];
   }
-  // Helper push HR (karena HR sekarang return array)
+  // Helper push HR
   function pushHR(arr){ arr.push(...HR()); }
   function PB(){ return new D.Paragraph({children:[new D.PageBreak()]}); }
 
@@ -2000,14 +2022,14 @@ async function exportWord(){
       borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
       verticalAlign:'center',
       children:[
-        P([T(judulUjian,{bold:true,size:20})],{align:'center',before:0,after:10}),
-        P([T(namaSekolah,{bold:true,size:28})],{align:'center',before:0,after:10}),
+        P([T(judulUjian,{bold:true,size:20})],{align:'center',before:0,after:6}),
+        P([T(namaSekolah,{bold:true,size:28})],{align:'center',before:0,after:6}),
         P([T('Tahun Pelajaran '+tahun,{size:20})],{align:'center',before:0,after:0}),
       ]
     }),
     logoCell('logo2'),
   ])],[logoW,titleW,logoW]));
-  pushHR(headerRows);
+  headerRows.push(HRtop());
 
   // Identitas siswa — struktur 6 kolom persis seperti preview
   // Kolom: label_kiri | sep | value_kiri | spacer | label_kanan | sep | value_kanan
@@ -2066,7 +2088,7 @@ async function exportWord(){
     borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
     rows:identRows
   }));
-  pushHR(headerRows);
+  headerRows.push(HRbottom());
 
   // ── Soal PG ──
   const pgP=[];
@@ -2842,17 +2864,19 @@ function scalePreview(){
   if(!box)return;
   const wrapper=box.closest('.preview-scroll-wrapper');
   if(!wrapper)return;
-  const avail=wrapper.clientWidth-8;
+  const avail=Math.max(wrapper.clientWidth-8, 100);
   const boxW=794;
-  if(avail<boxW){
-    const s=avail/boxW;
-    const scaledH=box.offsetHeight*s;
+  const s=Math.min(1, avail/boxW);
+  if(s<1){
     box.style.transform='scale('+s+')';
     box.style.transformOrigin='top left';
     box.style.marginLeft='0';
     box.style.marginRight='0';
+    // marginBottom negatif untuk collapse ruang yang "tersisa" setelah scale
+    const scaledH=box.offsetHeight*s;
     box.style.marginBottom=Math.round(scaledH-box.offsetHeight)+'px';
-    wrapper.style.minHeight=(scaledH+16)+'px';
+    wrapper.style.minHeight=(scaledH+8)+'px';
+    wrapper.style.width='100%';
   }else{
     box.style.transform='';
     box.style.transformOrigin='';
@@ -2864,8 +2888,8 @@ function scalePreview(){
 }
 window.addEventListener('resize',scalePreview);
 document.addEventListener('DOMContentLoaded',()=>{
-  setTimeout(scalePreview,300);
-  setTimeout(scalePreview,800);
+  // Fire multiple times to catch layout shifts (font load, images, etc)
+  [100,300,600,1200].forEach(t=>setTimeout(scalePreview,t));
 });
 
 </script>
