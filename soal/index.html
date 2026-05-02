@@ -154,7 +154,7 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .page-nav button:disabled{opacity:.3;cursor:not-allowed;}
 .page-info{font-size:.78rem;color:var(--text-light);font-weight:600;min-width:72px;text-align:center;}
 
-.preview-scroll-wrapper{overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:10px 6px;}
+.preview-scroll-wrapper{overflow-x:hidden;overflow-y:visible;-webkit-overflow-scrolling:touch;background:var(--gray-100);border-radius:8px;padding:8px 4px;}
 #previewBox{background:#fff;color:#000;padding:13mm 15mm 13mm 17mm;width:794px;min-width:794px;min-height:300px;margin:0 auto;border-radius:4px;box-shadow:var(--shadow-lg);font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;position:relative;display:block;text-align:left;transform-origin:top center;}
 #previewBox.has-content{min-height:1123px;}
 /* Empty state: absolute center di dalam previewBox */
@@ -171,19 +171,19 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 
 /* Dokumen styles */
 .doc-header-table{width:100%;border-collapse:collapse;margin-bottom:0;}
-.doc-header-table td{vertical-align:middle;padding:3px 5px;border:none;}
-.doc-logo-cell{width:70px;text-align:center;}
-.doc-logo-cell img{width:60px;height:60px;object-fit:contain;}
+.doc-header-table td{vertical-align:middle;padding:1px 4px;border:none;}
+.doc-logo-cell{width:68px;text-align:center;}
+.doc-logo-cell img{width:56px;height:56px;object-fit:contain;}
 .doc-title-cell{text-align:center;}
-.doc-ujian-title{font-size:11pt;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;font-family:'Times New Roman',serif;}
-.doc-school-name{font-size:14pt;font-weight:bold;text-transform:uppercase;letter-spacing:1px;font-family:'Times New Roman',serif;margin:3px 0;}
-.doc-tahun{font-size:10pt;font-family:'Times New Roman',serif;}
-.doc-header-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:5px 0 9px;}
-.doc-identitas-line{border-top:3px solid #000;border-bottom:3px solid #000;height:4px;margin:7px 0 9px;}
-.doc-identitas-table{width:100%;border-collapse:collapse;margin-bottom:0;font-size:11pt;font-family:'Times New Roman',serif;}
-.doc-identitas-table td{padding:2px 4px;vertical-align:top;}
-.id-label{width:110px;}.id-sep{width:10px;text-align:center;}
-.id-value{border-bottom:1px solid #333;min-width:108px;}
+.doc-ujian-title{font-size:10.5pt;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;font-family:'Times New Roman',serif;line-height:1.3;}
+.doc-school-name{font-size:13pt;font-weight:bold;text-transform:uppercase;letter-spacing:1px;font-family:'Times New Roman',serif;margin:1px 0;}
+.doc-tahun{font-size:9.5pt;font-family:'Times New Roman',serif;}
+.doc-header-line{border-top:2.5px solid #000;border-bottom:2.5px solid #000;height:3px;margin:4px 0 7px;}
+.doc-identitas-line{border-top:2.5px solid #000;border-bottom:2.5px solid #000;height:3px;margin:5px 0 8px;}
+.doc-identitas-table{width:100%;border-collapse:collapse;margin-bottom:0;font-size:10.5pt;font-family:'Times New Roman',serif;}
+.doc-identitas-table td{padding:1px 3px;vertical-align:top;}
+.id-label{width:108px;}.id-sep{width:10px;text-align:center;}
+.id-value{border-bottom:1px solid #333;min-width:100px;}
 .doc-section-title{font-size:11pt;font-weight:bold;font-family:'Times New Roman',serif;margin:12px 0 4px;text-decoration:underline;}
 .doc-petunjuk{font-size:10pt;font-style:italic;margin-bottom:6px;font-family:'Times New Roman',serif;}
 .doc-soal-table{width:100%;border-collapse:collapse;font-family:'Times New Roman',serif;font-size:11pt;}
@@ -246,7 +246,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   .col-preview{overflow-x:auto;}
 }
 @media(max-width:480px){
-  #previewBox{padding:4mm;font-size:9pt;width:100%;min-height:unset;}
+  #previewBox{padding:3mm;font-size:9pt;width:100%;min-height:unset;}
   header{padding:8px 12px;}.header-brand h1{font-size:.95rem;}
   .header-brand p{display:none;}
   .version-badge{font-size:.58rem;padding:2px 7px;}
@@ -1712,7 +1712,7 @@ function showPage(idx){
   pb.innerHTML=halamanSoal[currentPage];
   pb.classList.add('has-content');
   updatePageNav();
-  setTimeout(scalePreview,50);
+  requestAnimationFrame(()=>requestAnimationFrame(scalePreview));
 }
 function prevPage(){showPage(currentPage-1);}
 function nextPage(){showPage(currentPage+1);}
@@ -2847,19 +2847,26 @@ function scalePreview(){
   if(!box)return;
   const wrapper=box.closest('.preview-scroll-wrapper');
   if(!wrapper)return;
-  const avail=wrapper.clientWidth-12;
+  const avail=wrapper.clientWidth-16;
   const boxW=794;
   if(avail<boxW){
     const s=avail/boxW;
     box.style.transform='scale('+s+')';
-    box.style.marginBottom=Math.round(boxW*(s-1))+'px';
+    box.style.transformOrigin='top center';
+    box.style.marginBottom=Math.round(box.offsetHeight*(s-1))+'px';
+    wrapper.style.minHeight=Math.round(box.offsetHeight*s+20)+'px';
   }else{
     box.style.transform='';
+    box.style.transformOrigin='';
     box.style.marginBottom='';
+    wrapper.style.minHeight='';
   }
 }
 window.addEventListener('resize',scalePreview);
-document.addEventListener('DOMContentLoaded',()=>setTimeout(scalePreview,400));
+document.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(scalePreview,300);
+  setTimeout(scalePreview,800);
+});
 
 </script>
 </body>
