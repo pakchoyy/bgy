@@ -7,7 +7,8 @@
 <link rel="icon" href="../guru-cibisd2.png" sizes="192x192" type="image/png"/>
 <link rel="shortcut icon" href="../guru-cibisd2.png" type="image/png"/>
 <link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
-<meta name="theme-color" content="#0d9488"/>
+<meta name="theme-color" content="#0ea5a0"/>
+<link rel="manifest" href="./manifest.json"/>
 <meta name="description" content="Aplikasi katrol nilai siswa otomatis untuk guru. Upload Excel, berbagai metode katrol, export hasil."/>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
 <script>
@@ -1029,6 +1030,35 @@ function showToast(msg){
   t.textContent = msg; t.classList.add('show');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── Service Worker Registration ── */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/katrol-nilai/sw.js', {scope:'/katrol-nilai/'})
+      .then(reg => {
+        console.log('BGY SW registered:', reg.scope);
+        // Cek update SW
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+              // Ada versi baru — tampilkan toast
+              showToast('✅ Katrol Nilai diperbarui! Refresh untuk update.');
+            }
+          });
+        });
+      })
+      .catch(err => console.log('BGY SW error:', err));
+  });
+  // Reload otomatis saat SW baru aktif
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0ea5a0;color:#fff;padding:12px 20px;border-radius:12px;font-size:.88rem;font-weight:700;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;';
+    toast.innerHTML = '✅ App diperbarui! <button onclick="location.reload()" style="background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-weight:700;cursor:pointer;font-size:.82rem;">Refresh</button>';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 8000);
+  });
 }
 </script>
 </body>
