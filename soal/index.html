@@ -1701,7 +1701,7 @@ function buildKisiKisiPage(data,pg,isian,uraian){
    BUILD HALAMAN PROMPT GAMBAR
 ════════════════════════════════════════════ */
 function buildPromptGambarPage(data,pg,isian,uraian){
-  // Kata kunci yang menandakan soal butuh gambar
+  // Deteksi prioritas gambar
   const triggerWords=[
     /perhatikan gambar/i,/gambar (di atas|berikut|tersebut)/i,/lihat gambar/i,
     /berdasarkan gambar/i,/gambar bangun/i,/bangun datar/i,/bangun ruang/i,
@@ -1709,26 +1709,15 @@ function buildPromptGambarPage(data,pg,isian,uraian){
     /grafik (di atas|berikut)/i,/peta (di atas|berikut)/i,
     /tabel (di atas|berikut)/i,/ilustrasi/i
   ];
+  function butuhGambar(t){return triggerWords.some(re=>re.test(t));}
 
-  function butuhGambar(soalTeks){
-    return triggerWords.some(re=>re.test(soalTeks));
-  }
-
-  // Kumpulkan soal yang butuh gambar
+  // Semua soal PG, tandai mana yang prioritas
   const soalBergambar=[];
-  let no=1;
   pg.forEach((item,i)=>{
-    if(butuhGambar(item.soal||'')) soalBergambar.push({no:i+1,tipe:'PG',soal:item.soal||''});
-    no++;
-  });
-  isian.forEach((item,i)=>{
-    if(butuhGambar(item.soal||'')) soalBergambar.push({no:pg.length+i+1,tipe:'Isian',soal:item.soal||''});
-  });
-  uraian.forEach((item,i)=>{
-    if(butuhGambar(item.soal||'')) soalBergambar.push({no:pg.length+isian.length+i+1,tipe:'Uraian',soal:item.soal||''});
+    soalBergambar.push({no:i+1,tipe:'PG',soal:item.soal||'',prioritas:butuhGambar(item.soal||'')});
   });
 
-  // Tidak ada soal bergambar → tidak tampilkan halaman ini
+  // Tidak ada PG → tidak tampilkan halaman
   if(!soalBergambar.length) return null;
 
   const mapel=escHtml(document.getElementById('mataPelajaran').value);
@@ -1738,19 +1727,23 @@ function buildPromptGambarPage(data,pg,isian,uraian){
   soalBergambar.forEach(s=>{
     const soalPendek=stripHtml(s.soal).replace(/\s+/g,' ').trim();
     const snippet=soalPendek.length>120?soalPendek.substring(0,120)+'…':soalPendek;
-
-    // Buat prompt spesifik berdasarkan konteks soal
     const promptTeks=`Buatkan ilustrasi gambar sederhana, gaya kartun ramah anak SD kelas ${kelas}, bergaris tegas, warna cerah, latar putih. Gambar harus menunjukkan: ${soalPendek.substring(0,200)}. Ukuran: persegi atau landscape 4:3. Jangan tambahkan teks atau label di gambar.`;
 
+    const rowBg=s.prioritas?'background:#fff7ed;':'';
+    const noBg=s.prioritas?'background:#ea580c;color:#fff;':'background:#e5e7eb;color:#374151;';
+    const badge=s.prioritas?'<div style="margin-top:4px;font-size:7pt;background:#ea580c;color:#fff;border-radius:10px;padding:1px 6px;display:inline-block;">⭐ Prioritas</div>':'<div style="margin-top:4px;font-size:7pt;color:#9ca3af;">opsional</div>';
+    const promptBg=s.prioritas?'background:#fff7ed;color:#7c2d12;':'background:#f0f7ff;color:#1e3a5f;';
+
     promptRows+=`
-    <tr>
+    <tr style="${rowBg}">
       <td style="border:1px solid #aaa;padding:6px 8px;text-align:center;font-family:'Times New Roman',serif;font-size:10pt;vertical-align:top;white-space:nowrap;">
-        <strong>No. ${s.no}</strong><br/><span style="font-size:8pt;color:#555;">(${s.tipe})</span>
+        <div style="${noBg}border-radius:6px;padding:3px 8px;font-weight:bold;display:inline-block;">No. ${s.no}</div>
+        ${badge}
       </td>
       <td style="border:1px solid #aaa;padding:6px 8px;font-family:'Times New Roman',serif;font-size:9pt;color:#333;vertical-align:top;">
         <em>${escHtml(snippet)}</em>
       </td>
-      <td style="border:1px solid #aaa;padding:6px 8px;font-family:'Segoe UI',sans-serif;font-size:8.5pt;color:#1e3a5f;background:#f0f7ff;vertical-align:top;">
+      <td style="border:1px solid #aaa;padding:6px 8px;font-family:'Segoe UI',sans-serif;font-size:8.5pt;${promptBg}vertical-align:top;">
         <div style="user-select:all;cursor:pointer;" title="Klik untuk select semua teks prompt">${escHtml(promptTeks)}</div>
       </td>
     </tr>`;
@@ -1766,6 +1759,7 @@ function buildPromptGambarPage(data,pg,isian,uraian){
       <strong>💡 Cara Pakai:</strong> Salin prompt di kolom kanan → tempel ke AI image generator pilihanmu
       (ChatGPT, Gemini, Adobe Firefly, Midjourney, dll) → generate gambar →
       sisipkan ke soal di Word/PDF sesuai nomor soal.<br/>
+      <span style="color:#ea580c;font-weight:600;">⭐ Prioritas</span> = soal yang terdeteksi butuh gambar pendukung. Generate ini dulu.<br/>
       <span style="color:#7c5c00;">⚠️ Soal sudah lengkap &amp; berfungsi tanpa gambar. Gambar hanya sebagai penunjang visual.</span>
     </div>
 
