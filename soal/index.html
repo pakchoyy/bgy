@@ -1567,6 +1567,9 @@ function buildHalaman(data){
   halamanSoal.push(buildKunciPage(data,pg,isian,uraian));
   // Halaman kisi-kisi setelah kunci
   halamanSoal.push(buildKisiKisiPage(data,pg,isian,uraian));
+  // Halaman prompt gambar (hanya jika ada soal butuh gambar)
+  const halamanPrompt=buildPromptGambarPage(data,pg,isian,uraian);
+  if(halamanPrompt) halamanSoal.push(halamanPrompt);
   updatePageNav();
 }
 
@@ -1695,6 +1698,100 @@ function buildKisiKisiPage(data,pg,isian,uraian){
 }
 
 /* ════════════════════════════════════════════
+   BUILD HALAMAN PROMPT GAMBAR
+════════════════════════════════════════════ */
+function buildPromptGambarPage(data,pg,isian,uraian){
+  // Kata kunci yang menandakan soal butuh gambar
+  const triggerWords=[
+    /perhatikan gambar/i,/gambar (di atas|berikut|tersebut)/i,/lihat gambar/i,
+    /berdasarkan gambar/i,/gambar bangun/i,/bangun datar/i,/bangun ruang/i,
+    /bentuk (di atas|berikut)/i,/diagram (di atas|berikut)/i,
+    /grafik (di atas|berikut)/i,/peta (di atas|berikut)/i,
+    /tabel (di atas|berikut)/i,/ilustrasi/i
+  ];
+
+  function butuhGambar(soalTeks){
+    return triggerWords.some(re=>re.test(soalTeks));
+  }
+
+  // Kumpulkan soal yang butuh gambar
+  const soalBergambar=[];
+  let no=1;
+  pg.forEach((item,i)=>{
+    if(butuhGambar(item.soal||'')) soalBergambar.push({no:i+1,tipe:'PG',soal:item.soal||''});
+    no++;
+  });
+  isian.forEach((item,i)=>{
+    if(butuhGambar(item.soal||'')) soalBergambar.push({no:pg.length+i+1,tipe:'Isian',soal:item.soal||''});
+  });
+  uraian.forEach((item,i)=>{
+    if(butuhGambar(item.soal||'')) soalBergambar.push({no:pg.length+isian.length+i+1,tipe:'Uraian',soal:item.soal||''});
+  });
+
+  // Tidak ada soal bergambar → tidak tampilkan halaman ini
+  if(!soalBergambar.length) return null;
+
+  const mapel=escHtml(document.getElementById('mataPelajaran').value);
+  const kelas=document.getElementById('kelas').value;
+
+  let promptRows='';
+  soalBergambar.forEach(s=>{
+    const soalPendek=stripHtml(s.soal).replace(/\s+/g,' ').trim();
+    const snippet=soalPendek.length>120?soalPendek.substring(0,120)+'…':soalPendek;
+
+    // Buat prompt spesifik berdasarkan konteks soal
+    const promptTeks=`Buatkan ilustrasi gambar sederhana, gaya kartun ramah anak SD kelas ${kelas}, bergaris tegas, warna cerah, latar putih. Gambar harus menunjukkan: ${soalPendek.substring(0,200)}. Ukuran: persegi atau landscape 4:3. Jangan tambahkan teks atau label di gambar.`;
+
+    promptRows+=`
+    <tr>
+      <td style="border:1px solid #aaa;padding:6px 8px;text-align:center;font-family:'Times New Roman',serif;font-size:10pt;vertical-align:top;white-space:nowrap;">
+        <strong>No. ${s.no}</strong><br/><span style="font-size:8pt;color:#555;">(${s.tipe})</span>
+      </td>
+      <td style="border:1px solid #aaa;padding:6px 8px;font-family:'Times New Roman',serif;font-size:9pt;color:#333;vertical-align:top;">
+        <em>${escHtml(snippet)}</em>
+      </td>
+      <td style="border:1px solid #aaa;padding:6px 8px;font-family:'Segoe UI',sans-serif;font-size:8.5pt;color:#1e3a5f;background:#f0f7ff;vertical-align:top;">
+        <div style="user-select:all;cursor:pointer;" title="Klik untuk select semua teks prompt">${escHtml(promptTeks)}</div>
+      </td>
+    </tr>`;
+  });
+
+  return `
+  <div style="font-family:'Times New Roman',serif;">
+    <div class="kisi-page-header" style="color:#1a4f8a;">💡 PROMPT GENERATE GAMBAR SOAL</div>
+    <div class="kisi-page-sub">${mapel} — Kelas ${kelas} SD</div>
+    <div class="kisi-page-line" style="border-color:#1a4f8a;"></div>
+
+    <div style="background:#fff8e6;border:1.5px solid #f59e0b;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:9pt;font-family:'Segoe UI',sans-serif;line-height:1.7;">
+      <strong>💡 Cara Pakai:</strong> Salin prompt di kolom kanan → tempel ke AI image generator pilihanmu
+      (ChatGPT, Gemini, Adobe Firefly, Midjourney, dll) → generate gambar →
+      sisipkan ke soal di Word/PDF sesuai nomor soal.<br/>
+      <span style="color:#7c5c00;">⚠️ Soal sudah lengkap &amp; berfungsi tanpa gambar. Gambar hanya sebagai penunjang visual.</span>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;font-size:9pt;">
+      <thead>
+        <tr style="background:#dbeafe;">
+          <th style="border:1px solid #aaa;padding:6px 8px;text-align:center;font-family:'Segoe UI',sans-serif;font-size:8.5pt;width:72px;">No. Soal</th>
+          <th style="border:1px solid #aaa;padding:6px 8px;text-align:left;font-family:'Segoe UI',sans-serif;font-size:8.5pt;width:35%;">Konteks Soal</th>
+          <th style="border:1px solid #aaa;padding:6px 8px;text-align:left;font-family:'Segoe UI',sans-serif;font-size:8.5pt;">Prompt untuk AI Image Generator <span style="font-weight:normal;">(klik teks untuk select)</span></th>
+        </tr>
+      </thead>
+      <tbody>${promptRows}</tbody>
+    </table>
+
+    <div style="margin-top:10px;font-size:8pt;font-family:'Segoe UI',sans-serif;color:#555;line-height:1.8;">
+      <strong>AI Image Generator gratis yang bisa dicoba:</strong>
+      ChatGPT (chat.openai.com) &nbsp;·&nbsp;
+      Gemini (gemini.google.com) &nbsp;·&nbsp;
+      Microsoft Copilot (copilot.microsoft.com) &nbsp;·&nbsp;
+      Adobe Firefly (firefly.adobe.com) &nbsp;·&nbsp;
+      Canva AI (canva.com)
+    </div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════
    NAVIGASI HALAMAN
 ════════════════════════════════════════════ */
 function updatePageNav(){
@@ -1702,7 +1799,20 @@ function updatePageNav(){
   document.getElementById('btnPrev').disabled=currentPage===0;
   document.getElementById('btnNext').disabled=currentPage===halamanSoal.length-1;
   const total=halamanSoal.length;
-  const label=currentPage===total-1?`Kisi-kisi (${total}/${total})`:(currentPage===total-2?`Kunci (${total-1}/${total})`:`Hal ${currentPage+1} / ${total}`);
+  let label;
+  if(currentPage===total-1&&halamanSoal[currentPage]&&halamanSoal[currentPage].includes('PROMPT GENERATE GAMBAR')){
+    label=`💡 Prompt Gambar (${total}/${total})`;
+  } else if(currentPage===total-1){
+    label=`Kisi-kisi (${total}/${total})`;
+  } else if(currentPage===total-2&&halamanSoal[total-1]&&halamanSoal[total-1].includes('PROMPT GENERATE GAMBAR')){
+    label=`Kisi-kisi (${total-1}/${total})`;
+  } else if(currentPage===total-2){
+    label=`Kunci (${total-1}/${total})`;
+  } else if(currentPage===total-3&&halamanSoal[total-1]&&halamanSoal[total-1].includes('PROMPT GENERATE GAMBAR')){
+    label=`Kunci (${total-2}/${total})`;
+  } else {
+    label=`Hal ${currentPage+1} / ${total}`;
+  }
   document.getElementById('pageInfo').textContent=label;
 }
 function showPage(idx){
