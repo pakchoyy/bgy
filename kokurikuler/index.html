@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
 <link rel="manifest" href="/kokurikuler/manifest.json"/>
 <meta name="theme-color" content="#0d9488"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
 <script>
   window.dataLayer=window.dataLayer||[];
@@ -342,7 +343,7 @@ footer a{color:inherit;text-decoration:underline;}
       <!-- AKTIVASI PRO -->
       <div class="aktivasi-box" id="aktivasiBox">
         <div class="ak-label">🔓 Aktivasi Pro — Generate Unlimited</div>
-        <div class="ak-sub"><a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk kode aktivasi.</div>
+        <div class="ak-sub"><a href="https://bantuguruyuk.web.id/aktvs-kkrklr.html" target="_blank" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk kode aktivasi.</div>
         <div class="aktivasi-row">
           <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..."/>
           <button onclick="aktivasiPro()">Aktifkan</button>
@@ -421,7 +422,12 @@ footer a{color:inherit;text-decoration:underline;}
 // KONFIGURASI
 // ============================================================
 const DAILY_LIMIT = 1;
-const WORKER_URL  = 'https://bgypro-kokurikuler.pulsachoy.workers.dev';
+
+// ✅ Supabase — proyek sama dengan Buat Soal (BantuGuruYuk-Pro)
+const sbClient = window.supabase.createClient(
+  "https://xtmpiqpmwirsrcsphsto.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w"
+);
 
 // ============================================================
 // INIT
@@ -793,35 +799,64 @@ function updateLimitDisplay(){
 }
 
 // ============================================================
-// AKTIVASI PRO — worker baru bgypro-kokurikuler
+// AKTIVASI PRO — Supabase (proyek sama dengan Buat Soal)
 // ============================================================
 async function aktivasiPro(){
-  const kode=document.getElementById('inputKodeAktivasi').value.trim();
+  const kode=document.getElementById('inputKodeAktivasi').value.trim().toUpperCase();
   const msg=document.getElementById('aktivasiMsg');
   if(!kode){msg.textContent='⚠️ Masukkan kode dulu.';msg.style.color='#dc2626';return;}
   msg.textContent='⏳ Memverifikasi...';msg.style.color='#64748b';
   try{
-    const res=await fetch(WORKER_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({kode:kode.toUpperCase()})
-    });
-    const json=await res.json();
-    if(json.valid){
-      localStorage.setItem('bgy_pro_modul',JSON.stringify({aktif:true,kode:kode.toUpperCase(),tgl:getTodayStr()}));
+    const {data,error}=await sbClient
+      .from('users')
+      .select('*')
+      .eq('code',kode)
+      .eq('access','kokurikuler')
+      .maybeSingle();
+    if(error)throw error;
+    if(!data){
+      msg.textContent='❌ Kode tidak ditemukan atau bukan untuk Kokurikuler.';
+      msg.style.color='#dc2626';return;
+    }
+    if(data.is_pro){
+      // Sudah Pro di Supabase — langsung aktifkan di localStorage
+      localStorage.setItem('bgy_pro_modul',JSON.stringify({aktif:true,kode,tgl:getTodayStr()}));
       msg.textContent='✅ Selamat menggunakan Bantu Guru Yuk — Modul Kokurikuler Pro! 🎉 Generate unlimited sudah aktif.';
       msg.style.color='#059669';
       updateLimitDisplay();
-      gaEvent('aktivasi_pro_kokurikuler',{kode:kode.toUpperCase()});
-    } else {
-      msg.textContent='❌ '+(json.message||'Kode tidak valid.');
-      msg.style.color='#dc2626';
+      gaEvent('aktivasi_pro_kokurikuler',{kode});
+      return;
     }
+    // Update is_pro = true di Supabase
+    const {error:updErr}=await sbClient
+      .from('users')
+      .update({is_pro:true})
+      .eq('code',kode)
+      .eq('access','kokurikuler');
+    if(updErr)throw updErr;
+    localStorage.setItem('bgy_pro_modul',JSON.stringify({aktif:true,kode,tgl:getTodayStr()}));
+    msg.textContent='✅ Selamat menggunakan Bantu Guru Yuk — Modul Kokurikuler Pro! 🎉 Generate unlimited sudah aktif.';
+    msg.style.color='#059669';
+    updateLimitDisplay();
+    gaEvent('aktivasi_pro_kokurikuler',{kode});
   }catch(e){
     msg.textContent='❌ Gagal terhubung ke server. Cek koneksi internet.';
     msg.style.color='#dc2626';
   }
 }
+
+// ✅ Auto-aktivasi dari URL param ?email=...&kode=... (dari aktvs-kkrklr.html)
+(function checkUrlParams(){
+  const params=new URLSearchParams(window.location.search);
+  const kodeParam=params.get('kode');
+  const emailParam=params.get('email');
+  if(kodeParam){
+    const inp=document.getElementById('inputKodeAktivasi');
+    if(inp)inp.value=kodeParam.toUpperCase();
+    // Auto trigger aktivasi setelah halaman siap
+    window.addEventListener('load',()=>setTimeout(aktivasiPro,600));
+  }
+})();
 
 // ============================================================
 // AUTO SAVE / RESTORE
