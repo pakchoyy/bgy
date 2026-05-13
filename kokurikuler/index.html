@@ -636,8 +636,10 @@ function copyPrompt(){
   const txt=document.getElementById('hasilPrompt').textContent;
   if(!txt){alert('Generate prompt dulu!');return;}
 
+  if(!isPro()){showUpgradePopup();return;}
+
   // ✅ GA4 event salin
-  gaEvent('salin_prompt_kokurikuler',{tipe_user:isPro()?'pro':'free'});
+  gaEvent('salin_prompt_kokurikuler',{tipe_user:'pro'});
 
   const showNotif=()=>{
     const n=document.getElementById('notifCopy');
@@ -664,11 +666,13 @@ function openAI(tipe){
   const txt=document.getElementById('hasilPrompt').textContent;
   if(!txt){alert('Generate prompt dulu!');return;}
 
+  if(!isPro()){showUpgradePopup();return;}
+
   const urls={gemini:'https://gemini.google.com/app',claude:'https://claude.ai/new'};
   const nama=tipe==='gemini'?'Gemini':'Claude';
 
   // ✅ GA4 event buka AI
-  gaEvent('buka_'+tipe+'_kokurikuler',{tipe_user:isPro()?'pro':'free'});
+  gaEvent('buka_'+tipe+'_kokurikuler',{tipe_user:'pro'});
 
   // Buka tab DULU (synchronous — tidak diblok browser)
   window.open(urls[tipe],'_blank');
@@ -951,6 +955,34 @@ function hidePreviewModul() {
   if(el) el.style.display = 'none';
 }
 window.addEventListener('load', initPreviewModul);
+</script>
+<!-- UPGRADE POPUP -->
+<div id="upgradePopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:var(--card-bg);border-radius:18px;padding:30px 24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3);position:relative;">
+    <div style="font-size:2.2rem;margin-bottom:10px;">🔒</div>
+    <div style="font-weight:800;font-size:1.05rem;margin-bottom:8px;color:var(--text)">Fitur Khusus PRO</div>
+    <div style="font-size:.85rem;color:var(--text-light);margin-bottom:22px;line-height:1.6">
+      Tombol <strong>Salin Prompt</strong> dan <strong>Buka AI</strong> hanya untuk member PRO.<br><br>
+      Upgrade sekarang untuk akses unlimited + salin 1 klik ke Claude/Gemini.
+    </div>
+    <button onclick="document.getElementById('upgradePopup').style.display='none';selectTab('pro');"
+      style="background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border:none;border-radius:10px;padding:11px 0;font-weight:800;font-size:.92rem;cursor:pointer;width:100%;margin-bottom:10px;">
+      🚀 Lihat Paket PRO
+    </button>
+    <button onclick="document.getElementById('upgradePopup').style.display='none';"
+      style="background:var(--gray-100);color:var(--text-light);border:none;border-radius:10px;padding:9px 0;font-size:.82rem;cursor:pointer;width:100%;">
+      Nanti saja
+    </button>
+  </div>
+</div>
+<script>
+function showUpgradePopup(){
+  const el=document.getElementById('upgradePopup');
+  el.style.display='flex';
+}
+document.getElementById('upgradePopup').addEventListener('click',function(e){
+  if(e.target===this)this.style.display='none';
+});
 </script>
 </body>
 </html>
