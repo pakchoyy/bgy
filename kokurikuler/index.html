@@ -343,11 +343,37 @@ footer a{color:inherit;text-decoration:underline;}
       <!-- AKTIVASI PRO -->
       <div class="aktivasi-box" id="aktivasiBox">
         <div class="ak-label">🔓 Aktivasi Pro — Generate Unlimited</div>
-        <div class="ak-sub"><a href="https://bantuguruyuk.web.id/aktvs-kkrklr.html" target="_blank" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk kode aktivasi.</div>
-        <div class="aktivasi-row">
-          <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..."/>
-          <button onclick="aktivasiPro()">Aktifkan</button>
+
+        <!-- TAB SWITCHER -->
+        <div style="display:flex;gap:4px;margin-bottom:10px;background:#f1f5f9;border-radius:8px;padding:3px;">
+          <button id="tabKodeBtn" onclick="switchAktivasiTab('kode')"
+            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:#0ea5a0;color:#fff;transition:all .2s;">
+            🔑 Kode Aktivasi
+          </button>
+          <button id="tabEmailBtn" onclick="switchAktivasiTab('email')"
+            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;">
+            📧 Sudah Beli? Login Email
+          </button>
         </div>
+
+        <!-- PANEL KODE -->
+        <div id="panelKode">
+          <div class="ak-sub"><a href="https://bantuguruyuk.web.id/aktvs-kkrklr.html" target="_blank" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk dapatkan kode aktivasi.</div>
+          <div class="aktivasi-row">
+            <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..."/>
+            <button onclick="aktivasiPro()">Aktifkan</button>
+          </div>
+        </div>
+
+        <!-- PANEL EMAIL LOGIN -->
+        <div id="panelEmail" style="display:none;">
+          <div class="ak-sub" style="margin-bottom:6px;">Masukkan email yang kamu pakai saat beli Pro.</div>
+          <div class="aktivasi-row">
+            <input type="email" id="inputEmailLogin" placeholder="email@sekolah.com"/>
+            <button onclick="loginEmail()">Login</button>
+          </div>
+        </div>
+
         <div id="aktivasiMsg" style="font-size:.72rem;margin-top:6px;min-height:14px;"></div>
       </div>
 
@@ -795,6 +821,56 @@ function updateLimitDisplay(){
       btn.innerHTML='✨ Generate Prompt Modul <span style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;">('+remaining+'/'+DAILY_LIMIT+')</span>';
       btn.disabled=false;
     }
+  }
+}
+
+// ============================================================
+// TAB SWITCHER AKTIVASI
+// ============================================================
+function switchAktivasiTab(tab){
+  const isKode=tab==='kode';
+  document.getElementById('panelKode').style.display=isKode?'block':'none';
+  document.getElementById('panelEmail').style.display=isKode?'none':'block';
+  document.getElementById('tabKodeBtn').style.background=isKode?'#0ea5a0':'transparent';
+  document.getElementById('tabKodeBtn').style.color=isKode?'#fff':'#64748b';
+  document.getElementById('tabEmailBtn').style.background=isKode?'transparent':'#0ea5a0';
+  document.getElementById('tabEmailBtn').style.color=isKode?'#64748b':'#fff';
+  document.getElementById('aktivasiMsg').textContent='';
+}
+
+// ============================================================
+// LOGIN EMAIL — cek Supabase, aktifkan localStorage kalau is_pro=true
+// ============================================================
+async function loginEmail(){
+  const email=document.getElementById('inputEmailLogin').value.trim().toLowerCase();
+  const msg=document.getElementById('aktivasiMsg');
+  if(!email){msg.textContent='⚠️ Masukkan email dulu.';msg.style.color='#dc2626';return;}
+  msg.textContent='⏳ Mengecek email...';msg.style.color='#64748b';
+  try{
+    const {data,error}=await sbClient
+      .from('users')
+      .select('*')
+      .eq('email',email)
+      .eq('access','kokurikuler')
+      .maybeSingle();
+    if(error)throw error;
+    if(!data){
+      msg.textContent='❌ Email tidak ditemukan. Pastikan email sama dengan saat pembelian.';
+      msg.style.color='#dc2626';return;
+    }
+    if(!data.is_pro){
+      msg.textContent='❌ Email ini belum aktif Pro. Hubungi admin jika sudah bayar.';
+      msg.style.color='#dc2626';return;
+    }
+    // is_pro = true — aktifkan localStorage
+    localStorage.setItem('bgy_pro_modul',JSON.stringify({aktif:true,kode:data.code,tgl:getTodayStr()}));
+    msg.textContent='✅ Login berhasil! Generate unlimited sudah aktif. 🎉';
+    msg.style.color='#059669';
+    updateLimitDisplay();
+    gaEvent('login_email_kokurikuler',{});
+  }catch(e){
+    msg.textContent='❌ Gagal terhubung ke server. Cek koneksi internet.';
+    msg.style.color='#dc2626';
   }
 }
 
