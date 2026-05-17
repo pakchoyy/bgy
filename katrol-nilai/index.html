@@ -271,22 +271,22 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
 /* â”€â”€ PREMIUM SCROLLING TICKER BY PAK CHOY â”€â”€ */
 .ticker-wrap {
   width: 100%;
-  background: linear-gradient(90deg, #0ea5a0, #0d7a8a);
-  color: #ffffff;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+  color: #1e293b;
   padding: 12px 0;
   overflow: hidden;
   position: relative;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 2px 10px rgba(0, 0, 0, 0.1);
   font-size: 0.85rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   z-index: 200;
-  border-top: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-top: 1.5px solid rgba(255, 255, 255, 0.2);
 }
 .ticker-title {
-  background: #f59e0b;
-  color: #1e293b;
+  background: #1e293b;
+  color: #ffffff;
   padding: 4px 12px;
   font-weight: 800;
   border-radius: 6px;
@@ -296,7 +296,7 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
   text-transform: uppercase;
   letter-spacing: 0.7px;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   animation: ticker-pulse 2s infinite;
 }
 @keyframes ticker-pulse {
@@ -316,12 +316,12 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
   animation: ticker-animation 35s linear infinite;
   cursor: pointer;
   text-decoration: none;
-  color: #ffffff;
+  color: #1e293b;
   padding-left: 10px;
 }
 .ticker-content:hover {
   animation-play-state: paused;
-  color: #fef08a;
+  color: #0f172a;
 }
 @keyframes ticker-animation {
   0% { transform: translate3d(0, 0, 0); }
@@ -334,19 +334,18 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
   margin-right: 80px;
 }
 .ticker-link span {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 3px 10px;
+  background: #1e293b;
+  color: #ffffff;
+  padding: 3px 12px;
   border-radius: 20px;
   margin-left: 8px;
-  border: 1px dashed rgba(255, 255, 255, 0.5);
   font-size: 0.78rem;
   transition: all 0.2s ease;
   font-weight: 700;
 }
 .ticker-content:hover .ticker-link span {
   background: #ffffff;
-  color: #0d7a8a;
-  border-style: solid;
+  color: #1e293b;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }</style>
 </head>
@@ -662,16 +661,16 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
   <div class="ticker-title">ðŸ”¥ REKOMENDASI</div>
   <div class="ticker-scroll">
     <a href="https://bantuguruyuk.web.id" target="_blank" class="ticker-content">
-      <span class="ticker-link">ðŸ’¡ <b>Mau buat soal dalam lima menit?</b></span>
-      <span class="ticker-link">ðŸ“˜ <b>Butuh prompt LKPD menarik?</b></span>
-      <span class="ticker-link">ðŸŽ­ <b>Mau buat modul kokurikuler hitungan menit?</b></span>
-      <span class="ticker-link">ðŸ‘‰ <b>Yuk cobain semuanya!</b> <span>Klik di Sini ðŸš€</span></span>
+      <span class="ticker-link">[ SOAL ] <b>Mau buat soal dalam lima menit?</b></span>
+      <span class="ticker-link">[ LKPD ] <b>Butuh prompt LKPD menarik?</b></span>
+      <span class="ticker-link">[ P5 ] <b>Mau buat modul kokurikuler hitungan menit?</b></span>
+      <span class="ticker-link">[ COBA ] <b>Yuk cobain semuanya!</b> <span>Klik di Sini</span></span>
       
       <!-- Duplikasi konten untuk efek seamless scrolling tanpa patah -->
-      <span class="ticker-link">ðŸ’¡ <b>Mau buat soal dalam lima menit?</b></span>
-      <span class="ticker-link">ðŸ“˜ <b>Butuh prompt LKPD menarik?</b></span>
-      <span class="ticker-link">ðŸŽ­ <b>Mau buat modul kokurikuler hitungan menit?</b></span>
-      <span class="ticker-link">ðŸ‘‰ <b>Yuk cobain semuanya!</b> <span>Klik di Sini ðŸš€</span></span>
+      <span class="ticker-link">[ SOAL ] <b>Mau buat soal dalam lima menit?</b></span>
+      <span class="ticker-link">[ LKPD ] <b>Butuh prompt LKPD menarik?</b></span>
+      <span class="ticker-link">[ P5 ] <b>Mau buat modul kokurikuler hitungan menit?</b></span>
+      <span class="ticker-link">[ COBA ] <b>Yuk cobain semuanya!</b> <span>Klik di Sini</span></span>
     </a>
   </div>
 </div><footer>
