@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+∩╗┐<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8"/>
@@ -35,7 +35,7 @@ body.dark{
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;overflow-x:hidden;}
 
-/* ══ LOADING SCREEN (awal) ══ */
+/* ΓòÉΓòÉ LOADING SCREEN (awal) ΓòÉΓòÉ */
 #loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--grad);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;z-index:99999;}
 #loadingScreen img{width:64px;margin-bottom:14px;border-radius:16px;}
 #loadingScreen .ls-title{font-size:1.3rem;font-weight:800;letter-spacing:1px;}
@@ -43,7 +43,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .ls-spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-top:18px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ══ GENERATE/PROSES LOADING OVERLAY (adopsi dari buat soal) ══ */
+/* ΓòÉΓòÉ GENERATE/PROSES LOADING OVERLAY (adopsi dari buat soal) ΓòÉΓòÉ */
 #prosesOverlay{
   display:none;position:fixed;inset:0;z-index:9999;
   background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 50%,#0d2137 100%);
@@ -77,14 +77,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 #prosesOverlay .go-bar{height:100%;background:linear-gradient(90deg,#0ea5a0,#f59e0b,#3b82f6);border-radius:99px;animation:goBar 2.5s ease-in-out infinite;}
 @keyframes goBar{0%{width:0%;margin-left:0;}50%{width:70%;margin-left:0;}100%{width:0%;margin-left:100%;}}
 
-/* ══ INSTALL POPUP ══ */
+/* ΓòÉΓòÉ INSTALL POPUP ΓòÉΓòÉ */
 #installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
 #installPopup.show{top:0;}
 #installPopup button{border:none;border-radius:8px;padding:5px 14px;font-weight:700;cursor:pointer;font-size:.8rem;}
 .btn-install{background:#fff;color:#0d7a8a;}
 .btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
 
-/* ══ HEADER ══ */
+/* ΓòÉΓòÉ HEADER ΓòÉΓòÉ */
 header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
 body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
@@ -105,16 +105,16 @@ body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
 
-/* ══ MAIN ══ */
+/* ΓòÉΓòÉ MAIN ΓòÉΓòÉ */
 main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;overflow-x:hidden;}
 @media(max-width:640px){main{padding:10px 12px;}}
 
-/* ══ CARD ══ */
+/* ΓòÉΓòÉ CARD ΓòÉΓòÉ */
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);overflow:hidden;}
 @media(max-width:640px){.card{padding:14px 12px;border-radius:10px;}}
 .card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:8px;}
 
-/* ══ TWO COL ══ */
+/* ΓòÉΓòÉ TWO COL ΓòÉΓòÉ */
 .two-col{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start;}
 @media(max-width:960px){.two-col{grid-template-columns:1fr;}}
 
@@ -123,7 +123,7 @@ main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;overflow-x:hi
 /* Sticky hanya di desktop */
 @media(min-width:961px){.col-right{position:sticky;top:80px;}}
 
-/* ══ FORM ══ */
+/* ΓòÉΓòÉ FORM ΓòÉΓòÉ */
 .form-group{margin-bottom:10px;}
 label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
 input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;}
@@ -132,12 +132,12 @@ textarea{resize:vertical;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 @media(max-width:400px){.row-2{grid-template-columns:1fr;}}
 
-/* ══ HINT BAR ══ */
+/* ΓòÉΓòÉ HINT BAR ΓòÉΓòÉ */
 .hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.76rem;color:var(--text);line-height:1.8;}
 .hint-bar span{font-weight:700;color:#0d7a8a;}
 body.dark .hint-bar span{color:#5eead4;}
 
-/* ══ METODE ══ */
+/* ΓòÉΓòÉ METODE ΓòÉΓòÉ */
 .metode-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
 .mc{border:1.5px solid var(--border);border-radius:10px;padding:9px 10px;cursor:pointer;transition:all .2s;background:var(--input-bg);}
 .mc:hover{border-color:var(--blue);background:rgba(14,165,160,.05);}
@@ -146,7 +146,7 @@ body.dark .hint-bar span{color:#5eead4;}
 .mc .mn{font-size:.72rem;font-weight:700;color:var(--text);}
 .mc .md{font-size:.62rem;color:var(--text-light);margin-top:1px;line-height:1.3;}
 
-/* ══ PARAM BOX ══ */
+/* ΓòÉΓòÉ PARAM BOX ΓòÉΓòÉ */
 .param-box{background:rgba(14,165,160,.06);border:1.5px solid rgba(14,165,160,.25);border-radius:9px;padding:10px 12px;margin-bottom:10px;display:none;font-size:.75rem;color:var(--text);line-height:1.5;}
 .param-box.show{display:block;}
 .param-box strong{display:block;font-size:.69rem;font-weight:700;color:#0d7a8a;margin-bottom:5px;}
@@ -154,7 +154,7 @@ body.dark .param-box strong{color:#5eead4;}
 .param-box input{width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:.81rem;color:var(--text);background:var(--card-bg);outline:none;font-family:inherit;}
 .param-box input:focus{border-color:var(--blue);}
 
-/* ══ UPLOAD ══ */
+/* ΓòÉΓòÉ UPLOAD ΓòÉΓòÉ */
 .upload-area{border:2px dashed var(--border);border-radius:10px;padding:15px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--input-bg);position:relative;margin-bottom:10px;}
 .upload-area:hover{border-color:var(--blue);background:rgba(14,165,160,.04);}
 .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
@@ -164,11 +164,11 @@ body.dark .param-box strong{color:#5eead4;}
 .upload-area.has-file{border-color:#10b981;background:rgba(16,185,129,.04);}
 .upload-area.has-file .ut{color:#10b981;}
 
-/* ══ DIVIDER ══ */
+/* ΓòÉΓòÉ DIVIDER ΓòÉΓòÉ */
 .divider{display:flex;align-items:center;gap:8px;margin:10px 0;color:var(--text-light);font-size:.68rem;font-weight:600;}
 .divider::before,.divider::after{content:'';flex:1;border-top:1px solid var(--border);}
 
-/* ══ BUTTONS ══ */
+/* ΓòÉΓòÉ BUTTONS ΓòÉΓòÉ */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;}
 .btn-primary{background:var(--grad);color:#fff;width:100%;justify-content:center;padding:12px;font-size:.95rem;border-radius:10px;box-shadow:0 4px 14px rgba(14,165,160,.25);}
 .btn-primary:hover{transform:translateY(-1px);opacity:.92;}
@@ -188,17 +188,17 @@ body.dark .btn-csv{color:#fbbf24!important;}
 body.dark .btn-excel{color:#6ee7b7!important;}
 body.dark .btn-copy{color:#a5b4fc!important;}
 
-/* ══ TEXTAREA SISWA ══ */
+/* ΓòÉΓòÉ TEXTAREA SISWA ΓòÉΓòÉ */
 .ta-siswa{border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);font-size:.79rem;color:var(--text);min-height:110px;padding:9px 11px;resize:vertical;font-family:'Courier New',monospace;width:100%;outline:none;}
 .ta-siswa:focus{border-color:var(--blue);}
 .hint{font-size:.64rem;color:var(--text-light);margin-top:3px;line-height:1.4;}
 
-/* ══ MAX BOX ══ */
+/* ΓòÉΓòÉ MAX BOX ΓòÉΓòÉ */
 .max-box{background:rgba(245,158,11,.07);border:1.5px solid rgba(245,158,11,.3);border-radius:9px;padding:9px 12px;margin-bottom:10px;font-size:.74rem;color:var(--text);}
 .max-box .mb-label{font-size:.68rem;font-weight:700;color:#92400e;margin-bottom:4px;}
 body.dark .max-box .mb-label{color:#fbbf24;}
 
-/* ══ STATS ══ */
+/* ΓòÉΓòÉ STATS ΓòÉΓòÉ */
 .stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
 @media(min-width:961px){.stats-row{grid-template-columns:repeat(4,1fr);gap:6px;}}
 .stat-card{background:var(--card-bg);border-radius:10px;padding:12px 8px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border);min-width:0;overflow:hidden;}
@@ -208,7 +208,7 @@ body.dark .max-box .mb-label{color:#fbbf24;}
 .stat-card.bl .sv{color:var(--blue);}
 .stat-card.or .sv{color:#f59e0b;}
 
-/* ══ TABLE ══ */
+/* ΓòÉΓòÉ TABLE ΓòÉΓòÉ */
 .tbl-wrap{overflow-x:auto;border-radius:9px;border:1px solid var(--border);-webkit-overflow-scrolling:touch;width:100%;}
 table{width:100%;border-collapse:collapse;font-size:.76rem;}
 thead{background:var(--grad);}
@@ -230,27 +230,27 @@ body.dark .bturun{background:rgba(239,68,68,.12);color:#fca5a5;}
 .na{color:var(--text-light);}
 body.dark .nk{color:#5eead4;}
 
-/* ══ PLACEHOLDER ══ */
+/* ΓòÉΓòÉ PLACEHOLDER ΓòÉΓòÉ */
 .prompt-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;color:var(--text-light);gap:10px;}
 .prompt-placeholder .ph-icon{font-size:2.5rem;opacity:.35;}
 .prompt-placeholder p{font-size:.82rem;text-align:center;}
 
-/* ══ INFO PILL ══ */
+/* ΓòÉΓòÉ INFO PILL ΓòÉΓòÉ */
 .info-pill{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(14,165,160,.08);color:#0d7a8a;font-size:.65rem;padding:4px 11px;border-radius:99px;font-weight:600;border:1px solid rgba(14,165,160,.25);margin-bottom:11px;}
 body.dark .info-pill{background:rgba(14,165,160,.12);color:#5eead4;}
 
-/* ══ FOOTER ══ */
+/* ΓòÉΓòÉ FOOTER ΓòÉΓòÉ */
 footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
 footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
 footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 footer a{color:inherit;text-decoration:underline;}
 
-/* ══ TOAST ══ */
+/* ΓòÉΓòÉ TOAST ΓòÉΓòÉ */
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:10px 22px;border-radius:99px;font-size:.81rem;font-weight:600;z-index:9999;opacity:0;transition:all .35s;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 body.dark #toast{background:#f1f5f9;color:#1e293b;}
 
-/* ══ MODAL ══ */
+/* ΓòÉΓòÉ MODAL ΓòÉΓòÉ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:8000;display:none;align-items:center;justify-content:center;padding:16px;}
 .modal-overlay.open{display:flex;}
 .modal-box{background:var(--card-bg);border-radius:16px;box-shadow:var(--shadow-lg);padding:24px;width:100%;max-width:420px;position:relative;animation:modalIn .25s ease;}
@@ -267,19 +267,100 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:#b2d8e0;border-radius:99px;}
-</style>
+
+/* ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ PREMIUM SCROLLING TICKER BY PAK CHOY ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ */
+.ticker-wrap {
+  width: 100%;
+  background: linear-gradient(90deg, #0ea5a0, #0d7a8a);
+  color: #ffffff;
+  padding: 12px 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 2px 10px rgba(0, 0, 0, 0.15);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  z-index: 200;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+.ticker-title {
+  background: #f59e0b;
+  color: #1e293b;
+  padding: 4px 12px;
+  font-weight: 800;
+  border-radius: 6px;
+  margin-left: 16px;
+  margin-right: 16px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  animation: ticker-pulse 2s infinite;
+}
+@keyframes ticker-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.ticker-scroll {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  width: 100%;
+}
+.ticker-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-animation 35s linear infinite;
+  cursor: pointer;
+  text-decoration: none;
+  color: #ffffff;
+  padding-left: 10px;
+}
+.ticker-content:hover {
+  animation-play-state: paused;
+  color: #fef08a;
+}
+@keyframes ticker-animation {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.ticker-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 80px;
+}
+.ticker-link span {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-left: 8px;
+  border: 1px dashed rgba(255, 255, 255, 0.5);
+  font-size: 0.78rem;
+  transition: all 0.2s ease;
+  font-weight: 700;
+}
+.ticker-content:hover .ticker-link span {
+  background: #ffffff;
+  color: #0d7a8a;
+  border-style: solid;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}</style>
 </head>
 <body>
 
-<!-- ══ LOADING SCREEN (awal) ══ -->
+<!-- ΓòÉΓòÉ LOADING SCREEN (awal) ΓòÉΓòÉ -->
 <div id="loadingScreen">
   <img src="../guru-cibisd2.png" alt="Logo"/>
   <div class="ls-title">Bantu Guru Yuk</div>
-  <div class="ls-sub">Katrol Nilai · by Pak Choyy</div>
+  <div class="ls-sub">Katrol Nilai ┬╖ by Pak Choyy</div>
   <div class="ls-spinner"></div>
 </div>
 
-<!-- ══ PROSES OVERLAY (adopsi dari buat soal) ══ -->
+<!-- ΓòÉΓòÉ PROSES OVERLAY (adopsi dari buat soal) ΓòÉΓòÉ -->
 <div id="prosesOverlay">
   <div class="go-orb go-orb1"></div>
   <div class="go-orb go-orb2"></div>
@@ -289,10 +370,10 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
     <div class="go-ring go-ring1"></div>
     <div class="go-ring go-ring2"></div>
     <div class="go-ring go-ring3"></div>
-    <div class="go-icon">📊</div>
+    <div class="go-icon">≡ƒôè</div>
   </div>
   <div class="go-title">Sedang Katrol Nilai</div>
-  <div class="go-sub">Hitung dan proses nilai siswa... 🧮</div>
+  <div class="go-sub">Hitung dan proses nilai siswa... ≡ƒº«</div>
   <div class="go-msgs"><div class="go-msg" id="prosesMsg">Membaca data siswa...</div></div>
   <div class="go-dots">
     <div class="go-dot"></div>
@@ -302,21 +383,21 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
   <div class="go-bar-wrap"><div class="go-bar"></div></div>
 </div>
 
-<!-- ══ INSTALL POPUP ══ -->
+<!-- ΓòÉΓòÉ INSTALL POPUP ΓòÉΓòÉ -->
 <div id="installPopup">
-  <span>📲 Install aplikasi Bantu Guru Yuk di HP kamu!</span>
+  <span>≡ƒô▓ Install aplikasi Bantu Guru Yuk di HP kamu!</span>
   <button class="btn-install" onclick="installApp()">Install</button>
-  <button class="btn-install-close" onclick="closeInstall()">✕</button>
+  <button class="btn-install-close" onclick="closeInstall()">Γ£ò</button>
 </div>
 
-<!-- ══ TOAST ══ -->
+<!-- ΓòÉΓòÉ TOAST ΓòÉΓòÉ -->
 <div id="toast"></div>
 
-<!-- ══ MODAL KRITIK SARAN ══ -->
+<!-- ΓòÉΓòÉ MODAL KRITIK SARAN ΓòÉΓòÉ -->
 <div class="modal-overlay" id="modalFeedback">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">💬 Kritik &amp; Saran</div>
+    <button class="modal-close" onclick="closeModal()">Γ£ò</button>
+    <div class="modal-title">≡ƒÆ¼ Kritik &amp; Saran</div>
     <div id="fbForm">
       <div class="form-group">
         <label>Nama (opsional)</label>
@@ -325,29 +406,29 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
       <div class="form-group">
         <label>Perasaan setelah pakai</label>
         <div class="emoji-row">
-          <button class="emoji-btn" onclick="pilihEmoji(this,'😍')" title="Sangat Puas">😍</button>
-          <button class="emoji-btn" onclick="pilihEmoji(this,'😊')" title="Puas">😊</button>
-          <button class="emoji-btn" onclick="pilihEmoji(this,'😐')" title="Biasa">😐</button>
-          <button class="emoji-btn" onclick="pilihEmoji(this,'😕')" title="Kurang">😕</button>
-          <button class="emoji-btn" onclick="pilihEmoji(this,'😤')" title="Tidak Puas">😤</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'≡ƒÿì')" title="Sangat Puas">≡ƒÿì</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'≡ƒÿè')" title="Puas">≡ƒÿè</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'≡ƒÿÉ')" title="Biasa">≡ƒÿÉ</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'≡ƒÿò')" title="Kurang">≡ƒÿò</button>
+          <button class="emoji-btn" onclick="pilihEmoji(this,'≡ƒÿñ')" title="Tidak Puas">≡ƒÿñ</button>
         </div>
       </div>
       <div class="form-group">
         <label>Pesan / Saran</label>
         <textarea id="fbPesan" rows="3" placeholder="Tulis kritik, saran, atau permintaan fitur..."></textarea>
       </div>
-      <button class="modal-send" onclick="kirimFeedback()">💬 Kirim via WhatsApp</button>
+      <button class="modal-send" onclick="kirimFeedback()">≡ƒÆ¼ Kirim via WhatsApp</button>
     </div>
     <div id="fbSuccess" style="display:none;text-align:center;padding:16px;background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.3);border-radius:10px;color:#0d7a8a;font-size:.84rem;font-weight:600;">
-      🎉 Terima kasih! WA sudah terbuka. Tinggal kirim pesannya ke Pak Choyy!
+      ≡ƒÄë Terima kasih! WA sudah terbuka. Tinggal kirim pesannya ke Pak Choyy!
     </div>
   </div>
 </div>
 
-<!-- ══ MENU OVERLAY ══ -->
+<!-- ΓòÉΓòÉ MENU OVERLAY ΓòÉΓòÉ -->
 <div id="menuOverlay" onclick="closeMenu()"></div>
 
-<!-- ══ HEADER ══ -->
+<!-- ΓòÉΓòÉ HEADER ΓòÉΓòÉ -->
 <header>
   <div class="header-inner">
     <div class="header-brand">
@@ -357,106 +438,106 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
       </div>
     </div>
     <div class="header-right">
-      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang">🌙</button>
-      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu">☰</button>
+      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang">≡ƒîÖ</button>
+      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu">Γÿ░</button>
       <div class="dropdown-menu" id="dropdownMenu">
-        <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()">🏠 Home</button>
-        <button class="dropdown-item" id="mi-petunjuk" onclick="selectTab('petunjuk');closeMenu()">📖 Petunjuk</button>
+        <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()">≡ƒÅá Home</button>
+        <button class="dropdown-item" id="mi-petunjuk" onclick="selectTab('petunjuk');closeMenu()">≡ƒôû Petunjuk</button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
-        <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
+        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">Γä╣∩╕Å Tentang</button>
+        <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">≡ƒô¼ Kontak</button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" onclick="installApp();closeMenu()">📲 Install BGY</button>
+        <button class="dropdown-item" onclick="installApp();closeMenu()">≡ƒô▓ Install BGY</button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" onclick="window.open('https://bantuguruyuk.web.id','_blank')">🌐 bantuguruyuk.web.id</button>
+        <button class="dropdown-item" onclick="window.open('https://bantuguruyuk.web.id','_blank')">≡ƒîÉ bantuguruyuk.web.id</button>
       </div>
     </div>
   </div>
 </header>
 
-<!-- ══ TAB PETUNJUK ══ -->
+<!-- ΓòÉΓòÉ TAB PETUNJUK ΓòÉΓòÉ -->
 <div id="tab-petunjuk" style="display:none;">
 <main>
   <div class="card">
-    <div class="card-title">📖 Petunjuk Penggunaan</div>
+    <div class="card-title">≡ƒôû Petunjuk Penggunaan</div>
     <div style="font-size:.84rem;color:var(--text);line-height:1.9;">
       <div style="background:rgba(14,165,160,.08);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:16px;">
         <b>Katrol Nilai</b> membantu guru mengolah nilai siswa dengan berbagai metode secara otomatis. Cukup input data, pilih metode, hasil langsung muncul!
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
-          <div style="font-size:1.4rem;flex-shrink:0;">1️⃣</div>
+          <div style="font-size:1.4rem;flex-shrink:0;">1∩╕ÅΓâú</div>
           <div><b style="color:var(--blue);">Isi Identitas</b><br/>Tulis nama kelas, mata pelajaran, KKM, dan batas nilai maksimal setelah dikatrol.</div>
         </div>
         <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
-          <div style="font-size:1.4rem;flex-shrink:0;">2️⃣</div>
+          <div style="font-size:1.4rem;flex-shrink:0;">2∩╕ÅΓâú</div>
           <div><b style="color:var(--blue);">Pilih Metode Katrol</b><br/>
-            <b>➕ Tambah Poin</b> — semua nilai ditambah angka tetap (misal +5)<br/>
-            <b>🎯 Naik ke KKM</b> — yang belum tuntas langsung dinaikkan ke KKM<br/>
-            <b>√ Rumus Akar</b> — √nilai × 10 (rumus klasik favorit guru)<br/>
-            <b>📊 Skala Proporsional</b> — nilai tertinggi dijadikan 100
+            <b>Γ₧ò Tambah Poin</b> ΓÇö semua nilai ditambah angka tetap (misal +5)<br/>
+            <b>≡ƒÄ» Naik ke KKM</b> ΓÇö yang belum tuntas langsung dinaikkan ke KKM<br/>
+            <b>ΓêÜ Rumus Akar</b> ΓÇö ΓêÜnilai ├ù 10 (rumus klasik favorit guru)<br/>
+            <b>≡ƒôè Skala Proporsional</b> ΓÇö nilai tertinggi dijadikan 100
           </div>
         </div>
         <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
-          <div style="font-size:1.4rem;flex-shrink:0;">3️⃣</div>
-          <div><b style="color:var(--blue);">Masukkan Data Siswa</b><br/>Upload file Excel/CSV (Kolom A: Nama, Kolom B: Nilai), atau ketik/paste manual format: <code style="background:var(--border);padding:1px 5px;border-radius:4px;">Nama, Nilai</code> — satu baris satu siswa.</div>
+          <div style="font-size:1.4rem;flex-shrink:0;">3∩╕ÅΓâú</div>
+          <div><b style="color:var(--blue);">Masukkan Data Siswa</b><br/>Upload file Excel/CSV (Kolom A: Nama, Kolom B: Nilai), atau ketik/paste manual format: <code style="background:var(--border);padding:1px 5px;border-radius:4px;">Nama, Nilai</code> ΓÇö satu baris satu siswa.</div>
         </div>
         <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
-          <div style="font-size:1.4rem;flex-shrink:0;">4️⃣</div>
+          <div style="font-size:1.4rem;flex-shrink:0;">4∩╕ÅΓâú</div>
           <div><b style="color:var(--blue);">Klik Katrol Nilai</b><br/>Hasil langsung muncul di bawah: tabel lengkap, statistik ketuntasan.</div>
         </div>
         <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--input-bg);">
-          <div style="font-size:1.4rem;flex-shrink:0;">5️⃣</div>
+          <div style="font-size:1.4rem;flex-shrink:0;">5∩╕ÅΓâú</div>
           <div><b style="color:var(--blue);">Download / Salin Hasil</b><br/>Unduh sebagai Excel (.xlsx) atau CSV. Bisa juga salin ke clipboard lalu paste ke Excel.</div>
         </div>
       </div>
       <div style="margin-top:14px;background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.3);border-radius:9px;padding:10px 13px;font-size:.78rem;color:#92400e;">
-        ⚠️ <b>Tips:</b> Gunakan kolom <b>Nilai Maks Katrol</b> agar nilai tidak melebihi batas tertentu (misal max 90). Nilai katrol tidak akan pernah melebihi angka ini.
+        ΓÜá∩╕Å <b>Tips:</b> Gunakan kolom <b>Nilai Maks Katrol</b> agar nilai tidak melebihi batas tertentu (misal max 90). Nilai katrol tidak akan pernah melebihi angka ini.
       </div>
     </div>
   </div>
 </main>
 </div>
 
-<!-- ══ TAB TENTANG ══ -->
+<!-- ΓòÉΓòÉ TAB TENTANG ΓòÉΓòÉ -->
 <div id="tab-tentang" style="display:none;">
 <main>
   <div class="card">
-    <div class="card-title">ℹ️ Tentang Aplikasi</div>
-    <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Katrol Nilai · v26.5.1</p>
+    <div class="card-title">Γä╣∩╕Å Tentang Aplikasi</div>
+    <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk ΓÇö Katrol Nilai ┬╖ v26.5.1</p>
     <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Aplikasi Katrol Nilai</b> hadir untuk membantu guru SD mengolah nilai siswa secara otomatis, cepat, dan akurat menggunakan berbagai metode katrol.</p>
-    <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur Unggulan</h4>
+    <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">Γ£¿ Fitur Unggulan</h4>
     <ul style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
-      <li>4 metode katrol: Tambah Poin, Naik ke KKM, Rumus Akar √×10, Skala Proporsional</li>
+      <li>4 metode katrol: Tambah Poin, Naik ke KKM, Rumus Akar ΓêÜ├ù10, Skala Proporsional</li>
       <li>Upload file Excel (.xlsx / .xls) dan CSV langsung</li>
       <li>Tabel hasil lengkap dengan nilai asli, katrol, delta &amp; status</li>
       <li>Export ke Excel &amp; CSV</li>
       <li>Dark mode &amp; responsif di HP dan laptop</li>
     </ul>
-    <div style="margin-top:14px;font-size:.8rem;color:var(--text-light);">🏫 <a href="https://bantuguruyuk.web.id" target="_blank" style="color:var(--blue);">bantuguruyuk.web.id</a></div>
+    <div style="margin-top:14px;font-size:.8rem;color:var(--text-light);">≡ƒÅ½ <a href="https://bantuguruyuk.web.id" target="_blank" style="color:var(--blue);">bantuguruyuk.web.id</a></div>
   </div>
 </main>
 </div>
 
-<!-- ══ TAB KONTAK ══ -->
+<!-- ΓòÉΓòÉ TAB KONTAK ΓòÉΓòÉ -->
 <div id="tab-kontak" style="display:none;">
 <main>
   <div class="card">
-    <div class="card-title">📬 Kontak</div>
+    <div class="card-title">≡ƒô¼ Kontak</div>
     <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau kolaborasi:</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp Pak Choyy</button>
-      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok @pak.choyy</button>
+      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">≡ƒÆ¼ WhatsApp Pak Choyy</button>
+      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">≡ƒÄ╡ TikTok @pak.choyy</button>
     </div>
   </div>
 </main>
 </div>
 
-<!-- ══ TAB HOME ══ -->
+<!-- ΓòÉΓòÉ TAB HOME ΓòÉΓòÉ -->
 <div id="tab-home">
 <main>
   <div class="hint-bar">
-    💡 <span>Isi Form</span> → <span>Pilih Metode</span> → <span>Input Nilai</span> → <span>Klik Katrol</span> → <span>Download Hasil 🎉</span>
+    ≡ƒÆí <span>Isi Form</span> ΓåÆ <span>Pilih Metode</span> ΓåÆ <span>Input Nilai</span> ΓåÆ <span>Klik Katrol</span> ΓåÆ <span>Download Hasil ≡ƒÄë</span>
   </div>
 
   <div class="two-col">
@@ -464,26 +545,26 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
     <div class="col-left">
 
       <div class="card">
-        <div class="card-title">⚙️ Pengaturan Katrol</div>
+        <div class="card-title">ΓÜÖ∩╕Å Pengaturan Katrol</div>
         <div class="row-2">
           <div class="form-group">
             <label>Kelas SD</label>
             <select id="kelasSelect" onchange="onKelasChange()">
-              <option value="">— Pilih Kelas —</option>
+              <option value="">ΓÇö Pilih Kelas ΓÇö</option>
               <option value="1">Kelas 1</option>
               <option value="2">Kelas 2</option>
               <option value="3">Kelas 3</option>
               <option value="4">Kelas 4</option>
               <option value="5">Kelas 5</option>
               <option value="6">Kelas 6</option>
-              <option value="custom">✏️ Isi Sendiri</option>
+              <option value="custom">Γ£Å∩╕Å Isi Sendiri</option>
             </select>
             <input type="text" id="kelasCustom" placeholder="Tulis kelas / jenjang lain..." style="display:none;margin-top:5px;"/>
           </div>
           <div class="form-group">
             <label>Mata Pelajaran</label>
             <select id="mapelSelect" onchange="onMapelChange()">
-              <option value="">— Pilih kelas dulu —</option>
+              <option value="">ΓÇö Pilih kelas dulu ΓÇö</option>
             </select>
             <input type="text" id="mapelCustom" placeholder="Tulis mapel..." style="display:none;margin-top:5px;"/>
           </div>
@@ -502,19 +583,19 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
           <label>Metode Katrol</label>
           <div class="metode-grid">
             <div class="mc active" onclick="pilihMetode('tambah',this)">
-              <div class="mi">➕</div><div class="mn">Tambah Poin</div>
+              <div class="mi">Γ₧ò</div><div class="mn">Tambah Poin</div>
               <div class="md">Semua nilai ditambah angka tetap</div>
             </div>
             <div class="mc" onclick="pilihMetode('kkm',this)">
-              <div class="mi">🎯</div><div class="mn">Naik ke KKM</div>
+              <div class="mi">≡ƒÄ»</div><div class="mn">Naik ke KKM</div>
               <div class="md">Bawah KKM dinaikkan pas KKM</div>
             </div>
             <div class="mc" onclick="pilihMetode('akar',this)">
-              <div class="mi">√</div><div class="mn">Rumus Akar</div>
-              <div class="md">√nilai × 10 (rumus klasik)</div>
+              <div class="mi">ΓêÜ</div><div class="mn">Rumus Akar</div>
+              <div class="md">ΓêÜnilai ├ù 10 (rumus klasik)</div>
             </div>
             <div class="mc" onclick="pilihMetode('skala',this)">
-              <div class="mi">📊</div><div class="mn">Skala Proporsional</div>
+              <div class="mi">≡ƒôè</div><div class="mn">Skala Proporsional</div>
               <div class="md">Nilai tertinggi jadi 100</div>
             </div>
           </div>
@@ -524,21 +605,21 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
           <input type="number" id="poin" value="5" min="0" max="50"/>
         </div>
         <div class="param-box" id="p-kkm">Nilai di bawah KKM akan dinaikkan tepat ke nilai KKM. Nilai yang sudah tuntas tidak berubah.</div>
-        <div class="param-box" id="p-akar">Rumus: √nilai × 10. Contoh: nilai 64 → √64 × 10 = <strong style="display:inline;font-weight:800;">80</strong>. Nilai rendah naik lebih banyak secara proporsional.</div>
+        <div class="param-box" id="p-akar">Rumus: ΓêÜnilai ├ù 10. Contoh: nilai 64 ΓåÆ ΓêÜ64 ├ù 10 = <strong style="display:inline;font-weight:800;">80</strong>. Nilai rendah naik lebih banyak secara proporsional.</div>
         <div class="param-box" id="p-skala">Nilai tertinggi dijadikan 100, sisanya proporsional. Cocok jika soal terlalu sulit.</div>
         <div class="max-box">
-          <div class="mb-label">🔒 Batas Atas Nilai Katrol</div>
+          <div class="mb-label">≡ƒöÆ Batas Atas Nilai Katrol</div>
           Nilai katrol tidak akan melebihi <strong id="maxLabel">100</strong>. Atur di kolom "Nilai Maks Katrol" di atas.
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">📂 Data Nilai Siswa</div>
+        <div class="card-title">≡ƒôé Data Nilai Siswa</div>
         <div class="form-group">
           <label>Upload File Excel / CSV</label>
           <div class="upload-area" id="uploadArea">
             <input type="file" accept=".xlsx,.xls,.csv" onchange="handleFile(this)"/>
-            <div class="ui">📂</div>
+            <div class="ui">≡ƒôé</div>
             <div class="ut" id="uploadText">Klik atau seret file ke sini</div>
             <div class="us">Excel (.xlsx/.xls) atau CSV<br/>Kolom A: Nama | Kolom B: Nilai</div>
           </div>
@@ -550,21 +631,21 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
           <div class="hint">Satu baris = satu siswa. Pisah koma atau tab. Bisa paste langsung dari Excel.</div>
         </div>
         <div class="btn-row">
-          <button class="btn-sm" onclick="contohData()">📋 Isi Contoh</button>
-          <button class="btn-sm r" onclick="clearAll()">🗑️ Hapus Semua</button>
+          <button class="btn-sm" onclick="contohData()">≡ƒôï Isi Contoh</button>
+          <button class="btn-sm r" onclick="clearAll()">≡ƒùæ∩╕Å Hapus Semua</button>
         </div>
       </div>
 
-      <button class="btn btn-primary" id="btnKatrol" onclick="prosesKatrol()">✨ Katrol Nilai Sekarang</button>
+      <button class="btn btn-primary" id="btnKatrol" onclick="prosesKatrol()">Γ£¿ Katrol Nilai Sekarang</button>
     </div>
 
     <!-- KOLOM KANAN: Hasil -->
     <div class="col-right">
       <div class="card">
-        <div class="card-title">📊 Hasil Katrol Nilai</div>
+        <div class="card-title">≡ƒôè Hasil Katrol Nilai</div>
         <div id="panelHasil">
           <div class="prompt-placeholder">
-            <div class="ph-icon">📊</div>
+            <div class="ph-icon">≡ƒôè</div>
             <p>Isi form di kiri lalu klik<br/><b>Katrol Nilai Sekarang</b></p>
           </div>
         </div>
@@ -574,22 +655,40 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
 </main>
 </div>
 
-<!-- ══ FOOTER ══ -->
-<footer>
+<!-- ΓòÉΓòÉ FOOTER ΓòÉΓòÉ -->
+
+<!-- ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ PREMIUM RUNNING TEXT TICKER ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ -->
+<div class="ticker-wrap">
+  <div class="ticker-title">├░┼╕ΓÇ¥┬Ñ REKOMENDASI</div>
+  <div class="ticker-scroll">
+    <a href="https://bantuguruyuk.web.id" target="_blank" class="ticker-content">
+      <span class="ticker-link">├░┼╕ΓÇÖ┬í <b>Mau buat soal dalam lima menit?</b></span>
+      <span class="ticker-link">├░┼╕ΓÇ£╦£ <b>Butuh prompt LKPD menarik?</b></span>
+      <span class="ticker-link">├░┼╕┼╜┬¡ <b>Mau buat modul kokurikuler hitungan menit?</b></span>
+      <span class="ticker-link">├░┼╕ΓÇÿΓÇ░ <b>Yuk cobain semuanya!</b> <span>Klik di Sini ├░┼╕┼íΓé¼</span></span>
+      
+      <!-- Duplikasi konten untuk efek seamless scrolling tanpa patah -->
+      <span class="ticker-link">├░┼╕ΓÇÖ┬í <b>Mau buat soal dalam lima menit?</b></span>
+      <span class="ticker-link">├░┼╕ΓÇ£╦£ <b>Butuh prompt LKPD menarik?</b></span>
+      <span class="ticker-link">├░┼╕┼╜┬¡ <b>Mau buat modul kokurikuler hitungan menit?</b></span>
+      <span class="ticker-link">├░┼╕ΓÇÿΓÇ░ <b>Yuk cobain semuanya!</b> <span>Klik di Sini ├░┼╕┼íΓé¼</span></span>
+    </a>
+  </div>
+</div><footer>
   <div class="footer-title">Katrol Nilai</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.5.1</div>
+  <div class="footer-sub">┬⌐ 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.5.1</div>
 </footer>
 
 <script>
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    STATE
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 let deferredInstallPrompt = null;
 let metode = 'tambah';
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    INIT
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 (function init(){
   // Hide loading screen setelah load
   window.addEventListener('load', () => {
@@ -599,14 +698,14 @@ let metode = 'tambah';
 
   // Restore dark mode
   const saved = localStorage.getItem('katrol_theme');
-  if(saved === 'dark'){ document.body.classList.add('dark'); document.getElementById('darkBtn').textContent='☀️'; }
+  if(saved === 'dark'){ document.body.classList.add('dark'); document.getElementById('darkBtn').textContent='ΓÿÇ∩╕Å'; }
 
   // Max label sync
   document.getElementById('maxKatrol').addEventListener('input', function(){
     document.getElementById('maxLabel').textContent = this.value;
   });
 
-  // PWA install prompt — simpan deferredInstallPrompt
+  // PWA install prompt ΓÇö simpan deferredInstallPrompt
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredInstallPrompt = e;
@@ -618,15 +717,15 @@ let metode = 'tambah';
   });
 })();
 
-/* ═══════════════════════
-   PWA INSTALL — logika sama dengan buat soal
-═══════════════════════ */
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+   PWA INSTALL ΓÇö logika sama dengan buat soal
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function installApp(){
   if(deferredInstallPrompt){
     // Bisa install native
     deferredInstallPrompt.prompt();
     deferredInstallPrompt.userChoice.then(choice => {
-      if(choice.outcome === 'accepted') showToast('✅ Aplikasi berhasil diinstall!');
+      if(choice.outcome === 'accepted') showToast('Γ£à Aplikasi berhasil diinstall!');
       deferredInstallPrompt = null;
     });
   } else {
@@ -640,19 +739,19 @@ function closeInstall(){
   localStorage.setItem('katrol_installClosed', Date.now().toString());
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    DARK MODE
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function toggleDark(){
   document.body.classList.toggle('dark');
   const d = document.body.classList.contains('dark');
-  document.getElementById('darkBtn').textContent = d ? '☀️' : '🌙';
+  document.getElementById('darkBtn').textContent = d ? 'ΓÿÇ∩╕Å' : '≡ƒîÖ';
   localStorage.setItem('katrol_theme', d ? 'dark' : 'light');
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    MENU / TABS
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 let _menuOpen = false;
 function toggleMenu(){
   _menuOpen = !_menuOpen;
@@ -672,9 +771,9 @@ function selectTab(tab){
   window.scrollTo(0,0);
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    MODAL FEEDBACK
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 let selectedEmoji = '';
 function openModal(){
   document.getElementById('modalFeedback').classList.add('open');
@@ -694,15 +793,15 @@ function kirimFeedback(){
   const pesan = document.getElementById('fbPesan').value.trim();
   if(!pesan && !selectedEmoji){ showToast('Tulis pesan atau pilih emoji dulu ya!'); return; }
   const emoji = selectedEmoji||'-';
-  const teks = `*Kritik & Saran — Katrol Nilai*\n\n👤 Nama: ${nama}\n${emoji} Perasaan: ${emoji}\n💬 Pesan: ${pesan||'-'}\n\n_Dikirim dari bantuguruyuk.web.id_`;
+  const teks = `*Kritik & Saran ΓÇö Katrol Nilai*\n\n≡ƒæñ Nama: ${nama}\n${emoji} Perasaan: ${emoji}\n≡ƒÆ¼ Pesan: ${pesan||'-'}\n\n_Dikirim dari bantuguruyuk.web.id_`;
   window.open('https://wa.me/6289530713597?text='+encodeURIComponent(teks),'_blank');
   document.getElementById('fbForm').style.display='none';
   document.getElementById('fbSuccess').style.display='block';
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    METODE
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function pilihMetode(m, el){
   metode = m;
   document.querySelectorAll('.mc').forEach(c=>c.classList.remove('active'));
@@ -711,9 +810,9 @@ function pilihMetode(m, el){
   const pb = document.getElementById('p-'+m); if(pb) pb.classList.add('show');
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    FILE UPLOAD
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function handleFile(input){
   const file = input.files[0]; if(!file) return;
   const area = document.getElementById('uploadArea'), txt = document.getElementById('uploadText');
@@ -722,7 +821,7 @@ function handleFile(input){
     reader.onload = e => {
       const rows = e.target.result.split('\n').filter(r=>r.trim());
       document.getElementById('inputSiswa').value = rows.map(r=>r.split(',').slice(0,2).join(',')).join('\n');
-      area.classList.add('has-file'); txt.textContent = '✅ '+file.name;
+      area.classList.add('has-file'); txt.textContent = 'Γ£à '+file.name;
       showToast('File CSV berhasil diimport!');
     };
     reader.readAsText(file);
@@ -734,17 +833,17 @@ function handleFile(input){
         const data = XLSX.utils.sheet_to_json(ws, {header:1});
         const lines = data.filter(r=>r.length>=2&&r[0]&&!isNaN(parseFloat(r[1]))).map(r=>r[0]+','+r[1]).join('\n');
         document.getElementById('inputSiswa').value = lines;
-        area.classList.add('has-file'); txt.textContent = '✅ '+file.name+' ('+data.length+' baris)';
+        area.classList.add('has-file'); txt.textContent = 'Γ£à '+file.name+' ('+data.length+' baris)';
         showToast('File Excel berhasil diimport!');
-      } catch(err){ txt.textContent='❌ Gagal membaca. Coba CSV.'; showToast('Gagal baca file.'); }
+      } catch(err){ txt.textContent='Γ¥î Gagal membaca. Coba CSV.'; showToast('Gagal baca file.'); }
     };
     reader.readAsArrayBuffer(file);
   }
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    PARSE
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function parseSiswa(raw){
   return raw.trim().split('\n').filter(b=>b.trim()).map(b=>{
     const p = b.split(/[,\t]/);
@@ -755,9 +854,9 @@ function parseSiswa(raw){
   }).filter(Boolean);
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    HITUNG KATROL
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function hitungKatrol(nilai, maxNilai){
   const kkm = parseFloat(document.getElementById('kkm').value)||75;
   const maxK = parseFloat(document.getElementById('maxKatrol').value)||100;
@@ -773,16 +872,16 @@ function hitungKatrol(nilai, maxNilai){
   return Math.min(maxK, Math.round(h*10)/10);
 }
 
-/* ═══════════════════════
-   PROSES OVERLAY — loading pesan (mirip buat soal)
-═══════════════════════ */
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
+   PROSES OVERLAY ΓÇö loading pesan (mirip buat soal)
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 const _prosesMessages = [
-  'Membaca data siswa... 📋',
-  'Menghitung nilai katrol... 🧮',
-  'Mengecek ketuntasan KKM... 🎯',
-  'Menyusun tabel hasil... 📊',
-  'Merapikan tampilan... ✨',
-  'Hampir selesai, sabar ya! ⏳',
+  'Membaca data siswa... ≡ƒôï',
+  'Menghitung nilai katrol... ≡ƒº«',
+  'Mengecek ketuntasan KKM... ≡ƒÄ»',
+  'Menyusun tabel hasil... ≡ƒôè',
+  'Merapikan tampilan... Γ£¿',
+  'Hampir selesai, sabar ya! ΓÅ│',
 ];
 let _prosesTimer = null, _prosMsgIdx = 0;
 
@@ -810,9 +909,9 @@ function hideProsesOverlay(){
   _stopProsesMessages();
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    PROSES KATROL UTAMA
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function prosesKatrol(){
   const raw = document.getElementById('inputSiswa').value;
   if(!raw.trim()){ showToast('Data siswa belum diisi!'); return; }
@@ -839,7 +938,7 @@ function prosesKatrol(){
       const maxNilai = Math.max(...siswa.map(s=>s.nilai));
       const kelas = getKelasValue();
       const mapel = getMapelValue();
-      const mLabel = {tambah:`+${document.getElementById('poin')?document.getElementById('poin').value:5} Poin`,kkm:'Naik ke KKM',akar:'Akar √×10',skala:'Skala Prop.'};
+      const mLabel = {tambah:`+${document.getElementById('poin')?document.getElementById('poin').value:5} Poin`,kkm:'Naik ke KKM',akar:'Akar ΓêÜ├ù10',skala:'Skala Prop.'};
 
       const hasil = siswa.map((s,i) => {
         const katrol = hitungKatrol(s.nilai, maxNilai);
@@ -851,23 +950,23 @@ function prosesKatrol(){
       const tA = hasil.filter(h=>h.asli>=kkm).length;
       const tK = hasil.filter(h=>h.katrol>=kkm).length;
       const pct = Math.round(tK/hasil.length*100);
-      const judulKelas = [kelas?'Kelas '+kelas:'', mapel].filter(Boolean).join(' — ');
+      const judulKelas = [kelas?'Kelas '+kelas:'', mapel].filter(Boolean).join(' ΓÇö ');
 
       let rows = '';
       hasil.forEach(h => {
         const dc = h.delta>0?'dp':h.delta===0?'dz':'dm';
         const ds = h.delta>0?'+'+h.delta:h.delta;
         const badge = h.delta>0?'<span class="bnaik">Naik</span>':h.delta===0?'<span class="bsama">Sama</span>':'<span class="bturun">Turun</span>';
-        const sA = h.asli>=kkm?'✅':'❌', sK = h.katrol>=kkm?'✅':'❌';
+        const sA = h.asli>=kkm?'Γ£à':'Γ¥î', sK = h.katrol>=kkm?'Γ£à':'Γ¥î';
         rows += `<tr><td style="color:var(--text-light);font-size:.72rem;">${h.no}</td><td style="font-weight:600;">${h.nama}</td><td class="na">${h.asli} ${sA}</td><td class="nk">${h.katrol} ${sK}</td><td class="${dc}">${ds}</td><td>${badge}</td></tr>`;
       });
 
       document.getElementById('panelHasil').innerHTML = `
-        ${judulKelas?`<div class="info-pill">📚 ${judulKelas} | KKM: ${kkm} | ${mLabel[metode]}</div>`:`<div class="info-pill">KKM: ${kkm} | ${mLabel[metode]}</div>`}
+        ${judulKelas?`<div class="info-pill">≡ƒôÜ ${judulKelas} | KKM: ${kkm} | ${mLabel[metode]}</div>`:`<div class="info-pill">KKM: ${kkm} | ${mLabel[metode]}</div>`}
         <div class="stats-row">
           <div class="stat-card"><div class="sv">${hasil.length}</div><div class="sl">Total Siswa</div></div>
-          <div class="stat-card bl"><div class="sv">${rataAsli}→<span style="color:#10b981;">${rataKatrol}</span></div><div class="sl">Rata-rata</div></div>
-          <div class="stat-card gr"><div class="sv">${tA}→${tK}</div><div class="sl">Tuntas KKM</div></div>
+          <div class="stat-card bl"><div class="sv">${rataAsli}ΓåÆ<span style="color:#10b981;">${rataKatrol}</span></div><div class="sl">Rata-rata</div></div>
+          <div class="stat-card gr"><div class="sv">${tA}ΓåÆ${tK}</div><div class="sl">Tuntas KKM</div></div>
           <div class="stat-card or"><div class="sv">${pct}%</div><div class="sl">% Tuntas</div></div>
         </div>
         <div class="tbl-wrap">
@@ -877,9 +976,9 @@ function prosesKatrol(){
           </table>
         </div>
         <div class="btn-row" style="margin-top:12px;">
-          <button class="btn-sm btn-csv" onclick="exportCSV()">📥 CSV</button>
-          <button class="btn-sm btn-excel" onclick="exportExcel()">📊 Excel</button>
-          <button class="btn-sm btn-copy" onclick="copyTabel()">📋 Copy</button>
+          <button class="btn-sm btn-csv" onclick="exportCSV()">≡ƒôÑ CSV</button>
+          <button class="btn-sm btn-excel" onclick="exportExcel()">≡ƒôè Excel</button>
+          <button class="btn-sm btn-copy" onclick="copyTabel()">≡ƒôï Copy</button>
         </div>
       `;
 
@@ -905,22 +1004,22 @@ function prosesKatrol(){
             document.querySelector('.col-right')?.scrollIntoView({behavior:'smooth', block:'start'});
           }, 200);
         }
-        showToast('Nilai berhasil dikatrol! 🎉');
+        showToast('Nilai berhasil dikatrol! ≡ƒÄë');
       }, remaining);
 
     } catch(e) {
       hideProsesOverlay();
-      showToast('❌ Terjadi error: '+e.message);
+      showToast('Γ¥î Terjadi error: '+e.message);
     }
   }, 300);
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    EXPORT
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function exportCSV(){
   if(!window._hasil) return;
-  let csv = `Katrol Nilai${window._judulKelas?' — '+window._judulKelas:''}\nKKM: ${window._kkm} | Metode: ${window._mLabel}\n\nNo,Nama,Nilai Asli,Nilai Katrol,Delta,Keterangan\n`;
+  let csv = `Katrol Nilai${window._judulKelas?' ΓÇö '+window._judulKelas:''}\nKKM: ${window._kkm} | Metode: ${window._mLabel}\n\nNo,Nama,Nilai Asli,Nilai Katrol,Delta,Keterangan\n`;
   window._hasil.forEach(h => { csv += `${h.no},"${h.nama}",${h.asli},${h.katrol},${h.delta>0?'+'+h.delta:h.delta},${h.katrol>=window._kkm?'Tuntas':'Belum Tuntas'}\n`; });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
@@ -944,9 +1043,9 @@ function copyTabel(){
   navigator.clipboard.writeText(txt).then(()=>showToast('Berhasil dicopy! Paste ke Excel.'));
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    CONTOH & CLEAR
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 function contohData(){
   document.getElementById('kelasSelect').value = '5';
   onKelasChange();
@@ -962,27 +1061,27 @@ function clearAll(){
   document.getElementById('inputSiswa').value = '';
   document.getElementById('kelasSelect').value = '';
   document.getElementById('kelasCustom').style.display='none';
-  document.getElementById('mapelSelect').innerHTML = '<option value="">— Pilih kelas dulu —</option>';
+  document.getElementById('mapelSelect').innerHTML = '<option value="">ΓÇö Pilih kelas dulu ΓÇö</option>';
   document.getElementById('mapelSelect').style.display='';
   document.getElementById('mapelCustom').style.display='none';
   document.getElementById('uploadArea').classList.remove('has-file');
   document.getElementById('uploadText').textContent = 'Klik atau seret file ke sini';
-  document.getElementById('panelHasil').innerHTML = '<div class="prompt-placeholder"><div class="ph-icon">📊</div><p>Isi form di kiri lalu klik<br/><b>Katrol Nilai Sekarang</b></p></div>';
+  document.getElementById('panelHasil').innerHTML = '<div class="prompt-placeholder"><div class="ph-icon">≡ƒôè</div><p>Isi form di kiri lalu klik<br/><b>Katrol Nilai Sekarang</b></p></div>';
   window._hasil = null;
   showToast('Data berhasil dihapus.');
 }
 
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    DB MAPEL SD (Kurikulum Merdeka)
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 const DB_MAPEL_SD = {
-  1: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
-  2: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
-  3: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
-  4: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
-  5: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','KKA / Koding','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
-  6: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','KKA / Koding','Bahasa Inggris (Pilihan)','Muatan Lokal','✏️ Lainnya...'],
+  1: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','Γ£Å∩╕Å Lainnya...'],
+  2: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','Γ£Å∩╕Å Lainnya...'],
+  3: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','Γ£Å∩╕Å Lainnya...'],
+  4: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','Bahasa Inggris (Pilihan)','Muatan Lokal','Γ£Å∩╕Å Lainnya...'],
+  5: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','KKA / Koding','Bahasa Inggris (Pilihan)','Muatan Lokal','Γ£Å∩╕Å Lainnya...'],
+  6: ['Pendidikan Agama dan Budi Pekerti','Pendidikan Pancasila','Bahasa Indonesia','Matematika','IPAS (Ilmu Pengetahuan Alam dan Sosial)','PJOK','Seni dan Budaya','KKA / Koding','Bahasa Inggris (Pilihan)','Muatan Lokal','Γ£Å∩╕Å Lainnya...'],
 };
 
 function onKelasChange(){
@@ -994,15 +1093,15 @@ function onKelasChange(){
   if(sel.value === 'custom'){
     kc.style.display = 'block';
     kc.focus();
-    ms.innerHTML = '<option value="custom">✏️ Isi Sendiri</option>';
+    ms.innerHTML = '<option value="custom">Γ£Å∩╕Å Isi Sendiri</option>';
     mc.style.display = 'block';
     mc.focus();
   } else {
     kc.style.display = 'none';
     const kelas = parseInt(sel.value);
     const mapels = DB_MAPEL_SD[kelas] || [];
-    ms.innerHTML = '<option value="">— Pilih Mapel —</option>' +
-      mapels.map(m => m.startsWith('✏️')
+    ms.innerHTML = '<option value="">ΓÇö Pilih Mapel ΓÇö</option>' +
+      mapels.map(m => m.startsWith('Γ£Å∩╕Å')
         ? `<option value="custom">${m}</option>`
         : `<option value="${m}">${m}</option>`
       ).join('');
@@ -1035,9 +1134,9 @@ function getMapelValue(){
   return ms.value || '';
 }
 
-/* ═══════════════════════
+/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
    TOAST
-═══════════════════════ */
+ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 let _toastTimer;
 function showToast(msg){
   const t = document.getElementById('toast');
@@ -1046,7 +1145,7 @@ function showToast(msg){
   _toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-/* ── Service Worker Registration ── */
+/* ΓöÇΓöÇ Service Worker Registration ΓöÇΓöÇ */
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/katrol-nilai/sw.js', {scope:'/katrol-nilai/'})
@@ -1057,8 +1156,8 @@ if('serviceWorker' in navigator){
           const newWorker = reg.installing;
           newWorker.addEventListener('statechange', () => {
             if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
-              // Ada versi baru — tampilkan toast
-              showToast('✅ Katrol Nilai diperbarui! Refresh untuk update.');
+              // Ada versi baru ΓÇö tampilkan toast
+              showToast('Γ£à Katrol Nilai diperbarui! Refresh untuk update.');
             }
           });
         });
@@ -1069,7 +1168,7 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     const toast = document.createElement('div');
     toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0ea5a0;color:#fff;padding:12px 20px;border-radius:12px;font-size:.88rem;font-weight:700;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;';
-    toast.innerHTML = '✅ App diperbarui! <button onclick="location.reload()" style="background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-weight:700;cursor:pointer;font-size:.82rem;">Refresh</button>';
+    toast.innerHTML = 'Γ£à App diperbarui! <button onclick="location.reload()" style="background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:8px;padding:4px 10px;font-weight:700;cursor:pointer;font-size:.82rem;">Refresh</button>';
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 8000);
   });
