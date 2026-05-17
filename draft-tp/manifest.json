@@ -1,0 +1,27 @@
+{
+  "name": "Bantu Guru Yuk | Katrol Nilai",
+  "short_name": "Katrol Nilai",
+  "description": "Aplikasi katrol nilai siswa otomatis untuk guru SD Kurikulum Merdeka",
+  "start_url": "/katrol-nilai/",
+  "scope": "/katrol-nilai/",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#0ea5a0",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "../guru-cibisd2.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../guru-cibisd2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "id"
+}
