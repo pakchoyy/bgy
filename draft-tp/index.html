@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bantu Guru Yuk | Draft TP</title>
+<meta name="description" content="Generator Draft Tujuan Pembelajaran untuk Guru SD - Kurikulum Merdeka"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+/* ══════════════════════════════════════
+   RESET & ROOT VARIABLES
+══════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
+  --blue:#0ea5a0;--blue-dark:#0d7a8a;--blue-light:#5eead4;
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;
+  --text-light:#64748b;--border:#e2e8f0;--input-bg:#f8fafc;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+  --radius:12px;
+}
+body.dark{
+  --bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;
+  --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;
+}
+body{
+  font-family:'Segoe UI',system-ui,sans-serif;
+  background:var(--bg);min-height:100vh;color:var(--text);
+  transition:background .3s,color .3s;
+  display:flex;flex-direction:column;overflow-x:hidden;
+}
+
+/* ══ HEADER ══ */
+header{
+  position:sticky;top:0;z-index:300;
+  background:var(--grad);padding:0 16px;
+  box-shadow:0 2px 10px rgba(0,0,0,.18);
+}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
+.header-brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+.header-brand .logo-box{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.header-brand h1{font-size:.95rem;font-weight:800;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-brand p{font-size:.62rem;color:rgba(255,255,255,.75);white-space:nowrap;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{
+  height:32px;width:36px;border-radius:8px;
+  border:1.5px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.1);color:#fff;
+  cursor:pointer;font-size:1rem;transition:background .2s;
+  display:flex;align-items:center;justify-content:center;
+}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.dropdown-menu{
+  position:absolute;top:calc(100% + 8px);right:0;
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:12px;box-shadow:var(--shadow-lg);
+  min-width:190px;overflow:hidden;display:none;z-index:400;
+}
+.dropdown-menu.open{display:block;}
+.dropdown-item{
+  display:flex;align-items:center;gap:10px;padding:11px 16px;
+  font-size:.83rem;font-weight:600;color:var(--text);
+  cursor:pointer;transition:background .15s;
+  border:none;background:none;width:100%;text-align:left;
+}
+.dropdown-item:hover{background:var(--input-bg);}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+#menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
+#menuOverlay.open{display:block;}
+
+/* ══ PROSES OVERLAY (Loading Generate) ══ */
+#prosesOverlay{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 50%,#0d2137 100%);
+  flex-direction:column;align-items:center;justify-content:center;gap:0;
+}
+#prosesOverlay .go-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:goOrb 4s ease-in-out infinite;}
+@keyframes goOrb{0%,100%{transform:scale(1) translate(0,0);opacity:.5;}50%{transform:scale(1.2) translate(10px,-10px);opacity:.8;}}
+#prosesOverlay .go-orb1{width:300px;height:300px;background:radial-gradient(circle,#0ea5a066,transparent);top:-80px;left:-80px;}
+#prosesOverlay .go-orb2{width:250px;height:250px;background:radial-gradient(circle,#f59e0b44,transparent);bottom:-60px;right:-60px;animation-delay:1.5s;}
+#prosesOverlay .go-orb3{width:180px;height:180px;background:radial-gradient(circle,#3b82f644,transparent);bottom:30%;right:15%;animation-delay:.8s;}
+#prosesOverlay .go-ring-wrap{position:relative;width:110px;height:110px;margin-bottom:28px;}
+#prosesOverlay .go-ring{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;}
+#prosesOverlay .go-ring1{border-top-color:#0ea5a0;border-right-color:#0ea5a0;animation:goSpin 1.2s linear infinite;}
+#prosesOverlay .go-ring2{inset:12px;border-top-color:#f59e0b;border-left-color:#f59e0b;animation:goSpin 1.8s linear infinite reverse;}
+#prosesOverlay .go-ring3{inset:24px;border-top-color:#fff;animation:goSpin 2.4s linear infinite;}
+#prosesOverlay .go-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;}
+@keyframes goSpin{to{transform:rotate(360deg);}}
+#prosesOverlay .go-title{font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:.5px;text-align:center;margin-bottom:8px;}
+#prosesOverlay .go-sub{font-size:.9rem;color:rgba(255,255,255,.7);text-align:center;margin-bottom:32px;font-style:italic;}
+#prosesOverlay .go-msgs{min-height:28px;text-align:center;}
+#prosesOverlay .go-msg{font-size:.82rem;color:#5eead4;font-weight:700;letter-spacing:.3px;animation:goMsgFade .5s ease;}
+@keyframes goMsgFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+#prosesOverlay .go-dots{display:flex;gap:8px;margin-top:24px;align-items:center;justify-content:center;}
+#prosesOverlay .go-dot{width:8px;height:8px;border-radius:50%;background:#0ea5a0;animation:goDot 1.4s ease-in-out infinite;}
+#prosesOverlay .go-dot:nth-child(2){background:#f59e0b;animation-delay:.2s;}
+#prosesOverlay .go-dot:nth-child(3){background:#3b82f6;animation-delay:.4s;}
+@keyframes goDot{0%,80%,100%{transform:scale(.7);opacity:.5;}40%{transform:scale(1.2);opacity:1;}}
+#prosesOverlay .go-bar-wrap{width:260px;height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:20px;}
+#prosesOverlay .go-bar{height:100%;background:linear-gradient(90deg,#0ea5a0,#f59e0b,#3b82f6);border-radius:99px;animation:goBar 2.5s ease-in-out infinite;}
+@keyframes goBar{0%{width:0%;margin-left:0;}50%{width:70%;margin-left:0;}100%{width:0%;margin-left:100%;}}
+
+/* ══ MAIN ══ */
+main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;overflow-x:hidden;}
+@media(max-width:640px){main{padding:10px 12px;}}
+
+/* ══ TWO COL ══ */
+.two-col{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start;}
+@media(max-width:960px){.two-col{grid-template-columns:1fr;}}
+.col-left{display:flex;flex-direction:column;gap:12px;}
+.col-right{min-width:0;max-width:100%;overflow:hidden;}
+@media(min-width:961px){.col-right{position:sticky;top:80px;max-height:calc(100vh - 100px);overflow-y:auto;}}
+
+/* ══ CARD ══ */
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--border);overflow:hidden;}
+@media(max-width:640px){.card{padding:14px 12px;border-radius:10px;}}
+.card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:10px;}
+
+/* ══ FORM ══ */
+.form-group{margin-bottom:12px;}
+label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+input[type=text],input[type=number],select,textarea{
+  width:100%;padding:9px 11px;
+  border:1.5px solid var(--border);border-radius:8px;
+  font-size:.84rem;color:var(--text);background:var(--input-bg);
+  transition:border-color .2s,background .3s;outline:none;font-family:inherit;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+textarea{resize:vertical;}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:400px){.row-2{grid-template-columns:1fr;}}
+
+/* ══ GAYA PILIHAN ══ */
+.gaya-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:4px;}
+.gaya-btn{
+  border:1.5px solid var(--border);border-radius:9px;
+  padding:9px 6px;cursor:pointer;transition:all .2s;
+  background:var(--input-bg);text-align:center;
+  font-size:.72rem;font-weight:700;color:var(--text);
+}
+.gaya-btn:hover{border-color:var(--blue);background:rgba(14,165,160,.05);}
+.gaya-btn.active{border-color:var(--blue);background:rgba(14,165,160,.1);color:var(--blue);}
+.gaya-btn .gi{font-size:18px;display:block;margin-bottom:2px;}
+
+/* ══ UPLOAD AREA ══ */
+.upload-area{
+  border:2px dashed var(--border);border-radius:10px;
+  padding:14px 12px;text-align:center;cursor:pointer;
+  transition:all .2s;background:var(--input-bg);position:relative;
+}
+.upload-area:hover{border-color:var(--blue);background:rgba(14,165,160,.04);}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-area .ui{font-size:22px;margin-bottom:3px;}
+.upload-area .ut{font-size:.74rem;font-weight:700;color:var(--text);}
+.upload-area .us{font-size:.63rem;color:var(--text-light);margin-top:2px;line-height:1.4;}
+.upload-area.has-file{border-color:#10b981;background:rgba(16,185,129,.04);}
+.upload-area.has-file .ut{color:#10b981;}
+
+/* ══ TOMBOL GENERATE ══ */
+.btn-generate{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:14px;background:var(--grad);color:#fff;
+  border:none;border-radius:12px;font-size:1rem;font-weight:800;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 18px rgba(14,165,160,.3);letter-spacing:.3px;
+}
+.btn-generate:hover{transform:translateY(-1px);opacity:.93;box-shadow:0 6px 24px rgba(14,165,160,.4);}
+@media(max-width:600px){.btn-generate{padding:16px 12px;font-size:1.05rem;}}
+
+/* ══ TOMBOL KECIL ══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.79rem;cursor:pointer;transition:all .2s;}
+.btn-outline{border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue);}
+.btn-teal{background:var(--grad);color:#fff;}
+.btn-teal:hover{opacity:.88;}
+.btn-pdf{border:1.5px solid #ef4444!important;color:#ef4444!important;background:rgba(239,68,68,.06)!important;}
+.btn-pdf:hover{background:rgba(239,68,68,.12)!important;}
+.action-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+
+/* ══ PLACEHOLDER HASIL ══ */
+.hasil-placeholder{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:320px;color:var(--text-light);gap:12px;
+  border:2px dashed var(--border);border-radius:12px;
+}
+.hasil-placeholder .ph-icon{font-size:3rem;opacity:.3;}
+.hasil-placeholder p{font-size:.83rem;text-align:center;line-height:1.6;}
+
+/* ══ INFO PILLS ══ */
+.info-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.pill{
+  display:inline-block;background:rgba(14,165,160,.08);
+  color:var(--blue-dark);font-size:.65rem;padding:4px 10px;
+  border-radius:99px;font-weight:600;border:1px solid rgba(14,165,160,.22);
+}
+body.dark .pill{background:rgba(14,165,160,.12);color:var(--blue-light);}
+
+/* ══ TP CARD ══ */
+.tp-item{
+  background:var(--card-bg);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;margin-bottom:8px;
+  display:flex;align-items:flex-start;gap:10px;
+  transition:all .2s;
+}
+.tp-item:hover{border-color:var(--blue);box-shadow:0 2px 12px rgba(14,165,160,.1);}
+.tp-num{
+  min-width:28px;height:28px;background:var(--grad);
+  color:#fff;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-size:.72rem;font-weight:800;
+  flex-shrink:0;margin-top:1px;
+}
+.tp-text{flex:1;font-size:.84rem;color:var(--text);line-height:1.6;}
+.tp-copy{
+  flex-shrink:0;padding:5px 10px;border:1.5px solid var(--border);
+  background:var(--input-bg);color:var(--text-light);
+  border-radius:7px;font-size:.68rem;font-weight:700;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.tp-copy:hover{border-color:var(--blue);color:var(--blue);}
+.tp-copy.copied{border-color:#10b981;color:#10b981;background:rgba(16,185,129,.06);}
+
+/* ══ HASIL TITLE ══ */
+.hasil-header{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.hasil-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px;}
+
+/* ══ TOAST ══ */
+#toast{
+  position:fixed;bottom:22px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:#1e293b;color:#fff;padding:10px 22px;
+  border-radius:99px;font-size:.81rem;font-weight:600;
+  z-index:9999;opacity:0;transition:all .35s;
+  white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+body.dark #toast{background:#f1f5f9;color:#1e293b;}
+
+/* ══ FOOTER ══ */
+footer{
+  background:var(--grad);color:#fff;
+  text-align:center;padding:14px 20px 10px;margin-top:auto;
+}
+footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
+footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
+
+/* ══ SCROLLBAR ══ */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#b2d8e0;border-radius:99px;}
+
+/* ══ PDF CONTENT (hidden, for export) ══ */
+#pdfContent{display:none;}
+</style>
+</head>
+<body>
+
+<!-- ══ PROSES OVERLAY ══ -->
+<div id="prosesOverlay">
+  <div class="go-orb go-orb1"></div>
+  <div class="go-orb go-orb2"></div>
+  <div class="go-orb go-orb3"></div>
+  <div class="go-ring-wrap">
+    <div class="go-ring go-ring1"></div>
+    <div class="go-ring go-ring2"></div>
+    <div class="go-ring go-ring3"></div>
+    <div class="go-icon">📚</div>
+  </div>
+  <div class="go-title">Menyusun Draft TP</div>
+  <div class="go-sub">Membuat Tujuan Pembelajaran profesional...</div>
+  <div class="go-msgs"><div class="go-msg" id="prosesMsg">Membaca CP...</div></div>
+  <div class="go-dots">
+    <div class="go-dot"></div>
+    <div class="go-dot"></div>
+    <div class="go-dot"></div>
+  </div>
+  <div class="go-bar-wrap"><div class="go-bar"></div></div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast"></div>
+
+<!-- ══ MENU OVERLAY ══ -->
+<div id="menuOverlay" onclick="closeMenu()"></div>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="logo-box">📝</div>
+      <div>
+        <h1>Bantu Guru Yuk | Draft TP</h1>
+        <p>Generator Tujuan Pembelajaran SD</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <!-- Tombol Dark Mode -->
+      <button class="hdr-btn" id="darkBtn" onclick="toggleDark()" title="Dark Mode">🌙</button>
+      <!-- Tombol Menu -->
+      <button class="hdr-btn" id="menuBtn" onclick="toggleMenu()" title="Menu">☰</button>
+      <!-- Dropdown Menu -->
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item" onclick="resetForm();closeMenu()">🔄 Reset Form</button>
+        <button class="dropdown-item" onclick="scrollToHasil();closeMenu()">📄 Lihat Hasil</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" onclick="window.open('https://www.tiktok.com/@pak.choyy','_blank');closeMenu()">🎵 TikTok @pak.choyy</button>
+        <button class="dropdown-item" onclick="window.open('https://artikel-bgy.blogspot.com','_blank');closeMenu()">📰 Blog BGY</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ MAIN ══ -->
+<main>
+  <div class="two-col">
+
+    <!-- ══ KOLOM KIRI: FORM ══ -->
+    <div class="col-left">
+
+      <!-- CARD: Identitas TP -->
+      <div class="card">
+        <div class="card-title">📋 Identitas Tujuan Pembelajaran</div>
+
+        <!-- Jenis CP -->
+        <div class="form-group">
+          <label>Jenis CP</label>
+          <select id="jenisCp">
+            <option value="CP Terbaru">CP Terbaru (2022–sekarang)</option>
+            <option value="CP Lama">CP Lama (sebelum 2022)</option>
+          </select>
+        </div>
+
+        <!-- Kelas & Semester -->
+        <div class="row-2">
+          <div class="form-group">
+            <label>Kelas</label>
+            <select id="kelas">
+              <option value="1">Kelas 1</option>
+              <option value="2">Kelas 2</option>
+              <option value="3">Kelas 3</option>
+              <option value="4">Kelas 4</option>
+              <option value="5" selected>Kelas 5</option>
+              <option value="6">Kelas 6</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <select id="semester">
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Mata Pelajaran -->
+        <div class="form-group">
+          <label>Mata Pelajaran</label>
+          <select id="mapel">
+            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+            <option value="Matematika">Matematika</option>
+            <option value="IPAS">IPAS</option>
+            <option value="PPKn">PPKn</option>
+            <option value="PJOK">PJOK</option>
+            <option value="Seni Budaya">Seni Budaya</option>
+            <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
+            <option value="Bahasa Inggris">Bahasa Inggris</option>
+            <option value="Prakarya">Prakarya</option>
+            <option value="lainnya">Lainnya (isi manual)</option>
+          </select>
+        </div>
+        <div class="form-group" id="mapelManualWrap" style="display:none">
+          <label>Nama Mata Pelajaran</label>
+          <input type="text" id="mapelManual" placeholder="Contoh: Bahasa Daerah, TIK..."/>
+        </div>
+
+        <!-- Materi / Topik -->
+        <div class="form-group">
+          <label>Materi / Topik Pembelajaran</label>
+          <textarea id="materi" rows="3" placeholder="Contoh: Pecahan senilai, operasi penjumlahan dan pengurangan pecahan..."></textarea>
+        </div>
+
+        <!-- Jumlah TP -->
+        <div class="form-group">
+          <label>Jumlah TP yang diinginkan</label>
+          <input type="number" id="jumlahTp" value="5" min="1" max="20" style="max-width:120px"/>
+        </div>
+      </div>
+
+      <!-- CARD: Gaya Penulisan -->
+      <div class="card">
+        <div class="card-title">✍️ Gaya Penulisan</div>
+        <div class="gaya-grid">
+          <button class="gaya-btn active" data-gaya="singkat" onclick="setGaya(this)">
+            <span class="gi">⚡</span>Singkat
+          </button>
+          <button class="gaya-btn" data-gaya="detail" onclick="setGaya(this)">
+            <span class="gi">📖</span>Detail
+          </button>
+          <button class="gaya-btn" data-gaya="formal" onclick="setGaya(this)">
+            <span class="gi">🎓</span>Formal Guru
+          </button>
+        </div>
+      </div>
+
+      <!-- CARD: Referensi Guru -->
+      <div class="card">
+        <div class="card-title">📌 Referensi TP Guru (Opsional)</div>
+        <div class="form-group">
+          <label>Tempel Contoh TP Anda</label>
+          <textarea id="referensiTp" rows="6"
+            placeholder="Paste contoh TP dari guru agar sistem mengikuti gaya bahasa dan format penulisan...&#10;&#10;Contoh:&#10;1. Peserta didik mampu memahami konsep bilangan...&#10;2. Peserta didik dapat menjelaskan..."></textarea>
+        </div>
+        <div class="form-group" style="margin-top:8px">
+          <label>Upload File Referensi</label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" accept=".txt,.pdf" onchange="handleFileUpload(this)"/>
+            <div class="ui">📎</div>
+            <div class="ut" id="uploadText">Klik untuk upload file</div>
+            <div class="us">Mendukung .txt dan .pdf sederhana</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOMBOL GENERATE -->
+      <button class="btn-generate" onclick="generateTP()">
+        ✨ Generate Draft TP
+      </button>
+
+    </div><!-- /col-left -->
+
+    <!-- ══ KOLOM KANAN: HASIL ══ -->
+    <div class="col-right" id="colRight">
+      <div class="card" id="hasilCard">
+
+        <!-- Placeholder awal -->
+        <div class="hasil-placeholder" id="hasilPlaceholder">
+          <div class="ph-icon">📝</div>
+          <p>Isi form di kiri lalu klik<br><strong>✨ Generate Draft TP</strong><br>untuk membuat Tujuan Pembelajaran</p>
+        </div>
+
+        <!-- Konten Hasil (tersembunyi dulu) -->
+        <div id="hasilKonten" style="display:none">
+          <div class="hasil-header">
+            <div class="hasil-title" id="hasilJudul">Draft Tujuan Pembelajaran</div>
+            <div class="info-pills" id="infoPills"></div>
+          </div>
+
+          <!-- Tombol Aksi -->
+          <div class="action-row">
+            <button class="btn btn-teal" onclick="salinSemua()">📋 Salin Semua</button>
+            <button class="btn btn-outline btn-pdf" onclick="downloadPDF()">📄 Download PDF</button>
+          </div>
+
+          <!-- Daftar TP -->
+          <div id="daftarTp"></div>
+        </div>
+
+      </div>
+    </div><!-- /col-right -->
+
+  </div><!-- /two-col -->
+</main>
+
+<!-- ══ PDF HIDDEN CONTENT ══ -->
+<div id="pdfContent"></div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-title">Bantu Guru Yuk</div>
+  <div class="footer-sub">Generator Draft TP untuk Guru SD · by pak.choyy</div>
+</footer>
+
+<script>
+/* ════════════════════════════════════════════
+   DARK MODE
+════════════════════════════════════════════ */
+(function(){
+  if(localStorage.getItem('draftTpDark')==='1'){
+    document.body.classList.add('dark');
+    document.getElementById('darkBtn').textContent='☀️';
+  }
+})();
+
+function toggleDark(){
+  const d=document.body.classList.toggle('dark');
+  document.getElementById('darkBtn').textContent=d?'☀️':'🌙';
+  localStorage.setItem('draftTpDark',d?'1':'0');
+}
+
+/* ════════════════════════════════════════════
+   MENU DROPDOWN
+════════════════════════════════════════════ */
+function toggleMenu(){
+  document.getElementById('dropdownMenu').classList.toggle('open');
+  document.getElementById('menuOverlay').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('dropdownMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+
+/* ════════════════════════════════════════════
+   MAPEL MANUAL
+════════════════════════════════════════════ */
+document.getElementById('mapel').addEventListener('change',function(){
+  document.getElementById('mapelManualWrap').style.display=
+    this.value==='lainnya'?'block':'none';
+});
+
+/* ════════════════════════════════════════════
+   GAYA PENULISAN
+════════════════════════════════════════════ */
+let gayaAktif='singkat';
+function setGaya(el){
+  document.querySelectorAll('.gaya-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  gayaAktif=el.dataset.gaya;
+}
+
+/* ════════════════════════════════════════════
+   FILE UPLOAD (TXT / PDF sederhana)
+════════════════════════════════════════════ */
+let uploadedText='';
+function handleFileUpload(input){
+  const file=input.files[0];
+  if(!file) return;
+  const area=document.getElementById('uploadArea');
+  const txtEl=document.getElementById('uploadText');
+  if(file.type==='text/plain'){
+    const reader=new FileReader();
+    reader.onload=function(e){
+      uploadedText=e.target.result;
+      area.classList.add('has-file');
+      txtEl.textContent='✅ '+file.name;
+      toast('File referensi berhasil dibaca 📄');
+    };
+    reader.readAsText(file);
+  } else if(file.type==='application/pdf'){
+    // PDF: cukup catat nama, konten sulit dibaca tanpa library
+    uploadedText='[PDF referensi: '+file.name+']';
+    area.classList.add('has-file');
+    txtEl.textContent='✅ '+file.name+' (PDF)';
+    toast('File PDF tercatat sebagai referensi 📄');
+  } else {
+    toast('Format tidak didukung. Gunakan .txt atau .pdf');
+  }
+}
+
+/* ════════════════════════════════════════════
+   RESET FORM
+════════════════════════════════════════════ */
+function resetForm(){
+  document.getElementById('jenisCp').value='CP Terbaru';
+  document.getElementById('kelas').value='5';
+  document.getElementById('semester').value='1';
+  document.getElementById('mapel').value='Bahasa Indonesia';
+  document.getElementById('mapelManualWrap').style.display='none';
+  document.getElementById('materi').value='';
+  document.getElementById('jumlahTp').value='5';
+  document.getElementById('referensiTp').value='';
+  document.getElementById('uploadArea').classList.remove('has-file');
+  document.getElementById('uploadText').textContent='Klik untuk upload file';
+  uploadedText='';
+  gayaAktif='singkat';
+  document.querySelectorAll('.gaya-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  document.getElementById('hasilPlaceholder').style.display='flex';
+  document.getElementById('hasilKonten').style.display='none';
+  toast('Form berhasil direset 🔄');
+}
+
+/* ════════════════════════════════════════════
+   SCROLL KE HASIL (mobile)
+════════════════════════════════════════════ */
+function scrollToHasil(){
+  document.getElementById('colRight').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ════════════════════════════════════════════
+   TOAST NOTIFICATION
+════════════════════════════════════════════ */
+let toastTimer=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+/* ════════════════════════════════════════════
+   PROSES OVERLAY (Loading)
+════════════════════════════════════════════ */
+const loadMsgs=[
+  'Membaca CP...',
+  'Menganalisis referensi guru...',
+  'Menyusun kerangka TP...',
+  'Merapikan bahasa guru...',
+  'Membuat draft profesional...',
+  'Hampir selesai...'
+];
+let msgInterval=null;
+function showOverlay(){
+  const ov=document.getElementById('prosesOverlay');
+  ov.style.display='flex';
+  let i=0;
+  document.getElementById('prosesMsg').textContent=loadMsgs[0];
+  msgInterval=setInterval(()=>{
+    i=(i+1)%loadMsgs.length;
+    const el=document.getElementById('prosesMsg');
+    el.style.animation='none';
+    el.offsetHeight; // reflow
+    el.style.animation='';
+    el.textContent=loadMsgs[i];
+  },800);
+}
+function hideOverlay(){
+  clearInterval(msgInterval);
+  document.getElementById('prosesOverlay').style.display='none';
+}
+
+/* ════════════════════════════════════════════
+   GENERATOR DUMMY TP
+   - Baca referensi guru
+   - Analisis pola kalimat
+   - Generate TP sesuai gaya + materi
+════════════════════════════════════════════ */
+
+/* Template kata kerja per tingkat kelas */
+const kataKerjaKelas={
+  '1':['mengenal','menyebutkan','menunjukkan','menirukan','menyebutkan'],
+  '2':['mengenal','menyebutkan','menjelaskan','menunjukkan','membedakan'],
+  '3':['menjelaskan','membedakan','mengelompokkan','mengidentifikasi','menyebutkan'],
+  '4':['mengidentifikasi','mendeskripsikan','membandingkan','menganalisis','menyimpulkan'],
+  '5':['menganalisis','membandingkan','mengevaluasi','menyimpulkan','memecahkan'],
+  '6':['mengevaluasi','mengkreasi','mengembangkan','merancang','menyintesis']
+};
+
+/* Template awalan kalimat per gaya */
+const awalGaya={
+  singkat:{
+    awalan:'Peserta didik mampu ',
+    akhiran:' dengan tepat.'
+  },
+  detail:{
+    awalan:'Peserta didik dapat ',
+    akhiran:' secara mandiri melalui kegiatan pembelajaran yang aktif dan bermakna.'
+  },
+  formal:{
+    awalan:'Peserta didik diharapkan mampu ',
+    akhiran:' sesuai dengan capaian pembelajaran yang telah ditetapkan.'
+  }
+};
+
+/* Template konteks per mapel */
+const konteksMapel={
+  'Bahasa Indonesia':['teks bacaan','teks cerita','puisi','laporan','paragraf','kalimat efektif','ejaan dan tanda baca','kosakata baru'],
+  'Matematika':['bilangan','operasi hitung','bangun datar','bangun ruang','pengukuran','statistika','pola bilangan','pecahan'],
+  'IPAS':['makhluk hidup','ekosistem','sumber daya alam','gaya dan gerak','energi','perubahan materi','bumi dan tata surya','teknologi'],
+  'PPKn':['nilai Pancasila','hak dan kewajiban','keberagaman','persatuan','norma','aturan','musyawarah','kewarganegaraan'],
+  'PJOK':['gerak dasar','kebugaran jasmani','permainan tradisional','olahraga','pola hidup sehat','renang','atletik'],
+  'Seni Budaya':['karya seni','apresiasi seni','ragam hias','musik','tari','drama','kerajinan tangan'],
+  'Pendidikan Agama Islam':['rukun iman','rukun Islam','akhlak mulia','ibadah','Al-Quran','hadis','kisah nabi'],
+  'Bahasa Inggris':['vocabulary','reading','writing','speaking','listening','grammar','expression'],
+  'Prakarya':['kerajinan','pengolahan','budidaya','rekayasa']
+};
+
+/* Analisis pola referensi guru */
+function analisaReferensi(ref){
+  if(!ref || ref.trim().length<20) return null;
+  const lines=ref.split('\n').filter(l=>l.trim().length>10);
+  if(lines.length===0) return null;
+
+  // Cari awalan yang sering dipakai
+  let awalan='Peserta didik mampu ';
+  const patterns=['Peserta didik mampu','Peserta didik dapat','Siswa mampu','Siswa dapat','Murid mampu'];
+  for(const p of patterns){
+    if(ref.toLowerCase().includes(p.toLowerCase())){
+      awalan=p+' ';
+      break;
+    }
+  }
+
+  // Estimasi panjang kalimat dari referensi
+  const avgLen=lines.reduce((s,l)=>s+l.split(' ').length,0)/lines.length;
+  const panjang=avgLen>20?'detail':avgLen>12?'sedang':'singkat';
+
+  return {awalan,panjang,sample:lines.slice(0,3)};
+}
+
+/* Ambil konteks materi */
+function getKonteks(mapelVal,materi){
+  const ctx=konteksMapel[mapelVal]||['konsep dasar','materi pembelajaran','topik'];
+  if(materi && materi.trim().length>5){
+    // Pecah kata kunci dari input materi
+    const kataKunci=materi.split(/[,\n;]+/).map(k=>k.trim()).filter(k=>k.length>3);
+    return kataKunci.length>0?kataKunci:ctx;
+  }
+  return ctx;
+}
+
+/* Generate satu kalimat TP */
+function buatSatuTp(idx,kelas,mapelVal,materi,gaya,pola,konteksList){
+  const kk=kataKerjaKelas[kelas]||kataKerjaKelas['5'];
+  const kataKerja=kk[idx%kk.length];
+  const konteks=konteksList[idx%konteksList.length];
+
+  let awalan,akhiran;
+  if(pola){
+    awalan=pola.awalan;
+    // Sesuaikan akhiran berdasarkan panjang referensi
+    akhiran=pola.panjang==='detail'?
+      ' dengan baik dan benar sesuai dengan materi yang dipelajari.':
+      ' dengan tepat.';
+  } else {
+    const tmpl=awalGaya[gaya]||awalGaya.singkat;
+    awalan=tmpl.awalan;
+    akhiran=tmpl.akhiran;
+  }
+
+  // Variasikan struktur
+  const varStruktur=[
+    `${awalan}${kataKerja} ${konteks}${akhiran}`,
+    `${awalan}${kataKerja} dan menerapkan ${konteks} dalam kehidupan sehari-hari.`,
+    `${awalan}${kataKerja} ${konteks} dengan menggunakan ${idx%2===0?'berbagai sumber belajar':'pendekatan ilmiah'}.`,
+    `${awalan}${kataKerja} ${konteks} serta mengomunikasikan hasilnya kepada teman dan guru.`,
+    `${awalan}${kataKerja} ${konteks} berdasarkan pengalaman dan pengamatan langsung.`
+  ];
+
+  return varStruktur[idx%varStruktur.length];
+}
+
+/* FUNGSI UTAMA: Generate TP */
+function generateTP(){
+  const kelas=document.getElementById('kelas').value;
+  const mapelSelect=document.getElementById('mapel').value;
+  const mapelVal=mapelSelect==='lainnya'?
+    (document.getElementById('mapelManual').value||'Mata Pelajaran'):mapelSelect;
+  const semester=document.getElementById('semester').value;
+  const jenisCp=document.getElementById('jenisCp').value;
+  const materi=document.getElementById('materi').value.trim();
+  const jumlah=parseInt(document.getElementById('jumlahTp').value)||5;
+  const referensi=document.getElementById('referensiTp').value.trim();
+
+  // Validasi
+  if(!materi){
+    toast('⚠️ Isi Materi/Topik terlebih dahulu!');
+    document.getElementById('materi').focus();
+    return;
+  }
+
+  // Tampilkan overlay
+  showOverlay();
+
+  // Generate setelah delay premium (3 detik)
+  setTimeout(()=>{
+    const pola=analisaReferensi(referensi+'\n'+uploadedText);
+    const konteksList=getKonteks(mapelVal,materi);
+
+    // Buat daftar TP
+    const daftarTp=[];
+    for(let i=0;i<jumlah;i++){
+      daftarTp.push(buatSatuTp(i,kelas,mapelVal,materi,gayaAktif,pola,konteksList));
+    }
+
+    // Tampilkan hasil
+    tampilkanHasil(daftarTp,{kelas,mapelVal,semester,jenisCp,materi,jumlah});
+    hideOverlay();
+
+    // Scroll ke hasil di mobile
+    if(window.innerWidth<=960){
+      setTimeout(()=>{
+        document.getElementById('colRight').scrollIntoView({behavior:'smooth',block:'start'});
+      },300);
+    }
+    toast('✅ Draft TP berhasil dibuat!');
+  },3200);
+}
+
+/* ════════════════════════════════════════════
+   TAMPILKAN HASIL
+════════════════════════════════════════════ */
+let hasilData={tpList:[],meta:{}};
+
+function tampilkanHasil(tpList,meta){
+  hasilData={tpList,meta};
+
+  // Sembunyikan placeholder
+  document.getElementById('hasilPlaceholder').style.display='none';
+  document.getElementById('hasilKonten').style.display='block';
+
+  // Judul
+  document.getElementById('hasilJudul').textContent=
+    'Draft TP — Kelas '+meta.kelas+' '+meta.mapelVal;
+
+  // Info pills
+  const pills=document.getElementById('infoPills');
+  pills.innerHTML=[
+    'Kelas '+meta.kelas,
+    meta.mapelVal,
+    'Semester '+meta.semester,
+    meta.jenisCp,
+    tpList.length+' TP'
+  ].map(t=>`<span class="pill">${t}</span>`).join('');
+
+  // Render daftar TP
+  const container=document.getElementById('daftarTp');
+  container.innerHTML=tpList.map((tp,i)=>`
+    <div class="tp-item" id="tpItem${i}">
+      <div class="tp-num">${i+1}</div>
+      <div class="tp-text">${tp}</div>
+      <button class="tp-copy" onclick="salinSatu(${i},this)" title="Salin TP ini">📋 Salin</button>
+    </div>
+  `).join('');
+}
+
+/* ════════════════════════════════════════════
+   SALIN SATU TP
+════════════════════════════════════════════ */
+function salinSatu(idx,btn){
+  const tp=hasilData.tpList[idx];
+  if(!tp) return;
+  navigator.clipboard.writeText((idx+1)+'. '+tp).then(()=>{
+    btn.textContent='✅ Disalin';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Salin';btn.classList.remove('copied');},2000);
+    toast('TP '+(idx+1)+' berhasil disalin!');
+  });
+}
+
+/* ════════════════════════════════════════════
+   SALIN SEMUA TP
+════════════════════════════════════════════ */
+function salinSemua(){
+  const {tpList,meta}=hasilData;
+  if(!tpList.length){toast('Belum ada TP untuk disalin');return;}
+  const header=`DRAFT TUJUAN PEMBELAJARAN\nKelas ${meta.kelas} | ${meta.mapelVal} | Semester ${meta.semester} | ${meta.jenisCp}\nMateri: ${meta.materi}\n\n`;
+  const isi=tpList.map((tp,i)=>`${i+1}. ${tp}`).join('\n');
+  navigator.clipboard.writeText(header+isi).then(()=>{
+    toast('✅ Semua TP berhasil disalin!');
+  });
+}
+
+/* ════════════════════════════════════════════
+   DOWNLOAD PDF
+════════════════════════════════════════════ */
+function downloadPDF(){
+  const {tpList,meta}=hasilData;
+  if(!tpList.length){toast('⚠️ Generate TP terlebih dahulu!');return;}
+  toast('Menyiapkan PDF...');
+
+  // Buat konten PDF
+  const tgl=new Date().toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'});
+  const isiTp=tpList.map((tp,i)=>`
+    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;page-break-inside:avoid;">
+      <div style="min-width:28px;height:28px;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">${i+1}</div>
+      <div style="font-size:13px;color:#1e293b;line-height:1.7;padding-top:5px;">${tp}</div>
+    </div>
+  `).join('');
+
+  const html=`
+  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:700px;margin:0 auto;padding:40px;position:relative;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #0ea5a0;">
+      <div style="font-size:11px;color:#0ea5a0;font-weight:700;letter-spacing:2px;margin-bottom:6px;">BANTU GURU YUK</div>
+      <h1 style="font-size:20px;font-weight:900;color:#1e293b;margin:0 0 4px;">Draft Tujuan Pembelajaran</h1>
+      <div style="font-size:11px;color:#64748b;">Digenerate pada ${tgl}</div>
+    </div>
+
+    <!-- Info Identitas -->
+    <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 18px;margin-bottom:24px;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;width:35%;">Kelas</td><td style="color:#1e293b;font-weight:700;">: Kelas ${meta.kelas}</td></tr>
+        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;">Mata Pelajaran</td><td style="color:#1e293b;font-weight:700;">: ${meta.mapelVal}</td></tr>
+        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;">Semester</td><td style="color:#1e293b;font-weight:700;">: Semester ${meta.semester}</td></tr>
+        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;">Jenis CP</td><td style="color:#1e293b;font-weight:700;">: ${meta.jenisCp}</td></tr>
+        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;vertical-align:top;">Materi</td><td style="color:#1e293b;font-weight:700;">: ${meta.materi}</td></tr>
+      </table>
+    </div>
+
+    <!-- Daftar TP -->
+    <div style="margin-bottom:6px;font-size:11px;font-weight:800;color:#0ea5a0;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">
+      Tujuan Pembelajaran (${tpList.length} TP)
+    </div>
+    ${isiTp}
+
+    <!-- Watermark -->
+    <div style="margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
+      <div style="font-size:10px;color:#94a3b8;letter-spacing:.5px;">
+        🎵 TikTok: <strong style="color:#64748b;">@pak.choyy</strong> &nbsp;|&nbsp; Bantu Guru Yuk
+      </div>
+    </div>
+
+  </div>`;
+
+  const pdfEl=document.getElementById('pdfContent');
+  pdfEl.innerHTML=html;
+  pdfEl.style.display='block';
+
+  const opt={
+    margin:[10,10,14,10],
+    filename:'Draft_TP_Kelas'+meta.kelas+'_'+meta.mapelVal.replace(/\s/g,'_')+'.pdf',
+    image:{type:'jpeg',quality:.95},
+    html2canvas:{scale:2,useCORS:true},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['avoid-all','css']}
+  };
+
+  html2pdf().set(opt).from(pdfEl).save().then(()=>{
+    pdfEl.style.display='none';
+    toast('📄 PDF berhasil diunduh!');
+  }).catch(()=>{
+    pdfEl.style.display='none';
+    toast('❌ Gagal buat PDF, coba lagi');
+  });
+}
+</script>
+</body>
+</html>
