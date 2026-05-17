@@ -7,9 +7,6 @@
 <meta name="description" content="Generator Draft Tujuan Pembelajaran untuk Guru SD - Kurikulum Merdeka"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-/* ══════════════════════════════════════
-   RESET & ROOT VARIABLES
-══════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
@@ -23,63 +20,29 @@ body.dark{
   --bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;
   --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;
 }
-body{
-  font-family:'Segoe UI',system-ui,sans-serif;
-  background:var(--bg);min-height:100vh;color:var(--text);
-  transition:background .3s,color .3s;
-  display:flex;flex-direction:column;overflow-x:hidden;
-}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;overflow-x:hidden;}
 
-/* ══ HEADER ══ */
-header{
-  position:sticky;top:0;z-index:300;
-  background:var(--grad);padding:0 16px;
-  box-shadow:0 2px 10px rgba(0,0,0,.18);
-}
+/* HEADER */
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
 body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
 .header-brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
-.header-brand .logo-box{
-  width:36px;height:36px;border-radius:10px;
-  background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0;
-}
+.header-brand .logo-box{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .header-brand h1{font-size:.95rem;font-weight:800;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .header-brand p{font-size:.62rem;color:rgba(255,255,255,.75);white-space:nowrap;}
 .header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
-.hdr-btn{
-  height:32px;width:36px;border-radius:8px;
-  border:1.5px solid rgba(255,255,255,.3);
-  background:rgba(255,255,255,.1);color:#fff;
-  cursor:pointer;font-size:1rem;transition:background .2s;
-  display:flex;align-items:center;justify-content:center;
-}
+.hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;transition:background .2s;display:flex;align-items:center;justify-content:center;}
 .hdr-btn:hover{background:rgba(255,255,255,.22);}
-.dropdown-menu{
-  position:absolute;top:calc(100% + 8px);right:0;
-  background:var(--card-bg);border:1px solid var(--border);
-  border-radius:12px;box-shadow:var(--shadow-lg);
-  min-width:190px;overflow:hidden;display:none;z-index:400;
-}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:190px;overflow:hidden;display:none;z-index:400;}
 .dropdown-menu.open{display:block;}
-.dropdown-item{
-  display:flex;align-items:center;gap:10px;padding:11px 16px;
-  font-size:.83rem;font-weight:600;color:var(--text);
-  cursor:pointer;transition:background .15s;
-  border:none;background:none;width:100%;text-align:left;
-}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;}
 .dropdown-item:hover{background:var(--input-bg);}
 .dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
 
-/* ══ PROSES OVERLAY (Loading Generate) ══ */
-#prosesOverlay{
-  display:none;position:fixed;inset:0;z-index:9999;
-  background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 50%,#0d2137 100%);
-  flex-direction:column;align-items:center;justify-content:center;gap:0;
-}
+/* LOADING OVERLAY */
+#prosesOverlay{display:none;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 50%,#0d2137 100%);flex-direction:column;align-items:center;justify-content:center;gap:0;}
 #prosesOverlay .go-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:goOrb 4s ease-in-out infinite;}
 @keyframes goOrb{0%,100%{transform:scale(1) translate(0,0);opacity:.5;}50%{transform:scale(1.2) translate(10px,-10px);opacity:.8;}}
 #prosesOverlay .go-orb1{width:300px;height:300px;background:radial-gradient(circle,#0ea5a066,transparent);top:-80px;left:-80px;}
@@ -106,74 +69,54 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 #prosesOverlay .go-bar{height:100%;background:linear-gradient(90deg,#0ea5a0,#f59e0b,#3b82f6);border-radius:99px;animation:goBar 2.5s ease-in-out infinite;}
 @keyframes goBar{0%{width:0%;margin-left:0;}50%{width:70%;margin-left:0;}100%{width:0%;margin-left:100%;}}
 
-/* ══ MAIN ══ */
+/* MAIN */
 main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;overflow-x:hidden;}
 @media(max-width:640px){main{padding:10px 12px;}}
-
-/* ══ TWO COL ══ */
 .two-col{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start;}
 @media(max-width:960px){.two-col{grid-template-columns:1fr;}}
 .col-left{display:flex;flex-direction:column;gap:12px;}
 .col-right{min-width:0;max-width:100%;overflow:hidden;}
 @media(min-width:961px){.col-right{position:sticky;top:80px;max-height:calc(100vh - 100px);overflow-y:auto;}}
 
-/* ══ CARD ══ */
+/* CARD */
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--border);overflow:hidden;}
 @media(max-width:640px){.card{padding:14px 12px;border-radius:10px;}}
 .card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:10px;}
 
-/* ══ FORM ══ */
+/* FORM */
 .form-group{margin-bottom:12px;}
 label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
-input[type=text],input[type=number],select,textarea{
-  width:100%;padding:9px 11px;
-  border:1.5px solid var(--border);border-radius:8px;
-  font-size:.84rem;color:var(--text);background:var(--input-bg);
-  transition:border-color .2s,background .3s;outline:none;font-family:inherit;
-}
+input[type=text],select,textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:.84rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
 textarea{resize:vertical;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 @media(max-width:400px){.row-2{grid-template-columns:1fr;}}
 
-/* ══ GAYA PILIHAN ══ */
+/* MAPEL LIST — checkboxes */
+.mapel-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto;padding-right:2px;}
+.mapel-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;background:var(--input-bg);}
+.mapel-item:hover{border-color:var(--blue);background:rgba(14,165,160,.05);}
+.mapel-item.checked{border-color:var(--blue);background:rgba(14,165,160,.08);}
+.mapel-item input[type=checkbox]{accent-color:var(--blue);width:15px;height:15px;cursor:pointer;flex-shrink:0;}
+.mapel-item label{font-size:.8rem;font-weight:600;color:var(--text);cursor:pointer;margin:0;text-transform:none;letter-spacing:0;}
+.mapel-item.manual-row{flex-direction:column;align-items:flex-start;gap:6px;}
+.mapel-item.manual-row .row-top{display:flex;align-items:center;gap:8px;width:100%;}
+.mapel-item.manual-row input[type=text]{margin-top:2px;font-size:.8rem;}
+.mapel-hint{font-size:.65rem;color:var(--text-light);margin-top:4px;}
+
+/* GAYA PILIHAN */
 .gaya-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:4px;}
-.gaya-btn{
-  border:1.5px solid var(--border);border-radius:9px;
-  padding:9px 6px;cursor:pointer;transition:all .2s;
-  background:var(--input-bg);text-align:center;
-  font-size:.72rem;font-weight:700;color:var(--text);
-}
+.gaya-btn{border:1.5px solid var(--border);border-radius:9px;padding:9px 6px;cursor:pointer;transition:all .2s;background:var(--input-bg);text-align:center;font-size:.72rem;font-weight:700;color:var(--text);}
 .gaya-btn:hover{border-color:var(--blue);background:rgba(14,165,160,.05);}
 .gaya-btn.active{border-color:var(--blue);background:rgba(14,165,160,.1);color:var(--blue);}
 .gaya-btn .gi{font-size:18px;display:block;margin-bottom:2px;}
 
-/* ══ UPLOAD AREA ══ */
-.upload-area{
-  border:2px dashed var(--border);border-radius:10px;
-  padding:14px 12px;text-align:center;cursor:pointer;
-  transition:all .2s;background:var(--input-bg);position:relative;
-}
-.upload-area:hover{border-color:var(--blue);background:rgba(14,165,160,.04);}
-.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-area .ui{font-size:22px;margin-bottom:3px;}
-.upload-area .ut{font-size:.74rem;font-weight:700;color:var(--text);}
-.upload-area .us{font-size:.63rem;color:var(--text-light);margin-top:2px;line-height:1.4;}
-.upload-area.has-file{border-color:#10b981;background:rgba(16,185,129,.04);}
-.upload-area.has-file .ut{color:#10b981;}
-
-/* ══ TOMBOL GENERATE ══ */
-.btn-generate{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:14px;background:var(--grad);color:#fff;
-  border:none;border-radius:12px;font-size:1rem;font-weight:800;
-  cursor:pointer;transition:all .2s;
-  box-shadow:0 4px 18px rgba(14,165,160,.3);letter-spacing:.3px;
-}
+/* TOMBOL GENERATE */
+.btn-generate{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--grad);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 18px rgba(14,165,160,.3);letter-spacing:.3px;}
 .btn-generate:hover{transform:translateY(-1px);opacity:.93;box-shadow:0 6px 24px rgba(14,165,160,.4);}
 @media(max-width:600px){.btn-generate{padding:16px 12px;font-size:1.05rem;}}
 
-/* ══ TOMBOL KECIL ══ */
+/* TOMBOL KECIL */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.79rem;cursor:pointer;transition:all .2s;}
 .btn-outline{border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);}
 .btn-outline:hover{border-color:var(--blue);color:var(--blue);}
@@ -183,84 +126,55 @@ textarea{resize:vertical;}
 .btn-pdf:hover{background:rgba(239,68,68,.12)!important;}
 .action-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
 
-/* ══ PLACEHOLDER HASIL ══ */
-.hasil-placeholder{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:320px;color:var(--text-light);gap:12px;
-  border:2px dashed var(--border);border-radius:12px;
-}
+/* PLACEHOLDER HASIL */
+.hasil-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:320px;color:var(--text-light);gap:12px;border:2px dashed var(--border);border-radius:12px;}
 .hasil-placeholder .ph-icon{font-size:3rem;opacity:.3;}
 .hasil-placeholder p{font-size:.83rem;text-align:center;line-height:1.6;}
 
-/* ══ INFO PILLS ══ */
+/* INFO PILLS */
 .info-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
-.pill{
-  display:inline-block;background:rgba(14,165,160,.08);
-  color:var(--blue-dark);font-size:.65rem;padding:4px 10px;
-  border-radius:99px;font-weight:600;border:1px solid rgba(14,165,160,.22);
-}
-body.dark .pill{background:rgba(14,165,160,.12);color:var(--blue-light);}
+.pill{display:inline-block;background:rgba(14,165,160,.08);color:var(--blue-dark);font-size:.65rem;padding:4px 10px;border-radius:99px;font-weight:600;border:1px solid rgba(14,165,160,.22);}
 
-/* ══ TP CARD ══ */
-.tp-item{
-  background:var(--card-bg);border:1px solid var(--border);
-  border-radius:10px;padding:12px 14px;margin-bottom:8px;
-  display:flex;align-items:flex-start;gap:10px;
-  transition:all .2s;
-}
-.tp-item:hover{border-color:var(--blue);box-shadow:0 2px 12px rgba(14,165,160,.1);}
-.tp-num{
-  min-width:28px;height:28px;background:var(--grad);
-  color:#fff;border-radius:8px;display:flex;align-items:center;
-  justify-content:center;font-size:.72rem;font-weight:800;
-  flex-shrink:0;margin-top:1px;
-}
-.tp-text{flex:1;font-size:.84rem;color:var(--text);line-height:1.6;}
-.tp-copy{
-  flex-shrink:0;padding:5px 10px;border:1.5px solid var(--border);
-  background:var(--input-bg);color:var(--text-light);
-  border-radius:7px;font-size:.68rem;font-weight:700;
-  cursor:pointer;transition:all .2s;white-space:nowrap;
-}
+/* HASIL HEADER */
+.hasil-header{margin-bottom:14px;}
+.hasil-title{font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:8px;}
+
+/* TP SECTION */
+.tp-section{margin-bottom:22px;}
+.tp-section-title{font-size:.75rem;font-weight:800;color:var(--blue-dark);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding:6px 10px;background:rgba(14,165,160,.07);border-radius:7px;border-left:3px solid var(--blue);}
+.tp-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;margin-bottom:7px;transition:background .15s;}
+.tp-item:hover{background:var(--input-bg);}
+.tp-num{min-width:26px;height:26px;background:var(--grad);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0;}
+.tp-text{flex:1;font-size:.83rem;color:var(--text);line-height:1.55;padding-top:4px;}
+.tp-copy{border:1px solid var(--border);background:var(--card-bg);color:var(--text-light);border-radius:6px;padding:4px 9px;font-size:.69rem;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;margin-top:2px;}
 .tp-copy:hover{border-color:var(--blue);color:var(--blue);}
-.tp-copy.copied{border-color:#10b981;color:#10b981;background:rgba(16,185,129,.06);}
+.tp-copy.copied{border-color:#10b981;color:#10b981;}
 
-/* ══ HASIL TITLE ══ */
-.hasil-header{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-.hasil-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px;}
-
-/* ══ TOAST ══ */
-#toast{
-  position:fixed;bottom:22px;left:50%;
-  transform:translateX(-50%) translateY(80px);
-  background:#1e293b;color:#fff;padding:10px 22px;
-  border-radius:99px;font-size:.81rem;font-weight:600;
-  z-index:9999;opacity:0;transition:all .35s;
-  white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;
-}
+/* TOAST */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1e293b;color:#fff;padding:10px 20px;border-radius:99px;font-size:.8rem;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;white-space:nowrap;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 body.dark #toast{background:#f1f5f9;color:#1e293b;}
 
-/* ══ FOOTER ══ */
-footer{
-  background:var(--grad);color:#fff;
-  text-align:center;padding:14px 20px 10px;margin-top:auto;
-}
-footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
-footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
+/* FOOTER */
+footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
+.footer-title{font-weight:800;font-size:.8rem;color:var(--text);}
+.footer-sub{margin-top:2px;}
 
-/* ══ SCROLLBAR ══ */
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:#b2d8e0;border-radius:99px;}
+/* PDF HIDDEN */
+#pdfContent{display:none;position:absolute;left:-9999px;top:0;}
 
-/* ══ PDF CONTENT (hidden, for export) ══ */
-#pdfContent{display:none;}
+/* SCROLLBAR */
+.mapel-list::-webkit-scrollbar{width:4px;}
+.mapel-list::-webkit-scrollbar-track{background:transparent;}
+.mapel-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
 </style>
 </head>
 <body>
 
-<!-- ══ PROSES OVERLAY ══ -->
+<div id="menuOverlay" onclick="closeMenu()"></div>
+<div id="toast"></div>
+
+<!-- LOADING OVERLAY -->
 <div id="prosesOverlay">
   <div class="go-orb go-orb1"></div>
   <div class="go-orb go-orb2"></div>
@@ -269,41 +183,30 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     <div class="go-ring go-ring1"></div>
     <div class="go-ring go-ring2"></div>
     <div class="go-ring go-ring3"></div>
-    <div class="go-icon">📚</div>
+    <div class="go-icon">📝</div>
   </div>
-  <div class="go-title">Menyusun Draft TP</div>
-  <div class="go-sub">Membuat Tujuan Pembelajaran profesional...</div>
-  <div class="go-msgs"><div class="go-msg" id="prosesMsg">Membaca CP...</div></div>
+  <div class="go-title">Menyusun Draft TP...</div>
+  <div class="go-sub">Memilih dari bank TP kurikulum</div>
+  <div class="go-msgs"><div class="go-msg" id="prosesMsg">Membaca data CP...</div></div>
   <div class="go-dots">
-    <div class="go-dot"></div>
-    <div class="go-dot"></div>
-    <div class="go-dot"></div>
+    <div class="go-dot"></div><div class="go-dot"></div><div class="go-dot"></div>
   </div>
   <div class="go-bar-wrap"><div class="go-bar"></div></div>
 </div>
 
-<!-- ══ TOAST ══ -->
-<div id="toast"></div>
-
-<!-- ══ MENU OVERLAY ══ -->
-<div id="menuOverlay" onclick="closeMenu()"></div>
-
-<!-- ══ HEADER ══ -->
+<!-- HEADER -->
 <header>
   <div class="header-inner">
     <div class="header-brand">
-      <div class="logo-box">📝</div>
+      <div class="logo-box">📚</div>
       <div>
-        <h1>Bantu Guru Yuk | Draft TP</h1>
-        <p>Generator Tujuan Pembelajaran SD</p>
+        <h1>Bantu Guru Yuk</h1>
+        <p>Generator Draft Tujuan Pembelajaran</p>
       </div>
     </div>
     <div class="header-right">
-      <!-- Tombol Dark Mode -->
       <button class="hdr-btn" id="darkBtn" onclick="toggleDark()" title="Dark Mode">🌙</button>
-      <!-- Tombol Menu -->
       <button class="hdr-btn" id="menuBtn" onclick="toggleMenu()" title="Menu">☰</button>
-      <!-- Dropdown Menu -->
       <div class="dropdown-menu" id="dropdownMenu">
         <button class="dropdown-item" onclick="resetForm();closeMenu()">🔄 Reset Form</button>
         <button class="dropdown-item" onclick="scrollToHasil();closeMenu()">📄 Lihat Hasil</button>
@@ -315,31 +218,28 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   </div>
 </header>
 
-<!-- ══ MAIN ══ -->
 <main>
   <div class="two-col">
 
-    <!-- ══ KOLOM KIRI: FORM ══ -->
+    <!-- KOLOM KIRI -->
     <div class="col-left">
 
-      <!-- CARD: Identitas TP -->
+      <!-- CARD: Identitas -->
       <div class="card">
         <div class="card-title">📋 Identitas Tujuan Pembelajaran</div>
 
-        <!-- Jenis CP -->
         <div class="form-group">
           <label>Jenis CP</label>
           <select id="jenisCp">
-            <option value="CP Terbaru">CP Terbaru (2022–sekarang)</option>
-            <option value="CP Lama">CP Lama (sebelum 2022)</option>
+            <option value="baru">CP Terbaru (2022–sekarang)</option>
+            <option value="lama">CP Lama (sebelum 2022)</option>
           </select>
         </div>
 
-        <!-- Kelas & Semester -->
         <div class="row-2">
           <div class="form-group">
             <label>Kelas</label>
-            <select id="kelas">
+            <select id="kelas" onchange="updateMapelList()">
               <option value="1">Kelas 1</option>
               <option value="2">Kelas 2</option>
               <option value="3">Kelas 3</option>
@@ -350,45 +250,19 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           </div>
           <div class="form-group">
             <label>Semester</label>
-            <select id="semester">
+            <select id="semester" onchange="updateMapelList()">
               <option value="1">Semester 1</option>
               <option value="2">Semester 2</option>
             </select>
           </div>
         </div>
+      </div>
 
-        <!-- Mata Pelajaran -->
-        <div class="form-group">
-          <label>Mata Pelajaran</label>
-          <select id="mapel">
-            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-            <option value="Matematika">Matematika</option>
-            <option value="IPAS">IPAS</option>
-            <option value="PPKn">PPKn</option>
-            <option value="PJOK">PJOK</option>
-            <option value="Seni Budaya">Seni Budaya</option>
-            <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
-            <option value="Bahasa Inggris">Bahasa Inggris</option>
-            <option value="Prakarya">Prakarya</option>
-            <option value="lainnya">Lainnya (isi manual)</option>
-          </select>
-        </div>
-        <div class="form-group" id="mapelManualWrap" style="display:none">
-          <label>Nama Mata Pelajaran</label>
-          <input type="text" id="mapelManual" placeholder="Contoh: Bahasa Daerah, TIK..."/>
-        </div>
-
-        <!-- Materi / Topik -->
-        <div class="form-group">
-          <label>Materi / Topik Pembelajaran</label>
-          <textarea id="materi" rows="3" placeholder="Contoh: Pecahan senilai, operasi penjumlahan dan pengurangan pecahan..."></textarea>
-        </div>
-
-        <!-- Jumlah TP -->
-        <div class="form-group">
-          <label>Jumlah TP yang diinginkan</label>
-          <input type="number" id="jumlahTp" value="5" min="1" max="20" style="max-width:120px"/>
-        </div>
+      <!-- CARD: Pilih Mapel -->
+      <div class="card">
+        <div class="card-title">📚 Mata Pelajaran</div>
+        <div class="mapel-hint" style="margin-bottom:8px">Pilih satu atau lebih mata pelajaran:</div>
+        <div class="mapel-list" id="mapelList"></div>
       </div>
 
       <!-- CARD: Gaya Penulisan -->
@@ -407,25 +281,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         </div>
       </div>
 
-      <!-- CARD: Referensi Guru -->
-      <div class="card">
-        <div class="card-title">📌 Referensi TP Guru (Opsional)</div>
-        <div class="form-group">
-          <label>Tempel Contoh TP Anda</label>
-          <textarea id="referensiTp" rows="6"
-            placeholder="Paste contoh TP dari guru agar sistem mengikuti gaya bahasa dan format penulisan...&#10;&#10;Contoh:&#10;1. Peserta didik mampu memahami konsep bilangan...&#10;2. Peserta didik dapat menjelaskan..."></textarea>
-        </div>
-        <div class="form-group" style="margin-top:8px">
-          <label>Upload File Referensi</label>
-          <div class="upload-area" id="uploadArea">
-            <input type="file" id="fileInput" accept=".txt,.pdf" onchange="handleFileUpload(this)"/>
-            <div class="ui">📎</div>
-            <div class="ut" id="uploadText">Klik untuk upload file</div>
-            <div class="us">Mendukung .txt dan .pdf sederhana</div>
-          </div>
-        </div>
-      </div>
-
       <!-- TOMBOL GENERATE -->
       <button class="btn-generate" onclick="generateTP()">
         ✨ Generate Draft TP
@@ -433,68 +288,93 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
     </div><!-- /col-left -->
 
-    <!-- ══ KOLOM KANAN: HASIL ══ -->
+    <!-- KOLOM KANAN: HASIL -->
     <div class="col-right" id="colRight">
       <div class="card" id="hasilCard">
-
-        <!-- Placeholder awal -->
         <div class="hasil-placeholder" id="hasilPlaceholder">
           <div class="ph-icon">📝</div>
-          <p>Isi form di kiri lalu klik<br><strong>✨ Generate Draft TP</strong><br>untuk membuat Tujuan Pembelajaran</p>
+          <p>Pilih kelas, semester, dan mapel<br>lalu klik <strong>✨ Generate Draft TP</strong></p>
         </div>
-
-        <!-- Konten Hasil (tersembunyi dulu) -->
         <div id="hasilKonten" style="display:none">
           <div class="hasil-header">
             <div class="hasil-title" id="hasilJudul">Draft Tujuan Pembelajaran</div>
             <div class="info-pills" id="infoPills"></div>
           </div>
-
-          <!-- Tombol Aksi -->
           <div class="action-row">
             <button class="btn btn-teal" onclick="salinSemua()">📋 Salin Semua</button>
             <button class="btn btn-outline btn-pdf" onclick="downloadPDF()">📄 Download PDF</button>
           </div>
-
-          <!-- Daftar TP -->
           <div id="daftarTp"></div>
         </div>
-
       </div>
-    </div><!-- /col-right -->
+    </div>
 
-  </div><!-- /two-col -->
+  </div>
 </main>
 
-<!-- ══ PDF HIDDEN CONTENT ══ -->
 <div id="pdfContent"></div>
 
-<!-- ══ FOOTER ══ -->
 <footer>
   <div class="footer-title">Bantu Guru Yuk</div>
   <div class="footer-sub">Generator Draft TP untuk Guru SD · by pak.choyy</div>
 </footer>
 
 <script>
-/* ════════════════════════════════════════════
+/* ════════════════════════════
+   BANK DATA TP
+════════════════════════════ */
+const BANK={
+"lama":{
+"1":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 50","Menulis lambang bilangan hingga 50","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 25","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 25","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"2":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 100","Menulis lambang bilangan hingga 100","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 50","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 50","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"3":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 150","Menulis lambang bilangan hingga 150","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 75","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 75","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"4":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 200","Menulis lambang bilangan hingga 200","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 100","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 100","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"5":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 250","Menulis lambang bilangan hingga 250","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 125","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 125","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"6":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 300","Menulis lambang bilangan hingga 300","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 150","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 150","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik": ["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}}
+},
+"baru":{
+"1":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 50","Menulis lambang bilangan hingga 50","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 25","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 25","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"2":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 100","Menulis lambang bilangan hingga 100","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 50","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 50","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"3":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 150","Menulis lambang bilangan hingga 150","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 75","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 75","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"4":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 200","Menulis lambang bilangan hingga 200","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 100","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 100","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"5":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 250","Menulis lambang bilangan hingga 250","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 125","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 125","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}},
+"6":{"1":{"Bahasa Indonesia":["Menyimak teks naratif pendek lisan","Menjelaskan kembali isi teks naratif","Membaca lancar teks informasi","Memahami arti kosakata baru teks","Menulis kalimat berhuruf kapital","Menulis kalimat bertanda titik","Menemukan informasi pada dekripsi","Menceritakan pengalaman pribadi"],"Matematika":["Membaca lambang bilangan hingga 300","Menulis lambang bilangan hingga 300","Menentukan nilai tempat ratusan","Menentukan nilai tempat puluhan","Menentukan nilai tempat satuan","Membandingkan dua bilangan cacah","Mengurutkan sekelompok bilangan","Menghitung penjumlahan hingga 50","Menghitung pengurangan hingga 50"],"Pendidikan Pancasila":["Menyebutkan identitas diri asal hobi","Menjelaskan penerapan sila di rumah","Menjelaskan penerapan sila di sekolah","Menerima perbedaan ciri fisik teman","Menerima perbedaan hobi antar teman","Mengenal simbol keberagaman agama","Menghargai perbedaan simbol agama","Mempraktikkan hidup rukun di kelas"],"Pendidikan Agama Islam (PAI)":["Membaca Al-Quddus beserta artinya","Membaca As-Salam beserta artinya","Mencontoh perilaku kasih sayang","Mempraktikkan tata cara wudhu","Menghafal urutan doa selesai wudhu","Mencontoh akhlak terpuji harian"],"Pendidikan Agama Kristen":["Menerima keterbatasan diri sendiri","Menunjukkan sikap disiplin rumah","Menunjukkan sikap disiplin sekolah","Bersyukur atas kehadiran guru","Menerapkan kasih dalam pertemanan"],"PJOK":["Mempraktikkan gerak melempar bola","Mempraktikkan gerak menangkap bola","Mempraktikkan gerak menendang bola","Menjaga kebersihan ruang kelas","Menjaga kebersihan halaman sekolah","Mempraktikkan gerak berjalan lurus"],"Seni Rupa":["Mengenal elemen warna sekunder karya","Mengidentifikasi unsur rupa sekitar","Membuat gambar dekoratif tumbuhan","Mewarnai gambar kombinasi serasi","Membuat garis lengkung dekoratif"],"Seni Musik":["Menirukan pola melodi instrumen","Mengenali ragam alat musik melodis","Memainkan pola irama rata musik","Melakukan umpan balik praktik teman"]},"2":{"Bahasa Indonesia":["Menyampaikan pendapat secara santun","Menyampaikan sanggahan saat diskusi","Mengajukan pertanyaan secara sopan","Membaca puisi artikulasi jelas","Menulis teks pengalaman pribadi","Menggunakan kata tanya dalam kalimat"],"Matematika":["Menjelaskan konsep perkalian cacah","Menghitung perkalian sampai angka 150","Menjelaskan konsep pembagian cacah","Menghitung pembagian sampai angka 150","Mengidentifikasi bangun ruang kubus","Mengidentifikasi bangun ruang balok","Menghitung jumlah sisi bangun ruang","Membaca waktu tepat jam analog","Membaca waktu setengah jam analog"],"Pendidikan Pancasila":["Menunjukkan sikap peduli lingkungan","Mengidentifikasi perilaku jaga lingkungan","Mempraktikkan jaga lingkungan bersih","Mengidentifikasi kerja sama rumah","Mengidentifikasi kerja sama sekolah","Mengenal produk kerajinan daerah","Mengenal pakaian adat daerah asal","Menghargai keberagaman suku sekitar"],"Pendidikan Agama Islam (PAI)":["Menghafal Surah Al-Asr dengan lancar","Menjelaskan kisah Nabi Muhammad Saw","Mempraktikkan gerakan sholat subuh","Mempraktikkan gerakan sholat maghrib","Menghafal bacaan takbiratul ihram"],"Pendidikan Agama Kristen":["Menunjukkan sikap tolong-menolong","Mempraktikkan kerja sama kelompok","Bersyukur atas alam ciptaan Allah","Menjaga kelestarian tumbuhan rumah"],"PJOK":["Mempraktikkan gerak keseimbangan","Mempraktikkan gerak kelenturan dasar","Mengikuti aturan keselamatan air","Mempraktikkan gerak mengapung kolam"],"Seni Rupa":["Membuat cetak tinggi pelepah daun","Membuat cetak tinggi dari buah","Membuat karya tiga dimensi maket","Menggunakan bahan alam hiasan"],"Seni Musik":["Membuat bunyi teratur tubuh","Membuat pola irama barang bekas","Menyanyikan lagu daerah intonasi","Menunjukkan ekspresi gembira musik"]}}
+}
+};
+
+/* ════════════════════════════
+   GAYA PREFIX/SUFFIX
+════════════════════════════ */
+const GAYA_CONFIG={
+  singkat:{pre:'Peserta didik mampu ',suf:' dengan tepat.'},
+  detail:{pre:'Peserta didik dapat ',suf:' secara mandiri melalui kegiatan pembelajaran yang aktif dan bermakna.'},
+  formal:{pre:'Peserta didik diharapkan mampu ',suf:' sesuai dengan capaian pembelajaran yang telah ditetapkan.'}
+};
+
+/* ════════════════════════════
+   STATE
+════════════════════════════ */
+let gayaAktif='singkat';
+let hasilData={sections:[],meta:{}};
+
+/* ════════════════════════════
    DARK MODE
-════════════════════════════════════════════ */
+════════════════════════════ */
 (function(){
   if(localStorage.getItem('draftTpDark')==='1'){
     document.body.classList.add('dark');
     document.getElementById('darkBtn').textContent='☀️';
   }
 })();
-
 function toggleDark(){
   const d=document.body.classList.toggle('dark');
   document.getElementById('darkBtn').textContent=d?'☀️':'🌙';
   localStorage.setItem('draftTpDark',d?'1':'0');
 }
 
-/* ════════════════════════════════════════════
-   MENU DROPDOWN
-════════════════════════════════════════════ */
+/* ════════════════════════════
+   MENU
+════════════════════════════ */
 function toggleMenu(){
   document.getElementById('dropdownMenu').classList.toggle('open');
   document.getElementById('menuOverlay').classList.toggle('open');
@@ -504,85 +384,91 @@ function closeMenu(){
   document.getElementById('menuOverlay').classList.remove('open');
 }
 
-/* ════════════════════════════════════════════
-   MAPEL MANUAL
-════════════════════════════════════════════ */
-document.getElementById('mapel').addEventListener('change',function(){
-  document.getElementById('mapelManualWrap').style.display=
-    this.value==='lainnya'?'block':'none';
-});
-
-/* ════════════════════════════════════════════
-   GAYA PENULISAN
-════════════════════════════════════════════ */
-let gayaAktif='singkat';
+/* ════════════════════════════
+   GAYA
+════════════════════════════ */
 function setGaya(el){
   document.querySelectorAll('.gaya-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
   gayaAktif=el.dataset.gaya;
 }
 
-/* ════════════════════════════════════════════
-   FILE UPLOAD (TXT / PDF sederhana)
-════════════════════════════════════════════ */
-let uploadedText='';
-function handleFileUpload(input){
-  const file=input.files[0];
-  if(!file) return;
-  const area=document.getElementById('uploadArea');
-  const txtEl=document.getElementById('uploadText');
-  if(file.type==='text/plain'){
-    const reader=new FileReader();
-    reader.onload=function(e){
-      uploadedText=e.target.result;
-      area.classList.add('has-file');
-      txtEl.textContent='✅ '+file.name;
-      toast('File referensi berhasil dibaca 📄');
-    };
-    reader.readAsText(file);
-  } else if(file.type==='application/pdf'){
-    // PDF: cukup catat nama, konten sulit dibaca tanpa library
-    uploadedText='[PDF referensi: '+file.name+']';
-    area.classList.add('has-file');
-    txtEl.textContent='✅ '+file.name+' (PDF)';
-    toast('File PDF tercatat sebagai referensi 📄');
-  } else {
-    toast('Format tidak didukung. Gunakan .txt atau .pdf');
-  }
+/* ════════════════════════════
+   UPDATE DAFTAR MAPEL
+════════════════════════════ */
+function updateMapelList(){
+  const cp=document.getElementById('jenisCp').value;
+  const kelas=document.getElementById('kelas').value;
+  const sem=document.getElementById('semester').value;
+  const data=BANK[cp]?.[kelas]?.[sem]||{};
+  const mapelArr=Object.keys(data);
+
+  const container=document.getElementById('mapelList');
+  container.innerHTML='';
+
+  mapelArr.forEach(m=>{
+    const div=document.createElement('div');
+    div.className='mapel-item';
+    div.innerHTML=`<input type="checkbox" id="cb_${btoa(m)}" value="${m}"><label for="cb_${btoa(m)}">${m}</label>`;
+    div.addEventListener('click',function(e){
+      if(e.target.tagName==='INPUT') return;
+      const cb=div.querySelector('input');
+      cb.checked=!cb.checked;
+      div.classList.toggle('checked',cb.checked);
+    });
+    div.querySelector('input').addEventListener('change',function(){
+      div.classList.toggle('checked',this.checked);
+    });
+    container.appendChild(div);
+  });
+
+  // Baris mapel manual
+  const manualDiv=document.createElement('div');
+  manualDiv.className='mapel-item manual-row';
+  manualDiv.id='manualMapelRow';
+  manualDiv.innerHTML=`
+    <div class="row-top">
+      <input type="checkbox" id="cb_manual"><label for="cb_manual">Lainnya (isi manual)</label>
+    </div>
+    <input type="text" id="mapelManualInput" placeholder="Nama mata pelajaran..." style="display:none;font-size:.8rem;">
+  `;
+  container.appendChild(manualDiv);
+
+  document.getElementById('cb_manual').addEventListener('change',function(){
+    const inp=document.getElementById('mapelManualInput');
+    inp.style.display=this.checked?'block':'none';
+    manualDiv.classList.toggle('checked',this.checked);
+  });
 }
 
-/* ════════════════════════════════════════════
-   RESET FORM
-════════════════════════════════════════════ */
-function resetForm(){
-  document.getElementById('jenisCp').value='CP Terbaru';
-  document.getElementById('kelas').value='5';
-  document.getElementById('semester').value='1';
-  document.getElementById('mapel').value='Bahasa Indonesia';
-  document.getElementById('mapelManualWrap').style.display='none';
-  document.getElementById('materi').value='';
-  document.getElementById('jumlahTp').value='5';
-  document.getElementById('referensiTp').value='';
-  document.getElementById('uploadArea').classList.remove('has-file');
-  document.getElementById('uploadText').textContent='Klik untuk upload file';
-  uploadedText='';
-  gayaAktif='singkat';
-  document.querySelectorAll('.gaya-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
-  document.getElementById('hasilPlaceholder').style.display='flex';
-  document.getElementById('hasilKonten').style.display='none';
-  toast('Form berhasil direset 🔄');
+// Init on load
+document.getElementById('jenisCp').addEventListener('change',updateMapelList);
+updateMapelList();
+
+/* ════════════════════════════
+   OVERLAY
+════════════════════════════ */
+const loadMsgs=['Membaca bank data CP...','Menyusun daftar TP...','Menerapkan gaya penulisan...','Hampir selesai...'];
+let msgInterval=null;
+function showOverlay(){
+  document.getElementById('prosesOverlay').style.display='flex';
+  let i=0;
+  document.getElementById('prosesMsg').textContent=loadMsgs[0];
+  msgInterval=setInterval(()=>{
+    i=(i+1)%loadMsgs.length;
+    const el=document.getElementById('prosesMsg');
+    el.style.animation='none';el.offsetHeight;el.style.animation='';
+    el.textContent=loadMsgs[i];
+  },700);
+}
+function hideOverlay(){
+  clearInterval(msgInterval);
+  document.getElementById('prosesOverlay').style.display='none';
 }
 
-/* ════════════════════════════════════════════
-   SCROLL KE HASIL (mobile)
-════════════════════════════════════════════ */
-function scrollToHasil(){
-  document.getElementById('colRight').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-/* ════════════════════════════════════════════
-   TOAST NOTIFICATION
-════════════════════════════════════════════ */
+/* ════════════════════════════
+   TOAST
+════════════════════════════ */
 let toastTimer=null;
 function toast(msg){
   const el=document.getElementById('toast');
@@ -592,332 +478,187 @@ function toast(msg){
   toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
 
-/* ════════════════════════════════════════════
-   PROSES OVERLAY (Loading)
-════════════════════════════════════════════ */
-const loadMsgs=[
-  'Membaca CP...',
-  'Menganalisis referensi guru...',
-  'Menyusun kerangka TP...',
-  'Merapikan bahasa guru...',
-  'Membuat draft profesional...',
-  'Hampir selesai...'
-];
-let msgInterval=null;
-function showOverlay(){
-  const ov=document.getElementById('prosesOverlay');
-  ov.style.display='flex';
-  let i=0;
-  document.getElementById('prosesMsg').textContent=loadMsgs[0];
-  msgInterval=setInterval(()=>{
-    i=(i+1)%loadMsgs.length;
-    const el=document.getElementById('prosesMsg');
-    el.style.animation='none';
-    el.offsetHeight; // reflow
-    el.style.animation='';
-    el.textContent=loadMsgs[i];
-  },800);
-}
-function hideOverlay(){
-  clearInterval(msgInterval);
-  document.getElementById('prosesOverlay').style.display='none';
+/* ════════════════════════════
+   GENERATE TP
+════════════════════════════ */
+function applyGaya(tp,gaya){
+  const cfg=GAYA_CONFIG[gaya]||GAYA_CONFIG.singkat;
+  return cfg.pre+tp.charAt(0).toLowerCase()+tp.slice(1)+cfg.suf;
 }
 
-/* ════════════════════════════════════════════
-   GENERATOR DUMMY TP
-   - Baca referensi guru
-   - Analisis pola kalimat
-   - Generate TP sesuai gaya + materi
-════════════════════════════════════════════ */
-
-/* Template kata kerja per tingkat kelas */
-const kataKerjaKelas={
-  '1':['mengenal','menyebutkan','menunjukkan','menirukan','menyebutkan'],
-  '2':['mengenal','menyebutkan','menjelaskan','menunjukkan','membedakan'],
-  '3':['menjelaskan','membedakan','mengelompokkan','mengidentifikasi','menyebutkan'],
-  '4':['mengidentifikasi','mendeskripsikan','membandingkan','menganalisis','menyimpulkan'],
-  '5':['menganalisis','membandingkan','mengevaluasi','menyimpulkan','memecahkan'],
-  '6':['mengevaluasi','mengkreasi','mengembangkan','merancang','menyintesis']
-};
-
-/* Template awalan kalimat per gaya */
-const awalGaya={
-  singkat:{
-    awalan:'Peserta didik mampu ',
-    akhiran:' dengan tepat.'
-  },
-  detail:{
-    awalan:'Peserta didik dapat ',
-    akhiran:' secara mandiri melalui kegiatan pembelajaran yang aktif dan bermakna.'
-  },
-  formal:{
-    awalan:'Peserta didik diharapkan mampu ',
-    akhiran:' sesuai dengan capaian pembelajaran yang telah ditetapkan.'
-  }
-};
-
-/* Template konteks per mapel */
-const konteksMapel={
-  'Bahasa Indonesia':['teks bacaan','teks cerita','puisi','laporan','paragraf','kalimat efektif','ejaan dan tanda baca','kosakata baru'],
-  'Matematika':['bilangan','operasi hitung','bangun datar','bangun ruang','pengukuran','statistika','pola bilangan','pecahan'],
-  'IPAS':['makhluk hidup','ekosistem','sumber daya alam','gaya dan gerak','energi','perubahan materi','bumi dan tata surya','teknologi'],
-  'PPKn':['nilai Pancasila','hak dan kewajiban','keberagaman','persatuan','norma','aturan','musyawarah','kewarganegaraan'],
-  'PJOK':['gerak dasar','kebugaran jasmani','permainan tradisional','olahraga','pola hidup sehat','renang','atletik'],
-  'Seni Budaya':['karya seni','apresiasi seni','ragam hias','musik','tari','drama','kerajinan tangan'],
-  'Pendidikan Agama Islam':['rukun iman','rukun Islam','akhlak mulia','ibadah','Al-Quran','hadis','kisah nabi'],
-  'Bahasa Inggris':['vocabulary','reading','writing','speaking','listening','grammar','expression'],
-  'Prakarya':['kerajinan','pengolahan','budidaya','rekayasa']
-};
-
-/* Analisis pola referensi guru */
-function analisaReferensi(ref){
-  if(!ref || ref.trim().length<20) return null;
-  const lines=ref.split('\n').filter(l=>l.trim().length>10);
-  if(lines.length===0) return null;
-
-  // Cari awalan yang sering dipakai
-  let awalan='Peserta didik mampu ';
-  const patterns=['Peserta didik mampu','Peserta didik dapat','Siswa mampu','Siswa dapat','Murid mampu'];
-  for(const p of patterns){
-    if(ref.toLowerCase().includes(p.toLowerCase())){
-      awalan=p+' ';
-      break;
-    }
-  }
-
-  // Estimasi panjang kalimat dari referensi
-  const avgLen=lines.reduce((s,l)=>s+l.split(' ').length,0)/lines.length;
-  const panjang=avgLen>20?'detail':avgLen>12?'sedang':'singkat';
-
-  return {awalan,panjang,sample:lines.slice(0,3)};
-}
-
-/* Ambil konteks materi */
-function getKonteks(mapelVal,materi){
-  const ctx=konteksMapel[mapelVal]||['konsep dasar','materi pembelajaran','topik'];
-  if(materi && materi.trim().length>5){
-    // Pecah kata kunci dari input materi
-    const kataKunci=materi.split(/[,\n;]+/).map(k=>k.trim()).filter(k=>k.length>3);
-    return kataKunci.length>0?kataKunci:ctx;
-  }
-  return ctx;
-}
-
-/* Generate satu kalimat TP */
-function buatSatuTp(idx,kelas,mapelVal,materi,gaya,pola,konteksList){
-  const kk=kataKerjaKelas[kelas]||kataKerjaKelas['5'];
-  const kataKerja=kk[idx%kk.length];
-  const konteks=konteksList[idx%konteksList.length];
-
-  let awalan,akhiran;
-  if(pola){
-    awalan=pola.awalan;
-    // Sesuaikan akhiran berdasarkan panjang referensi
-    akhiran=pola.panjang==='detail'?
-      ' dengan baik dan benar sesuai dengan materi yang dipelajari.':
-      ' dengan tepat.';
-  } else {
-    const tmpl=awalGaya[gaya]||awalGaya.singkat;
-    awalan=tmpl.awalan;
-    akhiran=tmpl.akhiran;
-  }
-
-  // Variasikan struktur
-  const varStruktur=[
-    `${awalan}${kataKerja} ${konteks}${akhiran}`,
-    `${awalan}${kataKerja} dan menerapkan ${konteks} dalam kehidupan sehari-hari.`,
-    `${awalan}${kataKerja} ${konteks} dengan menggunakan ${idx%2===0?'berbagai sumber belajar':'pendekatan ilmiah'}.`,
-    `${awalan}${kataKerja} ${konteks} serta mengomunikasikan hasilnya kepada teman dan guru.`,
-    `${awalan}${kataKerja} ${konteks} berdasarkan pengalaman dan pengamatan langsung.`
-  ];
-
-  return varStruktur[idx%varStruktur.length];
-}
-
-/* FUNGSI UTAMA: Generate TP */
 function generateTP(){
+  const cp=document.getElementById('jenisCp').value;
   const kelas=document.getElementById('kelas').value;
-  const mapelSelect=document.getElementById('mapel').value;
-  const mapelVal=mapelSelect==='lainnya'?
-    (document.getElementById('mapelManual').value||'Mata Pelajaran'):mapelSelect;
-  const semester=document.getElementById('semester').value;
-  const jenisCp=document.getElementById('jenisCp').value;
-  const materi=document.getElementById('materi').value.trim();
-  const jumlah=parseInt(document.getElementById('jumlahTp').value)||5;
-  const referensi=document.getElementById('referensiTp').value.trim();
+  const sem=document.getElementById('semester').value;
+  const jenisCpLabel=cp==='baru'?'CP Terbaru (2022–sekarang)':'CP Lama (sebelum 2022)';
 
-  // Validasi
-  if(!materi){
-    toast('⚠️ Isi Materi/Topik terlebih dahulu!');
-    document.getElementById('materi').focus();
+  // Kumpulkan mapel yang dipilih
+  const selectedMapel=[];
+  document.querySelectorAll('#mapelList .mapel-item:not(.manual-row) input[type=checkbox]:checked').forEach(cb=>{
+    selectedMapel.push(cb.value);
+  });
+  const cbManual=document.getElementById('cb_manual');
+  if(cbManual&&cbManual.checked){
+    const nm=document.getElementById('mapelManualInput').value.trim();
+    if(nm) selectedMapel.push('__manual__:'+nm);
+  }
+
+  if(selectedMapel.length===0){
+    toast('⚠️ Pilih minimal satu mata pelajaran!');
     return;
   }
 
-  // Tampilkan overlay
   showOverlay();
 
-  // Generate setelah delay premium (3 detik)
   setTimeout(()=>{
-    const pola=analisaReferensi(referensi+'\n'+uploadedText);
-    const konteksList=getKonteks(mapelVal,materi);
+    const bankData=BANK[cp]?.[kelas]?.[sem]||{};
+    const sections=[];
 
-    // Buat daftar TP
-    const daftarTp=[];
-    for(let i=0;i<jumlah;i++){
-      daftarTp.push(buatSatuTp(i,kelas,mapelVal,materi,gayaAktif,pola,konteksList));
-    }
+    selectedMapel.forEach(m=>{
+      if(m.startsWith('__manual__:')){
+        const nm=m.replace('__manual__:','');
+        sections.push({mapel:nm,tpList:['(Belum ada data bank TP untuk mapel ini — silakan edit secara manual)']});
+        return;
+      }
+      const raw=bankData[m]||[];
+      const tpList=raw.map(tp=>applyGaya(tp,gayaAktif));
+      sections.push({mapel:m,tpList});
+    });
 
-    // Tampilkan hasil
-    tampilkanHasil(daftarTp,{kelas,mapelVal,semester,jenisCp,materi,jumlah});
+    hasilData={sections,meta:{kelas,sem,cp:jenisCpLabel}};
+    tampilkanHasil();
     hideOverlay();
 
-    // Scroll ke hasil di mobile
     if(window.innerWidth<=960){
-      setTimeout(()=>{
-        document.getElementById('colRight').scrollIntoView({behavior:'smooth',block:'start'});
-      },300);
+      setTimeout(()=>document.getElementById('colRight').scrollIntoView({behavior:'smooth',block:'start'}),300);
     }
     toast('✅ Draft TP berhasil dibuat!');
-  },3200);
+  },2200);
 }
 
-/* ════════════════════════════════════════════
+/* ════════════════════════════
    TAMPILKAN HASIL
-════════════════════════════════════════════ */
-let hasilData={tpList:[],meta:{}};
-
-function tampilkanHasil(tpList,meta){
-  hasilData={tpList,meta};
-
-  // Sembunyikan placeholder
+════════════════════════════ */
+function tampilkanHasil(){
+  const {sections,meta}=hasilData;
   document.getElementById('hasilPlaceholder').style.display='none';
   document.getElementById('hasilKonten').style.display='block';
 
-  // Judul
-  document.getElementById('hasilJudul').textContent=
-    'Draft TP — Kelas '+meta.kelas+' '+meta.mapelVal;
-
-  // Info pills
+  document.getElementById('hasilJudul').textContent='Draft Tujuan Pembelajaran — Kelas '+meta.kelas;
   const pills=document.getElementById('infoPills');
+  const total=sections.reduce((s,x)=>s+x.tpList.length,0);
   pills.innerHTML=[
     'Kelas '+meta.kelas,
-    meta.mapelVal,
-    'Semester '+meta.semester,
-    meta.jenisCp,
-    tpList.length+' TP'
+    'Semester '+meta.sem,
+    meta.cp,
+    sections.length+' Mapel',
+    total+' TP'
   ].map(t=>`<span class="pill">${t}</span>`).join('');
 
-  // Render daftar TP
   const container=document.getElementById('daftarTp');
-  container.innerHTML=tpList.map((tp,i)=>`
-    <div class="tp-item" id="tpItem${i}">
-      <div class="tp-num">${i+1}</div>
-      <div class="tp-text">${tp}</div>
-      <button class="tp-copy" onclick="salinSatu(${i},this)" title="Salin TP ini">📋 Salin</button>
+  container.innerHTML=sections.map((sec,si)=>`
+    <div class="tp-section">
+      <div class="tp-section-title">📚 ${sec.mapel}</div>
+      ${sec.tpList.map((tp,i)=>`
+        <div class="tp-item" id="tp_${si}_${i}">
+          <div class="tp-num">${i+1}</div>
+          <div class="tp-text">${tp}</div>
+          <button class="tp-copy" onclick="salinSatu(${si},${i},this)" title="Salin TP ini">📋 Salin</button>
+        </div>
+      `).join('')}
     </div>
   `).join('');
 }
 
-/* ════════════════════════════════════════════
-   SALIN SATU TP
-════════════════════════════════════════════ */
-function salinSatu(idx,btn){
-  const tp=hasilData.tpList[idx];
+/* ════════════════════════════
+   SALIN
+════════════════════════════ */
+function salinSatu(si,i,btn){
+  const tp=hasilData.sections[si]?.tpList[i];
   if(!tp) return;
-  navigator.clipboard.writeText((idx+1)+'. '+tp).then(()=>{
-    btn.textContent='✅ Disalin';
-    btn.classList.add('copied');
+  navigator.clipboard.writeText((i+1)+'. '+tp).then(()=>{
+    btn.textContent='✅ Disalin';btn.classList.add('copied');
     setTimeout(()=>{btn.textContent='📋 Salin';btn.classList.remove('copied');},2000);
-    toast('TP '+(idx+1)+' berhasil disalin!');
+    toast('TP '+(i+1)+' berhasil disalin!');
   });
 }
 
-/* ════════════════════════════════════════════
-   SALIN SEMUA TP
-════════════════════════════════════════════ */
 function salinSemua(){
-  const {tpList,meta}=hasilData;
-  if(!tpList.length){toast('Belum ada TP untuk disalin');return;}
-  const header=`DRAFT TUJUAN PEMBELAJARAN\nKelas ${meta.kelas} | ${meta.mapelVal} | Semester ${meta.semester} | ${meta.jenisCp}\nMateri: ${meta.materi}\n\n`;
-  const isi=tpList.map((tp,i)=>`${i+1}. ${tp}`).join('\n');
-  navigator.clipboard.writeText(header+isi).then(()=>{
-    toast('✅ Semua TP berhasil disalin!');
-  });
+  const {sections,meta}=hasilData;
+  if(!sections.length){toast('Belum ada TP');return;}
+  const header=`DRAFT TUJUAN PEMBELAJARAN\nKelas ${meta.kelas} | Semester ${meta.sem} | ${meta.cp}\n\n`;
+  const isi=sections.map(s=>`=== ${s.mapel} ===\n`+s.tpList.map((tp,i)=>`${i+1}. ${tp}`).join('\n')).join('\n\n');
+  navigator.clipboard.writeText(header+isi).then(()=>toast('✅ Semua TP berhasil disalin!'));
 }
 
-/* ════════════════════════════════════════════
-   DOWNLOAD PDF
-════════════════════════════════════════════ */
-function downloadPDF(){
-  const {tpList,meta}=hasilData;
-  if(!tpList.length){toast('⚠️ Generate TP terlebih dahulu!');return;}
-  toast('Menyiapkan PDF...');
+/* ════════════════════════════
+   RESET
+════════════════════════════ */
+function resetForm(){
+  document.getElementById('jenisCp').value='baru';
+  document.getElementById('kelas').value='5';
+  document.getElementById('semester').value='1';
+  gayaAktif='singkat';
+  document.querySelectorAll('.gaya-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
+  updateMapelList();
+  document.getElementById('hasilPlaceholder').style.display='flex';
+  document.getElementById('hasilKonten').style.display='none';
+  toast('Form berhasil direset 🔄');
+}
 
-  // Buat konten PDF
+function scrollToHasil(){
+  document.getElementById('colRight').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ════════════════════════════
+   DOWNLOAD PDF
+════════════════════════════ */
+function downloadPDF(){
+  const {sections,meta}=hasilData;
+  if(!sections.length){toast('⚠️ Generate TP terlebih dahulu!');return;}
+  toast('Menyiapkan PDF...');
   const tgl=new Date().toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'});
-  const isiTp=tpList.map((tp,i)=>`
-    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;page-break-inside:avoid;">
-      <div style="min-width:28px;height:28px;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">${i+1}</div>
-      <div style="font-size:13px;color:#1e293b;line-height:1.7;padding-top:5px;">${tp}</div>
+
+  const isiHtml=sections.map(s=>`
+    <div style="margin-bottom:22px;">
+      <div style="font-size:11px;font-weight:800;color:#0ea5a0;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding:5px 10px;background:rgba(14,165,160,.07);border-radius:6px;border-left:3px solid #0ea5a0;">📚 ${s.mapel}</div>
+      ${s.tpList.map((tp,i)=>`
+        <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;page-break-inside:avoid;">
+          <div style="min-width:26px;height:26px;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">${i+1}</div>
+          <div style="font-size:13px;color:#1e293b;line-height:1.65;padding-top:5px;">${tp}</div>
+        </div>
+      `).join('')}
     </div>
   `).join('');
 
   const html=`
-  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:700px;margin:0 auto;padding:40px;position:relative;">
-
-    <!-- Header -->
-    <div style="text-align:center;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #0ea5a0;">
+  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:700px;margin:0 auto;padding:40px;">
+    <div style="text-align:center;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid #0ea5a0;">
       <div style="font-size:11px;color:#0ea5a0;font-weight:700;letter-spacing:2px;margin-bottom:6px;">BANTU GURU YUK</div>
       <h1 style="font-size:20px;font-weight:900;color:#1e293b;margin:0 0 4px;">Draft Tujuan Pembelajaran</h1>
-      <div style="font-size:11px;color:#64748b;">Digenerate pada ${tgl}</div>
+      <div style="font-size:11px;color:#64748b;">Kelas ${meta.kelas} · Semester ${meta.sem} · ${meta.cp} · ${tgl}</div>
     </div>
-
-    <!-- Info Identitas -->
-    <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 18px;margin-bottom:24px;">
-      <table style="width:100%;border-collapse:collapse;font-size:12px;">
-        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;width:35%;">Kelas</td><td style="color:#1e293b;font-weight:700;">: Kelas ${meta.kelas}</td></tr>
-        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;">Mata Pelajaran</td><td style="color:#1e293b;font-weight:700;">: ${meta.mapelVal}</td></tr>
-        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;">Semester</td><td style="color:#1e293b;font-weight:700;">: Semester ${meta.semester}</td></tr>
-        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;">Jenis CP</td><td style="color:#1e293b;font-weight:700;">: ${meta.jenisCp}</td></tr>
-        <tr><td style="padding:3px 0;color:#64748b;font-weight:600;vertical-align:top;">Materi</td><td style="color:#1e293b;font-weight:700;">: ${meta.materi}</td></tr>
-      </table>
+    ${isiHtml}
+    <div style="margin-top:36px;padding-top:14px;border-top:1px solid #e2e8f0;text-align:center;">
+      <div style="font-size:10px;color:#94a3b8;">🎵 TikTok: <strong style="color:#64748b;">@pak.choyy</strong> &nbsp;|&nbsp; Bantu Guru Yuk</div>
     </div>
-
-    <!-- Daftar TP -->
-    <div style="margin-bottom:6px;font-size:11px;font-weight:800;color:#0ea5a0;letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">
-      Tujuan Pembelajaran (${tpList.length} TP)
-    </div>
-    ${isiTp}
-
-    <!-- Watermark -->
-    <div style="margin-top:40px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
-      <div style="font-size:10px;color:#94a3b8;letter-spacing:.5px;">
-        🎵 TikTok: <strong style="color:#64748b;">@pak.choyy</strong> &nbsp;|&nbsp; Bantu Guru Yuk
-      </div>
-    </div>
-
   </div>`;
 
   const pdfEl=document.getElementById('pdfContent');
-  pdfEl.innerHTML=html;
-  pdfEl.style.display='block';
+  pdfEl.innerHTML=html;pdfEl.style.display='block';
 
   const opt={
     margin:[10,10,14,10],
-    filename:'Draft_TP_Kelas'+meta.kelas+'_'+meta.mapelVal.replace(/\s/g,'_')+'.pdf',
+    filename:'Draft_TP_Kelas'+meta.kelas+'_Sem'+meta.sem+'.pdf',
     image:{type:'jpeg',quality:.95},
     html2canvas:{scale:2,useCORS:true},
     jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
     pagebreak:{mode:['avoid-all','css']}
   };
-
   html2pdf().set(opt).from(pdfEl).save().then(()=>{
     pdfEl.style.display='none';
     toast('📄 PDF berhasil diunduh!');
-  }).catch(()=>{
-    pdfEl.style.display='none';
-    toast('❌ Gagal buat PDF, coba lagi');
-  });
+  }).catch(()=>{pdfEl.style.display='none';toast('❌ Gagal buat PDF');});
 }
 </script>
 </body>
