@@ -184,13 +184,13 @@ a { text-decoration: none; color: inherit; }
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(14,165,160,.45);
+  color: rgba(14,165,160,.7);
   display: flex; align-items: center; gap: 8px;
 }
 .sb-section::after {
   content: '';
   flex: 1; height: 1px;
-  background: rgba(14,165,160,.15);
+  background: rgba(14,165,160,.2);
 }
 
 /* Nav item */
@@ -201,7 +201,7 @@ a { text-decoration: none; color: inherit; }
   margin: 1px 12px;
   padding: 9px 12px;
   border-radius: var(--r-sm);
-  color: rgba(224,242,254,.5);
+  color: rgba(224,242,254,.75);
   font-size: .82rem;
   font-weight: 500;
   cursor: pointer;
@@ -209,8 +209,8 @@ a { text-decoration: none; color: inherit; }
   position: relative;
 }
 .nav-item:hover {
-  background: rgba(14,165,160,.1);
-  color: rgba(224,242,254,.85);
+  background: rgba(14,165,160,.12);
+  color: rgba(224,242,254,.95);
 }
 .nav-item.active {
   background: rgba(14,165,160,.18);
@@ -245,11 +245,11 @@ a { text-decoration: none; color: inherit; }
   font-weight: 700;
   padding: 2px 7px;
   border-radius: 3px;
-  background: rgba(14,165,160,.08);
-  color: rgba(14,165,160,.5);
+  background: rgba(14,165,160,.12);
+  color: rgba(14,165,160,.75);
   letter-spacing: .8px;
   text-transform: uppercase;
-  border: 1px solid rgba(14,165,160,.12);
+  border: 1px solid rgba(14,165,160,.2);
 }
 
 /* Sidebar footer */
@@ -271,8 +271,8 @@ a { text-decoration: none; color: inherit; }
   color: #5eead4; flex-shrink: 0;
   font-family: 'Playfair Display', serif;
 }
-.sb-footer-name { font-size: .77rem; font-weight: 700; color: rgba(224,242,254,.7); }
-.sb-footer-role { font-size: .62rem; color: rgba(14,165,160,.5); margin-top: 1px; letter-spacing: .3px; }
+.sb-footer-name { font-size: .77rem; font-weight: 700; color: rgba(224,242,254,.85); }
+.sb-footer-role { font-size: .62rem; color: rgba(14,165,160,.65); margin-top: 1px; letter-spacing: .3px; }
 
 /* ════════════════════════
    MAIN
@@ -891,34 +891,23 @@ a { text-decoration: none; color: inherit; }
   <a href="/katrol-nilai" class="nav-item">
     <div class="nav-icon">📊</div>
     Katrol Nilai
-    <span style="margin-left:auto;font-size:.55rem;font-weight:800;padding:2px 7px;border-radius:3px;background:rgba(14,165,160,.15);color:#5eead4;letter-spacing:.5px;border:1px solid rgba(14,165,160,.2);">Baru</span>
+  </a>
+
+  <a href="/draft-tp" class="nav-item">
+    <div class="nav-icon">📄</div>
+    Draft TP
   </a>
 
   <div class="sb-section">Segera Hadir</div>
 
-  <a class="nav-item disabled">
-    <div class="nav-icon">📊</div>
-    Rapor Otomatis
-    <span class="nav-badge-soon">Soon</span>
-  </a>
   <a class="nav-item disabled">
     <div class="nav-icon">🗓️</div>
     RPP Generator
     <span class="nav-badge-soon">Soon</span>
   </a>
   <a class="nav-item disabled">
-    <div class="nav-icon">🖼️</div>
-    Media Ajar AI
-    <span class="nav-badge-soon">Soon</span>
-  </a>
-  <a class="nav-item disabled">
     <div class="nav-icon">📋</div>
     Absensi Digital
-    <span class="nav-badge-soon">Soon</span>
-  </a>
-  <a class="nav-item disabled">
-    <div class="nav-icon">🏆</div>
-    Bank Soal
     <span class="nav-badge-soon">Soon</span>
   </a>
 
@@ -977,7 +966,7 @@ a { text-decoration: none; color: inherit; }
       <div class="stamp-card">
         <div class="stamp-new">Baru</div>
         <div class="stamp-icon">📚</div>
-        <div class="stamp-num">3+</div>
+        <div class="stamp-num">5</div>
         <div class="stamp-lbl">Fitur Aktif</div>
         <hr class="stamp-hr">
         <div class="quote-slider" id="quoteSlider">
@@ -1042,10 +1031,20 @@ a { text-decoration: none; color: inherit; }
     <a href="/katrol-nilai" class="tool-card tool-card-featured">
       <div class="tool-card-top">
         <div class="tool-icon-wrap" style="background:rgba(14,165,160,.12);border-color:rgba(14,165,160,.25);">📊</div>
-        <span class="tool-badge badge-active">Baru ✦</span>
+        <span class="tool-badge badge-active">Aktif</span>
       </div>
       <div class="tool-name">Katrol Nilai</div>
       <div class="tool-desc">Hitung &amp; katrol nilai siswa otomatis — input nilai mentah, dapatkan hasil akhir yang adil &amp; proporsional.</div>
+      <div class="tool-arrow">→</div>
+    </a>
+
+    <a href="/draft-tp" class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">📄</div>
+        <span class="tool-badge badge-active">Aktif</span>
+      </div>
+      <div class="tool-name">Draft TP</div>
+      <div class="tool-desc">Buat draf Tujuan Pembelajaran sesuai Kurikulum Merdeka, cepat dan terstruktur.</div>
       <div class="tool-arrow">→</div>
     </a>
 
@@ -1056,26 +1055,6 @@ a { text-decoration: none; color: inherit; }
       </div>
       <div class="tool-name">RPP Generator</div>
       <div class="tool-desc">Buat Rencana Pelaksanaan Pembelajaran lengkap sesuai format Kurikulum Merdeka.</div>
-      <div class="tool-arrow">→</div>
-    </div>
-
-    <div class="tool-card coming-soon">
-      <div class="tool-card-top">
-        <div class="tool-icon-wrap">📊</div>
-        <span class="tool-badge badge-soon">Segera</span>
-      </div>
-      <div class="tool-name">Rapor Otomatis</div>
-      <div class="tool-desc">Input nilai siswa, sistem generate deskripsi rapor otomatis per mata pelajaran.</div>
-      <div class="tool-arrow">→</div>
-    </div>
-
-    <div class="tool-card coming-soon">
-      <div class="tool-card-top">
-        <div class="tool-icon-wrap">🏆</div>
-        <span class="tool-badge badge-soon">Segera</span>
-      </div>
-      <div class="tool-name">Bank Soal</div>
-      <div class="tool-desc">Simpan &amp; kelola kumpulan soal yang sudah dibuat. Bisa digunakan ulang kapanpun.</div>
       <div class="tool-arrow">→</div>
     </div>
 
@@ -1146,7 +1125,7 @@ a { text-decoration: none; color: inherit; }
       <div class="card-title">✦ Info Platform</div>
       <div class="stat-grid">
         <div class="stat-item">
-          <div class="stat-num">3+</div>
+          <div class="stat-num">5</div>
           <div class="stat-lbl">Fitur Aktif</div>
         </div>
         <div class="stat-item">
