@@ -76,8 +76,6 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 @keyframes goBar{0%{width:0%;margin-left:0;}50%{width:70%;margin-left:0;}100%{width:0%;margin-left:100%;}}
 
 /* MAIN */
-main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;overflow-x:hidden;}
-@media(max-width:640px){main{padding:10px 12px;}}
 .hint-full{grid-column:1/-1;margin-bottom:0;}
 .two-col{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start;}
 @media(max-width:960px){.two-col{grid-template-columns:1fr;}}
@@ -86,9 +84,20 @@ main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;overflow-x:hi
 /* A5-ish portrait card — no scroll */
 .col-right .card{width:100%;min-height:210mm;box-sizing:border-box;}
 
+/* PAGE HOME wrapper */
+#pageHome{padding:14px;}
+@media(min-width:641px){#pageHome{padding:20px;}}
+.page-home-inner{max-width:1280px;margin:0 auto;}
+.hint-wrap{margin-bottom:12px;}
+
+/* PAGE lainnya */
+.page{display:none;padding:14px;}
+@media(min-width:641px){.page{padding:20px;}}
+.page-inner{max-width:780px;margin:0 auto;}
+
 /* CARD */
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--border);overflow:hidden;}
-@media(max-width:640px){.card{padding:14px 12px;border-radius:10px;}}
+@media(max-width:640px){.card{padding:15px;border-radius:10px;}}
 .card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:10px;}
 
 /* FORM */
@@ -289,6 +298,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 
 <!-- PAGE TENTANG -->
 <div id="pageTentang" class="page">
+  <div class="page-inner">
   <div class="page-card">
     <div class="page-card-title">ℹ️ Tentang Aplikasi</div>
     <div class="page-ver">Bantu Guru Yuk — Draft TP · v26.5.18</div>
@@ -303,10 +313,12 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     <p>Dibuat oleh <strong>Pak Choyy</strong> · BGY Tools</p>
     <p>🏠 <a href="https://bantuguruyuk.web.id" target="_blank">bantuguruyuk.web.id</a></p>
   </div>
+  </div>
 </div>
 
 <!-- PAGE KONTAK -->
 <div id="pageKontak" class="page">
+  <div class="page-inner">
   <div class="page-card">
     <div class="page-card-title">💬 Kontak</div>
     <p>Untuk bantuan, kritik, saran, atau kolaborasi:</p>
@@ -315,14 +327,15 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
       <a class="btn-tiktok" href="https://www.tiktok.com/@pak.choyy" target="_blank">🎵 TikTok @pak.choyy</a>
     </div>
   </div>
+  </div>
 </div>
 
 <div id="pageHome">
-  <!-- HINT FULL WIDTH -->
-  <div class="hint-box" style="margin-bottom:16px;max-width:1280px;margin-left:auto;margin-right:auto;padding-left:20px;padding-right:20px;box-sizing:border-box;margin-bottom:16px;">
+  <div class="page-home-inner">
+  <!-- HINT -->
+  <div class="hint-box hint-wrap">
     💡 <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>✨ Generate Draft TP</strong> → Salin ke erapor 🎉
   </div>
-  <div style="max-width:1280px;margin:0 auto;padding:0 20px;">
   <div class="two-col">
 
     <!-- KOLOM KIRI -->
@@ -405,7 +418,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     </div>
 
   </div>
-  </div>
+  </div><!-- /page-home-inner -->
 </div><!-- /pageHome -->
 
 
@@ -683,13 +696,13 @@ function scrollToHasil(){
    PAGE NAVIGATION
 ════════════════════════════ */
 function showPage(page){
-  document.getElementById('pageHome').style.display = page==='home' ? '' : 'none';
-  document.getElementById('pageTentang').style.display = page==='tentang' ? 'block' : 'none';
-  document.getElementById('pageKontak').style.display = page==='kontak' ? 'block' : 'none';
+  document.getElementById('pageHome').style.display   = page==='home'    ? '' : 'none';
+  document.getElementById('pageTentang').style.display= page==='tentang' ? 'block' : 'none';
+  document.getElementById('pageKontak').style.display = page==='kontak'  ? 'block' : 'none';
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// legacy — masih dipanggil dari mana-mana
+// legacy
 function openTentang(){showPage('tentang');}
 function closeTentang(){showPage('home');}
 
