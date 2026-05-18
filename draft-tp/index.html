@@ -72,12 +72,13 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 /* MAIN */
 main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;overflow-x:hidden;}
 @media(max-width:640px){main{padding:10px 12px;}}
+.hint-full{grid-column:1/-1;margin-bottom:0;}
 .two-col{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start;}
 @media(max-width:960px){.two-col{grid-template-columns:1fr;}}
 .col-left{display:flex;flex-direction:column;gap:12px;}
 .col-right{min-width:0;}
-/* A4 portrait card — no scroll, tampil semua */
-.col-right .card{width:100%;min-height:297mm;box-sizing:border-box;}
+/* A5-ish portrait card — no scroll */
+.col-right .card{width:100%;min-height:210mm;box-sizing:border-box;}
 
 /* CARD */
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--border);overflow:hidden;}
@@ -157,9 +158,21 @@ textarea{resize:vertical;}
 body.dark #toast{background:#f1f5f9;color:#1e293b;}
 
 /* FOOTER */
-footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
-.footer-title{font-weight:800;font-size:.8rem;color:var(--text);}
-.footer-sub{margin-top:2px;}
+footer{background:var(--grad);padding:16px 20px;text-align:center;}
+.footer-title{font-weight:700;font-size:.75rem;color:rgba(255,255,255,.75);letter-spacing:.3px;}
+.footer-sub{margin-top:3px;font-size:.78rem;color:#fff;}
+.footer-link{color:#fff;text-decoration:underline;cursor:pointer;font-weight:700;}
+.footer-link:hover{opacity:.8;}
+.footer-ver{font-size:.62rem;color:rgba(255,255,255,.5);margin-top:3px;}
+
+/* MODAL TENTANG */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--card-bg);border-radius:16px;padding:24px;max-width:380px;width:90%;box-shadow:var(--shadow-lg);position:relative;}
+.modal-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.modal-body{font-size:.83rem;color:var(--text);line-height:1.7;}
+.modal-body a{color:var(--blue-dark);font-weight:700;}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text-light);}
 
 /* HINT BOX */
 .hint-box{background:rgba(14,165,160,.06);border:1.5px solid rgba(14,165,160,.2);border-radius:var(--radius);padding:12px 16px;font-size:.78rem;color:var(--text);line-height:1.5;}
@@ -185,7 +198,7 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
     <div class="go-ring go-ring1"></div>
     <div class="go-ring go-ring2"></div>
     <div class="go-ring go-ring3"></div>
-    <div class="go-icon"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuDGFaobvfBRLbANFbMSbUVqWqD_MiGHlObBhiO3kDfLLOi03_xA4t4FNEbFa8-3MEbGjAi9PFZB_ld8y9eQS0mjqBHzCIMmCPCrJxIqaMMCqBOC0YlkyEZw0OM4-rMiIFWxN3JFWiilk/s1600/gurucibisd2.png" style="width:44px;height:44px;object-fit:contain;border-radius:8px;" onerror="this.outerHTML='📝'"></div>
+    <div class="go-icon" id="loadingIcon">🏫</div>
   </div>
   <div class="go-title">Menyusun Draft TP...</div>
   <div class="go-sub">Memilih dari bank TP kurikulum</div>
@@ -200,34 +213,36 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
 <header>
   <div class="header-inner">
     <div class="header-brand">
-      <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuDGFaobvfBRLbANFbMSbUVqWqD_MiGHlObBhiO3kDfLLOi03_xA4t4FNEbFa8-3MEbGjAi9PFZB_ld8y9eQS0mjqBHzCIMmCPCrJxIqaMMCqBOC0YlkyEZw0OM4-rMiIFWxN3JFWiilk/s1600/gurucibisd2.png" alt="Guru Cibi" class="header-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="logo-box-fallback" style="display:none;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏫</div>
+      <img src="https://lh3.googleusercontent.com/blogger_img_proxy/AEn0k_sqFmm_d8QxTjM_Kq1uoOCqz6X1wY_8UcVLf4a7Z_yCVKT35MEXrORkjLXCpq9p3xCKjfNY7q4SJb5uO_a7LMEBCeK0kgjDFvVyP_F7WFfz0rn8sCBvMN3Jl3EqxYdN1JgzFMDqoRWxHkLmYvNjDvxZFMNBFOJkPlD=s0-d" alt="Guru Cibi" class="header-logo-img" onerror="this.src='https://ik.imagekit.io/bantuguruyuk/gurucibisd2.png';this.onerror=function(){this.style.display='none';this.nextElementSibling.style.display='flex';}">
+      <div class="logo-box-fallback" style="display:none;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏫</div>
       <h1 class="header-title-inline">Bantu Guru Yuk <span class="hdr-sep">|</span> Draft Tujuan Pembelajaran</h1>
     </div>
     <div class="header-right">
       <button class="hdr-btn" id="darkBtn" onclick="toggleDark()" title="Dark Mode">🌙</button>
       <button class="hdr-btn" id="menuBtn" onclick="toggleMenu()" title="Menu">☰</button>
       <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item" onclick="window.location.reload();closeMenu()">🏠 Home</button>
         <button class="dropdown-item" onclick="resetForm();closeMenu()">🔄 Reset Form</button>
-        <button class="dropdown-item" onclick="scrollToHasil();closeMenu()">📄 Lihat Hasil</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" onclick="openTentang();closeMenu()">ℹ️ Tentang</button>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item" onclick="window.open('https://www.tiktok.com/@pak.choyy','_blank');closeMenu()">🎵 TikTok @pak.choyy</button>
-        <button class="dropdown-item" onclick="window.open('https://artikel-bgy.blogspot.com','_blank');closeMenu()">📰 Blog BGY</button>
+        <button class="dropdown-item" onclick="window.open('https://bantuguruyuk.web.id','_blank');closeMenu()">🌐 bantuguruyuk.web.id</button>
       </div>
     </div>
   </div>
 </header>
 
 <main>
+  <!-- HINT FULL WIDTH -->
+  <div class="hint-box" style="margin-bottom:16px;">
+    💡 <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>✨ Generate Draft TP</strong> → Salin ke erapor 🎉
+  </div>
+
   <div class="two-col">
 
     <!-- KOLOM KIRI -->
     <div class="col-left">
-
-      <!-- HINT PENGGUNAAN -->
-      <div class="hint-box">
-        💡 <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>✨ Generate Draft TP</strong> → Salin ke erapor 🎉
-      </div>
 
       <!-- CARD: Identitas -->
       <div class="card">
@@ -307,9 +322,26 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
 
 
 <footer>
-  <div class="footer-title">Bantu Guru Yuk</div>
-  <div class="footer-sub">Generator Draft TP untuk Guru SD · by pak.choyy</div>
+  <div class="footer-title">Generator Draft TP</div>
+  <div class="footer-sub"><a class="footer-link" onclick="window.open('https://www.tiktok.com/@pak.choyy','_blank')">Bantu Guru Yuk by pak.choyy</a></div>
+  <div class="footer-ver">v26.5.18</div>
 </footer>
+
+<!-- MODAL TENTANG -->
+<div class="modal-overlay" id="modalTentang" onclick="if(event.target===this)closeTentang()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeTentang()">✕</button>
+    <div class="modal-title">ℹ️ Tentang Aplikasi</div>
+    <div class="modal-body">
+      <p><strong>Bantu Guru Yuk – Draft TP</strong> adalah alat bantu bagi guru SD untuk membuat draft Tujuan Pembelajaran sesuai Kurikulum Merdeka, mendukung CP Baru (BSKAP 046/2025) dan CP Lama (BSKAP 033/2022).</p>
+      <br>
+      <p>Dibuat oleh <strong>Pak Choyy</strong> · BGY Tools</p>
+      <br>
+      <p>💬 Kritik &amp; saran, hubungi via WhatsApp:<br>
+      <a href="https://wa.me/6289530713597" target="_blank">wa.me/6289530713597</a></p>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ════════════════════════════
@@ -575,6 +607,35 @@ function resetForm(){
 function scrollToHasil(){
   document.getElementById('colRight').scrollIntoView({behavior:'smooth',block:'start'});
 }
+
+function openTentang(){
+  document.getElementById('modalTentang').classList.add('open');
+}
+function closeTentang(){
+  document.getElementById('modalTentang').classList.remove('open');
+}
+
+/* ════════════════════════════
+   LOAD GURU CIBI ICON
+════════════════════════════ */
+(function(){
+  const ICON_URL='https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiuDGFaobvfBRLbANFbMSbUVqWqD_MiGHlObBhiO3kDfLLOi03_xA4t4FNEbFa8-3MEbGjAi9PFZB_ld8y9eQS0mjqBHzCIMmCPCrJxIqaMMCqBOC0YlkyEZw0OM4-rMiIFWxN3JFWiilk/s200/gurucibisd2.png';
+  // Header icon
+  const hdrImg=document.querySelector('.header-logo-img');
+  if(hdrImg){
+    const t=new Image();
+    t.onload=()=>{hdrImg.src=ICON_URL;};
+    t.onerror=()=>{/* fallback emoji already shown */};
+    t.src=ICON_URL;
+  }
+  // Loading overlay icon
+  const li=document.getElementById('loadingIcon');
+  if(li){
+    const t2=new Image();
+    t2.onload=()=>{li.innerHTML=`<img src="${ICON_URL}" style="width:44px;height:44px;object-fit:contain;border-radius:8px;">`;};
+    t2.src=ICON_URL;
+  }
+})();
 
 /* ════════════════════════════
    END
