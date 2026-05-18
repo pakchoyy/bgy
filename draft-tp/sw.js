@@ -1,4 +1,4 @@
-const CACHE='bgy-draft-tp-v1';
+const CACHE='bgy-draft-tp-v2';
 const ASSETS=['./',  './index.html', './guru-cibisd2.png', './manifest.json'];
 
 self.addEventListener('install', e=>{
