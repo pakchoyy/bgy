@@ -1,5 +1,5 @@
 const CACHE='bgy-draft-tp-v1';
-const ASSETS=['./',  './index.html', './gurucibisd2.png', './manifest.json'];
+const ASSETS=['./',  './index.html', './guru-cibisd2.png', './manifest.json'];
 
 self.addEventListener('install', e=>{
   e.waitUntil(
