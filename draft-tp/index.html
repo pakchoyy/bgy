@@ -207,20 +207,94 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 .btn-tiktok{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:#111;color:#fff;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;}
 .btn-tiktok:hover{background:#333;}
 
-/* INSTALL BANNER */
-#installBanner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:600;background:var(--grad);padding:14px 20px;box-shadow:0 -4px 20px rgba(0,0,0,.2);animation:slideUp .4s ease;}
-@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+/* INSTALL BANNER (MODAL TENGAH) */
+#installBanner{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(4px);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
 #installBanner.show{display:flex;}
-.install-banner-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:12px;width:100%;}
-.install-banner-icon{width:42px;height:42px;border-radius:10px;flex-shrink:0;object-fit:contain;}
-.install-banner-text{flex:1;color:#fff;}
-.install-banner-text strong{display:block;font-size:.88rem;font-weight:800;}
-.install-banner-text span{font-size:.72rem;opacity:.85;}
-.install-banner-btns{display:flex;gap:8px;flex-shrink:0;}
-.btn-install-yes{background:#fff;color:var(--blue-dark);font-weight:800;font-size:.8rem;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;}
-.btn-install-yes:hover{background:#e2e8f0;}
-.btn-install-no{background:transparent;color:rgba(255,255,255,.7);font-size:.8rem;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);cursor:pointer;}
-.btn-install-no:hover{background:rgba(255,255,255,.1);}
+.install-banner-inner{
+  background:var(--card-bg);
+  border:1.5px solid var(--border);
+  border-radius:16px;
+  box-shadow:var(--shadow-lg);
+  padding:24px;
+  width:100%;
+  max-width:380px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:16px;
+  animation:zoomIn .3s cubic-bezier(0.34, 1.56, 0.64, 1) ease;
+}
+@keyframes zoomIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
+.install-banner-icon{
+  width:64px;
+  height:64px;
+  border-radius:16px;
+  object-fit:contain;
+  box-shadow:0 4px 12px rgba(14,165,160,0.15);
+}
+.install-banner-text{
+  color:var(--text);
+}
+.install-banner-text strong{
+  display:block;
+  font-size:1.1rem;
+  font-weight:800;
+  margin-bottom:6px;
+}
+.install-banner-text span{
+  font-size:.82rem;
+  color:var(--text-light);
+  line-height:1.4;
+}
+.install-banner-btns{
+  display:flex;
+  gap:10px;
+  width:100%;
+  margin-top:4px;
+}
+.btn-install-yes{
+  flex:1;
+  background:var(--grad);
+  color:#fff;
+  font-weight:700;
+  font-size:.85rem;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(14,165,160,0.2);
+  transition:all .2s;
+}
+.btn-install-yes:hover{
+  transform:translateY(-1px);
+  opacity:.9;
+}
+.btn-install-no{
+  flex:1;
+  background:var(--input-bg);
+  color:var(--text);
+  font-weight:700;
+  font-size:.85rem;
+  padding:10px;
+  border-radius:10px;
+  border:1.5px solid var(--border);
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-install-no:hover{
+  background:var(--border);
+}
 
 /* HINT BOX */
 .hint-box{background:rgba(14,165,160,.06);border:1.5px solid rgba(14,165,160,.2);border-radius:var(--radius);padding:12px 16px;font-size:.78rem;color:var(--text);line-height:1.5;}
@@ -453,21 +527,6 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
               <option value="1">Semester 1</option>
               <option value="2">Semester 2</option>
             </select>
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-top:10px;">
-          <label>Gaya Penulisan TP</label>
-          <div class="gaya-grid">
-            <div class="gaya-btn active" data-gaya="singkat" onclick="setGaya(this)">
-              <span class="gi">📝</span> Singkat
-            </div>
-            <div class="gaya-btn" data-gaya="detail" onclick="setGaya(this)">
-              <span class="gi">🔍</span> Detail
-            </div>
-            <div class="gaya-btn" data-gaya="formal" onclick="setGaya(this)">
-              <span class="gi">👔</span> Formal
-            </div>
           </div>
         </div>
       </div>
@@ -719,7 +778,7 @@ function generateTP(){
         return;
       }
       const raw=bankData[m]||[];
-      const tpList=raw.map(tp=>applyGaya(tp,gayaAktif));
+      const tpList=raw.map(tp=>tp);
       sections.push({mapel:m,tpList});
     });
 
