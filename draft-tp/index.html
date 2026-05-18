@@ -4,13 +4,13 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bantu Guru Yuk | Draft TP</title>
-<link rel="icon" type="image/png" href="./gurucibisd2.png">
+<link rel="icon" type="image/png" href="./guru-cibisd2.png">
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0ea5a0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Draft TP BGY">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="./gurucibisd2.png">
+<link rel="apple-touch-icon" href="./guru-cibisd2.png">
 <meta name="description" content="Draft Tujuan Pembelajaran untuk Guru SD - Kurikulum Merdeka"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -198,10 +198,20 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 .btn-tiktok{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:#111;color:#fff;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;}
 .btn-tiktok:hover{background:#333;}
 
-/* INSTALL BGY */
-#installBgyItem{display:none;}
-#installBgyItem.visible{display:flex;}
-.install-badge{background:var(--grad);color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:auto;}
+/* INSTALL BANNER */
+#installBanner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:600;background:var(--grad);padding:14px 20px;box-shadow:0 -4px 20px rgba(0,0,0,.2);animation:slideUp .4s ease;}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+#installBanner.show{display:flex;}
+.install-banner-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:12px;width:100%;}
+.install-banner-icon{width:42px;height:42px;border-radius:10px;flex-shrink:0;object-fit:contain;}
+.install-banner-text{flex:1;color:#fff;}
+.install-banner-text strong{display:block;font-size:.88rem;font-weight:800;}
+.install-banner-text span{font-size:.72rem;opacity:.85;}
+.install-banner-btns{display:flex;gap:8px;flex-shrink:0;}
+.btn-install-yes{background:#fff;color:var(--blue-dark);font-weight:800;font-size:.8rem;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;}
+.btn-install-yes:hover{background:#e2e8f0;}
+.btn-install-no{background:transparent;color:rgba(255,255,255,.7);font-size:.8rem;padding:8px 10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);cursor:pointer;}
+.btn-install-no:hover{background:rgba(255,255,255,.1);}
 
 /* HINT BOX */
 .hint-box{background:rgba(14,165,160,.06);border:1.5px solid rgba(14,165,160,.2);border-radius:var(--radius);padding:12px 16px;font-size:.78rem;color:var(--text);line-height:1.5;}
@@ -218,6 +228,21 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 <div id="menuOverlay" onclick="closeMenu()"></div>
 <div id="toast"></div>
 
+<!-- INSTALL BANNER -->
+<div id="installBanner">
+  <div class="install-banner-inner">
+    <img src="./guru-cibisd2.png" class="install-banner-icon" onerror="this.style.display='none'">
+    <div class="install-banner-text">
+      <strong>Install Draft TP BGY</strong>
+      <span>Akses cepat tanpa buka browser 🚀</span>
+    </div>
+    <div class="install-banner-btns">
+      <button class="btn-install-yes" onclick="doInstall()">Install</button>
+      <button class="btn-install-no" onclick="dismissBanner()">Nanti</button>
+    </div>
+  </div>
+</div>
+
 <!-- LOADING OVERLAY -->
 <div id="prosesOverlay">
   <div class="go-orb go-orb1"></div>
@@ -227,7 +252,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     <div class="go-ring go-ring1"></div>
     <div class="go-ring go-ring2"></div>
     <div class="go-ring go-ring3"></div>
-    <div class="go-icon"><img src="./gurucibisd2.png" style="width:44px;height:44px;object-fit:contain;border-radius:8px;" onerror="this.outerHTML='🏫'"></div>
+    <div class="go-icon"><img src="./guru-cibisd2.png" style="width:44px;height:44px;object-fit:contain;border-radius:8px;" onerror="this.outerHTML='🏫'"></div>
   </div>
   <div class="go-title">Menyusun Draft TP...</div>
   <div class="go-sub">Memilih dari bank TP kurikulum</div>
@@ -242,7 +267,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 <header>
   <div class="header-inner">
     <div class="header-brand">
-      <img src="./gurucibisd2.png" alt="Guru Cibi" class="header-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <img src="./guru-cibisd2.png" alt="Guru Cibi" class="header-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="logo-box-fallback" style="display:none;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏫</div>
       <h1 class="header-title-inline">Bantu Guru Yuk <span class="hdr-sep">|</span> Draft Tujuan Pembelajaran</h1>
     </div>
@@ -675,22 +700,37 @@ let deferredInstall=null;
 window.addEventListener('beforeinstallprompt',e=>{
   e.preventDefault();
   deferredInstall=e;
+  // Tampilkan toggle item
   const el=document.getElementById('installBgyItem');
   if(el) el.classList.add('visible');
+  // Tampilkan banner setelah 3 detik jika belum pernah dismiss
+  if(!sessionStorage.getItem('installDismissed')){
+    setTimeout(()=>{
+      const b=document.getElementById('installBanner');
+      if(b) b.classList.add('show');
+    },3000);
+  }
 });
 window.addEventListener('appinstalled',()=>{
   deferredInstall=null;
   const el=document.getElementById('installBgyItem');
   if(el) el.classList.remove('visible');
+  dismissBanner();
   toast('✅ Aplikasi berhasil diinstal!');
 });
 function installBGY(){
-  if(!deferredInstall){toast('📲 Buka di browser Chrome/Edge untuk install');return;}
+  if(!deferredInstall){toast('📲 Buka di Chrome/Edge untuk install');return;}
   deferredInstall.prompt();
   deferredInstall.userChoice.then(r=>{
-    if(r.outcome==='accepted') toast('✅ Menginstal aplikasi...');
+    if(r.outcome==='accepted'){toast('✅ Menginstal aplikasi...');dismissBanner();}
     deferredInstall=null;
   });
+}
+function doInstall(){installBGY();}
+function dismissBanner(){
+  sessionStorage.setItem('installDismissed','1');
+  const b=document.getElementById('installBanner');
+  if(b) b.classList.remove('show');
 }
 
 /* ════════════════════════════
