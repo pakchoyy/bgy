@@ -402,18 +402,29 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 <!-- ══ TAB TENTANG ══ -->
 <div id="tab-tentang" style="display:none;max-width:760px;margin:20px auto;background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;">
   <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:6px;color:var(--text);">ℹ️ Tentang Aplikasi</h3>
-  <p style="font-size:.8rem;color:var(--text-light);margin-bottom:16px;">Bantu Guru Yuk v26.4.1 • Free Version • 2026</p>
-  <p style="font-size:.88rem;color:var(--text);line-height:1.8;margin-bottom:14px;"><b>Bantu Guru Yuk</b> adalah generator soal otomatis berbasis AI yang dirancang khusus untuk guru SD Kurikulum Merdeka.</p>
-  <h4 style="font-size:.85rem;font-weight:700;margin:14px 0 8px;color:var(--text);">✨ Fitur Utama</h4>
-  <ul style="font-size:.84rem;color:var(--text);line-height:2.1;padding-left:18px;">
-    <li>Generate soal PG, Isian Singkat &amp; Uraian otomatis via AI</li>
-    <li>Gambar ilustrasi otomatis di soal PG (via Gemini)</li>
-    <li>Sesuai Taksonomi Bloom C1–C6</li>
-    <li>Export soal ke PDF &amp; Word (kunci sudah termasuk)</li>
-    <li>PDF tanpa header/footer bawaan browser</li>
+  <p style="font-size:.8rem;color:var(--text-light);margin-bottom:16px;">Bantu Guru Yuk v<span class="app-version"></span> • 2026</p>
+
+  <p style="font-size:.88rem;color:var(--text);line-height:1.9;margin-bottom:14px;">
+    <b>Bantu Guru Yuk — Buat Soal</b> adalah aplikasi berbasis AI yang membantu guru SD membuat soal ujian dalam hitungan detik — lengkap dengan kunci jawaban dan kisi-kisi otomatis, sesuai Kurikulum Merdeka dan Capaian Pembelajaran terbaru (<b>KepKaBSKAP 046/H/KR/2025</b>). Nggak perlu buka buku, nggak perlu ngetik manual — cukup pilih kelas, mapel, materi, klik generate, dan soalmu siap dipakai. ✅
+  </p>
+
+  <h4 style="font-size:.85rem;font-weight:700;margin:16px 0 9px;color:var(--text);">✨ Fitur Utama</h4>
+  <ul style="font-size:.84rem;color:var(--text);line-height:2.2;padding-left:18px;">
+    <li>🤖 Generate soal PG, Isian Singkat &amp; Uraian otomatis via AI — semua sekaligus</li>
+    <li>📚 Database materi lengkap Kelas 1–6 semua mapel (sinkron CP 2025)</li>
+    <li>🌺 Dukungan Muatan Lokal dengan input nama bahasa daerah</li>
+    <li>🧠 Sesuai Taksonomi Bloom C1–C6 — bisa pilih level yang diinginkan</li>
+    <li>📊 Kisi-kisi soal otomatis langsung di halaman terakhir</li>
+    <li>🖨️ Export ke PDF bersih (tanpa header/footer browser) &amp; Word (.docx)</li>
+    <li>🔑 Kunci jawaban otomatis termasuk dalam dokumen</li>
+    <li>✏️ Edit soal langsung di preview sebelum download</li>
+    <li>🕒 Histori soal — bisa dibuka, regenerate, atau duplikat kapan saja</li>
+    <li>🌙 Dark mode + PWA (bisa install di HP/laptop tanpa install dari Play Store)</li>
+    <li>📱 Responsif — nyaman di HP maupun PC/laptop</li>
   </ul>
+
   <div style="margin-top:18px;padding:12px 16px;background:var(--input-bg);border-radius:10px;border:1px solid var(--border);font-size:.8rem;color:var(--text-light);line-height:1.8;">
-    📌 <b>Versi:</b> <span class="app-version">v26.5.1</span> &nbsp;|&nbsp; <b>Tahun:</b> 2026 &nbsp;|&nbsp; CP: KepKaBSKAP 046/H/KR/2025
+    📌 <b>Versi:</b> <span class="app-version"></span> &nbsp;|&nbsp; <b>Tahun:</b> 2026 &nbsp;|&nbsp; CP: KepKaBSKAP 046/H/KR/2025
   </div>
 </div>
 
@@ -569,6 +580,11 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <div class="form-group">
         <label>Mata Pelajaran</label>
         <select id="mataPelajaran" onchange="onMapelChange()"></select>
+      </div>
+
+      <div class="form-group" id="bahasaDaerahGroup" style="display:none;">
+        <label>Nama Bahasa Daerah</label>
+        <input type="text" id="bahasaDaerah" placeholder="Contoh: Bahasa Jawa, Bahasa Sunda, Bahasa Bali..."/>
       </div>
 
       <div class="form-group">
@@ -736,7 +752,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
 <footer>
   <div class="footer-title">Buat Soal</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;font-weight:700;">Pak.Choyy</a> &bull; <span class="app-version">v26.5.1</span></div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener" style="color:#fff;text-decoration:underline;font-weight:700;">Pak.Choyy</a> &bull; <span class="app-version">v26.5.18</span></div>
 </footer>
 
 <script>
@@ -777,7 +793,7 @@ window.dataLayer=window.dataLayer||[];
    DATABASE MAPEL — Kurikulum Merdeka 2025
 ════════════════════════════════════════════ */
 /* ── DB_MAPEL sinkron DB_MATERI (CP 046/2025) ── */
-const APP_VERSION='v26.5.2';
+const APP_VERSION='v26.5.18';
 const DB_MAPEL={
   1:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","PJOK","Seni Musik","Seni Rupa","Seni Tari","Muatan Lokal"],
   2:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","PJOK","Seni Musik","Seni Rupa","Seni Tari","Muatan Lokal"],
@@ -1128,6 +1144,7 @@ function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null
     if(biOpt)mapelSel.value='Bahasa Indonesia';
     renderMateriChecklist();
     autoSetBloom();
+    toggleBahasaDaerah();
     restoreAutoSave();
     updateLimitDisplay();
     updateHistoriBadge(getHistoriList().length);
@@ -1271,6 +1288,7 @@ function loadHistori(id){
       renderMapelOptions();
       if(f.mapel)document.getElementById('mataPelajaran').value=f.mapel;
       renderMateriChecklist();
+      toggleBahasaDaerah();
     }
     soalData=JSON.parse(item.data);
     buildHalaman(soalData);
@@ -1318,9 +1336,14 @@ function hapusLogo(inputId,key,thumbId,hintId,btnId){
 /* ════════════════════════════════════════════
    FORM DINAMIS
 ════════════════════════════════════════════ */
-function onKelasChange(){updateOpsiNote();renderMapelOptions();renderMateriChecklist();autoSetBloom();}
-function onMapelChange(){renderMateriChecklist();}
+function onKelasChange(){updateOpsiNote();renderMapelOptions();renderMateriChecklist();autoSetBloom();toggleBahasaDaerah();}
+function onMapelChange(){renderMateriChecklist();toggleBahasaDaerah();}
 function onSemesterChange(){renderMateriChecklist();}
+function toggleBahasaDaerah(){
+  const mapel=document.getElementById('mataPelajaran').value;
+  const grp=document.getElementById('bahasaDaerahGroup');
+  if(grp)grp.style.display=mapel==='Muatan Lokal'?'block':'none';
+}
 
 // Set level Bloom otomatis sesuai kelas (tapi user tetap bisa ubah manual)
 function autoSetBloom(){
@@ -1377,6 +1400,8 @@ async function handleGenerate(){
   const materiLengkap=topik?`${materi}. Catatan: ${topik}`:materi;
   const kelas=parseInt(document.getElementById('kelas').value);
   const mapel=document.getElementById('mataPelajaran').value;
+  const bahasaDaerahVal=document.getElementById('bahasaDaerah')?.value.trim();
+  const mapelLabel=(mapel==='Muatan Lokal'&&bahasaDaerahVal)?`Muatan Lokal — ${bahasaDaerahVal}`:mapel;
   const jmlPG=parseInt(document.getElementById('jmlPG').value)||0;
   const jmlIsian=parseInt(document.getElementById('jmlIsian').value)||0;
   const jmlUraian=parseInt(document.getElementById('jmlUraian').value)||0;
@@ -1390,9 +1415,19 @@ async function handleGenerate(){
   hideError();setLoading(true);showGenerateFeedback('🤖 AI sedang membuat soal...',0);
 
   const gaya=kelas<=2?'Gunakan kalimat sangat pendek dan sederhana, cocok untuk siswa baru membaca.':kelas<=4?'Gunakan kalimat campuran (narasi singkat dan langsung).':'Gunakan soal kontekstual dan HOTS (berpikir tingkat tinggi).';
+  const instruksiKelas = parseInt(kelas) >= 5
+    ? `\nKarena ini kelas ${kelas} (kelas tinggi SD), terapkan ketentuan berikut:
+- Kalimat soal HARUS panjang dan kontekstual — buat soal berbentuk narasi/wacana singkat atau situasi nyata sebelum pertanyaan inti (minimal 2–3 kalimat per soal PG dan isian, minimal 4–5 kalimat untuk uraian)
+- Gunakan data, angka, atau kutipan teks pendek sebagai stimulus soal
+- Hindari soal satu kalimat langsung — selalu beri konteks atau latar situasi
+- Soal uraian harus menuntut penjelasan, analisis, atau langkah penyelesaian yang rinci
+- Opsi PG harus homogen (panjang mirip, tidak ada yang jelas salah secara trivial)
+- Prioritaskan level C3–C5 sesuai checklist tingkat kesulitan`
+    : `\nUntuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
+
   const prompt=`Kamu adalah guru SD berpengalaman yang membuat soal Kurikulum Merdeka.
 Buatkan soal untuk siswa kelas ${kelas} SD.
-Mata Pelajaran: ${mapel}
+Mata Pelajaran: ${mapelLabel}
 Materi: ${materiLengkap}
 Tingkat kesulitan: ${kesulitan}
 Jumlah soal:
@@ -1406,6 +1441,7 @@ Aturan:
 - Gunakan Bahasa Indonesia yang baik dan benar
 - Sesuaikan tingkat kesulitan dengan kelas ${kelas} SD
 - Kalimat soal harus jelas dan tidak ambigu
+${instruksiKelas}
 
 Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
 {
@@ -1413,7 +1449,7 @@ Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
   "isian":[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C1"}],
   "uraian":[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C4"}]
 }
-Untuk kelas 1-2, array opsi hanya 3 elemen (A, B, C). Field "indikator" diisi kalimat singkat "Siswa dapat [kata kerja] ..." sesuai level kognitif Bloom. Field "level" diisi salah satu: C1, C2, C3, C4, C5, C6.`;
+Field "indikator" diisi kalimat singkat "Siswa dapat [kata kerja] ..." sesuai level kognitif Bloom. Field "level" diisi salah satu: C1, C2, C3, C4, C5, C6.`;
 
   try{
     let resp;
