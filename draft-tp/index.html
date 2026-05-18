@@ -4,8 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Bantu Guru Yuk | Draft TP</title>
-<meta name="description" content="Generator Draft Tujuan Pembelajaran untuk Guru SD - Kurikulum Merdeka"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<meta name="description" content="Draft Tujuan Pembelajaran untuk Guru SD - Kurikulum Merdeka"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -77,6 +76,7 @@ main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;overflow-x:hi
 .col-left{display:flex;flex-direction:column;gap:12px;}
 .col-right{min-width:0;max-width:100%;overflow:hidden;}
 @media(min-width:961px){.col-right{position:sticky;top:80px;max-height:calc(100vh - 100px);overflow-y:auto;}}
+.col-right .card{min-height:400px;}
 
 /* CARD */
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--border);overflow:hidden;}
@@ -160,8 +160,12 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
 .footer-title{font-weight:800;font-size:.8rem;color:var(--text);}
 .footer-sub{margin-top:2px;}
 
-/* PDF HIDDEN */
-#pdfContent{display:none;position:absolute;left:-9999px;top:0;}
+/* HINT BOX */
+.hint-box{background:rgba(14,165,160,.06);border:1.5px solid rgba(14,165,160,.2);border-radius:var(--radius);padding:14px 16px;}
+.hint-title{font-size:.78rem;font-weight:800;color:var(--blue-dark);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.hint-list{padding-left:18px;display:flex;flex-direction:column;gap:5px;}
+.hint-list li{font-size:.78rem;color:var(--text);line-height:1.5;}
+.hint-list strong{color:var(--blue-dark);}
 
 /* SCROLLBAR */
 .mapel-list::-webkit-scrollbar{width:4px;}
@@ -198,10 +202,10 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
 <header>
   <div class="header-inner">
     <div class="header-brand">
-      <div class="logo-box">📚</div>
+      <div class="logo-box">🏫</div>
       <div>
         <h1>Bantu Guru Yuk</h1>
-        <p>Generator Draft Tujuan Pembelajaran</p>
+        <p>Draft Tujuan Pembelajaran</p>
       </div>
     </div>
     <div class="header-right">
@@ -224,6 +228,18 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
     <!-- KOLOM KIRI -->
     <div class="col-left">
 
+      <!-- HINT PENGGUNAAN -->
+      <div class="hint-box">
+        <div class="hint-title">💡 Cara Penggunaan</div>
+        <ol class="hint-list">
+          <li>Pilih <strong>Jenis CP</strong> sesuai acuan sekolahmu</li>
+          <li>Tentukan <strong>Kelas</strong> dan <strong>Semester</strong></li>
+          <li>Pilih <strong>Mata Pelajaran</strong> dari dropdown</li>
+          <li>Klik <strong>✨ Generate Draft TP</strong></li>
+          <li>Salin hasil TP ke dokumen atau erapor</li>
+        </ol>
+      </div>
+
       <!-- CARD: Identitas -->
       <div class="card">
         <div class="card-title">📋 Identitas Tujuan Pembelajaran</div>
@@ -231,8 +247,8 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
         <div class="form-group">
           <label>Jenis CP</label>
           <select id="jenisCp">
-            <option value="baru">CP Terbaru (2022–sekarang)</option>
-            <option value="lama">CP Lama (sebelum 2022)</option>
+            <option value="baru">CP Baru – BSKAP 046/2025</option>
+            <option value="lama">CP Lama – BSKAP 033/2022</option>
           </select>
         </div>
 
@@ -241,10 +257,10 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
             <label>Kelas</label>
             <select id="kelas" onchange="updateMapelList()">
               <option value="1">Kelas 1</option>
-              <option value="2">Kelas 2</option>
+              <option value="2" selected>Kelas 2</option>
               <option value="3">Kelas 3</option>
               <option value="4">Kelas 4</option>
-              <option value="5" selected>Kelas 5</option>
+              <option value="5">Kelas 5</option>
               <option value="6">Kelas 6</option>
             </select>
           </div>
@@ -261,25 +277,14 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
       <!-- CARD: Pilih Mapel -->
       <div class="card">
         <div class="card-title">📚 Mata Pelajaran</div>
-        <div class="mapel-hint" style="margin-bottom:8px">Pilih satu atau lebih mata pelajaran:</div>
-        <div class="mapel-list" id="mapelList"></div>
-      </div>
-
-      <!-- CARD: Gaya Penulisan -->
-      <div class="card">
-        <div class="card-title">✍️ Gaya Penulisan</div>
-        <div class="gaya-grid">
-          <button class="gaya-btn active" data-gaya="singkat" onclick="setGaya(this)">
-            <span class="gi">⚡</span>Singkat
-          </button>
-          <button class="gaya-btn" data-gaya="detail" onclick="setGaya(this)">
-            <span class="gi">📖</span>Detail
-          </button>
-          <button class="gaya-btn" data-gaya="formal" onclick="setGaya(this)">
-            <span class="gi">🎓</span>Formal Guru
-          </button>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Pilih Mata Pelajaran</label>
+          <select id="mapelSelect">
+            <option value="">-- Pilih mapel --</option>
+          </select>
         </div>
       </div>
+
 
       <!-- TOMBOL GENERATE -->
       <button class="btn-generate" onclick="generateTP()">
@@ -302,7 +307,6 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
           </div>
           <div class="action-row">
             <button class="btn btn-teal" onclick="salinSemua()">📋 Salin Semua</button>
-            <button class="btn btn-outline btn-pdf" onclick="downloadPDF()">📄 Download PDF</button>
           </div>
           <div id="daftarTp"></div>
         </div>
@@ -312,7 +316,6 @@ footer{text-align:center;padding:20px;font-size:.72rem;color:var(--text-light);}
   </div>
 </main>
 
-<div id="pdfContent"></div>
 
 <footer>
   <div class="footer-title">Bantu Guru Yuk</div>
@@ -394,7 +397,7 @@ function setGaya(el){
 }
 
 /* ════════════════════════════
-   UPDATE DAFTAR MAPEL
+   UPDATE DAFTAR MAPEL (DROPDOWN)
 ════════════════════════════ */
 function updateMapelList(){
   const cp=document.getElementById('jenisCp').value;
@@ -403,46 +406,26 @@ function updateMapelList(){
   const data=BANK[cp]?.[kelas]?.[sem]||{};
   const mapelArr=Object.keys(data);
 
-  const container=document.getElementById('mapelList');
-  container.innerHTML='';
-
+  const sel=document.getElementById('mapelSelect');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">-- Pilih mapel --</option>';
   mapelArr.forEach(m=>{
-    const div=document.createElement('div');
-    div.className='mapel-item';
-    div.innerHTML=`<input type="checkbox" id="cb_${btoa(m)}" value="${m}"><label for="cb_${btoa(m)}">${m}</label>`;
-    div.addEventListener('click',function(e){
-      if(e.target.tagName==='INPUT') return;
-      const cb=div.querySelector('input');
-      cb.checked=!cb.checked;
-      div.classList.toggle('checked',cb.checked);
-    });
-    div.querySelector('input').addEventListener('change',function(){
-      div.classList.toggle('checked',this.checked);
-    });
-    container.appendChild(div);
+    const opt=document.createElement('option');
+    opt.value=m;opt.textContent=m;
+    sel.appendChild(opt);
   });
+  // Tambah opsi manual
+  const optManual=document.createElement('option');
+  optManual.value='__manual__';optManual.textContent='Lainnya (isi manual)';
+  sel.appendChild(optManual);
 
-  // Baris mapel manual
-  const manualDiv=document.createElement('div');
-  manualDiv.className='mapel-item manual-row';
-  manualDiv.id='manualMapelRow';
-  manualDiv.innerHTML=`
-    <div class="row-top">
-      <input type="checkbox" id="cb_manual"><label for="cb_manual">Lainnya (isi manual)</label>
-    </div>
-    <input type="text" id="mapelManualInput" placeholder="Nama mata pelajaran..." style="display:none;font-size:.8rem;">
-  `;
-  container.appendChild(manualDiv);
-
-  document.getElementById('cb_manual').addEventListener('change',function(){
-    const inp=document.getElementById('mapelManualInput');
-    inp.style.display=this.checked?'block':'none';
-    manualDiv.classList.toggle('checked',this.checked);
-  });
+  if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
 }
 
 // Init on load
 document.getElementById('jenisCp').addEventListener('change',updateMapelList);
+document.getElementById('kelas').addEventListener('change',updateMapelList);
+document.getElementById('semester').addEventListener('change',updateMapelList);
 updateMapelList();
 
 /* ════════════════════════════
@@ -490,22 +473,18 @@ function generateTP(){
   const cp=document.getElementById('jenisCp').value;
   const kelas=document.getElementById('kelas').value;
   const sem=document.getElementById('semester').value;
-  const jenisCpLabel=cp==='baru'?'CP Terbaru (2022–sekarang)':'CP Lama (sebelum 2022)';
+  const jenisCpLabel=cp==='baru'?'CP Baru – BSKAP 046/2025':'CP Lama – BSKAP 033/2022';
 
-  // Kumpulkan mapel yang dipilih
+  const selVal=document.getElementById('mapelSelect').value;
+  if(!selVal){toast('⚠️ Pilih mata pelajaran terlebih dahulu!');return;}
+
   const selectedMapel=[];
-  document.querySelectorAll('#mapelList .mapel-item:not(.manual-row) input[type=checkbox]:checked').forEach(cb=>{
-    selectedMapel.push(cb.value);
-  });
-  const cbManual=document.getElementById('cb_manual');
-  if(cbManual&&cbManual.checked){
-    const nm=document.getElementById('mapelManualInput').value.trim();
-    if(nm) selectedMapel.push('__manual__:'+nm);
-  }
-
-  if(selectedMapel.length===0){
-    toast('⚠️ Pilih minimal satu mata pelajaran!');
-    return;
+  if(selVal==='__manual__'){
+    const nm=prompt('Masukkan nama mata pelajaran:','');
+    if(!nm||!nm.trim()){toast('⚠️ Nama mapel tidak boleh kosong!');return;}
+    selectedMapel.push('__manual__:'+nm.trim());
+  } else {
+    selectedMapel.push(selVal);
   }
 
   showOverlay();
@@ -521,7 +500,7 @@ function generateTP(){
         return;
       }
       const raw=bankData[m]||[];
-      const tpList=raw.map(tp=>applyGaya(tp,gayaAktif));
+      const tpList=raw.map(tp=>tp);
       sections.push({mapel:m,tpList});
     });
 
@@ -596,10 +575,8 @@ function salinSemua(){
 ════════════════════════════ */
 function resetForm(){
   document.getElementById('jenisCp').value='baru';
-  document.getElementById('kelas').value='5';
+  document.getElementById('kelas').value='2';
   document.getElementById('semester').value='1';
-  gayaAktif='singkat';
-  document.querySelectorAll('.gaya-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
   updateMapelList();
   document.getElementById('hasilPlaceholder').style.display='flex';
   document.getElementById('hasilKonten').style.display='none';
@@ -611,55 +588,8 @@ function scrollToHasil(){
 }
 
 /* ════════════════════════════
-   DOWNLOAD PDF
+   END
 ════════════════════════════ */
-function downloadPDF(){
-  const {sections,meta}=hasilData;
-  if(!sections.length){toast('⚠️ Generate TP terlebih dahulu!');return;}
-  toast('Menyiapkan PDF...');
-  const tgl=new Date().toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'});
-
-  const isiHtml=sections.map(s=>`
-    <div style="margin-bottom:22px;">
-      <div style="font-size:11px;font-weight:800;color:#0ea5a0;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding:5px 10px;background:rgba(14,165,160,.07);border-radius:6px;border-left:3px solid #0ea5a0;">📚 ${s.mapel}</div>
-      ${s.tpList.map((tp,i)=>`
-        <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;page-break-inside:avoid;">
-          <div style="min-width:26px;height:26px;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;">${i+1}</div>
-          <div style="font-size:13px;color:#1e293b;line-height:1.65;padding-top:5px;">${tp}</div>
-        </div>
-      `).join('')}
-    </div>
-  `).join('');
-
-  const html=`
-  <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:700px;margin:0 auto;padding:40px;">
-    <div style="text-align:center;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid #0ea5a0;">
-      <div style="font-size:11px;color:#0ea5a0;font-weight:700;letter-spacing:2px;margin-bottom:6px;">BANTU GURU YUK</div>
-      <h1 style="font-size:20px;font-weight:900;color:#1e293b;margin:0 0 4px;">Draft Tujuan Pembelajaran</h1>
-      <div style="font-size:11px;color:#64748b;">Kelas ${meta.kelas} · Semester ${meta.sem} · ${meta.cp} · ${tgl}</div>
-    </div>
-    ${isiHtml}
-    <div style="margin-top:36px;padding-top:14px;border-top:1px solid #e2e8f0;text-align:center;">
-      <div style="font-size:10px;color:#94a3b8;">🎵 TikTok: <strong style="color:#64748b;">@pak.choyy</strong> &nbsp;|&nbsp; Bantu Guru Yuk</div>
-    </div>
-  </div>`;
-
-  const pdfEl=document.getElementById('pdfContent');
-  pdfEl.innerHTML=html;pdfEl.style.display='block';
-
-  const opt={
-    margin:[10,10,14,10],
-    filename:'Draft_TP_Kelas'+meta.kelas+'_Sem'+meta.sem+'.pdf',
-    image:{type:'jpeg',quality:.95},
-    html2canvas:{scale:2,useCORS:true},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['avoid-all','css']}
-  };
-  html2pdf().set(opt).from(pdfEl).save().then(()=>{
-    pdfEl.style.display='none';
-    toast('📄 PDF berhasil diunduh!');
-  }).catch(()=>{pdfEl.style.display='none';toast('❌ Gagal buat PDF');});
-}
 </script>
 </body>
 </html>
