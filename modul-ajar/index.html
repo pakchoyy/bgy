@@ -220,7 +220,7 @@ footer a{color:inherit;text-decoration:underline;}
   <div class="pw-features">
     <span class="pw-feat">⚡ Generate Unlimited</span>
     <span class="pw-feat">📋 Salin 1 Klik</span>
-    <span class="pw-feat">🚀 Buka Claude/Gemini</span>
+    <span class="pw-feat">🚀 Buka Claude</span>
     <span class="pw-feat">📚 Kurikulum Merdeka</span>
   </div>
   <button class="pw-btn" onclick="closeProWelcome()">Ayo Mulai Buat Modul! 🚀</button>
@@ -318,7 +318,7 @@ footer a{color:inherit;text-decoration:underline;}
 <main>
 
   <div class="hint-bar">
-    💡 <span>Isi form</span> → <span>Klik Generate</span> → <span>Prompt siap muncul</span> → <span>Salin & paste ke Claude/Gemini 🎉</span>
+    💡 <span>Isi form</span> → <span>Klik Generate</span> → <span>Prompt siap muncul</span> → <span>Salin & paste ke Claude 🎉</span>
   </div>
 
   <div class="two-col">
@@ -482,7 +482,7 @@ footer a{color:inherit;text-decoration:underline;}
 
         <div class="prompt-placeholder" id="promptPlaceholder">
           <div class="ph-icon">📝</div>
-          <p>Isi form di kiri lalu klik<br/><b>Generate Prompt Modul Ajar</b><br/><span style="font-size:.74rem;opacity:.7;">Prompt siap paste ke Claude/Gemini</span></p>
+          <p>Isi form di kiri lalu klik<br/><b>Generate Prompt Modul Ajar</b><br/><span style="font-size:.74rem;opacity:.7;">Prompt siap paste ke Claude</span></p>
         </div>
 
         <div id="promptContent" style="display:none;">
@@ -492,12 +492,12 @@ footer a{color:inherit;text-decoration:underline;}
             <div class="notif-box" id="notifCopy">✅ Prompt berhasil disalin!</div>
           </div>
           <div style="margin-top:10px;background:rgba(14,165,160,.07);border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:10px 12px;">
-            <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;">🚀 Kirim ke AI — Prompt otomatis tersalin, langsung paste!</div>
+            <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;">🚀 Kirim ke Claude — Prompt otomatis tersalin, langsung paste!</div>
             <div style="display:flex;gap:8px;">
-              <button class="btn btn-gemini" onclick="openAI('gemini')">✨ Buka Gemini</button>
-              <button class="btn btn-claude" onclick="openAI('claude')">🧡 Buka Claude</button>
+              <button class="btn btn-claude" style="width:100%;" onclick="openAI('claude')">🧡 Buka Claude</button>
             </div>
             <div style="font-size:.68rem;color:var(--text-light);margin-top:6px;">Setelah terbuka, tekan <b>Ctrl+V</b> (atau tahan layar → Tempel) lalu kirim.</div>
+            <div style="font-size:.68rem;color:#b45309;margin-top:5px;font-weight:600;">⚠️ Jika terkena limit Claude, silahkan coba ganti akun Claude.</div>
           </div>
           <div id="generateFeedback" style="font-size:.75rem;text-align:center;margin-top:6px;min-height:14px;color:#15803d;"></div>
         </div>
@@ -524,7 +524,7 @@ footer a{color:inherit;text-decoration:underline;}
       Tombol <strong>Salin Prompt</strong> dan <strong>Buka AI</strong> hanya untuk member PRO.<br><br>
       <div style="background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 12px;margin-bottom:14px;text-align:left;">
         <div style="font-size:.76rem;font-weight:700;color:#0d7a8a;margin-bottom:5px;">💡 Untuk pengguna Free:</div>
-        <div style="font-size:.75rem;color:var(--text);line-height:1.7;">Silakan <b>salin prompt secara manual</b> (tekan lama → Pilih Semua → Salin), lalu paste ke AI favoritmu seperti <b>Claude, Gemini, ChatGPT</b>, dll.</div>
+        <div style="font-size:.75rem;color:var(--text);line-height:1.7;">Silakan <b>salin prompt secara manual</b> (tekan lama → Pilih Semua → Salin), lalu paste ke <b>Claude</b> atau AI lainnya.</div>
       </div>
       Upgrade ke PRO untuk salin 1 klik + generate unlimited tanpa batas!
     </div>
@@ -980,6 +980,29 @@ OUTPUT RULES:
 - Use full Markdown formatting (##/### headings, markdown tables for activities & rubrics, bold for important terms).
 
 ════════════════════════════════════════
+SIGNATURE PAGE (HALAMAN PENGESAHAN):
+- At the very end of the document, add a signature page with this EXACT format (do NOT duplicate headers):
+
+${namaSekolah}, ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}
+
+Mengetahui,
+Kepala ${namaSekolah}
+
+
+(________________________)
+NIP. ____________________
+
+
+Guru Kelas,
+
+
+(${namaPenyusun})
+NIP. ____________________
+
+- Use a simple 2-column table in the .docx for the two signatures side by side (Kepala Sekolah kiri, Guru Kelas kanan).
+- Do NOT repeat "Mengetahui, Kepala ${namaSekolah}" twice. Only write it ONCE at the top of the signature block.
+
+════════════════════════════════════════
 AFTER COMPLETING THE FULL MODULE CONTENT:
 
 1. Immediately use the **file creation tool** to save the entire module as a downloadable **.docx file** — do this automatically, without waiting for any additional instruction from the user.
@@ -1000,7 +1023,7 @@ AFTER COMPLETING THE FULL MODULE CONTENT:
 
   gaEvent('generate_prompt_modul_ajar',{mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
 
-  document.getElementById('generateFeedback').textContent='✅ Prompt siap! Salin lalu paste ke Claude atau Gemini.';
+  document.getElementById('generateFeedback').textContent='✅ Prompt siap! Salin lalu paste ke Claude.';
   setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);
 
   if(window.innerWidth<900){
