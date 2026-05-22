@@ -256,9 +256,13 @@ footer a{color:inherit;text-decoration:underline;}
           🕒 Histori
           <span id="historiBadge" class="dropdown-badge" style="display:none;"></span>
         </button>
-        <div class="dropdown-divider"></div>
         <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
         <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
+        <button class="dropdown-item" onclick="installApp();closeMenu()">📲 Install BGY</button>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="https://bantuguruyuk.web.id" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          🌐 BantuGuruYuk
+        </a>
       </div>
     </div>
   </div>
@@ -620,9 +624,9 @@ function onFaseChange(){
   });
   const saved=localStorage.getItem('theme');
   if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️';}
+  checkProStatus();    // ← harus sebelum updateLimitDisplay!
   updateLimitDisplay();
   updateHistoriBadge();
-  checkProStatus();
   onFaseChange();
   window.addEventListener('beforeinstallprompt',e=>{
     e.preventDefault();window._dip=e;
@@ -917,76 +921,66 @@ Your VERY FIRST word must be "##". No greeting. No opener. No explanation.
 If your response does not begin with "## MODUL AJAR", you have failed this instruction.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Act as a professional elementary school teacher, curriculum developer, school assessor, and Kurikulum Merdeka practitioner who fully understands the latest school supervision standards and educational administration requirements in Indonesia.
+Kamu adalah guru SD berpengalaman, pengembang kurikulum, dan praktisi Kurikulum Merdeka yang memahami standar pengawasan sekolah dan administrasi pendidikan Indonesia terkini.
 
-Generate a complete, detailed, systematic, professional, realistic, ready-to-use **MODUL AJAR KURIKULUM MERDEKA** that requires minimal revision, using the following identity:
+Buatkan **MODUL AJAR KURIKULUM MERDEKA** yang lengkap, detail, sistematis, profesional, realistis, dan siap pakai dengan identitas berikut:
 
-**MODULE IDENTITY:**
-- School Name: \${namaSekolah}
-- Author: \${namaPenyusun}
-- Subject: \${mapel}
-- Phase / Grade: \${fase}
-- Semester: \${semester}
-- Academic Year: \${tahun}
-- Time Allocation: \${alokasi}
-- Topic / Core Material: \${topik}
+**IDENTITAS MODUL:**
+- Nama Sekolah: ${namaSekolah}
+- Penyusun: ${namaPenyusun}
+- Mata Pelajaran: ${mapel}
+- Fase / Kelas: ${fase}
+- Semester: ${semester}
+- Tahun Ajaran: ${tahun}
+- Alokasi Waktu: ${alokasi}
+- Topik / Materi Pokok: ${topik}
 
-**CORE GUIDELINES:**
-1. The module must comply with the latest national Kurikulum Merdeka standards based on **BSKAP Nomor 046/H/KR/2025**.
-2. Must apply the **Deep Learning** approach (Mindful, Meaningful, Joyful Learning) integrated with the \${model} learning model.
-3. Must include **HOTS (Higher Order Thinking Skills)**, Differentiated Learning, Meaningful Learning, and Student-Centered Learning.
-4. Student Profile / Characteristics: \${karakteristik}
-5. Document completeness level: comprehensive and highly detailed.
+**PANDUAN UTAMA:**
+1. Modul harus sesuai standar Kurikulum Merdeka terbaru berdasarkan **BSKAP Nomor 046/H/KR/2025**.
+2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
+3. Sertakan **HOTS**, Pembelajaran Berdiferensiasi, Pembelajaran Bermakna, dan Student-Centered Learning.
+4. Karakteristik peserta didik: ${karakteristik}
+5. Tingkat kelengkapan: komprehensif dan sangat detail.
 
-Generate the module structure with the following detailed components. Write ALL content in formal academic Bahasa Indonesia, natural and authentic like a real official document:
+Tulis SEMUA konten dalam Bahasa Indonesia formal akademik, natural seperti dokumen resmi sungguhan:
 
-1. GENERAL INFORMATION (INFORMASI UMUM)
-Describe student characteristics contextually for Indonesian elementary school, facilities and infrastructure (realistic for Indonesian SD conditions), Profil Pelajar Pancasila (\${p5}), target learners, and the learning model/approach/methods used.
+1. **INFORMASI UMUM** — karakteristik peserta didik kontekstual SD Indonesia, sarana prasarana (realistis kondisi SD), Profil Pelajar Pancasila (${p5}), target peserta didik, model/pendekatan/metode pembelajaran.
 
-2. LEARNING ACHIEVEMENT (CAPAIAN PEMBELAJARAN / CP)
-Write the complete official CP text from Kurikulum Merdeka for the relevant subject and phase.
+2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka lengkap sesuai mapel dan fase.
 
-3. LEARNING OBJECTIVES (TUJUAN PEMBELAJARAN / TP)
-Write specific, measurable objectives using Bloom's Taxonomy operational verbs (KKO), targeting HOTS levels, and realistic for elementary students.
+3. **TUJUAN PEMBELAJARAN (TP)** — tujuan spesifik terukur menggunakan KKO Taksonomi Bloom level HOTS, realistis untuk SD.
 
-4. MEANINGFUL UNDERSTANDING (PEMAHAMAN BERMAKNA)
-List concrete benefits of this topic in the students' daily lives and local environment.
+4. **PEMAHAMAN BERMAKNA** — manfaat nyata topik ini dalam kehidupan sehari-hari dan lingkungan lokal siswa.
 
-5. TRIGGER QUESTIONS (PERTANYAAN PEMANTIK)
-Write at least 3 contextual questions that spark curiosity, encourage HOTS/problem-solving thinking, and relate directly to children's everyday experiences.
+5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan kontekstual memantik rasa ingin tahu, mendorong HOTS, relevan pengalaman anak sehari-hari.
 
-6. LEARNING PREPARATION (PERSIAPAN PEMBELAJARAN)
-Interactive learning media, concrete tools and materials, learning resources, supporting technology, and teacher preparation steps before teaching.
+6. **PERSIAPAN PEMBELAJARAN** — media pembelajaran interaktif, alat & bahan konkret, sumber belajar, teknologi pendukung, langkah persiapan guru.
 
-7. LEARNING ACTIVITIES — extremely detailed, realistic, sequential, with time estimates, teacher actions, and student actions:
-   - A. OPENING ACTIVITIES (KEGIATAN PENDAHULUAN): Greeting and prayer, attendance, contextual apperception, cheerful ice breaking typical for SD, learning motivation, trigger questions, delivery of learning objectives.
-   - B. CORE ACTIVITIES (KEGIATAN INTI): Write concrete step-by-step activities following the \${model} learning model syntax, integrated with DEEP LEARNING elements (real problem exploration, direct observation/media, interactive group discussion, collaboration, case analysis/independent practice, experiment/creative work, presentation, mid-process reflection, communication, creativity, process/content differentiation, literacy and numeracy reinforcement). Include realistic sample dialogues between teacher and students.
-   - C. CLOSING ACTIVITIES (KEGIATAN PENUTUP): Student reflection on learning, teacher concept reinforcement, joint conclusion, short evaluation/quiz, follow-up actions, closing motivation, closing prayer.
+7. **KEGIATAN PEMBELAJARAN** — sangat detail, realistis, berurutan, dengan estimasi waktu, aksi guru, dan aksi siswa:
+   - A. **PENDAHULUAN**: Salam & doa, presensi, apersepsi kontekstual, ice breaking ceria khas SD, motivasi belajar, pertanyaan pemantik, penyampaian tujuan.
+   - B. **INTI**: Langkah-langkah konkret mengikuti sintaks model ${model} terintegrasi elemen DEEP LEARNING (eksplorasi masalah nyata, observasi langsung/media, diskusi kelompok interaktif, kolaborasi, analisis kasus/latihan mandiri, eksperimen/karya kreatif, presentasi, refleksi tengah proses, komunikasi, kreativitas, diferensiasi proses/konten, penguatan literasi & numerasi). Sertakan contoh dialog guru-siswa yang realistis.
+   - C. **PENUTUP**: Refleksi siswa, penguatan konsep guru, simpulan bersama, evaluasi singkat/kuis, tindak lanjut, motivasi penutup, doa.
 
-8. COMPLETE ASSESSMENT (ASESMEN LENGKAP)
-Provide a full assessment framework: diagnostic assessment (cognitive/non-cognitive), formative assessment (during process), summative assessment (end), attitude assessment, skill assessment, knowledge assessment, observation sheet instruments, detailed descriptive scoring rubrics, question grids (kisi-kisi soal), and concrete HOTS sample questions for elementary level.
+8. **ASESMEN LENGKAP** — diagnostik (kognitif/non-kognitif), formatif, sumatif, asesmen sikap, keterampilan, pengetahuan; instrumen lembar observasi, rubrik penilaian deskriptif, kisi-kisi soal, dan contoh soal HOTS level SD.
 
-9. DIFFERENTIATED LEARNING (DIFERENSIASI PEMBELAJARAN)
-Technical explanation of how to implement content differentiation, process differentiation, and product differentiation based on students' learning readiness.
+9. **DIFERENSIASI PEMBELAJARAN** — cara teknis diferensiasi konten, proses, dan produk berdasarkan kesiapan belajar siswa.
 
-10. REMEDIAL AND ENRICHMENT (REMEDIAL DAN PENGAYAAN)
-Tactical activities for remedial (students who haven't mastered the material) and enrichment (fast learners).
+10. **REMEDIAL DAN PENGAYAAN** — kegiatan taktis untuk siswa belum tuntas dan siswa cepat belajar.
 
-11. TEACHER REFLECTION (REFLEKSI GURU)
-Guiding reflection questions for the teacher regarding student responses, classroom technical obstacles, strategy effectiveness, and improvement plans for the next session.
+11. **REFLEKSI GURU** — pertanyaan panduan refleksi terkait respons siswa, kendala teknis, efektivitas strategi, dan rencana perbaikan sesi berikutnya.
 
-12. READY-TO-USE APPENDICES (LAMPIRAN SIAP PAKAI)
-Must include complete draft content: an engaging Student Worksheet (LKPD) for elementary students, a concise reading/teaching material, a blank assessment rubric/table, and a ready-to-use observation instrument.
+12. **LAMPIRAN SIAP PAKAI** — wajib berisi draft konten lengkap: LKPD menarik untuk SD, materi ajar/bacaan ringkas, tabel/rubrik asesmen kosong siap isi, instrumen observasi siap pakai.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⛔ MANDATORY OUTPUT RULES — NO EXCEPTIONS:
-- ALL document content MUST be written in formal academic Bahasa Indonesia.
-- Activity design must be child-friendly, active, and collaborative.
-- Use Markdown formatting (markdown tables for activities and rubrics for clean copy-paste to Word/PDF).
-- ⛔ DO NOT write any greeting, preamble, AI disclaimer, or opening sentence.
-- ⛔ DO NOT say "Tentu!", "Baik!", "Berikut adalah...", "Dengan senang hati", or any similar opener.
-- ✅ Your response MUST begin IMMEDIATELY with: ## MODUL AJAR KURIKULUM MERDEKA
-- ✅ Your FIRST word must be "##" — anything before that is a violation of this instruction.
+⛔ ATURAN OUTPUT WAJIB — TANPA PENGECUALIAN:
+- Seluruh konten WAJIB dalam Bahasa Indonesia formal akademik.
+- ⛔ DILARANG menulis sapaan, pembuka, disclaimer AI, atau kalimat pengantar apapun.
+- ⛔ DILARANG menulis "Tentu!", "Baik!", "Berikut adalah...", "Dengan senang hati", atau apapun sejenisnya.
+- ⛔ DILARANG menambahkan penjelasan, catatan, atau komentar setelah dokumen selesai.
+- ✅ Respons HARUS langsung dimulai dengan: ## MODUL AJAR KURIKULUM MERDEKA
+- ✅ KATA PERTAMA harus "##" — apapun sebelum itu adalah pelanggaran instruksi ini.
+- ✅ Setelah konten modul selesai, LANGSUNG BERHENTI. Jangan tambahkan penutup, saran, atau kalimat apapun.
+- ✅ Gunakan format Markdown lengkap (heading ##/###, tabel markdown untuk kegiatan & rubrik, bold untuk istilah penting) agar hasil bisa langsung disalin ke Word/PDF dengan rapi.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 
   document.getElementById('hasilPrompt').textContent=prompt;
