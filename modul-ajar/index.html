@@ -128,6 +128,35 @@ footer a{color:inherit;text-decoration:underline;}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
 
+/* GENERATE OVERLAY */
+#generateOverlay .go-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:goOrb 4s ease-in-out infinite;}
+@keyframes goOrb{0%,100%{transform:scale(1) translate(0,0);opacity:.5;}50%{transform:scale(1.2) translate(10px,-10px);opacity:.8;}}
+#generateOverlay .go-orb1{width:300px;height:300px;background:radial-gradient(circle,#0ea5a066,transparent);top:-80px;left:-80px;animation-delay:0s;}
+#generateOverlay .go-orb2{width:250px;height:250px;background:radial-gradient(circle,#f59e0b44,transparent);bottom:-60px;right:-60px;animation-delay:1.5s;}
+#generateOverlay .go-orb3{width:180px;height:180px;background:radial-gradient(circle,#3b82f644,transparent);bottom:30%;right:15%;animation-delay:.8s;}
+#generateOverlay .go-logo{width:72px;height:72px;border-radius:20px;margin-bottom:24px;box-shadow:0 0 40px rgba(14,165,160,.5);}
+#generateOverlay .go-ring-wrap{position:relative;width:110px;height:110px;margin-bottom:28px;}
+#generateOverlay .go-ring{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;}
+#generateOverlay .go-ring1{border-top-color:#0ea5a0;border-right-color:#0ea5a0;animation:goSpin1 1.2s linear infinite;}
+#generateOverlay .go-ring2{inset:12px;border-top-color:#f59e0b;border-left-color:#f59e0b;animation:goSpin2 1.8s linear infinite reverse;}
+#generateOverlay .go-ring3{inset:24px;border-top-color:#fff;animation:goSpin1 2.4s linear infinite;}
+#generateOverlay .go-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;}
+@keyframes goSpin1{to{transform:rotate(360deg);}}
+@keyframes goSpin2{to{transform:rotate(360deg);}}
+#generateOverlay .go-title{font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:.5px;text-align:center;margin-bottom:8px;}
+#generateOverlay .go-sub{font-size:.9rem;color:rgba(255,255,255,.7);text-align:center;margin-bottom:32px;font-style:italic;}
+#generateOverlay .go-msgs{min-height:28px;text-align:center;}
+#generateOverlay .go-msg{font-size:.82rem;color:#5eead4;font-weight:700;letter-spacing:.3px;animation:goMsgFade .5s ease;}
+@keyframes goMsgFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+#generateOverlay .go-dots{display:flex;gap:8px;margin-top:24px;align-items:center;justify-content:center;}
+#generateOverlay .go-dot{width:8px;height:8px;border-radius:50%;background:#0ea5a0;animation:goDot 1.4s ease-in-out infinite;}
+#generateOverlay .go-dot:nth-child(2){background:#f59e0b;animation-delay:.2s;}
+#generateOverlay .go-dot:nth-child(3){background:#3b82f6;animation-delay:.4s;}
+@keyframes goDot{0%,80%,100%{transform:scale(.7);opacity:.5;}40%{transform:scale(1.2);opacity:1;}}
+#generateOverlay .go-bar-wrap{width:260px;height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:20px;}
+#generateOverlay .go-bar{height:100%;background:linear-gradient(90deg,#0ea5a0,#f59e0b,#3b82f6);border-radius:99px;animation:goBar 2.5s ease-in-out infinite;}
+@keyframes goBar{0%{width:0%;margin-left:0;}50%{width:70%;margin-left:0;}100%{width:0%;margin-left:100%;}}
+
 /* OUTPUT RENDERED HTML */
 .output-area{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:16px;font-size:.83rem;color:var(--text);line-height:1.9;min-height:300px;font-family:'Segoe UI',system-ui,sans-serif;}
 .output-area h1,.output-area h2{font-size:.95rem;font-weight:800;color:#0d7a8a;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.3px;}
@@ -214,6 +243,29 @@ body.dark .output-area table tr:nth-child(even) td{background:rgba(14,165,160,.0
   <div class="ls-title">Bantu Guru Yuk</div>
   <div class="ls-sub">Modul Ajar SD &bull; Powered by AI</div>
   <div class="ls-spinner"></div>
+</div>
+
+<!-- GENERATE OVERLAY -->
+<div id="generateOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 50%,#0d2137 100%);flex-direction:column;align-items:center;justify-content:center;gap:0;">
+  <div class="go-orb go-orb1"></div>
+  <div class="go-orb go-orb2"></div>
+  <div class="go-orb go-orb3"></div>
+  <img src="../guru-cibisd2.png" alt="Logo" class="go-logo" onerror="this.style.display='none'"/>
+  <div class="go-ring-wrap">
+    <div class="go-ring go-ring1"></div>
+    <div class="go-ring go-ring2"></div>
+    <div class="go-ring go-ring3"></div>
+    <div class="go-icon">📝</div>
+  </div>
+  <div class="go-title">Sedang Membuat Modul Ajar</div>
+  <div class="go-sub">Sabarrr ya... AI lagi kerja keras nih! 🧠</div>
+  <div class="go-msgs"><div class="go-msg" id="goMsg">Menyiapkan modul terbaik...</div></div>
+  <div class="go-dots">
+    <div class="go-dot"></div>
+    <div class="go-dot"></div>
+    <div class="go-dot"></div>
+  </div>
+  <div class="go-bar-wrap"><div class="go-bar"></div></div>
 </div>
 
 <!-- INSTALL POPUP -->
@@ -447,34 +499,58 @@ body.dark .output-area table tr:nth-child(even) td{background:rgba(14,165,160,.0
         ✨ Generate Modul Ajar <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;"></span>
       </button>
 
-      <!-- AKTIVASI PRO -->
-      <div class="aktivasi-box" id="aktivasiBox">
-        <div class="ak-label">🔓 Aktivasi Pro — Generate Unlimited</div>
-        <div style="display:flex;gap:4px;margin-bottom:10px;background:#f1f5f9;border-radius:8px;padding:3px;">
-          <button id="tabKodeBtn" onclick="switchAktivasiTab('kode')"
-            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:#0ea5a0;color:#fff;transition:all .2s;">
-            🔑 Kode Aktivasi
-          </button>
-          <button id="tabEmailBtn" onclick="switchAktivasiTab('email')"
-            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;">
-            📧 Sudah Beli? Login Email
-          </button>
-        </div>
-        <div id="panelKode">
-          <div class="ak-sub"><a href="https://bantuguruyuk.web.id/aktvs-ma.html" target="_blank" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk dapatkan kode aktivasi.</div>
-          <div class="aktivasi-row">
-            <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..."/>
-            <button onclick="aktivasiPro()">Aktifkan</button>
+      <!-- AKTIVASI PRO — desain BGY soal -->
+      <div id="aktivasiBox" style="margin-top:12px;border:2px solid #f59e0b;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(245,158,11,.15);">
+        <div style="background:linear-gradient(135deg,#f59e0b,#d97706);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:.8rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;">
+            🔓 <span>Aktivasi Pro</span>
+            <span style="background:rgba(255,255,255,.25);font-size:.6rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
           </div>
+          <a href="https://bantuguruyuk.web.id/aktvs-ma.html" target="_blank"
+            style="font-size:.65rem;font-weight:700;color:#fff;background:rgba(255,255,255,.2);padding:3px 9px;border-radius:99px;text-decoration:none;border:1px solid rgba(255,255,255,.4);">
+            Beli Pro →
+          </a>
         </div>
-        <div id="panelEmail" style="display:none;">
-          <div class="ak-sub" style="margin-bottom:6px;">Masukkan email yang kamu pakai saat beli Pro.</div>
-          <div class="aktivasi-row">
-            <input type="email" id="inputEmailLogin" placeholder="email@sekolah.com"/>
-            <button onclick="loginEmail()">Login</button>
+        <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(14,165,160,.04));">
+          <!-- MODE KODE -->
+          <div id="modeKode" style="display:none;">
+            <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;font-weight:600;">✉️ Masukkan email + kode aktivasi kamu:</div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <input type="email" id="inputEmailKode" placeholder="Email pembelian..."
+                style="width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;"
+                onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='var(--border)'"/>
+              <div style="display:flex;gap:6px;">
+                <input type="text" id="inputKodeAktivasi" placeholder="BGY-XXXXX"
+                  style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.85rem;font-weight:700;font-family:monospace;letter-spacing:2px;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;"
+                  onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='var(--border)'"/>
+                <button onclick="verifikasiKode()"
+                  style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:9px;padding:8px 15px;font-size:.82rem;font-weight:800;cursor:pointer;white-space:nowrap;">
+                  🔑 Aktifkan
+                </button>
+              </div>
+            </div>
+            <div style="font-size:.67rem;color:var(--text-light);margin-top:7px;text-align:center;">
+              Sudah pernah aktivasi? <a href="#" onclick="tampilModeEmail();return false;" style="color:#d97706;font-weight:700;">Cek pakai email</a>
+            </div>
           </div>
+          <!-- MODE EMAIL (default) -->
+          <div id="modeEmail" style="display:block;">
+            <div style="font-size:.72rem;color:var(--text-light);margin-bottom:7px;">Sudah beli? Masukkan email pembelian untuk cek status:</div>
+            <div style="display:flex;gap:6px;">
+              <input type="email" id="inputEmailPro" placeholder="Email pembelian..."
+                style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;"
+                onfocus="this.style.borderColor='#0ea5a0'" onblur="this.style.borderColor='var(--border)'"/>
+              <button onclick="cekAksesPro()"
+                style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border:none;border-radius:9px;padding:8px 14px;font-size:.82rem;font-weight:800;cursor:pointer;">
+                Cek
+              </button>
+            </div>
+            <div style="font-size:.67rem;color:var(--text-light);margin-top:7px;text-align:center;">
+              Punya kode aktivasi? <a href="#" onclick="tampilModeKode();return false;" style="color:#d97706;font-weight:700;">Masukkan kode</a>
+            </div>
+          </div>
+          <div id="aktivasiMsg" style="font-size:.73rem;margin-top:8px;min-height:14px;font-weight:600;"></div>
         </div>
-        <div id="aktivasiMsg" style="font-size:.72rem;margin-top:6px;min-height:14px;"></div>
       </div>
 
     </div><!-- /col-left -->
@@ -672,39 +748,43 @@ function updateLimitDisplay(){
 }
 
 // ============================================================
-// AKTIVASI PRO
+// AKTIVASI PRO — sesuai BGY soal
 // ============================================================
-function switchAktivasiTab(tab){
-  document.getElementById('panelKode').style.display=tab==='kode'?'block':'none';
-  document.getElementById('panelEmail').style.display=tab==='email'?'block':'none';
-  document.getElementById('tabKodeBtn').style.background=tab==='kode'?'#0ea5a0':'transparent';
-  document.getElementById('tabKodeBtn').style.color=tab==='kode'?'#fff':'#64748b';
-  document.getElementById('tabEmailBtn').style.background=tab==='email'?'#0ea5a0':'transparent';
-  document.getElementById('tabEmailBtn').style.color=tab==='email'?'#fff':'#64748b';
+function tampilModeKode(){
+  document.getElementById('modeKode').style.display='block';
+  document.getElementById('modeEmail').style.display='none';
+}
+function tampilModeEmail(){
+  document.getElementById('modeKode').style.display='none';
+  document.getElementById('modeEmail').style.display='block';
 }
 
-async function aktivasiPro(){
+function _setProAktif(){
+  _isPro=true;
+  document.getElementById('hBadge').textContent='PRO';
+  document.getElementById('hBadge').className='badge-pro';
+  document.getElementById('aktivasiBox').style.display='none';
+  updateLimitDisplay();
+}
+
+async function verifikasiKode(){
+  const email=document.getElementById('inputEmailKode').value.trim().toLowerCase();
   const kode=document.getElementById('inputKodeAktivasi').value.trim().toUpperCase();
   const msgEl=document.getElementById('aktivasiMsg');
   if(!kode){msgEl.style.color='#dc2626';msgEl.textContent='⚠️ Kode tidak boleh kosong.';return;}
   msgEl.style.color='#0d7a8a';msgEl.textContent='⏳ Memeriksa kode...';
   try{
     const{data,error}=await sbClient.from('pro_licenses').select('*').eq('kode',kode).eq('tool','modul_ajar').single();
-    if(error||!data){msgEl.style.color='#dc2626';msgEl.textContent='❌ Kode tidak valid atau tidak ditemukan.';return;}
-    if(data.is_used&&data.used_by&&data.used_by!==kode){msgEl.style.color='#dc2626';msgEl.textContent='❌ Kode sudah digunakan.';return;}
-    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,kode}));
-    _isPro=true;
-    document.getElementById('hBadge').textContent='PRO';
-    document.getElementById('hBadge').className='badge-pro';
-    document.getElementById('aktivasiBox').style.display='none';
-    updateLimitDisplay();
+    if(error||!data){msgEl.style.color='#dc2626';msgEl.textContent='❌ Kode tidak valid.';return;}
+    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,kode,email}));
+    _setProAktif();
     msgEl.style.color='#15803d';msgEl.textContent='✅ Aktivasi berhasil! Selamat menjadi PRO 🎉';
     gaEvent('aktivasi_pro_ma',{kode});
-  }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='❌ Gagal menghubungi server. Coba lagi.';}
+  }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='❌ Gagal menghubungi server.';}
 }
 
-async function loginEmail(){
-  const email=document.getElementById('inputEmailLogin').value.trim().toLowerCase();
+async function cekAksesPro(){
+  const email=document.getElementById('inputEmailPro').value.trim().toLowerCase();
   const msgEl=document.getElementById('aktivasiMsg');
   if(!email){msgEl.style.color='#dc2626';msgEl.textContent='⚠️ Email tidak boleh kosong.';return;}
   msgEl.style.color='#0d7a8a';msgEl.textContent='⏳ Memeriksa email...';
@@ -712,13 +792,45 @@ async function loginEmail(){
     const{data,error}=await sbClient.from('pro_licenses').select('*').eq('email',email).eq('tool','modul_ajar').single();
     if(error||!data||!data.is_pro){msgEl.style.color='#dc2626';msgEl.textContent='❌ Email tidak ditemukan atau belum Pro.';return;}
     localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email}));
-    _isPro=true;
-    document.getElementById('hBadge').textContent='PRO';
-    document.getElementById('hBadge').className='badge-pro';
-    document.getElementById('aktivasiBox').style.display='none';
-    updateLimitDisplay();
+    _setProAktif();
     msgEl.style.color='#15803d';msgEl.textContent='✅ Login berhasil! Selamat datang PRO 🎉';
   }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='❌ Gagal menghubungi server.';}
+}
+
+// ============================================================
+// GENERATE OVERLAY
+// ============================================================
+const _goMessages=[
+  'Menyiapkan modul terbaik... 📝',
+  'AI lagi mikir keras nih, bentar ya! 🧠',
+  'Lagi menyusun komponen modul... 🎯',
+  'Sabarrrrr, hampir jadi! ⏳',
+  'Ngeracik kegiatan pembelajaran... 📚',
+  'Mastiin asesmen lengkap semua... ✅',
+  'Ngecek diferensiasi pembelajaran... 🔑',
+  'Dikiiit lagi, ditunggu ya Bu/Pak Guru! 🙏',
+  'AI-nya lagi semangat bikin modul! 💪',
+  'Proses... sambil ngopi dulu boleh nih ☕',
+];
+let _goMsgTimer=null,_goMsgIdx=0;
+function _startGoMessages(){
+  _goMsgIdx=0;
+  const el=document.getElementById('goMsg');
+  function rotate(){
+    if(el){el.style.animation='none';el.offsetHeight;el.style.animation='';el.textContent=_goMessages[_goMsgIdx%_goMessages.length];_goMsgIdx++;}
+    _goMsgTimer=setTimeout(rotate,2800);
+  }
+  rotate();
+}
+function _stopGoMessages(){clearTimeout(_goMsgTimer);}
+
+function setLoadingOverlay(s){
+  const ov=document.getElementById('generateOverlay');
+  if(ov){
+    ov.style.display=s?'flex':'none';
+    if(s){_startGoMessages();document.body.style.overflow='hidden';}
+    else{_stopGoMessages();document.body.style.overflow='';}
+  }
 }
 
 // ============================================================
@@ -756,17 +868,20 @@ async function generateModul(){
   console.log('[BGY] checkLimit →',lc,'_isPro →',_isPro);
   if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
 
-  // UI loading
+  // UI loading — tampilkan overlay
   const btn=document.getElementById('btnGenerate');
   btn.disabled=true;
   btn.textContent='⏳ Membuat modul...';
+  setLoadingOverlay(true);
+  // Siapkan output area
   document.getElementById('outputPlaceholder').style.display='none';
   document.getElementById('outputContent').style.display='block';
   const hasilEl=document.getElementById('hasilModul');
-  hasilEl.textContent='';
-  hasilEl.classList.add('typing-cursor');
-  document.getElementById('statusBadge').textContent='🟡 Generating...';
-  document.getElementById('generateFeedback').textContent='';
+  if(hasilEl){hasilEl.innerHTML='';hasilEl.classList.add('typing-cursor');}
+  const statusBadge=document.getElementById('statusBadge');
+  const feedbackEl=document.getElementById('generateFeedback');
+  if(statusBadge)statusBadge.textContent='🟡 Generating...';
+  if(feedbackEl)feedbackEl.textContent='';
   gaEvent('generate_modul_ajar',{mapel,fase,topik});
 
   // Susun prompt — dikirim ke server, key Gemini aman di env Vercel
@@ -923,23 +1038,24 @@ Pastikan modul: mudah dipahami siswa, cocok dengan alokasi waktu ${alokasi}, tid
 
     const html=mdToHtml(text);
 
-    // Tampilkan langsung (tidak perlu typeChar karena HTML)
-    hasilEl.innerHTML=html;
-    hasilEl.classList.remove('typing-cursor');
-    document.getElementById('statusBadge').textContent='✅ Selesai';
-    document.getElementById('generateFeedback').textContent='✅ Modul berhasil dibuat!';
-    // Simpan teks mentah untuk copy
-    hasilEl.dataset.rawText=text;
+    // Tampilkan hasil
+    if(hasilEl){
+      hasilEl.innerHTML=html;
+      hasilEl.classList.remove('typing-cursor');
+      hasilEl.dataset.rawText=text;
+    }
+    if(statusBadge)statusBadge.textContent='✅ Selesai';
+    if(feedbackEl)feedbackEl.textContent='✅ Modul berhasil dibuat!';
     incrementLimit();
     updateLimitDisplay();
     saveHistori({mapel,fase,topik,teks:text});
     updateHistoriBadge();
 
   }catch(e){
-    hasilEl.classList.remove('typing-cursor');
-    hasilEl.textContent='❌ Gagal generate: '+e.message;
-    document.getElementById('statusBadge').textContent='❌ Error';
+    if(hasilEl){hasilEl.classList.remove('typing-cursor');hasilEl.innerHTML='<p style="color:#dc2626;">❌ Gagal generate: '+e.message+'</p>';}
+    if(statusBadge)statusBadge.textContent='❌ Error';
   }finally{
+    setLoadingOverlay(false);
     btn.disabled=false;
     btn.innerHTML='✨ Generate Modul Ajar <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;"></span>';
     updateLimitDisplay();
