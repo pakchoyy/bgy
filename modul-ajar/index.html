@@ -455,7 +455,13 @@ body.dark .limit-bar-wrap{color:#fcd34d;}
 
 <footer>
   <div class="footer-title">Modul Ajar SD • Kurikulum Merdeka</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.5.0</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.5.1</div>
+  <div style="margin-top:6px;">
+    <button onclick="localStorage.removeItem('bgy_ma_limit');updateLimitDisplay();alert('✅ Limit harian direset!')"
+      style="background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.6);font-size:.65rem;padding:3px 10px;border-radius:6px;cursor:pointer;">
+      🔄 Reset Limit
+    </button>
+  </div>
 </footer>
 
 <!-- UPGRADE POPUP -->
@@ -482,7 +488,7 @@ body.dark .limit-bar-wrap{color:#fcd34d;}
 // ============================================================
 // KONFIGURASI
 // ============================================================
-const DAILY_LIMIT = 2; // Free: 2x/hari
+const DAILY_LIMIT = 3; // Free: 3x/hari
 const STORAGE_KEY_HISTORI = 'bgy_ma_histori';
 const STORAGE_KEY_LIMIT   = 'bgy_ma_limit';
 
@@ -680,6 +686,8 @@ async function generateModul(){
   const kelengkapan=document.getElementById('kelengkapan').value;
   const tahun=document.getElementById('tahunAjar').value.trim()||'2025/2026';
 
+  console.log('[BGY] generateModul dipanggil',{mapel,topik,p5});
+
   // Validasi
   if(!mapel){errBox.textContent='⚠️ Pilih mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
   if(!topik){errBox.textContent='⚠️ Topik / materi pokok belum diisi.';errBox.style.display='block';return;}
@@ -687,6 +695,7 @@ async function generateModul(){
 
   // Cek limit
   const lc=checkLimit();
+  console.log('[BGY] checkLimit →',lc,'_isPro →',_isPro);
   if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
 
   // UI loading
