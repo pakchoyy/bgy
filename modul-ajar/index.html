@@ -637,7 +637,7 @@ async function verifikasiKode(){
   if(!kode){msgEl.style.color='#dc2626';msgEl.textContent='⚠️ Kode tidak boleh kosong.';return;}
   msgEl.style.color='#0d7a8a';msgEl.textContent='⏳ Memeriksa kode...';
   try{
-    const{data,error}=await sbClient.from('pro_licenses').select('*').eq('kode',kode).eq('tool','modul_ajar').single();
+    const{data,error}=await sbClient.from('users').select('*').eq('code',kode).eq('access','modul_ajar').single();
     if(error||!data){msgEl.style.color='#dc2626';msgEl.textContent='❌ Kode tidak valid.';return;}
     localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,kode,email}));
     _setProAktif();
@@ -651,7 +651,7 @@ async function cekAksesPro(){
   if(!email){msgEl.style.color='#dc2626';msgEl.textContent='⚠️ Email tidak boleh kosong.';return;}
   msgEl.style.color='#0d7a8a';msgEl.textContent='⏳ Memeriksa email...';
   try{
-    const{data,error}=await sbClient.from('pro_licenses').select('*').eq('email',email).eq('tool','modul_ajar').single();
+    const{data,error}=await sbClient.from('users').select('*').eq('email',email).eq('access','modul_ajar').single();
     if(error||!data||!data.is_pro){msgEl.style.color='#dc2626';msgEl.textContent='❌ Email tidak ditemukan atau belum Pro.';return;}
     localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email}));
     _setProAktif();
