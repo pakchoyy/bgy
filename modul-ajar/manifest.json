@@ -1,19 +1,20 @@
 {
-  "name": "Bantu Guru Yuk - Modul Ajar",
-  "short_name": "BGY Modul Ajar",
-  "description": "Generator Prompt Modul Ajar Kurikulum Merdeka berbasis AI",
-  "start_url": "/modul-ajar/",
+  "name": "Bantu Guru Yuk",
+  "short_name": "Bantu Guru Yuk",
+  "description": "AI Tools untuk Guru SD Indonesia",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0d9488",
-  "theme_color": "#0d9488",
+  "background_color": "#0d2b3e",
+  "theme_color": "#0ea5a0",
   "icons": [
     {
-      "src": "../guru-cibisd2.png",
+      "src": "guru-cibisd2.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "../guru-cibisd2.png",
+      "src": "guru-cibisd2.png",
       "sizes": "512x512",
       "type": "image/png"
     }
