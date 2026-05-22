@@ -264,25 +264,15 @@ footer a{color:inherit;text-decoration:underline;}
 
         <div class="form-group">
           <label>Mata Pelajaran</label>
-          <select id="mapel">
+          <select id="mapel" onchange="toggleMapelManual(this.value)">
             <option value="">-- Pilih Mata Pelajaran --</option>
-            <option>Bahasa Indonesia</option>
-            <option>Matematika</option>
-            <option>IPA</option>
-            <option>IPS</option>
-            <option>PPKn</option>
-            <option>IPAS</option>
-            <option>PJOK</option>
-            <option>Seni Budaya</option>
-            <option>Pendidikan Agama Islam</option>
-            <option>Bahasa Inggris</option>
           </select>
         </div>
 
         <div class="row-2">
           <div class="form-group">
             <label>Fase / Kelas</label>
-            <select id="faseKelas">
+            <select id="faseKelas" onchange="onFaseChange()">
               <option value="Fase A / Kelas 1 SD">Fase A / Kelas 1</option>
               <option value="Fase A / Kelas 2 SD">Fase A / Kelas 2</option>
               <option value="Fase B / Kelas 3 SD">Fase B / Kelas 3</option>
@@ -293,18 +283,13 @@ footer a{color:inherit;text-decoration:underline;}
           </div>
           <div class="form-group">
             <label>Alokasi Waktu</label>
-            <input type="text" id="alokasiWaktu" placeholder="Misal: 2 x 35 menit"/>
+            <input type="text" id="alokasiWaktu" placeholder="Misal: 2 x 35 menit" oninput="this.dataset.edited='1'"/>
           </div>
         </div>
 
         <div class="form-group">
           <label>Topik / Materi Pokok</label>
           <input type="text" id="topikMateri" placeholder="Contoh: Bilangan Bulat, Teks Deskripsi, Gaya dan Gerak..."/>
-        </div>
-
-        <div class="form-group">
-          <label>Capaian Pembelajaran (CP) — Opsional</label>
-          <textarea id="cpText" rows="3" placeholder="Tulis atau tempel CP yang relevan... (biarkan kosong untuk default)"></textarea>
         </div>
 
         <div class="form-group">
@@ -334,33 +319,10 @@ footer a{color:inherit;text-decoration:underline;}
         </div>
 
         <div class="form-group">
-          <label>Karakteristik Siswa</label>
+          <label>Karakteristik Siswa <span style="font-size:.65rem;color:var(--text-light);font-weight:400;">(opsional)</span></label>
           <textarea id="karakteristikSiswa" rows="2" placeholder="Contoh: Reguler, mayoritas visual, ada siswa berkebutuhan khusus..."></textarea>
         </div>
 
-        <div class="form-group">
-          <label>Konteks / Catatan Tambahan (Opsional)</label>
-          <textarea id="konteksNotes" rows="2" placeholder="Contoh: Sekolah di daerah pegunungan, ada lab komputer..."></textarea>
-        </div>
-
-      </div>
-
-      <div class="card">
-        <div class="card-title">⚙️ Pengaturan Output</div>
-        <div class="row-2">
-          <div class="form-group">
-            <label>Kelengkapan</label>
-            <select id="kelengkapan">
-              <option value="lengkap dan detail">Lengkap &amp; Detail</option>
-              <option value="sedang (komponen utama)">Sedang</option>
-              <option value="ringkas (pokok-pokok saja)">Ringkas</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Tahun Ajaran</label>
-            <input type="text" id="tahunAjar" value="2025/2026"/>
-          </div>
-        </div>
       </div>
 
       <div id="errorBox" class="error-box"></div>
@@ -514,6 +476,7 @@ const sbClient = window.supabase.createClient(
   updateLimitDisplay();
   updateHistoriBadge();
   checkProStatus();
+  onFaseChange();
   window.addEventListener('beforeinstallprompt',e=>{
     e.preventDefault();window._dip=e;
     const last=localStorage.getItem('installClosedAt');
@@ -607,9 +570,10 @@ function updateLimitDisplay(){
   const wrapper=document.getElementById('limitBarWrapper');
   const count=document.getElementById('limitCount');
   const badge=document.getElementById('limitBadgeBtn');
-  badge.textContent='('+lc.remaining+'/'+DAILY_LIMIT+')';
+  const remaining=Math.max(0,lc.remaining);
+  badge.textContent='('+lc.used+'/'+DAILY_LIMIT+')';
   if(!lc.ok){wrapper.style.display='flex';count.textContent='0 — habis!';}
-  else{wrapper.style.display=lc.used>0?'flex':'none';count.textContent=lc.remaining+' kali';}
+  else{wrapper.style.display=lc.used>0?'flex':'none';count.textContent=remaining+' kali';}
 }
 
 // ============================================================
@@ -660,6 +624,79 @@ async function cekAksesPro(){
 }
 
 // ============================================================
+// TAHUN AJARAN OTOMATIS
+// ============================================================
+function getAutoTahunAjaran(){
+  const now=new Date();
+  const month=now.getMonth()+1; // 1-12
+  const year=now.getFullYear();
+  // Juli-Des = tahun berjalan / tahun+1, Jan-Jun = tahun-1 / tahun berjalan
+  if(month>=7) return year+'/'+(year+1);
+  return (year-1)+'/'+year;
+}
+
+// ============================================================
+// MAPEL DINAMIS BERDASARKAN FASE
+// ============================================================
+const MAPEL_PER_FASE={
+  A:['Bahasa Indonesia','Matematika','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+  B:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+  C:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+};
+const ALOKASI_PER_FASE={A:'2 x 35 menit',B:'3 x 35 menit',C:'3 x 35 menit'};
+let _mapelLainnyaActive=false;
+
+function getFaseFromValue(val){
+  if(val.startsWith('Fase A'))return 'A';
+  if(val.startsWith('Fase B'))return 'B';
+  if(val.startsWith('Fase C'))return 'C';
+  return 'B';
+}
+
+function updateMapelOptions(fase){
+  const sel=document.getElementById('mapel');
+  const currentVal=sel.value;
+  const list=MAPEL_PER_FASE[fase]||MAPEL_PER_FASE.B;
+  sel.innerHTML='<option value="">-- Pilih Mata Pelajaran --</option>';
+  list.forEach(m=>{
+    const opt=document.createElement('option');
+    if(m==='Lainnya'){opt.value='__lainnya__';opt.textContent='Lainnya (isi manual)';}
+    else{opt.value=m;opt.textContent=m;}
+    if(m===currentVal||opt.value===currentVal)opt.selected=true;
+    sel.appendChild(opt);
+  });
+  toggleMapelManual(sel.value);
+}
+
+function toggleMapelManual(val){
+  let manualWrap=document.getElementById('mapelManualWrap');
+  if(val==='__lainnya__'){
+    if(!manualWrap){
+      manualWrap=document.createElement('div');
+      manualWrap.id='mapelManualWrap';
+      manualWrap.style.marginTop='6px';
+      manualWrap.innerHTML='<input type="text" id="mapelManual" placeholder="Tulis nama mata pelajaran..." style="width:100%;"/>';
+      document.getElementById('mapel').parentNode.appendChild(manualWrap);
+    }
+    manualWrap.style.display='block';
+  } else {
+    if(manualWrap)manualWrap.style.display='none';
+  }
+}
+
+function onFaseChange(){
+  const fase=getFaseFromValue(document.getElementById('faseKelas').value);
+  updateMapelOptions(fase);
+  // Auto-isi alokasi waktu hanya jika user belum edit manual
+  const alokasiEl=document.getElementById('alokasiWaktu');
+  const defaultValues=Object.values(ALOKASI_PER_FASE);
+  if(!alokasiEl.dataset.edited||defaultValues.includes(alokasiEl.value)){
+    alokasiEl.value=ALOKASI_PER_FASE[fase];
+    delete alokasiEl.dataset.edited;
+  }
+}
+
+// ============================================================
 // GENERATE PROMPT
 // ============================================================
 function generatePrompt(){
@@ -669,19 +706,17 @@ function generatePrompt(){
   const namaSekolah=document.getElementById('namaSekolah').value.trim()||'SD ...';
   const namaPenyusun=document.getElementById('namaPenyusun').value.trim()||'Guru Kelas';
   const semester=document.getElementById('semester').value;
-  const mapel=document.getElementById('mapel').value;
+  const mapelRaw=document.getElementById('mapel').value;
+  const mapel=mapelRaw==='__lainnya__'?(document.getElementById('mapelManual')?.value.trim()||'Lainnya'):mapelRaw;
   const fase=document.getElementById('faseKelas').value;
   const alokasi=document.getElementById('alokasiWaktu').value.trim()||'2 x 35 menit';
   const topik=document.getElementById('topikMateri').value.trim();
-  const cp=document.getElementById('cpText').value.trim();
   const model=document.getElementById('modelPembelajaran').value;
   const p5=[...document.querySelectorAll('.cb-p5:checked')].map(c=>c.value).join(', ');
-  const karakteristik=document.getElementById('karakteristikSiswa').value.trim()||'Peserta didik reguler';
-  const konteks=document.getElementById('konteksNotes').value.trim();
-  const kelengkapan=document.getElementById('kelengkapan').value;
-  const tahun=document.getElementById('tahunAjar').value.trim()||'2025/2026';
+  const karakteristik=document.getElementById('karakteristikSiswa').value.trim()||'Peserta didik reguler, kelas heterogen';
+  const tahun=getAutoTahunAjaran();
 
-  if(!mapel){errBox.textContent='⚠️ Pilih mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
+  if(!mapelRaw||mapelRaw==='__lainnya__'&&!document.getElementById('mapelManual')?.value.trim()){errBox.textContent='⚠️ Pilih atau isi mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
   if(!topik){errBox.textContent='⚠️ Topik / materi pokok belum diisi.';errBox.style.display='block';return;}
   if(!p5){errBox.textContent='⚠️ Pilih minimal satu dimensi Profil Pelajar Pancasila.';errBox.style.display='block';return;}
 
@@ -713,9 +748,7 @@ Buatkan **MODUL AJAR KURIKULUM MERDEKA** yang lengkap, detail, sistematis, profe
 2. Wajib menggunakan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) kombinasi dengan model \${model}.
 3. Memuat unsur **HOTS (Higher Order Thinking Skills)**, Pembelajaran Berdiferensiasi, Pembelajaran Bermakna, dan Student-Centered Learning.
 4. Karakteristik Siswa: \${karakteristik}
-\${cp ? '- Capaian Pembelajaran (CP) Resmi: ' + cp : ''}
-\${konteks ? '- Catatan Konteks Tambahan: ' + konteks : ''}
-- Tingkat Kelengkapan Dokumen: \${kelengkapan}
+- Tingkat Kelengkapan Dokumen: lengkap dan detail
 
 Wajib buat struktur modul dengan komponen detail sebagai berikut (Gunakan Bahasa Indonesia yang formal akademik namun natural seperti dokumen asli):
 
