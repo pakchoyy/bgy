@@ -2,21 +2,23 @@
   "name": "Bantu Guru Yuk",
   "short_name": "Bantu Guru Yuk",
   "description": "AI Tools untuk Guru SD Indonesia",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0d2b3e",
+  "background_color": "#f0f4f8",
   "theme_color": "#0ea5a0",
+  "orientation": "any",
   "icons": [
     {
-      "src": "guru-cibisd2.png",
+      "src": "./guru-cibisd2.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "guru-cibisd2.png",
+      "src": "./guru-cibisd2.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
