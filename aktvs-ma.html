@@ -125,10 +125,10 @@
 
     try {
       const { data, error: fetchError } = await sbClient
-        .from("pro_licenses")
+        .from("users")
         .select("*")
         .eq("email", email)
-        .eq("tool", "modul_ajar")
+        .eq("access", "modul_ajar")
         .maybeSingle();
 
       if (fetchError) throw fetchError;
@@ -142,16 +142,16 @@
             </div>`;
           return;
         }
-        tampilKode(data.kode, email);
+        tampilKode(data.code, email);
         return;
       }
 
       const kode = generateKode();
 
-      const { error: insertError } = await sbClient.from("pro_licenses").insert({
+      const { error: insertError } = await sbClient.from("users").insert({
         email: email,
-        kode: kode,
-        tool: "modul_ajar",
+        code: kode,
+        access: "modul_ajar",
         is_pro: false
       });
 
