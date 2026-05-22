@@ -36,13 +36,57 @@ body.dark{
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;}
 
 /* LOADING */
-#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0d2b3e;display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;z-index:99999;}
-#loadingScreen::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);opacity:.85;}
-#loadingScreen img{width:80px;margin-bottom:16px;border-radius:18px;position:relative;z-index:1;box-shadow:0 4px 20px rgba(0,0,0,.35);}
-#loadingScreen .ls-title{font-size:1.5rem;font-weight:900;position:relative;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.4);}
-#loadingScreen .ls-sub{font-size:.85rem;margin-top:8px;opacity:1;position:relative;z-index:1;color:#e0f7f6;font-weight:600;}
-.ls-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-top:20px;position:relative;z-index:1;}
+#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--grad);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-family:sans-serif;z-index:99999;}
+#loadingScreen img{width:64px;margin-bottom:14px;border-radius:16px;}
+#loadingScreen .ls-title{font-size:1.3rem;font-weight:800;letter-spacing:1px;}
+#loadingScreen .ls-sub{font-size:.8rem;margin-top:6px;opacity:.85;}
+.ls-spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-top:18px;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+/* GENERATE OVERLAY */
+#generateOverlay{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 50%,#0d2137 100%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+#generateOverlay .go-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:goOrb 4s ease-in-out infinite;}
+@keyframes goOrb{0%,100%{transform:scale(1) translate(0,0);opacity:.5;}50%{transform:scale(1.2) translate(10px,-10px);opacity:.8;}}
+#generateOverlay .go-orb1{width:300px;height:300px;background:radial-gradient(circle,#0ea5a066,transparent);top:-80px;left:-80px;animation-delay:0s;}
+#generateOverlay .go-orb2{width:250px;height:250px;background:radial-gradient(circle,#f59e0b44,transparent);bottom:-60px;right:-60px;animation-delay:1.5s;}
+#generateOverlay .go-orb3{width:180px;height:180px;background:radial-gradient(circle,#3b82f644,transparent);bottom:30%;right:15%;animation-delay:.8s;}
+#generateOverlay .go-logo{width:72px;height:72px;border-radius:20px;margin-bottom:24px;box-shadow:0 0 40px rgba(14,165,160,.5);}
+#generateOverlay .go-ring-wrap{position:relative;width:110px;height:110px;margin-bottom:28px;}
+#generateOverlay .go-ring{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;}
+#generateOverlay .go-ring1{border-top-color:#0ea5a0;border-right-color:#0ea5a0;animation:goSpin1 1.2s linear infinite;}
+#generateOverlay .go-ring2{inset:12px;border-top-color:#f59e0b;border-left-color:#f59e0b;animation:goSpin2 1.8s linear infinite reverse;}
+#generateOverlay .go-ring3{inset:24px;border-top-color:#fff;animation:goSpin1 2.4s linear infinite;}
+#generateOverlay .go-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;}
+@keyframes goSpin1{to{transform:rotate(360deg);}}
+@keyframes goSpin2{to{transform:rotate(360deg);}}
+#generateOverlay .go-title{font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:.5px;text-align:center;margin-bottom:8px;}
+#generateOverlay .go-sub{font-size:.9rem;color:rgba(255,255,255,.7);text-align:center;margin-bottom:32px;font-style:italic;}
+#generateOverlay .go-msgs{min-height:28px;text-align:center;}
+#generateOverlay .go-msg{font-size:.82rem;color:#5eead4;font-weight:700;letter-spacing:.3px;animation:goMsgFade .5s ease;}
+@keyframes goMsgFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+#generateOverlay .go-dots{display:flex;gap:8px;margin-top:24px;align-items:center;justify-content:center;}
+#generateOverlay .go-dot{width:8px;height:8px;border-radius:50%;background:#0ea5a0;animation:goDot 1.4s ease-in-out infinite;}
+#generateOverlay .go-dot:nth-child(2){background:#f59e0b;animation-delay:.2s;}
+#generateOverlay .go-dot:nth-child(3){background:#3b82f6;animation-delay:.4s;}
+@keyframes goDot{0%,80%,100%{transform:scale(.7);opacity:.5;}40%{transform:scale(1.2);opacity:1;}}
+#generateOverlay .go-bar-wrap{width:260px;height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:20px;}
+#generateOverlay .go-bar{height:100%;background:linear-gradient(90deg,#0ea5a0,#f59e0b,#3b82f6);border-radius:99px;animation:goBar 2.5s ease-in-out infinite;}
+@keyframes goBar{0%{width:0%;margin-left:0;}50%{width:70%;margin-left:0;}100%{width:0%;margin-left:100%;}}
+
+/* PRO WELCOME OVERLAY */
+#proWelcomeOverlay .pw-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+#proWelcomeOverlay .pw-confetti span{position:absolute;top:-20px;width:10px;height:10px;border-radius:2px;animation:pwFall linear infinite;}
+@keyframes pwFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+#proWelcomeOverlay .pw-badge{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-size:1rem;font-weight:900;padding:7px 22px;border-radius:99px;letter-spacing:2px;display:inline-block;margin-bottom:20px;box-shadow:0 4px 20px rgba(245,158,11,.5);animation:pwPulse 1.5s ease-in-out infinite;}
+@keyframes pwPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+#proWelcomeOverlay .pw-emoji{font-size:3.5rem;margin-bottom:16px;animation:pwBounce .6s ease-in-out 4;}
+@keyframes pwBounce{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
+#proWelcomeOverlay .pw-title{font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:8px;letter-spacing:.5px;text-shadow:0 2px 20px rgba(245,158,11,.5);}
+#proWelcomeOverlay .pw-sub{font-size:.95rem;color:rgba(255,255,255,.8);margin-bottom:28px;line-height:1.9;}
+#proWelcomeOverlay .pw-features{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:32px;max-width:400px;}
+#proWelcomeOverlay .pw-feat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:.8rem;font-weight:700;padding:7px 14px;border-radius:99px;}
+#proWelcomeOverlay .pw-btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:14px;padding:16px 42px;font-size:1rem;font-weight:900;cursor:pointer;box-shadow:0 6px 24px rgba(245,158,11,.45);letter-spacing:.5px;transition:transform .2s,box-shadow .2s;}
+#proWelcomeOverlay .pw-btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(245,158,11,.6);}
 
 /* INSTALL POPUP */
 #installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
@@ -142,6 +186,46 @@ footer a{color:inherit;text-decoration:underline;}
   <div class="ls-spinner"></div>
 </div>
 
+<!-- GENERATE OVERLAY -->
+<div id="generateOverlay">
+  <div class="go-orb go-orb1"></div>
+  <div class="go-orb go-orb2"></div>
+  <div class="go-orb go-orb3"></div>
+  <img src="../guru-cibisd2.png" alt="Logo" class="go-logo" onerror="this.style.display='none'"/>
+  <div class="go-ring-wrap">
+    <div class="go-ring go-ring1"></div>
+    <div class="go-ring go-ring2"></div>
+    <div class="go-ring go-ring3"></div>
+    <div class="go-icon">📝</div>
+  </div>
+  <div class="go-title">Menyusun Prompt Modul</div>
+  <div class="go-sub">Sabar ya... AI lagi racik prompt terbaik! 🧠</div>
+  <div class="go-msgs"><div class="go-msg" id="goMsg">Menyiapkan struktur modul ajar...</div></div>
+  <div class="go-dots">
+    <div class="go-dot"></div>
+    <div class="go-dot"></div>
+    <div class="go-dot"></div>
+  </div>
+  <div class="go-bar-wrap"><div class="go-bar"></div></div>
+</div>
+
+<!-- PRO WELCOME OVERLAY -->
+<div id="proWelcomeOverlay" style="display:none;position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 40%,#1a1a2e 100%);flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;">
+  <div class="pw-confetti" id="pwConfetti"></div>
+  <div class="pw-glow" style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.18),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+  <div class="pw-badge">✨ BGY PRO</div>
+  <div class="pw-emoji" id="pwEmoji">🎉</div>
+  <div class="pw-title">Selamat, Pak/Bu Guru!</div>
+  <div class="pw-sub">Kamu sekarang sudah jadi<br/><strong style="color:#f59e0b;">Member Pro BGY — Modul Ajar</strong><br/>Nikmati semua fitur tanpa batas! 🚀</div>
+  <div class="pw-features">
+    <span class="pw-feat">⚡ Generate Unlimited</span>
+    <span class="pw-feat">📋 Salin 1 Klik</span>
+    <span class="pw-feat">🚀 Buka Claude/Gemini</span>
+    <span class="pw-feat">📚 Kurikulum Merdeka</span>
+  </div>
+  <button class="pw-btn" onclick="closeProWelcome()">Ayo Mulai Buat Modul! 🚀</button>
+</div>
+
 <!-- INSTALL POPUP -->
 <div id="installPopup">
   <span>📲 Install aplikasi Bantu Guru Yuk</span>
@@ -239,10 +323,6 @@ footer a{color:inherit;text-decoration:underline;}
       <div class="card">
         <div class="card-title">📋 Identitas Modul Ajar</div>
 
-        <div id="limitBarWrapper" style="display:none;" class="limit-bar-wrap">
-          ⚡ Sisa generate hari ini: <strong id="limitCount"></strong>
-        </div>
-
         <div class="form-group">
           <label>Nama Sekolah</label>
           <input type="text" id="namaSekolah" placeholder="Contoh: SD Negeri 1 Magetan"/>
@@ -327,9 +407,13 @@ footer a{color:inherit;text-decoration:underline;}
 
       <div id="errorBox" class="error-box"></div>
 
+      <div id="errorBox" class="error-box" style="display:none;margin-bottom:8px;"></div>
+
       <button class="btn btn-primary" id="btnGenerate" onclick="generatePrompt()">
-        ✨ Generate Prompt Modul Ajar <span id="limitBadgeBtn" style="background:rgba(255,255,255,.2);border-radius:99px;padding:2px 9px;font-size:.7rem;font-weight:700;margin-left:6px;"></span>
+        <span id="btnLabel">✨ Generate Prompt Modul Ajar</span>
       </button>
+      <div id="limitInfo" style="font-size:.75rem;text-align:center;margin-top:5px;color:#64748b;min-height:16px;"></div>
+      <div id="limitReset" style="font-size:.68rem;text-align:center;color:var(--text-light);margin-top:2px;font-style:italic;">(reset tiap tengah malam)</div>
 
       <!-- AKTIVASI PRO -->
       <div id="aktivasiBox" style="margin-top:12px;border:2px solid #f59e0b;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(245,158,11,.15);">
@@ -344,18 +428,19 @@ footer a{color:inherit;text-decoration:underline;}
           </a>
         </div>
         <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(14,165,160,.04));">
+          <!-- MODE 1: Input kode -->
           <div id="modeKode" style="display:none;">
             <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;font-weight:600;">✉️ Masukkan email + kode aktivasi kamu:</div>
             <div style="display:flex;flex-direction:column;gap:7px;">
               <input type="email" id="inputEmailKode" placeholder="Email pembelian..."
-                style="width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;"
+                style="width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;transition:border-color .2s;"
                 onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='var(--border)'"/>
               <div style="display:flex;gap:6px;">
                 <input type="text" id="inputKodeAktivasi" placeholder="BGY-XXXXX"
-                  style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.85rem;font-weight:700;font-family:monospace;letter-spacing:2px;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;"
+                  style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.85rem;font-weight:700;font-family:monospace;letter-spacing:2px;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;transition:border-color .2s;"
                   onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='var(--border)'"/>
                 <button onclick="verifikasiKode()"
-                  style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:9px;padding:8px 15px;font-size:.82rem;font-weight:800;cursor:pointer;white-space:nowrap;">
+                  style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:9px;padding:8px 15px;font-size:.82rem;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(245,158,11,.35);">
                   🔑 Aktifkan
                 </button>
               </div>
@@ -364,14 +449,15 @@ footer a{color:inherit;text-decoration:underline;}
               Sudah pernah aktivasi? <a href="#" onclick="tampilModeEmail();return false;" style="color:#d97706;font-weight:700;">Cek pakai email</a>
             </div>
           </div>
+          <!-- MODE 2: Cek email (default) -->
           <div id="modeEmail" style="display:block;">
             <div style="font-size:.72rem;color:var(--text-light);margin-bottom:7px;">Sudah beli? Masukkan email pembelian untuk cek status:</div>
             <div style="display:flex;gap:6px;">
               <input type="email" id="inputEmailPro" placeholder="Email pembelian..."
-                style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;"
+                style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;transition:border-color .2s;"
                 onfocus="this.style.borderColor='#0ea5a0'" onblur="this.style.borderColor='var(--border)'"/>
               <button onclick="cekAksesPro()"
-                style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border:none;border-radius:9px;padding:8px 14px;font-size:.82rem;font-weight:800;cursor:pointer;">
+                style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border:none;border-radius:9px;padding:8px 14px;font-size:.82rem;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(14,165,160,.3);">
                 Cek
               </button>
             </div>
@@ -626,26 +712,113 @@ function incrementDaily(){
   localStorage.setItem(STORAGE_KEY_LIMIT,JSON.stringify(data));
 }
 function updateLimitDisplay(){
+  const el=document.getElementById('limitInfo');
+  const lr=document.getElementById('limitReset');
+  const btnLbl=document.getElementById('btnLabel');
+  const btn=document.getElementById('btnGenerate');
   if(_isPro){
-    document.getElementById('limitBarWrapper').style.display='none';
-    const badge=document.getElementById('limitBadgeBtn');
-    if(badge){badge.style.display='none';}
+    if(el){el.textContent='⭐ Pro Aktif — Generate Unlimited';el.style.color='#059669';}
+    document.getElementById('aktivasiBox').style.display='none';
+    if(btnLbl)btnLbl.textContent='✨ Generate Prompt Modul Ajar';
+    if(btn)btn.disabled=false;
+    if(lr)lr.style.display='none';
+    const b=document.getElementById('hBadge');if(b){b.textContent='PRO';b.className='badge-pro';}
     return;
   }
+  if(lr)lr.style.display='';
+  const b=document.getElementById('hBadge');if(b){b.textContent='FREE';b.className='badge-free';}
   const lc=checkLimit();
-  const wrapper=document.getElementById('limitBarWrapper');
-  const count=document.getElementById('limitCount');
-  const badge=document.getElementById('limitBadgeBtn');
-  const btn=document.getElementById('btnGenerate');
   const remaining=Math.max(0,lc.remaining);
-  if(badge){badge.style.display='inline';badge.textContent='('+lc.used+'/'+DAILY_LIMIT+')';}
-  if(!lc.ok){
-    wrapper.style.display='flex';count.textContent='0 — habis!';
-    if(btn){btn.innerHTML='⛔ Limit Habis — Coba Besok';btn.disabled=true;}
-  }else{
-    wrapper.style.display=lc.used>0?'flex':'none';count.textContent=remaining+' kali';
-    if(btn){btn.disabled=false;}
+  if(el){
+    el.textContent=lc.ok?`🔢 Sisa generate hari ini: ${remaining}x`:'⛔ Batas harian habis. Aktivasi Pro atau coba besok.';
+    el.style.color=remaining<=0?'#dc2626':remaining===1?'#d97706':'#64748b';
   }
+  if(btnLbl&&btnLbl.textContent.indexOf('Menyusun')===-1){
+    btnLbl.textContent=lc.ok?`✨ Generate Prompt Modul Ajar (${remaining}x)`:'⛔ Limit Habis';
+  }
+  if(btn)btn.disabled=!lc.ok;
+}
+
+// ============================================================
+// GENERATE OVERLAY
+// ============================================================
+const _goMessages=[
+  'Menyusun kerangka modul ajar... 📋',
+  'Menyelaraskan dengan Kurikulum Merdeka... 📚',
+  'Meracik tujuan pembelajaran... 🎯',
+  'Menyiapkan alur kegiatan belajar... 🗂️',
+  'Dikiiit lagi, Pak/Bu Guru! ⏳',
+  'Ngecek profil pelajar Pancasila... 🇮🇩',
+  'AI-nya semangat bikin modul! 💪',
+  'Sebentar ya... sambil ngopi dulu boleh nih ☕',
+];
+let _goMsgTimer=null,_goMsgIdx=0;
+function _startGoMessages(){
+  _goMsgIdx=0;
+  const el=document.getElementById('goMsg');
+  function rotate(){
+    if(el){el.style.animation='none';el.offsetHeight;el.style.animation='';el.textContent=_goMessages[_goMsgIdx%_goMessages.length];_goMsgIdx++;}
+    _goMsgTimer=setTimeout(rotate,2800);
+  }
+  rotate();
+}
+function _stopGoMessages(){clearTimeout(_goMsgTimer);}
+
+function setLoading(s){
+  const btn=document.getElementById('btnGenerate');
+  const btnLbl=document.getElementById('btnLabel');
+  if(btn)btn.disabled=s;
+  const ov=document.getElementById('generateOverlay');
+  if(ov){
+    ov.style.display=s?'flex':'none';
+    if(s){_startGoMessages();document.body.style.overflow='hidden';}
+    else{_stopGoMessages();document.body.style.overflow='';}
+  }
+  if(!s){
+    const{ok,remaining}=checkLimit();
+    if(btnLbl){
+      btnLbl.textContent=_isPro?'✨ Generate Prompt Modul Ajar':(ok?`✨ Generate Prompt Modul Ajar (${remaining}x)`:'⛔ Limit Habis');
+    }
+  } else {
+    if(btnLbl)btnLbl.textContent='Menyusun prompt...';
+  }
+}
+
+// ============================================================
+// PRO WELCOME CELEBRATION
+// ============================================================
+function showProWelcome(){
+  const ov=document.getElementById('proWelcomeOverlay');
+  if(!ov)return;
+  ov.style.display='flex';
+  document.body.style.overflow='hidden';
+  const conf=document.getElementById('pwConfetti');
+  if(conf){
+    conf.innerHTML='';
+    const colors=['#f59e0b','#0ea5a0','#3b82f6','#10b981','#ef4444','#8b5cf6','#fff'];
+    for(let i=0;i<60;i++){
+      const s=document.createElement('span');
+      const color=colors[i%colors.length];
+      const size=6+Math.random()*8;
+      const left=Math.random()*100;
+      const delay=Math.random()*3;
+      const dur=2.5+Math.random()*3;
+      s.style.cssText=`left:${left}%;width:${size}px;height:${size}px;background:${color};animation-duration:${dur}s;animation-delay:${delay}s;border-radius:${Math.random()>.5?'50%':'2px'};`;
+      conf.appendChild(s);
+    }
+  }
+  const emojis=['🎉','🥳','⭐','🎊','🚀','✨'];
+  let ei=0;
+  const el=document.getElementById('pwEmoji');
+  const emojiTimer=setInterval(()=>{if(el){el.textContent=emojis[ei%emojis.length];ei++;}},600);
+  ov._emojiTimer=emojiTimer;
+}
+function closeProWelcome(){
+  const ov=document.getElementById('proWelcomeOverlay');
+  if(!ov)return;
+  if(ov._emojiTimer)clearInterval(ov._emojiTimer);
+  ov.style.display='none';
+  document.body.style.overflow='';
 }
 
 // ============================================================
@@ -659,12 +832,13 @@ function tampilModeEmail(){
   document.getElementById('modeKode').style.display='none';
   document.getElementById('modeEmail').style.display='block';
 }
-function _setProAktif(){
+function _setProAktif(fromActivation){
   _isPro=true;
   document.getElementById('hBadge').textContent='PRO';
   document.getElementById('hBadge').className='badge-pro';
   document.getElementById('aktivasiBox').style.display='none';
   updateLimitDisplay();
+  if(fromActivation)showProWelcome();
 }
 async function verifikasiKode(){
   const email=document.getElementById('inputEmailKode').value.trim().toLowerCase();
@@ -676,7 +850,7 @@ async function verifikasiKode(){
     const{data,error}=await sbClient.from('users').select('*').eq('code',kode).eq('access','modul_ajar').single();
     if(error||!data){msgEl.style.color='#dc2626';msgEl.textContent='❌ Kode tidak valid.';return;}
     localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,kode,email}));
-    _setProAktif();
+    _setProAktif(true);
     msgEl.style.color='#15803d';msgEl.textContent='✅ Aktivasi berhasil! Selamat menjadi PRO 🎉';
     gaEvent('aktivasi_pro_ma',{kode});
   }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='❌ Gagal menghubungi server.';}
@@ -690,7 +864,7 @@ async function cekAksesPro(){
     const{data,error}=await sbClient.from('users').select('*').eq('email',email).eq('access','modul_ajar').single();
     if(error||!data||!data.is_pro){msgEl.style.color='#dc2626';msgEl.textContent='❌ Email tidak ditemukan atau belum Pro.';return;}
     localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email}));
-    _setProAktif();
+    _setProAktif(true);
     msgEl.style.color='#15803d';msgEl.textContent='✅ Login berhasil! Selamat datang PRO 🎉';
   }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='❌ Gagal menghubungi server.';}
 }
@@ -734,6 +908,9 @@ function generatePrompt(){
   const lc=checkLimit();
   if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
 
+  setLoading(true);
+  // Prompt building is sync, but wrap in setTimeout for overlay to render
+  setTimeout(()=>{
   const prompt=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ⛔ CRITICAL INSTRUCTION — READ BEFORE GENERATING:
 Your VERY FIRST word must be "##". No greeting. No opener. No explanation.
@@ -818,6 +995,7 @@ Must include complete draft content: an engaging Student Worksheet (LKPD) for el
 
   if(!isPro()) incrementDaily();
   simpanHistori(prompt,mapel,fase,topik);
+  setLoading(false);
   updateLimitDisplay();
   updateHistoriBadge();
 
@@ -829,6 +1007,7 @@ Must include complete draft content: an engaging Student Worksheet (LKPD) for el
   if(window.innerWidth<900){
     document.getElementById('hasilCard').scrollIntoView({behavior:'smooth',block:'start'});
   }
+  },600); // 600ms overlay for feel
 }
 
 // ============================================================
