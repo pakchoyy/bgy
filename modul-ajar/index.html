@@ -920,13 +920,7 @@ function generatePrompt(){
   setLoading(true);
   // Prompt building is sync, but wrap in setTimeout for overlay to render
   setTimeout(()=>{
-  const prompt=`════════════════════════════════════════
-⛔ MANDATORY SYSTEM INSTRUCTION — PARSE BEFORE GENERATING:
-Your VERY FIRST word must be "##". No greeting. No opener. No explanation. No preamble.
-If your response does not begin with "## MODUL AJAR", you have FAILED this instruction.
-════════════════════════════════════════
-
-You are an expert Indonesian elementary school (SD) teacher, curriculum developer, and practitioner of Kurikulum Merdeka with deep knowledge of the latest Indonesian national education standards and school administration.
+  const prompt=`You are an expert Indonesian elementary school (SD) teacher, curriculum developer, and practitioner of Kurikulum Merdeka with deep knowledge of the latest Indonesian national education standards and school administration.
 
 Generate a complete, detailed, systematic, professional, and ready-to-use **MODUL AJAR KURIKULUM MERDEKA** with the following identity:
 
@@ -977,19 +971,21 @@ Write ALL content in formal academic Indonesian (Bahasa Indonesia formal akademi
 12. **LAMPIRAN SIAP PAKAI** — must contain complete draft content: engaging LKPD for SD, brief subject matter/reading material, blank assessment tables/rubrics ready to fill, ready-to-use observation instruments.
 
 ════════════════════════════════════════
-⛔ MANDATORY OUTPUT RULES — NO EXCEPTIONS:
+OUTPUT RULES:
 - ALL content MUST be written in formal academic Indonesian (Bahasa Indonesia formal akademik).
-- ⛔ DO NOT write any greeting, opener, AI disclaimer, or introductory sentence.
-- ⛔ DO NOT write "Tentu!", "Baik!", "Berikut adalah...", "Dengan senang hati", or anything similar.
-- ⛔ DO NOT add any explanation, note, or comment after the document is finished.
-- ✅ Response MUST start directly with: ## MODUL AJAR KURIKULUM MERDEKA
-- ✅ FIRST WORD must be "##" — anything before it is a direct violation of this instruction.
-- ✅ After the module content is complete, STOP IMMEDIATELY. Do not add a closing, suggestions, or any sentence.
-- ✅ Use full Markdown formatting (##/### headings, markdown tables for activities & rubrics, bold for important terms) so the result can be directly exported to Word or PDF neatly.
-- ✅ After the very last section (Lampiran), output EXACTLY this line on a new paragraph:
+- DO NOT write any greeting, opener, AI disclaimer, or introductory sentence.
+- DO NOT write "Tentu!", "Baik!", "Berikut adalah...", "Dengan senang hati", or anything similar.
+- DO NOT add any explanation, note, or comment between sections.
+- Start the document directly with: ## MODUL AJAR KURIKULUM MERDEKA
+- Use full Markdown formatting (##/### headings, markdown tables for activities & rubrics, bold for important terms).
 
----
-📄 **EKSPOR DOKUMEN:** Ketik **"Buatkan file Word dari modul ini"** untuk mendapatkan file .docx — atau ketik **"Ekspor ke PDF"** untuk format PDF siap cetak.
+════════════════════════════════════════
+AFTER COMPLETING THE FULL MODULE CONTENT:
+
+1. Immediately use the **file creation tool** to save the entire module as a downloadable **.docx file** — do this automatically, without waiting for any additional instruction from the user.
+2. Name the file: Modul_Ajar_${mapel.replace(/\s+/g,'_')}_${fase.replace(/[\s\/]+/g,'_')}.docx
+3. After the file is created and ready to download, inform the user with a short message:
+   "✅ Modul Ajar selesai disusun. File Word (.docx) sudah siap diunduh di atas."
 ════════════════════════════════════════`;
 
   document.getElementById('hasilPrompt').textContent=prompt;
