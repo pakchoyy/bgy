@@ -491,6 +491,7 @@ body.dark .limit-bar-wrap{color:#fcd34d;}
 const DAILY_LIMIT = 3; // Free: 3x/hari
 const STORAGE_KEY_HISTORI = 'bgy_ma_histori';
 const STORAGE_KEY_LIMIT   = 'bgy_ma_limit';
+let _isPro = false; // harus di sini sebelum init()
 
 // Supabase
 const sbClient = window.supabase.createClient(
@@ -568,7 +569,6 @@ function selectTab(tab){
 // ============================================================
 // LIMIT & PRO
 // ============================================================
-let _isPro = false;
 
 function checkProStatus(){
   const proData=localStorage.getItem('bgy_pro_ma');
