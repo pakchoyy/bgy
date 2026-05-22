@@ -128,8 +128,33 @@ footer a{color:inherit;text-decoration:underline;}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
 
-/* OUTPUT AREA */
-.output-area{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:16px;font-size:.83rem;color:var(--text);line-height:1.9;min-height:300px;white-space:pre-wrap;font-family:'Segoe UI',system-ui,sans-serif;}
+/* OUTPUT RENDERED HTML */
+.output-area{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:16px;font-size:.83rem;color:var(--text);line-height:1.9;min-height:300px;font-family:'Segoe UI',system-ui,sans-serif;}
+.output-area h1,.output-area h2{font-size:.95rem;font-weight:800;color:#0d7a8a;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.3px;}
+.output-area h3{font-size:.86rem;font-weight:700;color:#0d7a8a;margin:10px 0 4px;}
+.output-area table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.8rem;}
+.output-area table th{background:#0d7a8a;color:#fff;padding:7px 10px;text-align:left;font-size:.75rem;}
+.output-area table td{padding:6px 10px;border:1px solid var(--border);vertical-align:top;}
+.output-area table tr:nth-child(even) td{background:rgba(14,165,160,.04);}
+.output-area ul,.output-area ol{padding-left:18px;margin:4px 0;}
+.output-area li{margin-bottom:3px;}
+.output-area strong,.output-area b{font-weight:700;color:var(--text);}
+.output-area hr{border:none;border-top:2px solid #0d7a8a;margin:14px 0;}
+.output-area .section-header{background:#0d7a8a;color:#fff;padding:6px 12px;border-radius:6px;font-weight:800;font-size:.82rem;margin:14px 0 8px;display:block;text-transform:uppercase;}
+
+/* PRINT / PDF */
+@media print{
+  header,footer,.col-left,#installPopup,#upgradePopup,.btn,.notif-box,#generateFeedback,#statusBadge,.aktivasi-box,.limit-bar-wrap{display:none!important;}
+  body,.output-area{background:#fff!important;color:#000!important;font-size:11pt;}
+  .two-col{display:block!important;}
+  .col-right{position:static!important;}
+  .card{border:none!important;box-shadow:none!important;padding:0!important;}
+  .output-area{border:none!important;padding:0!important;min-height:unset!important;}
+  .output-area table{page-break-inside:avoid;}
+  .output-area table th{background:#1a5276!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .output-area table tr:nth-child(even) td{background:#f0f8ff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .output-area .section-header{background:#1a5276!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
 .output-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);gap:10px;}
 .output-placeholder .ph-icon{font-size:2.5rem;opacity:.4;}
 .output-placeholder p{font-size:.82rem;text-align:center;}
@@ -147,6 +172,38 @@ body.dark .output-section h3{color:#5eead4;}
 /* LIMIT BAR */
 .limit-bar-wrap{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:7px 11px;font-size:.74rem;color:#92400e;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
 body.dark .limit-bar-wrap{color:#fcd34d;}
+
+/* OUTPUT RENDERED HTML */
+.output-area{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:16px 20px;font-size:.83rem;color:var(--text);line-height:1.9;min-height:300px;font-family:'Segoe UI',system-ui,sans-serif;}
+.output-area h1{font-size:1.1rem;font-weight:900;color:#0d7a8a;text-align:center;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.5px;}
+.output-area h2{font-size:.95rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);padding:6px 12px;margin:16px -4px 8px;border-radius:6px;}
+.output-area h3{font-size:.85rem;font-weight:700;color:#0d7a8a;margin:12px 0 4px;border-left:3px solid #0ea5a0;padding-left:8px;}
+.output-area h4{font-size:.82rem;font-weight:700;color:var(--text);margin:8px 0 3px;}
+.output-area table{width:100%;border-collapse:collapse;margin:8px 0;font-size:.78rem;}
+.output-area table th{background:#0ea5a0;color:#fff;padding:7px 10px;text-align:left;font-weight:700;font-size:.75rem;}
+.output-area table td{padding:6px 10px;border:1px solid #cbd5e1;vertical-align:top;}
+.output-area table tr:nth-child(even) td{background:rgba(14,165,160,.04);}
+.output-area ul,.output-area ol{padding-left:18px;margin:4px 0;}
+.output-area li{margin-bottom:3px;}
+.output-area p{margin:4px 0;}
+.output-area strong{color:#0d4a47;font-weight:700;}
+body.dark .output-area strong{color:#5eead4;}
+body.dark .output-area h2{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+body.dark .output-area table th{background:#0d4a47;}
+body.dark .output-area table td{border-color:#334155;}
+body.dark .output-area table tr:nth-child(even) td{background:rgba(14,165,160,.08);}
+.output-area hr{border:none;border-top:2px solid rgba(14,165,160,.2);margin:12px 0;}
+
+/* PRINT */
+@media print{
+  body *{visibility:hidden;}
+  #printArea,#printArea *{visibility:visible;}
+  #printArea{position:fixed;top:0;left:0;width:100%;padding:20px 28px;font-size:11pt;line-height:1.6;}
+  #printArea h1{font-size:13pt;color:#000!important;-webkit-print-color-adjust:exact;}
+  #printArea h2{background:#0ea5a0!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  #printArea table{page-break-inside:avoid;}
+  #printArea table th{background:#0ea5a0!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
 </style>
 </head>
 <body>
@@ -438,11 +495,12 @@ body.dark .limit-bar-wrap{color:#fcd34d;}
 
         <!-- OUTPUT STREAMING -->
         <div id="outputContent" style="display:none;">
-          <div class="output-area" id="hasilModul"></div>
-          <div style="margin-top:10px;display:flex;flex-direction:column;gap:7px;">
-            <button class="btn btn-copy" onclick="copyHasil()">📋 Salin Modul</button>
-            <div class="notif-box" id="notifCopy">✅ Modul berhasil disalin!</div>
+          <div class="output-area" id="hasilModul" style="white-space:normal;"></div>
+          <div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap;">
+            <button class="btn btn-copy" onclick="copyHasil()" style="flex:1;">📋 Salin Teks</button>
+            <button class="btn" onclick="downloadPDF()" style="flex:1;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;justify-content:center;padding:11px;font-size:.88rem;border-radius:9px;">🖨️ Download PDF</button>
           </div>
+          <div class="notif-box" id="notifCopy">✅ Modul berhasil disalin!</div>
           <div id="generateFeedback" style="font-size:.75rem;text-align:center;margin-top:6px;min-height:14px;color:#15803d;"></div>
         </div>
 
@@ -712,7 +770,18 @@ async function generateModul(){
   gaEvent('generate_modul_ajar',{mapel,fase,topik});
 
   // Susun prompt — dikirim ke server, key Gemini aman di env Vercel
-  const userPrompt=`Bertindak sebagai guru profesional, pengembang kurikulum, asesor sekolah, dan praktisi Kurikulum Merdeka yang memahami standar supervisi kepala sekolah dan administrasi pendidikan terbaru.
+  const userPrompt=`PENTING: Langsung output dokumen modul ajar tanpa kalimat pembuka, basa-basi, pengantar, atau penjelasan apapun. Mulai langsung dari baris pertama dokumen.
+
+Bertindak sebagai guru profesional, pengembang kurikulum, asesor sekolah, dan praktisi Kurikulum Merdeka yang memahami standar supervisi kepala sekolah dan administrasi pendidikan terbaru.
+
+INSTRUKSI FORMAT OUTPUT (WAJIB DIIKUTI):
+- Gunakan heading ## untuk setiap bagian utama (contoh: ## A. IDENTITAS MODUL AJAR)
+- Gunakan heading ### untuk sub-bagian
+- Gunakan tabel markdown untuk identitas dan data terstruktur (format: | Kolom1 | Kolom2 |\n|---|---|\n| isi | isi |)
+- Gunakan **bold** untuk label penting
+- Gunakan bullet list (- item) untuk daftar
+- JANGAN tulis kalimat pembuka/penutup seperti "Tentu saya akan..." atau "Demikian modul ajar..."
+- Langsung mulai dengan ## MODUL AJAR KURIKULUM MERDEKA
 
 Buatkan MODUL AJAR KURIKULUM MERDEKA yang lengkap, detail, sistematis, profesional, realistis, siap pakai, dan minim revisi.
 
@@ -814,28 +883,57 @@ Pastikan modul: mudah dipahami siswa, cocok dengan alokasi waktu ${alokasi}, tid
 
     const text=data.text||'';
 
-    // Tampilkan dengan efek ketik sederhana
-    hasilEl.textContent='';
-    let i=0;
-    const speed=4; // ms per karakter — bisa dinaikan biar kerasa streaming
-    function typeChar(){
-      if(i<text.length){
-        hasilEl.textContent+=text[i];
-        i++;
-        // Auto scroll
-        hasilEl.scrollTop=hasilEl.scrollHeight;
-        setTimeout(typeChar,speed);
-      }else{
-        hasilEl.classList.remove('typing-cursor');
-        document.getElementById('statusBadge').textContent='✅ Selesai';
-        document.getElementById('generateFeedback').textContent='✅ Modul berhasil dibuat!';
-        incrementLimit();
-        updateLimitDisplay();
-        saveHistori({mapel,fase,topik,teks:text});
-        updateHistoriBadge();
-      }
+    // Konversi markdown → HTML rapi
+    function mdToHtml(md){
+      // Hapus kalimat basa-basi di awal (sebelum baris dokumen sesungguhnya)
+      md = md.replace(/^[\s\S]*?(?=\*\*MODUL AJAR|#\s*MODUL AJAR|MODUL AJAR|═══)/i, '').trim() || md.trim();
+
+      // Proses tabel dulu (sebelum replace lain)
+      md = md.replace(/\|(.+)\|[ \t]*\n\|[-| :]+\|[ \t]*\n((?:\|.+\|[ \t]*\n?)+)/g, (match, header, body) => {
+        const headers = header.split('|').map(s=>s.trim()).filter(Boolean);
+        const rows = body.trim().split('\n').map(row =>
+          row.split('|').map(s=>s.trim()).filter(Boolean)
+        ).filter(r=>r.length>0);
+        let t = '<table><tr>' + headers.map(h=>`<th>${h}</th>`).join('') + '</tr>';
+        rows.forEach(r => { t += '<tr>' + r.map(c=>`<td>${c}</td>`).join('') + '</tr>'; });
+        return t + '</table>\n';
+      });
+
+      let h = md
+        // Garis pemisah ═══
+        .replace(/^[═=]{3,}.*$/gm, '<hr>')
+        // Section header ## atau #
+        .replace(/^#{1,2}\s+(.+)$/gm, '<span class="section-header">$1</span>')
+        .replace(/^#{3}\s+(.+)$/gm, '<h3>$1</h3>')
+        // Bold **text**
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // HR ---
+        .replace(/^---+$/gm, '<hr>')
+        // Numbered list
+        .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
+        // Bullet list
+        .replace(/^[-*]\s+(.+)$/gm, '<li>$1</li>')
+        // Wrap consecutive <li> dalam <ul>
+        .replace(/(<li>[\s\S]+?<\/li>)(\n<li>[\s\S]+?<\/li>)*/g, m => '<ul>' + m + '</ul>')
+        // Baris kosong → paragraf baru
+        .replace(/\n{2,}/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+      return '<p>' + h + '</p>';
     }
-    typeChar();
+
+    const html=mdToHtml(text);
+
+    // Tampilkan langsung (tidak perlu typeChar karena HTML)
+    hasilEl.innerHTML=html;
+    hasilEl.classList.remove('typing-cursor');
+    document.getElementById('statusBadge').textContent='✅ Selesai';
+    document.getElementById('generateFeedback').textContent='✅ Modul berhasil dibuat!';
+    // Simpan teks mentah untuk copy
+    hasilEl.dataset.rawText=text;
+    incrementLimit();
+    updateLimitDisplay();
+    saveHistori({mapel,fase,topik,teks:text});
+    updateHistoriBadge();
 
   }catch(e){
     hasilEl.classList.remove('typing-cursor');
@@ -852,13 +950,21 @@ Pastikan modul: mudah dipahami siswa, cocok dengan alokasi waktu ${alokasi}, tid
 // COPY
 // ============================================================
 function copyHasil(){
-  const teks=document.getElementById('hasilModul').textContent;
+  const el=document.getElementById('hasilModul');
+  const teks=el.dataset.rawText||el.innerText;
   if(!teks)return;
   navigator.clipboard.writeText(teks).then(()=>{
     const notif=document.getElementById('notifCopy');
     notif.style.display='block';
     setTimeout(()=>notif.style.display='none',2500);
   });
+}
+
+// ============================================================
+// DOWNLOAD PDF
+// ============================================================
+function downloadPDF(){
+  window.print();
 }
 
 // ============================================================
