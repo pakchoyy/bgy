@@ -1,37 +1,47 @@
-// sw.js — Bantu Guru Yuk! Service Worker v2
-// Strategy: Cache app shell → buka instant kayak app
-//           API & dynamic content → selalu dari network
+// BGY Modul Ajar — Service Worker v1.0
+// Cache: aset statis saja. API/generate tetap butuh internet.
 
-const CACHE = 'bgy-shell-v2';
-const SHELL = ['/', '/index.html', '/manifest.json', '/guru-cibisd2.png'];
+const CACHE = 'bgy-modul-ajar-v1';
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
-  self.skipWaiting();
+// Aset yang di-cache saat install (disesuaikan dengan jalur modul-ajar)
+const PRECACHE = [
+  '/modul-ajar/',
+  '/modul-ajar/index.html',
+  '../guru-cibisd2.png',
+  '/modul-ajar/manifest.json'
+];
+
+// ── Install: pre-cache aset utama ──
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(cache => {
+      return Promise.allSettled(
+        PRECACHE.map(url => cache.add(url).catch(() => null))
+      );
+    }).then(() => self.skipWaiting())
+  );
 });
 
-self.addEventListener('activate', (e) => {
+// ── Activate: hapus cache lama ──
+self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url);
-  if (e.request.method !== 'GET') return;
-  // API & external → network only
-  if (url.hostname !== self.location.hostname) return;
-  if (url.pathname.startsWith('/api/')) return;
-  // Shell → cache first
-  if (SHELL.includes(url.pathname) || url.pathname === '/') {
-    e.respondWith(
-      caches.match(e.request).then(cached => cached || fetch(e.request))
-    );
-    return;
-  }
-  // Lainnya → network
-  e.respondWith(fetch(e.request));
+// ── Fetch: Cache First / Network Fallback untuk aset statis ──
+self.addEventListener('fetch', e => {
+  // Hanya tangani request HTTP/HTTPS (hindari chrome-extension dll)
+  if (!e.request.url.startsWith('http')) return;
+
+  e.respondWith(
+    caches.match(e.request).then(cachedResponse => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(e.request);
+    })
+  );
 });
