@@ -626,15 +626,26 @@ function incrementDaily(){
   localStorage.setItem(STORAGE_KEY_LIMIT,JSON.stringify(data));
 }
 function updateLimitDisplay(){
-  if(_isPro){document.getElementById('limitBarWrapper').style.display='none';document.getElementById('limitBadgeBtn').textContent='PRO ∞';return;}
+  if(_isPro){
+    document.getElementById('limitBarWrapper').style.display='none';
+    const badge=document.getElementById('limitBadgeBtn');
+    if(badge){badge.style.display='none';}
+    return;
+  }
   const lc=checkLimit();
   const wrapper=document.getElementById('limitBarWrapper');
   const count=document.getElementById('limitCount');
   const badge=document.getElementById('limitBadgeBtn');
+  const btn=document.getElementById('btnGenerate');
   const remaining=Math.max(0,lc.remaining);
-  badge.textContent='('+lc.used+'/'+DAILY_LIMIT+')';
-  if(!lc.ok){wrapper.style.display='flex';count.textContent='0 — habis!';}
-  else{wrapper.style.display=lc.used>0?'flex':'none';count.textContent=remaining+' kali';}
+  if(badge){badge.style.display='inline';badge.textContent='('+lc.used+'/'+DAILY_LIMIT+')';}
+  if(!lc.ok){
+    wrapper.style.display='flex';count.textContent='0 — habis!';
+    if(btn){btn.innerHTML='⛔ Limit Habis — Coba Besok';btn.disabled=true;}
+  }else{
+    wrapper.style.display=lc.used>0?'flex':'none';count.textContent=remaining+' kali';
+    if(btn){btn.disabled=false;}
+  }
 }
 
 // ============================================================
