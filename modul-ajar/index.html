@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bantu Guru Yuk | Modul Ajar</title>
+<link rel="icon" href="../guru-cibisd2.png" sizes="192x192" type="image/png"/>
+<link rel="shortcut icon" href="../guru-cibisd2.png" type="image/png"/>
+<link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
+<link rel="manifest" href="/modul-ajar/manifest.json"/>
+<meta name="theme-color" content="#0d9488"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-83WBBEE5BG');
+  function gaEvent(n,p){if(typeof gtag==='function')gtag('event',n,p||{});}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
+  --white:#fff;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
+  --gray-700:#334155;--blue:#0ea5a0;--radius:12px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;
+  --text-light:#64748b;--border:#e2e8f0;--input-bg:#f8fafc;
+  --accent:#f59e0b;
+}
+body.dark{
+  --bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;
+  --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;}
+
+/* LOADING */
+#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:#0d2b3e;display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;z-index:99999;}
+#loadingScreen::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);opacity:.85;}
+#loadingScreen img{width:80px;margin-bottom:16px;border-radius:18px;position:relative;z-index:1;box-shadow:0 4px 20px rgba(0,0,0,.35);}
+#loadingScreen .ls-title{font-size:1.5rem;font-weight:900;position:relative;z-index:1;text-shadow:0 2px 8px rgba(0,0,0,.4);}
+#loadingScreen .ls-sub{font-size:.85rem;margin-top:8px;opacity:1;position:relative;z-index:1;color:#e0f7f6;font-weight:600;}
+.ls-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-top:20px;position:relative;z-index:1;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* INSTALL POPUP */
+#installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+#installPopup.show{top:0;}
+#installPopup button{border:none;border-radius:8px;padding:5px 14px;font-weight:700;cursor:pointer;font-size:.8rem;}
+.btn-install{background:#fff;color:#2563eb;}
+.btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
+.header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
+.header-brand-text h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;}
+.header-brand-text p{font-size:.68rem;color:rgba(255,255,255,.8);font-weight:500;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;transition:background .2s;display:flex;align-items:center;justify-content:center;}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.hdr-menu-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;position:relative;}
+.hdr-menu-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:99px;padding:0 4px;font-size:.55rem;font-weight:800;line-height:14px;min-width:14px;text-align:center;display:none;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:180px;overflow:hidden;display:none;z-index:400;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;}
+.dropdown-item:hover{background:var(--gray-100);}
+body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
+.dropdown-item.active{color:var(--blue);}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+.dropdown-badge{background:#ef4444;color:#fff;border-radius:99px;padding:0 5px;font-size:.6rem;font-weight:800;line-height:16px;display:inline-block;min-width:16px;text-align:center;margin-left:auto;}
+.badge-pro{display:inline-block;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;}
+.badge-free{display:inline-block;background:#64748b;color:#fff;font-size:.6rem;font-weight:800;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;}
+
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:20px;width:100%;flex:1;}
+@media(max-width:640px){main{padding:10px;}}
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+.card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.two-col{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+.col-left{display:flex;flex-direction:column;gap:12px;}
+.col-right{position:sticky;top:80px;}
+
+/* FORM */
+.form-group{margin-bottom:10px;}
+label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
+input[type=text],input[type=email],select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.12);}
+textarea{resize:vertical;}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:500px){.row-2{grid-template-columns:1fr;}}
+.dim-checks{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px;}
+.dim-chip{display:flex;align-items:center;gap:4px;padding:4px 10px;border:1.5px solid var(--border);border-radius:99px;font-size:.72rem;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .18s;background:var(--input-bg);}
+.dim-chip input{display:none;}
+.dim-chip:has(input:checked){background:#cff0ef;border-color:#0ea5a0;color:#0d6e6a;}
+body.dark .dim-chip:has(input:checked){background:#0d3a47;color:#5eead4;border-color:#0ea5a0;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--grad);color:#fff;width:100%;justify-content:center;padding:12px;font-size:.9rem;border-radius:10px;box-shadow:0 4px 14px rgba(37,99,235,.3);}
+.btn-primary:hover{transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-copy{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:100%;justify-content:center;padding:11px;font-size:.88rem;border-radius:9px;}
+.notif-box{background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:600;text-align:center;display:none;margin-top:8px;}
+.aktivasi-box{border:1.5px dashed #0ea5a0;border-radius:10px;padding:12px 14px;background:rgba(14,165,160,.04);margin-top:8px;}
+.aktivasi-box .ak-label{font-size:.78rem;font-weight:700;color:#0d7a8a;margin-bottom:3px;}
+.aktivasi-box .ak-sub{font-size:.71rem;color:var(--text-light);margin-bottom:8px;}
+.aktivasi-row{display:flex;gap:6px;}
+.aktivasi-row input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;}
+.aktivasi-row button{background:linear-gradient(135deg,#0ea5a0,#2d6a7f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.histori-item{border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:7px;background:var(--input-bg);cursor:pointer;transition:all .2s;}
+.histori-item:hover{border-color:var(--blue);background:rgba(59,130,246,.04);}
+.histori-item .hi-meta{font-size:.69rem;color:var(--text-light);margin-bottom:2px;}
+.histori-item .hi-preview{font-size:.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.error-box{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:9px 12px;border-radius:8px;font-size:.79rem;display:none;margin-bottom:10px;}
+.hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.76rem;color:var(--text);line-height:1.8;}
+.hint-bar span{font-weight:700;color:#0d7a8a;}
+body.dark .hint-bar span{color:#5eead4;}
+
+footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
+footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
+footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
+footer a{color:inherit;text-decoration:underline;}
+#menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
+#menuOverlay.open{display:block;}
+
+/* OUTPUT AREA */
+.output-area{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:16px;font-size:.83rem;color:var(--text);line-height:1.9;min-height:300px;white-space:pre-wrap;font-family:'Segoe UI',system-ui,sans-serif;}
+.output-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);gap:10px;}
+.output-placeholder .ph-icon{font-size:2.5rem;opacity:.4;}
+.output-placeholder p{font-size:.82rem;text-align:center;}
+body.dark .output-area{background:#0f172a;}
+
+/* STREAMING CURSOR */
+.typing-cursor::after{content:'▍';animation:blink .7s step-end infinite;color:var(--blue);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* SECTION HEADINGS dalam output */
+.output-section{margin-bottom:16px;}
+.output-section h3{font-size:.85rem;font-weight:800;color:#0d7a8a;margin-bottom:6px;padding-bottom:4px;border-bottom:1.5px solid rgba(14,165,160,.2);}
+body.dark .output-section h3{color:#5eead4;}
+
+/* LIMIT BAR */
+.limit-bar-wrap{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:7px 11px;font-size:.74rem;color:#92400e;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+body.dark .limit-bar-wrap{color:#fcd34d;}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <img src="../guru-cibisd2.png" alt="Logo"/>
+  <div class="ls-title">Bantu Guru Yuk</div>
+  <div class="ls-sub">Modul Ajar SD &bull; Powered by AI</div>
+  <div class="ls-spinner"></div>
+</div>
+
+<!-- INSTALL POPUP -->
+<div id="installPopup">
+  <span>📲 Install aplikasi Bantu Guru Yuk</span>
+  <button class="btn-install" onclick="installApp()">Install</button>
+  <button class="btn-install-close" onclick="closeInstall()">✕</button>
+</div>
+
+<div id="menuOverlay" onclick="closeMenu()"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="../guru-cibisd2.png" alt="Logo"/>
+      <div class="header-brand-text">
+        <h1>Bantu Guru Yuk | Modul Ajar <span id="hBadge" class="badge-free">FREE</span></h1>
+        <p>Generator Modul Ajar SD • Kurikulum Merdeka</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang">🌙</button>
+      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu">
+        ☰
+        <span id="menuBadge" class="hdr-menu-badge"></span>
+      </button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()">🏠 Home</button>
+        <button class="dropdown-item" id="mi-histori" onclick="selectTab('histori');closeMenu()">
+          🕒 Histori
+          <span id="historiBadge" class="dropdown-badge" style="display:none;"></span>
+        </button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
+        <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TAB TENTANG -->
+<div id="tab-tentang" style="display:none;">
+<main>
+  <div class="card">
+    <div class="card-title">ℹ️ Tentang Aplikasi</div>
+    <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Modul Ajar v26.5.0</p>
+    <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Generator Modul Ajar SD</b> membantu guru SD membuat Modul Ajar lengkap sesuai <b>Kurikulum Merdeka</b> secara otomatis langsung di halaman ini menggunakan AI.</p>
+    <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur</h4>
+    <ul style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
+      <li>Generate Modul Ajar SD lengkap &amp; siap pakai langsung di halaman</li>
+      <li>Sesuai Kurikulum Merdeka (Kemendikdasmen)</li>
+      <li>Mencakup identitas, tujuan, asesmen, kegiatan, hingga refleksi</li>
+      <li>Streaming output langsung — tidak perlu copy-paste ke AI lain</li>
+      <li>Histori 20 modul terakhir</li>
+    </ul>
+  </div>
+</main>
+</div>
+
+<!-- TAB HISTORI -->
+<div id="tab-histori" style="display:none;">
+<main>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div class="card-title" style="margin-bottom:0;border:none;padding:0;">🕒 Histori Modul</div>
+      <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 11px;font-size:.74rem;font-weight:700;cursor:pointer;">🗑️ Hapus Semua</button>
+    </div>
+    <div id="historiList"><div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya! 😊</div></div>
+  </div>
+</main>
+</div>
+
+<!-- TAB KONTAK -->
+<div id="tab-kontak" style="display:none;">
+<main>
+  <div class="card">
+    <div class="card-title">📬 Kontak</div>
+    <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau aktivasi Pro:</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp</button>
+      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok</button>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- TAB HOME -->
+<div id="tab-home">
+<main>
+
+  <div class="hint-bar">
+    💡 <span>Isi form</span> → <span>Klik Generate</span> → <span>Modul Ajar langsung muncul di sini</span> → <span>Salin atau simpan 🎉</span>
+  </div>
+
+  <div class="two-col">
+    <!-- ============ KOLOM KIRI: FORM ============ -->
+    <div class="col-left">
+      <div class="card">
+        <div class="card-title">📋 Identitas Modul Ajar</div>
+
+        <!-- LIMIT BAR -->
+        <div id="limitBarWrapper" style="display:none;" class="limit-bar-wrap">
+          ⚡ Sisa generate hari ini: <strong id="limitCount"></strong>
+        </div>
+
+        <!-- ============================
+             FORM FIELDS
+             (Pak Choy sesuaikan di sini)
+             ============================ -->
+
+        <div class="form-group">
+          <label>Mata Pelajaran</label>
+          <select id="mapel">
+            <option value="">-- Pilih mapel --</option>
+            <option>Bahasa Indonesia</option>
+            <option>Matematika</option>
+            <option>IPAS</option>
+            <option>Pendidikan Pancasila</option>
+            <option>PJOK</option>
+            <option>Seni Budaya</option>
+            <option>Pendidikan Agama Islam</option>
+            <option>Bahasa Inggris</option>
+          </select>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>Fase / Kelas</label>
+            <select id="faseKelas">
+              <option value="Fase A / Kelas 1 SD">Fase A / Kelas 1</option>
+              <option value="Fase A / Kelas 2 SD">Fase A / Kelas 2</option>
+              <option value="Fase B / Kelas 3 SD">Fase B / Kelas 3</option>
+              <option value="Fase B / Kelas 4 SD">Fase B / Kelas 4</option>
+              <option value="Fase C / Kelas 5 SD" selected>Fase C / Kelas 5</option>
+              <option value="Fase C / Kelas 6 SD">Fase C / Kelas 6</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Alokasi Waktu</label>
+            <input type="text" id="alokasiWaktu" placeholder="Misal: 2 x 35 menit"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Topik / Materi Pokok</label>
+          <input type="text" id="topikMateri" placeholder="Contoh: Bilangan Bulat, Teks Deskripsi, Gaya dan Gerak..."/>
+        </div>
+
+        <div class="form-group">
+          <label>Capaian Pembelajaran (CP) — Opsional</label>
+          <textarea id="cpText" rows="3" placeholder="Tulis atau tempel CP yang relevan dari Permendikbud... (biarkan kosong untuk default)"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Model / Pendekatan Pembelajaran</label>
+          <select id="modelPembelajaran">
+            <option value="Discovery Learning">Discovery Learning</option>
+            <option value="Project Based Learning (PjBL)">Project Based Learning (PjBL)</option>
+            <option value="Problem Based Learning (PBL)">Problem Based Learning (PBL)</option>
+            <option value="Cooperative Learning">Cooperative Learning</option>
+            <option value="Inquiry Learning">Inquiry Learning</option>
+            <option value="Kontekstual / Kontextual Teaching Learning (CTL)">Kontekstual (CTL)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Profil Pelajar Pancasila</label>
+          <div class="dim-checks">
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Beriman, Bertakwa kepada Tuhan YME dan Berakhlak Mulia"/>Beriman &amp; Berakhlak</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Berkebinekaan Global" checked/>Berkebinekaan Global</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Bergotong Royong" checked/>Bergotong Royong</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Mandiri"/>Mandiri</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Bernalar Kritis" checked/>Bernalar Kritis</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Kreatif"/>Kreatif</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Konteks / Catatan Tambahan (Opsional)</label>
+          <textarea id="konteksNotes" rows="3" placeholder="Contoh: Sekolah di daerah pegunungan, siswa dominan visual..."></textarea>
+        </div>
+
+      </div><!-- /card identitas -->
+
+      <div class="card">
+        <div class="card-title">⚙️ Pengaturan Output</div>
+        <div class="row-2">
+          <div class="form-group">
+            <label>Kelengkapan</label>
+            <select id="kelengkapan">
+              <option value="lengkap dan detail">Lengkap &amp; Detail</option>
+              <option value="sedang (komponen utama)">Sedang</option>
+              <option value="ringkas (pokok-pokok saja)">Ringkas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tahun Ajaran</label>
+            <input type="text" id="tahunAjar" value="2025/2026"/>
+          </div>
+        </div>
+      </div>
+
+      <div id="errorBox" class="error-box"></div>
+
+      <button class="btn btn-primary" id="btnGenerate" onclick="generateModul()">
+        ✨ Generate Modul Ajar <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;"></span>
+      </button>
+
+      <!-- AKTIVASI PRO -->
+      <div class="aktivasi-box" id="aktivasiBox">
+        <div class="ak-label">🔓 Aktivasi Pro — Generate Unlimited</div>
+        <div style="display:flex;gap:4px;margin-bottom:10px;background:#f1f5f9;border-radius:8px;padding:3px;">
+          <button id="tabKodeBtn" onclick="switchAktivasiTab('kode')"
+            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:#0ea5a0;color:#fff;transition:all .2s;">
+            🔑 Kode Aktivasi
+          </button>
+          <button id="tabEmailBtn" onclick="switchAktivasiTab('email')"
+            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;">
+            📧 Sudah Beli? Login Email
+          </button>
+        </div>
+        <div id="panelKode">
+          <div class="ak-sub"><a href="https://bantuguruyuk.web.id/aktvs-ma.html" target="_blank" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk dapatkan kode aktivasi.</div>
+          <div class="aktivasi-row">
+            <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..."/>
+            <button onclick="aktivasiPro()">Aktifkan</button>
+          </div>
+        </div>
+        <div id="panelEmail" style="display:none;">
+          <div class="ak-sub" style="margin-bottom:6px;">Masukkan email yang kamu pakai saat beli Pro.</div>
+          <div class="aktivasi-row">
+            <input type="email" id="inputEmailLogin" placeholder="email@sekolah.com"/>
+            <button onclick="loginEmail()">Login</button>
+          </div>
+        </div>
+        <div id="aktivasiMsg" style="font-size:.72rem;margin-top:6px;min-height:14px;"></div>
+      </div>
+
+    </div><!-- /col-left -->
+
+    <!-- ============ KOLOM KANAN: OUTPUT ============ -->
+    <div class="col-right">
+      <div class="card" id="hasilCard">
+        <div class="card-title" style="justify-content:space-between;">
+          <span>📄 Hasil Modul Ajar</span>
+          <span id="statusBadge" style="font-size:.68rem;font-weight:600;color:var(--text-light);"></span>
+        </div>
+
+        <!-- PLACEHOLDER saat belum generate -->
+        <div class="output-placeholder" id="outputPlaceholder">
+          <div class="ph-icon">📝</div>
+          <p>Isi form di kiri lalu klik<br/><b>Generate Modul Ajar</b><br/><span style="font-size:.74rem;opacity:.7;">Modul akan langsung tampil di sini</span></p>
+        </div>
+
+        <!-- OUTPUT STREAMING -->
+        <div id="outputContent" style="display:none;">
+          <div class="output-area" id="hasilModul"></div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:7px;">
+            <button class="btn btn-copy" onclick="copyHasil()">📋 Salin Modul</button>
+            <div class="notif-box" id="notifCopy">✅ Modul berhasil disalin!</div>
+          </div>
+          <div id="generateFeedback" style="font-size:.75rem;text-align:center;margin-top:6px;min-height:14px;color:#15803d;"></div>
+        </div>
+
+      </div>
+    </div><!-- /col-right -->
+
+  </div>
+</main>
+</div>
+
+<footer>
+  <div class="footer-title">Modul Ajar SD • Kurikulum Merdeka</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.5.0</div>
+</footer>
+
+<!-- UPGRADE POPUP -->
+<div id="upgradePopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;">
+  <div style="background:var(--card-bg);border-radius:18px;padding:30px 24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3);position:relative;">
+    <div style="font-size:2.2rem;margin-bottom:10px;">🔒</div>
+    <div style="font-weight:800;font-size:1.05rem;margin-bottom:8px;color:var(--text)">Fitur Khusus PRO</div>
+    <div style="font-size:.85rem;color:var(--text-light);margin-bottom:22px;line-height:1.6">
+      Batas generate harian sudah habis.<br><br>
+      Upgrade sekarang untuk generate unlimited Modul Ajar tanpa batas!
+    </div>
+    <a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank"
+      style="display:block;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border-radius:10px;padding:11px 0;font-weight:800;font-size:.92rem;text-align:center;width:100%;margin-bottom:10px;text-decoration:none;">
+      🚀 Upgrade ke PRO Sekarang
+    </a>
+    <button onclick="document.getElementById('upgradePopup').style.display='none';"
+      style="background:var(--gray-100);color:var(--text-light);border:none;border-radius:10px;padding:9px 0;font-size:.82rem;cursor:pointer;width:100%;">
+      Nanti saja
+    </button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// KONFIGURASI
+// ============================================================
+const DAILY_LIMIT = 2; // Free: 2x/hari
+const STORAGE_KEY_HISTORI = 'bgy_ma_histori';
+const STORAGE_KEY_LIMIT   = 'bgy_ma_limit';
+
+// Supabase
+const sbClient = window.supabase.createClient(
+  "https://xtmpiqpmwirsrcsphsto.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w"
+);
+
+// ============================================================
+// INIT
+// ============================================================
+(function init(){
+  window.addEventListener('load',()=>{
+    const ls=document.getElementById('loadingScreen');
+    if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>ls.remove(),400);}
+  });
+  const saved=localStorage.getItem('theme');
+  if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️';}
+  updateLimitDisplay();
+  updateHistoriBadge();
+  checkProStatus();
+
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();window._dip=e;
+    const last=localStorage.getItem('installClosedAt');
+    if(!last||Date.now()-parseInt(last)>86400000){
+      setTimeout(()=>document.getElementById('installPopup').classList.add('show'),2000);
+    }
+  });
+})();
+
+// ============================================================
+// DARK MODE
+// ============================================================
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  const d=document.body.classList.contains('dark');
+  document.getElementById('darkBtn').textContent=d?'☀️':'🌙';
+  localStorage.setItem('theme',d?'dark':'light');
+}
+
+// ============================================================
+// PWA
+// ============================================================
+function installApp(){if(window._dip){window._dip.prompt();window._dip=null;}closeInstall();}
+function closeInstall(){document.getElementById('installPopup').classList.remove('show');localStorage.setItem('installClosedAt',Date.now().toString());}
+
+// ============================================================
+// MENU
+// ============================================================
+let _menuOpen=false;
+function toggleMenu(){
+  _menuOpen=!_menuOpen;
+  document.getElementById('dropdownMenu').classList.toggle('open',_menuOpen);
+  document.getElementById('menuOverlay').classList.toggle('open',_menuOpen);
+}
+function closeMenu(){
+  _menuOpen=false;
+  document.getElementById('dropdownMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function selectTab(tab){
+  ['home','histori','tentang','kontak'].forEach(t=>{
+    const d=document.getElementById('tab-'+t);
+    if(d)d.style.display=t===tab?'block':'none';
+    const mi=document.getElementById('mi-'+t);
+    if(mi)mi.classList.toggle('active',t===tab);
+  });
+  if(tab==='histori')renderHistoriList();
+}
+
+// ============================================================
+// LIMIT & PRO
+// ============================================================
+let _isPro = false;
+
+function checkProStatus(){
+  const proData=localStorage.getItem('bgy_pro_ma');
+  if(proData){
+    try{
+      const d=JSON.parse(proData);
+      if(d.is_pro){
+        _isPro=true;
+        document.getElementById('hBadge').textContent='PRO';
+        document.getElementById('hBadge').className='badge-pro';
+        document.getElementById('aktivasiBox').style.display='none';
+      }
+    }catch(e){}
+  }
+}
+
+function checkLimit(){
+  if(_isPro)return{ok:true,used:0,remaining:999};
+  const today=new Date().toDateString();
+  let data=JSON.parse(localStorage.getItem(STORAGE_KEY_LIMIT)||'{}');
+  if(data.date!==today)data={date:today,used:0};
+  const used=data.used||0;
+  return{ok:used<DAILY_LIMIT,used,remaining:DAILY_LIMIT-used};
+}
+
+function incrementLimit(){
+  const today=new Date().toDateString();
+  let data=JSON.parse(localStorage.getItem(STORAGE_KEY_LIMIT)||'{}');
+  if(data.date!==today)data={date:today,used:0};
+  data.used=(data.used||0)+1;
+  localStorage.setItem(STORAGE_KEY_LIMIT,JSON.stringify(data));
+}
+
+function updateLimitDisplay(){
+  if(_isPro){document.getElementById('limitBarWrapper').style.display='none';document.getElementById('limitBadgeBtn').textContent='PRO ∞';return;}
+  const lc=checkLimit();
+  const wrapper=document.getElementById('limitBarWrapper');
+  const count=document.getElementById('limitCount');
+  const badge=document.getElementById('limitBadgeBtn');
+  badge.textContent='('+lc.remaining+'/'+DAILY_LIMIT+')';
+  if(!lc.ok){wrapper.style.display='flex';count.textContent='0 — habis!';}
+  else{wrapper.style.display=lc.used>0?'flex':'none';count.textContent=lc.remaining+' kali';}
+}
+
+// ============================================================
+// AKTIVASI PRO
+// ============================================================
+function switchAktivasiTab(tab){
+  document.getElementById('panelKode').style.display=tab==='kode'?'block':'none';
+  document.getElementById('panelEmail').style.display=tab==='email'?'block':'none';
+  document.getElementById('tabKodeBtn').style.background=tab==='kode'?'#0ea5a0':'transparent';
+  document.getElementById('tabKodeBtn').style.color=tab==='kode'?'#fff':'#64748b';
+  document.getElementById('tabEmailBtn').style.background=tab==='email'?'#0ea5a0':'transparent';
+  document.getElementById('tabEmailBtn').style.color=tab==='email'?'#fff':'#64748b';
+}
+
+async function aktivasiPro(){
+  const kode=document.getElementById('inputKodeAktivasi').value.trim().toUpperCase();
+  const msgEl=document.getElementById('aktivasiMsg');
+  if(!kode){msgEl.style.color='#dc2626';msgEl.textContent='⚠️ Kode tidak boleh kosong.';return;}
+  msgEl.style.color='#0d7a8a';msgEl.textContent='⏳ Memeriksa kode...';
+  try{
+    const{data,error}=await sbClient.from('pro_licenses').select('*').eq('kode',kode).eq('tool','modul_ajar').single();
+    if(error||!data){msgEl.style.color='#dc2626';msgEl.textContent='❌ Kode tidak valid atau tidak ditemukan.';return;}
+    if(data.is_used&&data.used_by&&data.used_by!==kode){msgEl.style.color='#dc2626';msgEl.textContent='❌ Kode sudah digunakan.';return;}
+    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,kode}));
+    _isPro=true;
+    document.getElementById('hBadge').textContent='PRO';
+    document.getElementById('hBadge').className='badge-pro';
+    document.getElementById('aktivasiBox').style.display='none';
+    updateLimitDisplay();
+    msgEl.style.color='#15803d';msgEl.textContent='✅ Aktivasi berhasil! Selamat menjadi PRO 🎉';
+    gaEvent('aktivasi_pro_ma',{kode});
+  }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='❌ Gagal menghubungi server. Coba lagi.';}
+}
+
+async function loginEmail(){
+  const email=document.getElementById('inputEmailLogin').value.trim().toLowerCase();
+  const msgEl=document.getElementById('aktivasiMsg');
+  if(!email){msgEl.style.color='#dc2626';msgEl.textContent='⚠️ Email tidak boleh kosong.';return;}
+  msgEl.style.color='#0d7a8a';msgEl.textContent='⏳ Memeriksa email...';
+  try{
+    const{data,error}=await sbClient.from('pro_licenses').select('*').eq('email',email).eq('tool','modul_ajar').single();
+    if(error||!data||!data.is_pro){msgEl.style.color='#dc2626';msgEl.textContent='❌ Email tidak ditemukan atau belum Pro.';return;}
+    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email}));
+    _isPro=true;
+    document.getElementById('hBadge').textContent='PRO';
+    document.getElementById('hBadge').className='badge-pro';
+    document.getElementById('aktivasiBox').style.display='none';
+    updateLimitDisplay();
+    msgEl.style.color='#15803d';msgEl.textContent='✅ Login berhasil! Selamat datang PRO 🎉';
+  }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='❌ Gagal menghubungi server.';}
+}
+
+// ============================================================
+// GENERATE MODUL — API CLAUDE
+// ============================================================
+async function generateModul(){
+  const errBox=document.getElementById('errorBox');
+  errBox.style.display='none';
+
+  // Ambil nilai form
+  const mapel=document.getElementById('mapel').value;
+  const fase=document.getElementById('faseKelas').value;
+  const alokasi=document.getElementById('alokasiWaktu').value.trim()||'2 x 35 menit';
+  const topik=document.getElementById('topikMateri').value.trim();
+  const cp=document.getElementById('cpText').value.trim();
+  const model=document.getElementById('modelPembelajaran').value;
+  const p5=[...document.querySelectorAll('.cb-p5:checked')].map(c=>c.value).join(', ');
+  const konteks=document.getElementById('konteksNotes').value.trim();
+  const kelengkapan=document.getElementById('kelengkapan').value;
+  const tahun=document.getElementById('tahunAjar').value.trim()||'2025/2026';
+
+  // Validasi
+  if(!mapel){errBox.textContent='⚠️ Pilih mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
+  if(!topik){errBox.textContent='⚠️ Topik / materi pokok belum diisi.';errBox.style.display='block';return;}
+  if(!p5){errBox.textContent='⚠️ Pilih minimal satu dimensi Profil Pelajar Pancasila.';errBox.style.display='block';return;}
+
+  // Cek limit
+  const lc=checkLimit();
+  if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
+
+  // UI loading
+  const btn=document.getElementById('btnGenerate');
+  btn.disabled=true;
+  btn.textContent='⏳ Membuat modul...';
+  document.getElementById('outputPlaceholder').style.display='none';
+  document.getElementById('outputContent').style.display='block';
+  const hasilEl=document.getElementById('hasilModul');
+  hasilEl.textContent='';
+  hasilEl.classList.add('typing-cursor');
+  document.getElementById('statusBadge').textContent='🟡 Generating...';
+  document.getElementById('generateFeedback').textContent='';
+  gaEvent('generate_modul_ajar',{mapel,fase,topik});
+
+  // Susun prompt
+  const userPrompt=`Buatkan Modul Ajar SD sesuai Kurikulum Merdeka dengan detail berikut:
+
+📌 IDENTITAS MODUL
+- Mata Pelajaran : ${mapel}
+- Fase / Kelas   : ${fase}
+- Topik / Materi : ${topik}
+- Alokasi Waktu  : ${alokasi}
+- Tahun Ajaran   : ${tahun}
+- Model Pembelajaran : ${model}
+- Profil Pelajar Pancasila : ${p5}
+${cp?'- Capaian Pembelajaran : '+cp:''}
+${konteks?'- Konteks / Catatan : '+konteks:''}
+
+📌 KELENGKAPAN OUTPUT: ${kelengkapan}
+
+Buat Modul Ajar LENGKAP dalam Bahasa Indonesia mencakup:
+A. Informasi Umum (identitas, kompetensi awal, sarana prasarana, target peserta didik)
+B. Komponen Inti:
+   1. Tujuan Pembelajaran
+   2. Pemahaman Bermakna
+   3. Pertanyaan Pemantik
+   4. Kegiatan Pembelajaran (Pendahuluan, Inti, Penutup) — detail langkah per menit
+   5. Asesmen (diagnostik, formatif, sumatif)
+   6. Pengayaan & Remedial
+   7. Refleksi Guru & Peserta Didik
+C. Lampiran (LKPD singkat, rubrik penilaian)
+
+Gunakan bahasa formal-edukatif. Pastikan kegiatan pembelajaran sesuai fase dan model pembelajaran yang dipilih.`;
+
+  // Call Anthropic API
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        stream:false,
+        messages:[{role:'user',content:userPrompt}]
+      })
+    });
+
+    if(!response.ok){
+      const err=await response.json().catch(()=>({}));
+      throw new Error(err.error?.message||'HTTP '+response.status);
+    }
+
+    const data=await response.json();
+    const text=data.content?.map(b=>b.type==='text'?b.text:'').join('')||'';
+
+    // Tampilkan dengan efek ketik sederhana
+    hasilEl.textContent='';
+    let i=0;
+    const speed=4; // ms per karakter — bisa dinaikan biar kerasa streaming
+    function typeChar(){
+      if(i<text.length){
+        hasilEl.textContent+=text[i];
+        i++;
+        // Auto scroll
+        hasilEl.scrollTop=hasilEl.scrollHeight;
+        setTimeout(typeChar,speed);
+      }else{
+        hasilEl.classList.remove('typing-cursor');
+        document.getElementById('statusBadge').textContent='✅ Selesai';
+        document.getElementById('generateFeedback').textContent='✅ Modul berhasil dibuat!';
+        incrementLimit();
+        updateLimitDisplay();
+        saveHistori({mapel,fase,topik,teks:text});
+        updateHistoriBadge();
+      }
+    }
+    typeChar();
+
+  }catch(e){
+    hasilEl.classList.remove('typing-cursor');
+    hasilEl.textContent='❌ Gagal generate: '+e.message;
+    document.getElementById('statusBadge').textContent='❌ Error';
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='✨ Generate Modul Ajar <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;"></span>';
+    updateLimitDisplay();
+  }
+}
+
+// ============================================================
+// COPY
+// ============================================================
+function copyHasil(){
+  const teks=document.getElementById('hasilModul').textContent;
+  if(!teks)return;
+  navigator.clipboard.writeText(teks).then(()=>{
+    const notif=document.getElementById('notifCopy');
+    notif.style.display='block';
+    setTimeout(()=>notif.style.display='none',2500);
+  });
+}
+
+// ============================================================
+// HISTORI
+// ============================================================
+function loadHistori(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORI)||'[]');}catch(e){return[];}
+}
+function saveHistori(item){
+  const list=loadHistori();
+  list.unshift({...item,ts:Date.now()});
+  if(list.length>20)list.pop();
+  localStorage.setItem(STORAGE_KEY_HISTORI,JSON.stringify(list));
+}
+function updateHistoriBadge(){
+  const list=loadHistori();
+  const badge=document.getElementById('historiBadge');
+  if(list.length>0){badge.textContent=list.length;badge.style.display='inline-block';}
+  else badge.style.display='none';
+  const menuBadge=document.getElementById('menuBadge');
+  if(menuBadge){menuBadge.textContent=list.length>0?list.length:'';menuBadge.style.display=list.length>0?'block':'none';}
+}
+function renderHistoriList(){
+  const list=loadHistori();
+  const container=document.getElementById('historiList');
+  if(list.length===0){container.innerHTML='<div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya! 😊</div>';return;}
+  container.innerHTML=list.map((h,i)=>`
+    <div class="histori-item" onclick="loadFromHistori(${i})">
+      <div class="hi-meta">${new Date(h.ts).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})} &bull; ${h.mapel||''} &bull; ${h.fase||''}</div>
+      <div class="hi-preview">${(h.teks||'').substring(0,120)}...</div>
+    </div>`).join('');
+}
+function loadFromHistori(idx){
+  const list=loadHistori();
+  const h=list[idx];
+  if(!h)return;
+  selectTab('home');
+  document.getElementById('outputPlaceholder').style.display='none';
+  document.getElementById('outputContent').style.display='block';
+  document.getElementById('hasilModul').textContent=h.teks||'';
+  document.getElementById('statusBadge').textContent='📂 Dari histori';
+}
+function hapusSemuaHistori(){
+  if(confirm('Hapus semua histori modul?')){
+    localStorage.removeItem(STORAGE_KEY_HISTORI);
+    updateHistoriBadge();
+    renderHistoriList();
+  }
+}
+
+// ============================================================
+// UPGRADE POPUP
+// ============================================================
+function showUpgradePopup(){document.getElementById('upgradePopup').style.display='flex';}
+document.getElementById('upgradePopup').addEventListener('click',function(e){if(e.target===this)this.style.display='none';});
+</script>
+</body>
+</html>
