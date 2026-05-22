@@ -328,7 +328,7 @@ footer a{color:inherit;text-decoration:underline;}
       <div id="errorBox" class="error-box"></div>
 
       <button class="btn btn-primary" id="btnGenerate" onclick="generatePrompt()">
-        ✨ Generate Prompt Modul Ajar <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;"></span>
+        ✨ Generate Prompt Modul Ajar <span id="limitBadgeBtn" style="background:rgba(255,255,255,.2);border-radius:99px;padding:2px 9px;font-size:.7rem;font-weight:700;margin-left:6px;"></span>
       </button>
 
       <!-- AKTIVASI PRO -->
@@ -462,6 +462,67 @@ const sbClient = window.supabase.createClient(
   "https://xtmpiqpmwirsrcsphsto.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w"
 );
+
+// ============================================================
+// MAPEL DINAMIS BERDASARKAN FASE
+// (harus di atas init agar tidak ReferenceError)
+// ============================================================
+const MAPEL_PER_FASE={
+  A:['Bahasa Indonesia','Matematika','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+  B:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+  C:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+};
+const ALOKASI_PER_FASE={A:'2 x 35 menit',B:'3 x 35 menit',C:'3 x 35 menit'};
+let _mapelLainnyaActive=false;
+
+function getFaseFromValue(val){
+  if(val.startsWith('Fase A'))return 'A';
+  if(val.startsWith('Fase B'))return 'B';
+  if(val.startsWith('Fase C'))return 'C';
+  return 'B';
+}
+
+function updateMapelOptions(fase){
+  const sel=document.getElementById('mapel');
+  const currentVal=sel.value;
+  const list=MAPEL_PER_FASE[fase]||MAPEL_PER_FASE.B;
+  sel.innerHTML='<option value="">-- Pilih Mata Pelajaran --</option>';
+  list.forEach(m=>{
+    const opt=document.createElement('option');
+    if(m==='Lainnya'){opt.value='__lainnya__';opt.textContent='Lainnya (isi manual)';}
+    else{opt.value=m;opt.textContent=m;}
+    if(m===currentVal||opt.value===currentVal)opt.selected=true;
+    sel.appendChild(opt);
+  });
+  toggleMapelManual(sel.value);
+}
+
+function toggleMapelManual(val){
+  let manualWrap=document.getElementById('mapelManualWrap');
+  if(val==='__lainnya__'){
+    if(!manualWrap){
+      manualWrap=document.createElement('div');
+      manualWrap.id='mapelManualWrap';
+      manualWrap.style.marginTop='6px';
+      manualWrap.innerHTML='<input type="text" id="mapelManual" placeholder="Tulis nama mata pelajaran..." style="width:100%;"/>';
+      document.getElementById('mapel').parentNode.appendChild(manualWrap);
+    }
+    manualWrap.style.display='block';
+  } else {
+    if(manualWrap)manualWrap.style.display='none';
+  }
+}
+
+function onFaseChange(){
+  const fase=getFaseFromValue(document.getElementById('faseKelas').value);
+  updateMapelOptions(fase);
+  const alokasiEl=document.getElementById('alokasiWaktu');
+  const defaultValues=Object.values(ALOKASI_PER_FASE);
+  if(!alokasiEl.dataset.edited||defaultValues.includes(alokasiEl.value)){
+    alokasiEl.value=ALOKASI_PER_FASE[fase];
+    delete alokasiEl.dataset.edited;
+  }
+}
 
 // ============================================================
 // INIT
@@ -633,67 +694,6 @@ function getAutoTahunAjaran(){
   // Juli-Des = tahun berjalan / tahun+1, Jan-Jun = tahun-1 / tahun berjalan
   if(month>=7) return year+'/'+(year+1);
   return (year-1)+'/'+year;
-}
-
-// ============================================================
-// MAPEL DINAMIS BERDASARKAN FASE
-// ============================================================
-const MAPEL_PER_FASE={
-  A:['Bahasa Indonesia','Matematika','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
-  B:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
-  C:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
-};
-const ALOKASI_PER_FASE={A:'2 x 35 menit',B:'3 x 35 menit',C:'3 x 35 menit'};
-let _mapelLainnyaActive=false;
-
-function getFaseFromValue(val){
-  if(val.startsWith('Fase A'))return 'A';
-  if(val.startsWith('Fase B'))return 'B';
-  if(val.startsWith('Fase C'))return 'C';
-  return 'B';
-}
-
-function updateMapelOptions(fase){
-  const sel=document.getElementById('mapel');
-  const currentVal=sel.value;
-  const list=MAPEL_PER_FASE[fase]||MAPEL_PER_FASE.B;
-  sel.innerHTML='<option value="">-- Pilih Mata Pelajaran --</option>';
-  list.forEach(m=>{
-    const opt=document.createElement('option');
-    if(m==='Lainnya'){opt.value='__lainnya__';opt.textContent='Lainnya (isi manual)';}
-    else{opt.value=m;opt.textContent=m;}
-    if(m===currentVal||opt.value===currentVal)opt.selected=true;
-    sel.appendChild(opt);
-  });
-  toggleMapelManual(sel.value);
-}
-
-function toggleMapelManual(val){
-  let manualWrap=document.getElementById('mapelManualWrap');
-  if(val==='__lainnya__'){
-    if(!manualWrap){
-      manualWrap=document.createElement('div');
-      manualWrap.id='mapelManualWrap';
-      manualWrap.style.marginTop='6px';
-      manualWrap.innerHTML='<input type="text" id="mapelManual" placeholder="Tulis nama mata pelajaran..." style="width:100%;"/>';
-      document.getElementById('mapel').parentNode.appendChild(manualWrap);
-    }
-    manualWrap.style.display='block';
-  } else {
-    if(manualWrap)manualWrap.style.display='none';
-  }
-}
-
-function onFaseChange(){
-  const fase=getFaseFromValue(document.getElementById('faseKelas').value);
-  updateMapelOptions(fase);
-  // Auto-isi alokasi waktu hanya jika user belum edit manual
-  const alokasiEl=document.getElementById('alokasiWaktu');
-  const defaultValues=Object.values(ALOKASI_PER_FASE);
-  if(!alokasiEl.dataset.edited||defaultValues.includes(alokasiEl.value)){
-    alokasiEl.value=ALOKASI_PER_FASE[fase];
-    delete alokasiEl.dataset.edited;
-  }
 }
 
 // ============================================================
