@@ -674,12 +674,53 @@ async function generateModul(){
   document.getElementById('generateFeedback').textContent='';
   gaEvent('generate_modul_ajar',{mapel,fase,topik});
 
-  // Call Vercel API — key aman di server, tidak expose di frontend
+  // Susun prompt — dikirim ke server, key Gemini aman di env Vercel
+  const userPrompt=`Buatkan Modul Ajar SD sesuai Kurikulum Merdeka dengan detail berikut:
+
+📌 IDENTITAS MODUL
+- Mata Pelajaran     : ${mapel}
+- Fase / Kelas       : ${fase}
+- Topik / Materi     : ${topik}
+- Alokasi Waktu      : ${alokasi}
+- Tahun Ajaran       : ${tahun}
+- Model Pembelajaran : ${model}
+- Profil Pelajar Pancasila : ${p5}
+${cp?'- Capaian Pembelajaran : '+cp:''}
+${konteks?'- Konteks / Catatan    : '+konteks:''}
+
+📌 KELENGKAPAN OUTPUT: ${kelengkapan}
+
+Buat Modul Ajar LENGKAP dalam Bahasa Indonesia mencakup:
+A. INFORMASI UMUM
+   - Identitas modul (nama penyusun, institusi, tahun)
+   - Kompetensi awal peserta didik
+   - Sarana dan prasarana yang dibutuhkan
+   - Target peserta didik
+
+B. KOMPONEN INTI
+   1. Tujuan Pembelajaran (kata kerja operasional)
+   2. Pemahaman Bermakna
+   3. Pertanyaan Pemantik (minimal 3)
+   4. Kegiatan Pembelajaran:
+      - Pendahuluan (±10 menit): salam, apersepsi, motivasi, tujuan
+      - Inti (±50 menit): langkah detail sesuai model ${model}
+      - Penutup (±10 menit): refleksi, kesimpulan, tindak lanjut
+   5. Asesmen: diagnostik, formatif, sumatif
+   6. Pengayaan & Remedial
+   7. Refleksi Guru & Peserta Didik
+
+C. LAMPIRAN
+   - LKPD singkat
+   - Rubrik Penilaian
+
+Gunakan bahasa formal-edukatif sesuai fase ${fase}.`;
+
+  // Call Vercel API — key Gemini aman di server, tidak expose di frontend
   try{
     const response=await fetch('/api/generate-modul-ajar',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({mapel,fase,alokasi,topik,cp,model,p5,konteks,kelengkapan,tahun})
+      body:JSON.stringify({prompt:userPrompt})
     });
 
     const data=await response.json();
@@ -688,7 +729,7 @@ async function generateModul(){
       throw new Error(data.error||'HTTP '+response.status);
     }
 
-    const text=data.result||'';
+    const text=data.text||'';
 
     // Tampilkan dengan efek ketik sederhana
     hasilEl.textContent='';
