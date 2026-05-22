@@ -474,7 +474,11 @@ footer a{color:inherit;text-decoration:underline;}
     <div style="font-weight:800;font-size:1.05rem;margin-bottom:8px;color:var(--text)">Fitur Khusus PRO</div>
     <div style="font-size:.85rem;color:var(--text-light);margin-bottom:22px;line-height:1.6">
       Tombol <strong>Salin Prompt</strong> dan <strong>Buka AI</strong> hanya untuk member PRO.<br><br>
-      Upgrade sekarang untuk akses unlimited + salin 1 klik ke Claude/Gemini.
+      <div style="background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 12px;margin-bottom:14px;text-align:left;">
+        <div style="font-size:.76rem;font-weight:700;color:#0d7a8a;margin-bottom:5px;">💡 Untuk pengguna Free:</div>
+        <div style="font-size:.75rem;color:var(--text);line-height:1.7;">Silakan <b>salin prompt secara manual</b> (tekan lama → Pilih Semua → Salin), lalu paste ke AI favoritmu seperti <b>Claude, Gemini, ChatGPT</b>, dll.</div>
+      </div>
+      Upgrade ke PRO untuk salin 1 klik + generate unlimited tanpa batas!
     </div>
     <a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank"
       style="display:block;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border-radius:10px;padding:11px 0;font-weight:800;font-size:.92rem;text-align:center;width:100%;margin-bottom:10px;text-decoration:none;">
@@ -491,7 +495,7 @@ footer a{color:inherit;text-decoration:underline;}
 // ============================================================
 // KONFIGURASI
 // ============================================================
-const DAILY_LIMIT = 3;
+const DAILY_LIMIT = 1;
 const STORAGE_KEY_HISTORI = 'bgy_ma_histori';
 const STORAGE_KEY_LIMIT   = 'bgy_ma_limit';
 let _isPro = false;
@@ -689,99 +693,86 @@ function generatePrompt(){
   if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
 
   const prompt=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚠️ INSTRUKSI FORMAT OUTPUT (WAJIB):
-Langsung buat dokumen modul ajar tanpa kalimat pembuka, basa-basi, atau penjelasan apapun.
-Mulai langsung dari baris pertama dokumen.
+🚨 BEFORE YOU START — OUTPUT FORMAT IS MANDATORY:
+Do NOT write any opening remarks, greetings, or explanations.
+Start your response DIRECTLY from the first line of the document.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Bertindak sebagai guru profesional, pengembang kurikulum, asesor sekolah, dan praktisi Kurikulum Merdeka yang memahami standar supervisi kepala sekolah dan administrasi pendidikan terbaru.
+You are a professional Indonesian elementary school teacher, curriculum developer, school assessor, and Merdeka Curriculum practitioner who deeply understands the latest administrative standards required by school principals.
 
-FORMAT OUTPUT:
-- Gunakan heading ## untuk setiap bagian utama (## A. IDENTITAS MODUL AJAR)
-- Gunakan heading ### untuk sub-bagian
-- Gunakan tabel markdown untuk identitas dan data terstruktur
-- Gunakan **bold** untuk label penting
-- Gunakan bullet list (- item) untuk daftar
-- JANGAN tulis kalimat pembuka/penutup
-- Langsung mulai dengan ## MODUL AJAR KURIKULUM MERDEKA
+Please create a COMPLETE, DETAILED, SYSTEMATIC, PROFESSIONAL, and PRINT-READY LESSON MODULE (MODUL AJAR) for Indonesian elementary school (SD) based on the Merdeka Curriculum.
 
-Buatkan MODUL AJAR KURIKULUM MERDEKA yang lengkap, detail, sistematis, profesional, realistis, siap pakai, dan minim revisi.
+⚠️ CRITICAL: Your ENTIRE OUTPUT must be written in BAHASA INDONESIA. Do NOT use English anywhere in the output document.
 
-Modul ajar harus:
-- Sesuai Kurikulum Merdeka terbaru
-- Menggunakan pendekatan Deep Learning
-- Memuat HOTS, diferensiasi pembelajaran, pembelajaran bermakna, student centered learning
-- Sesuai kondisi nyata sekolah Indonesia
-- Bahasa formal akademik namun natural
+MODULE IDENTITY:
+- School Name         : ${namaSekolah}
+- Subject             : ${mapel}
+- Phase / Grade       : ${fase}
+- Semester            : ${semester}
+- Academic Year       : ${tahun}
+- Time Allocation     : ${alokasi}
+- Topic / Material    : ${topik}
+- Learning Model      : ${model}
+- Prepared by         : ${namaPenyusun}
+- Pancasila Profile   : ${p5}
+- Student Profile     : ${karakteristik}${cp?'\n- Learning Achievement (CP): '+cp:''}${konteks?'\n- Additional Context: '+konteks:''}
+- Output Completeness : ${kelengkapan}
 
-Kelengkapan output: ${kelengkapan}.
-
-═══════════════════════════════════════
-IDENTITAS MODUL AJAR
-═══════════════════════════════════════
-- Nama Sekolah       : ${namaSekolah}
-- Mata Pelajaran     : ${mapel}
-- Fase / Kelas       : ${fase}
-- Semester           : ${semester}
-- Tahun Ajaran       : ${tahun}
-- Alokasi Waktu      : ${alokasi}
-- Materi Pokok       : ${topik}
-- Model Pembelajaran : ${model}
-- Penyusun           : ${namaPenyusun}
-- Profil Pelajar Pancasila: ${p5}
-- Karakteristik Siswa: ${karakteristik}${cp?'\n- Capaian Pembelajaran: '+cp:''}${konteks?'\n- Catatan Tambahan: '+konteks:''}
-
-═══════════════════════════════════════
-KOMPONEN MODUL AJAR (WAJIB LENGKAP)
-═══════════════════════════════════════
+Write the COMPLETE MODUL AJAR with ALL sections below IN BAHASA INDONESIA:
 
 1. INFORMASI UMUM
-Lengkap: karakteristik siswa, sarana prasarana, Profil Pelajar Pancasila, target peserta didik, model pembelajaran, pendekatan, metode.
+Include: student characteristics, facilities, Pancasila Student Profile, target learners, learning model, approach, and methods.
 
 2. CAPAIAN PEMBELAJARAN (CP)
-Tuliskan CP resmi dan relevan sesuai Kurikulum Merdeka untuk ${mapel} ${fase}.
+Write the official and relevant CP from the Merdeka Curriculum for ${mapel} ${fase}.
 
 3. TUJUAN PEMBELAJARAN (TP)
-TP: spesifik, terukur, kata kerja operasional Taksonomi Bloom, mengarah HOTS, realistis.
+Specific, measurable, using Bloom's Taxonomy operational verbs, HOTS-oriented, realistic.
 
 4. PEMAHAMAN BERMAKNA
-Manfaat materi dalam kehidupan nyata, relevansi, penerapan sehari-hari.
+Real-life relevance and application of the material for students.
 
 5. PERTANYAAN PEMANTIK
-Minimal 3 pertanyaan: kontekstual, memancing rasa ingin tahu, HOTS.
+Minimum 3 questions: contextual, curiosity-provoking, HOTS-aligned.
 
 6. PERSIAPAN PEMBELAJARAN
-Media, alat dan bahan, sumber belajar, teknologi pendukung, strategi sebelum mengajar.
+Learning media, tools and materials, learning resources, supporting technology, teacher preparation strategies.
 
 7. KEGIATAN PEMBELAJARAN (${alokasi})
-Sangat rinci, realistis, runtut. Tampilkan aktivitas guru, aktivitas siswa, estimasi waktu.
+Highly detailed, realistic, and sequential. Include: teacher activities, student activities, time estimates.
 
 A. KEGIATAN PENDAHULUAN
-Salam dan doa, Presensi, Apersepsi, Ice breaking, Motivasi, Pertanyaan pemantik, Tujuan pembelajaran.
+Greeting & prayer, attendance, apperception, ice breaking, motivation, guiding questions, learning objectives.
 
 B. KEGIATAN INTI
-Sintaks Deep Learning + ${model}. Detail: eksplorasi masalah nyata, observasi, diskusi kelompok, kolaborasi, analisis, praktik langsung, presentasi, refleksi, diferensiasi pembelajaran, literasi dan numerasi.
+Use Deep Learning syntax + ${model}. Detail: real problem exploration, observation, group discussion, collaboration, analysis, hands-on practice, presentation, reflection, differentiated learning, literacy & numeracy integration.
 
 C. KEGIATAN PENUTUP
-Refleksi siswa, Penguatan konsep, Kesimpulan, Evaluasi, Tindak lanjut, Motivasi akhir, Doa.
+Student reflection, concept reinforcement, conclusion, learning evaluation, follow-up, closing motivation, prayer.
 
 8. ASESMEN
-Lengkap: diagnostik, formatif, sumatif, penilaian sikap/keterampilan/pengetahuan, rubrik, kisi-kisi, contoh soal HOTS.
+Complete: diagnostic, formative, summative, attitude/skill/knowledge assessment, rubrics, question grids, HOTS sample questions.
 
 9. DIFERENSIASI PEMBELAJARAN
-Diferensiasi konten, proses, produk, penyesuaian kebutuhan siswa.
+Content differentiation, process differentiation, product differentiation, student needs adaptation.
 
 10. REMEDIAL DAN PENGAYAAN
-Strategi remedial, pengayaan, aktivitas tambahan, tindak lanjut.
+Remedial strategies, enrichment activities, follow-up actions.
 
 11. REFLEKSI GURU
-Respon siswa, kendala, keberhasilan, evaluasi strategi, rencana perbaikan.
+Student response, obstacles, successes, strategy evaluation, improvement plan.
 
 12. LAMPIRAN
-LKPD, bahan ajar, media pembelajaran, rubrik, tabel penilaian, instrumen observasi.
+LKPD, teaching materials, learning media, rubrics, assessment tables, observation instruments.
+
+CRITICAL REQUIREMENTS:
+- ALL output MUST be in Bahasa Indonesia
+- Language and activities MUST suit elementary school students
+- Module must be realistic for actual Indonesian classroom implementation
+- Must meet school principal supervision standards
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📎 Format siap Word/PDF. Pastikan modul mudah dipahami siswa dan realistis diterapkan.
+📎 Format ready for Word/PDF. Start directly with ## MODUL AJAR KURIKULUM MERDEKA
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
 
   document.getElementById('hasilPrompt').textContent=prompt;
