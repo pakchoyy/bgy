@@ -269,6 +269,25 @@ body.dark .limit-bar-wrap{color:#fcd34d;}
              ============================ -->
 
         <div class="form-group">
+          <label>Nama Sekolah</label>
+          <input type="text" id="namaSekolah" placeholder="Contoh: SD Negeri 1 Magetan"/>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>Nama Penyusun</label>
+            <input type="text" id="namaPenyusun" placeholder="Nama guru..."/>
+          </div>
+          <div class="form-group">
+            <label>Semester</label>
+            <select id="semester">
+              <option value="Semester 1 (Ganjil)">Semester 1 (Ganjil)</option>
+              <option value="Semester 2 (Genap)">Semester 2 (Genap)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label>Mata Pelajaran</label>
           <select id="mapel">
             <option value="">-- Pilih mapel --</option>
@@ -336,8 +355,13 @@ body.dark .limit-bar-wrap{color:#fcd34d;}
         </div>
 
         <div class="form-group">
+          <label>Karakteristik Siswa</label>
+          <textarea id="karakteristikSiswa" rows="2" placeholder="Contoh: Reguler, mayoritas visual, ada siswa berkebutuhan khusus..."></textarea>
+        </div>
+
+        <div class="form-group">
           <label>Konteks / Catatan Tambahan (Opsional)</label>
-          <textarea id="konteksNotes" rows="3" placeholder="Contoh: Sekolah di daerah pegunungan, siswa dominan visual..."></textarea>
+          <textarea id="konteksNotes" rows="2" placeholder="Contoh: Sekolah di daerah pegunungan, ada lab komputer..."></textarea>
         </div>
 
       </div><!-- /card identitas -->
@@ -641,6 +665,9 @@ async function generateModul(){
   errBox.style.display='none';
 
   // Ambil nilai form
+  const namaSekolah=document.getElementById('namaSekolah').value.trim()||'SD ...';
+  const namaPenyusun=document.getElementById('namaPenyusun').value.trim()||'Guru Kelas';
+  const semester=document.getElementById('semester').value;
   const mapel=document.getElementById('mapel').value;
   const fase=document.getElementById('faseKelas').value;
   const alokasi=document.getElementById('alokasiWaktu').value.trim()||'2 x 35 menit';
@@ -648,6 +675,7 @@ async function generateModul(){
   const cp=document.getElementById('cpText').value.trim();
   const model=document.getElementById('modelPembelajaran').value;
   const p5=[...document.querySelectorAll('.cb-p5:checked')].map(c=>c.value).join(', ');
+  const karakteristik=document.getElementById('karakteristikSiswa').value.trim()||'Peserta didik reguler';
   const konteks=document.getElementById('konteksNotes').value.trim();
   const kelengkapan=document.getElementById('kelengkapan').value;
   const tahun=document.getElementById('tahunAjar').value.trim()||'2025/2026';
@@ -675,45 +703,91 @@ async function generateModul(){
   gaEvent('generate_modul_ajar',{mapel,fase,topik});
 
   // Susun prompt — dikirim ke server, key Gemini aman di env Vercel
-  const userPrompt=`Buatkan Modul Ajar SD sesuai Kurikulum Merdeka dengan detail berikut:
+  const userPrompt=`Bertindak sebagai guru profesional, pengembang kurikulum, asesor sekolah, dan praktisi Kurikulum Merdeka yang memahami standar supervisi kepala sekolah dan administrasi pendidikan terbaru.
 
-📌 IDENTITAS MODUL
-- Mata Pelajaran     : ${mapel}
-- Fase / Kelas       : ${fase}
-- Topik / Materi     : ${topik}
-- Alokasi Waktu      : ${alokasi}
-- Tahun Ajaran       : ${tahun}
-- Model Pembelajaran : ${model}
-- Profil Pelajar Pancasila : ${p5}
-${cp?'- Capaian Pembelajaran : '+cp:''}
-${konteks?'- Konteks / Catatan    : '+konteks:''}
+Buatkan MODUL AJAR KURIKULUM MERDEKA yang lengkap, detail, sistematis, profesional, realistis, siap pakai, dan minim revisi.
 
-📌 KELENGKAPAN OUTPUT: ${kelengkapan}
+Modul ajar harus:
+- Sesuai Kurikulum Merdeka terbaru
+- Menggunakan pendekatan Deep Learning
+- Memuat HOTS, diferensiasi pembelajaran, pembelajaran bermakna, student centered learning
+- Sesuai kondisi nyata sekolah Indonesia
+- Menggunakan pendekatan: student centered, pembelajaran aktif, collaborative learning, critical thinking, creativity, communication, dan problem solving
 
-Buat Modul Ajar LENGKAP dalam Bahasa Indonesia mencakup:
-A. INFORMASI UMUM
-   - Identitas modul (nama penyusun, institusi, tahun)
-   - Kompetensi awal peserta didik
-   - Sarana dan prasarana yang dibutuhkan
-   - Target peserta didik
+Gunakan bahasa formal akademik namun tetap natural seperti dokumen guru profesional sungguhan.
+Sertakan tabel profesional dan rapi, bahasa administrasi sekolah, narasi realistis, aktivitas siswa aktif, pembelajaran bermakna, pembelajaran mendalam (Deep Learning), dan suasana kelas nyata Indonesia.
 
-B. KOMPONEN INTI
-   1. Tujuan Pembelajaran (kata kerja operasional)
-   2. Pemahaman Bermakna
-   3. Pertanyaan Pemantik (minimal 3)
-   4. Kegiatan Pembelajaran:
-      - Pendahuluan (±10 menit): salam, apersepsi, motivasi, tujuan
-      - Inti (±50 menit): langkah detail sesuai model ${model}
-      - Penutup (±10 menit): refleksi, kesimpulan, tindak lanjut
-   5. Asesmen: diagnostik, formatif, sumatif
-   6. Pengayaan & Remedial
-   7. Refleksi Guru & Peserta Didik
+Format siap Word/PDF.
+Kelengkapan output: ${kelengkapan}.
 
-C. LAMPIRAN
-   - LKPD singkat
-   - Rubrik Penilaian
+═══════════════════════════════════════
+IDENTITAS MODUL AJAR
+═══════════════════════════════════════
+- Nama Sekolah      : ${namaSekolah}
+- Mata Pelajaran    : ${mapel}
+- Fase / Kelas      : ${fase}
+- Semester          : ${semester}
+- Tahun Ajaran      : ${tahun}
+- Alokasi Waktu     : ${alokasi}
+- Materi Pokok      : ${topik}
+- Model Pembelajaran: ${model}
+- Penyusun          : ${namaPenyusun}
+- Profil Pelajar Pancasila: ${p5}
+- Karakteristik Siswa: ${karakteristik}
+${cp?'- Capaian Pembelajaran: '+cp:''}
+${konteks?'- Catatan Tambahan: '+konteks:''}
 
-Gunakan bahasa formal-edukatif sesuai fase ${fase}.`;
+═══════════════════════════════════════
+KOMPONEN MODUL AJAR (WAJIB LENGKAP)
+═══════════════════════════════════════
+
+1. INFORMASI UMUM
+Buat lengkap: karakteristik siswa, sarana dan prasarana, Profil Pelajar Pancasila, target peserta didik, model pembelajaran, pendekatan pembelajaran, metode pembelajaran.
+
+2. CAPAIAN PEMBELAJARAN (CP)
+Tuliskan CP resmi dan relevan sesuai Kurikulum Merdeka untuk ${mapel} ${fase}.
+
+3. TUJUAN PEMBELAJARAN (TP)
+Buat TP: spesifik, terukur, menggunakan kata kerja operasional Taksonomi Bloom, mengarah pada HOTS, dan realistis dicapai siswa.
+
+4. PEMAHAMAN BERMAKNA
+Buat poin: manfaat materi dalam kehidupan nyata, relevansi materi, penerapan dalam kehidupan sehari-hari.
+
+5. PERTANYAAN PEMANTIK
+Buat pertanyaan: kontekstual, memancing rasa ingin tahu, HOTS, problem solving, dan relevan dengan kehidupan siswa (minimal 3 pertanyaan).
+
+6. PERSIAPAN PEMBELAJARAN
+Tuliskan: media pembelajaran, alat dan bahan, sumber belajar, teknologi pendukung, dan strategi guru sebelum mengajar.
+
+7. KEGIATAN PEMBELAJARAN (${alokasi})
+Buat sangat rinci, realistis, dan runtut. Tampilkan: aktivitas guru, aktivitas siswa, contoh interaksi, estimasi waktu, strategi pengelolaan kelas.
+
+A. KEGIATAN PENDAHULUAN
+- Salam dan doa, Presensi, Apersepsi, Ice breaking, Motivasi belajar, Pertanyaan pemantik, Penyampaian tujuan pembelajaran
+
+B. KEGIATAN INTI
+Gunakan sintaks pembelajaran Deep Learning + ${model}.
+Buat detail: eksplorasi masalah nyata, observasi, diskusi kelompok, kolaborasi, analisis kasus, praktik langsung, eksperimen (jika relevan), presentasi, refleksi, komunikasi, kreativitas siswa, diferensiasi pembelajaran, integrasi literasi dan numerasi, penggunaan teknologi/interaktif digital.
+
+C. KEGIATAN PENUTUP
+- Refleksi siswa, Penguatan konsep, Kesimpulan, Evaluasi pembelajaran, Tindak lanjut, Motivasi akhir, Doa penutup
+
+8. ASESMEN
+Buat lengkap: asesmen diagnostik, asesmen formatif, asesmen sumatif, penilaian sikap, penilaian keterampilan, penilaian pengetahuan, instrumen observasi, rubrik penilaian, kisi-kisi soal, dan contoh soal HOTS.
+
+9. DIFERENSIASI PEMBELAJARAN
+Jelaskan: diferensiasi konten, diferensiasi proses, diferensiasi produk, penyesuaian kebutuhan siswa.
+
+10. REMEDIAL DAN PENGAYAAN
+Buat: strategi remedial, strategi pengayaan, aktivitas tambahan, dan tindak lanjut hasil belajar.
+
+11. REFLEKSI GURU
+Buat refleksi realistis: respon siswa, kendala pembelajaran, keberhasilan pembelajaran, evaluasi strategi guru, rencana perbaikan.
+
+12. LAMPIRAN
+Tambahkan: LKPD, bahan ajar, media pembelajaran, rubrik, tabel penilaian, instrumen observasi, contoh hasil kerja siswa.
+
+Pastikan modul: mudah dipahami siswa, cocok dengan alokasi waktu ${alokasi}, tidak terlalu padat, realistis diterapkan guru, dan memenuhi standar supervisi kepala sekolah.`;
 
   // Call Vercel API — key Gemini aman di server, tidak expose di frontend
   try{
