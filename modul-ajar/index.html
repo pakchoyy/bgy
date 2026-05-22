@@ -158,7 +158,6 @@ footer a{color:inherit;text-decoration:underline;}
       <img src="../guru-cibisd2.png" alt="Logo"/>
       <div class="header-brand-text">
         <h1>Bantu Guru Yuk | Modul Ajar <span id="hBadge" class="badge-free">FREE</span></h1>
-        <p>Generator Prompt Modul Ajar SD • Kurikulum Merdeka</p>
       </div>
     </div>
     <div class="header-right">
@@ -311,6 +310,8 @@ footer a{color:inherit;text-decoration:underline;}
         <div class="form-group">
           <label>Model / Pendekatan Pembelajaran</label>
           <select id="modelPembelajaran">
+            <option value="Deep Learning + Problem Based Learning (PBL)">Deep Learning + Problem Based Learning (PBL)</option>
+            <option value="Deep Learning + Project Based Learning (PjBL)">Deep Learning + Project Based Learning (PjBL)</option>
             <option value="Discovery Learning">Discovery Learning</option>
             <option value="Project Based Learning (PjBL)">Project Based Learning (PjBL)</option>
             <option value="Problem Based Learning (PBL)">Problem Based Learning (PBL)</option>
@@ -459,12 +460,7 @@ footer a{color:inherit;text-decoration:underline;}
 <footer>
   <div class="footer-title">Modul Ajar SD • Kurikulum Merdeka</div>
   <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.5.2</div>
-  <div style="margin-top:6px;">
-    <button onclick="localStorage.removeItem('bgy_ma_limit');updateLimitDisplay();alert('✅ Limit harian direset!')"
-      style="background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.6);font-size:.65rem;padding:3px 10px;border-radius:6px;cursor:pointer;">
-      🔄 Reset Limit
-    </button>
-  </div>
+
 </footer>
 
 <!-- UPGRADE POPUP -->
@@ -698,82 +694,74 @@ Do NOT write any opening remarks, greetings, or explanations.
 Start your response DIRECTLY from the first line of the document.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-You are a professional Indonesian elementary school teacher, curriculum developer, school assessor, and Merdeka Curriculum practitioner who deeply understands the latest administrative standards required by school principals.
+Bertindak sebagai guru profesional, pengembang kurikulum, asesor sekolah, dan praktisi Kurikulum Merdeka yang memahami standar supervisi kepala sekolah dan administrasi pendidikan terbaru.
 
-Please create a COMPLETE, DETAILED, SYSTEMATIC, PROFESSIONAL, and PRINT-READY LESSON MODULE (MODUL AJAR) for Indonesian elementary school (SD) based on the Merdeka Curriculum.
+Buatkan **MODUL AJAR KURIKULUM MERDEKA** yang lengkap, detail, sistematis, profesional, realistis, siap pakai, dan minim revisi dengan identitas berikut:
 
-⚠️ CRITICAL: Your ENTIRE OUTPUT must be written in BAHASA INDONESIA. Do NOT use English anywhere in the output document.
+**IDENTITAS MODUL AJAR:**
+- Nama Sekolah: \${namaSekolah}
+- Nama Penyusun: \${namaPenyusun}
+- Mata Pelajaran: \${mapel}
+- Fase / Kelas: \${fase}
+- Semester: \${semester}
+- Tahun Ajaran: \${tahun}
+- Alokasi Waktu: \${alokasi}
+- Materi Pokok / Topik: \${topik}
 
-MODULE IDENTITY:
-- School Name         : ${namaSekolah}
-- Subject             : ${mapel}
-- Phase / Grade       : ${fase}
-- Semester            : ${semester}
-- Academic Year       : ${tahun}
-- Time Allocation     : ${alokasi}
-- Topic / Material    : ${topik}
-- Learning Model      : ${model}
-- Prepared by         : ${namaPenyusun}
-- Pancasila Profile   : ${p5}
-- Student Profile     : ${karakteristik}${cp?'\n- Learning Achievement (CP): '+cp:''}${konteks?'\n- Additional Context: '+konteks:''}
-- Output Completeness : ${kelengkapan}
+**PANDUAN UTAMA PEMBUATAN:**
+1. Modul ajar wajib mengacu pada standar Kurikulum Merdeka nasional terbaru berdasarkan **BSKAP Nomor 046/H/KR/2025**.
+2. Wajib menggunakan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) kombinasi dengan model \${model}.
+3. Memuat unsur **HOTS (Higher Order Thinking Skills)**, Pembelajaran Berdiferensiasi, Pembelajaran Bermakna, dan Student-Centered Learning.
+4. Karakteristik Siswa: \${karakteristik}
+\${cp ? '- Capaian Pembelajaran (CP) Resmi: ' + cp : ''}
+\${konteks ? '- Catatan Konteks Tambahan: ' + konteks : ''}
+- Tingkat Kelengkapan Dokumen: \${kelengkapan}
 
-Write the COMPLETE MODUL AJAR with ALL sections below IN BAHASA INDONESIA:
+Wajib buat struktur modul dengan komponen detail sebagai berikut (Gunakan Bahasa Indonesia yang formal akademik namun natural seperti dokumen asli):
 
 1. INFORMASI UMUM
-Include: student characteristics, facilities, Pancasila Student Profile, target learners, learning model, approach, and methods.
+Jabarkan Karakteristik siswa SD secara kontekstual, Sarana dan Prasarana (sesuaikan dengan kondisi nyata sekolah dasar di Indonesia), Profil Pelajar Pancasila (\${p5}), Target Peserta Didik, serta Model, Pendekatan, dan Metode pembelajaran yang digunakan.
 
 2. CAPAIAN PEMBELAJARAN (CP)
-Write the official and relevant CP from the Merdeka Curriculum for ${mapel} ${fase}.
+Tuliskan kembali teks CP resmi Kurikulum Merdeka untuk materi terkait secara lengkap.
 
 3. TUJUAN PEMBELAJARAN (TP)
-Specific, measurable, using Bloom's Taxonomy operational verbs, HOTS-oriented, realistic.
+Buat TP yang spesifik, terukur, menggunakan kata kerja operasional (KKO) Taksonomi Bloom, mengarah pada tingkatan HOTS, dan realistis dicapai oleh anak SD.
 
 4. PEMAHAMAN BERMAKNA
-Real-life relevance and application of the material for students.
+Poin-poin manfaat konkret materi ini dalam kehidupan sehari-hari siswa di lingkungan mereka.
 
 5. PERTANYAAN PEMANTIK
-Minimum 3 questions: contextual, curiosity-provoking, HOTS-aligned.
+Buat minimal 3 pertanyaan kontekstual, memancing rasa ingin tahu, bernuansa HOTS/problem solving, dan dekat dengan kehidupan anak-anak.
 
 6. PERSIAPAN PEMBELAJARAN
-Learning media, tools and materials, learning resources, supporting technology, teacher preparation strategies.
+Media pembelajaran interaktif, alat dan bahan konkret, sumber belajar, teknologi pendukung, serta langkah persiapan guru sebelum mengajar.
 
-7. KEGIATAN PEMBELAJARAN (${alokasi})
-Highly detailed, realistic, and sequential. Include: teacher activities, student activities, time estimates.
+7. KEGIATAN PEMBELAJARAN (Buat sangat rinci, realistis, runtut, berikan estimasi waktu, aktivitas guru, dan aktivitas siswa):
+   - A. KEGIATAN PENDAHULUAN: Salam dan doa, presensi, apersepsi kontekstual, ice breaking ceria khas SD, motivasi belajar, pertanyaan pemantik, penyampaian tujuan pembelajaran.
+   - B. KEGIATAN INTI: Tuliskan langkah-langkah konkret sesuai sintaks pembelajaran model \${model} yang diintegrasikan dengan elemen DEEP LEARNING (Eksplorasi masalah nyata, observasi langsung/media, diskusi kelompok interaktif, kolaborasi, analisis kasus/praktik mandiri, eksperimen/karya, presentasi, refleksi di tengah proses, komunikasi, kreativitas, diferensiasi proses/konten, serta penguatan literasi dan numerasi). Tampilkan contoh interaksi dialogis nyata antara guru dan murid.
+   - C. KEGIATAN PENUTUP: Refleksi siswa terhadap pembelajaran, penguatan konsep oleh guru, kesimpulan bersama, evaluasi/kuis singkat, tindak lanjut, motivasi akhir, doa penutup.
 
-A. KEGIATAN PENDAHULUAN
-Greeting & prayer, attendance, apperception, ice breaking, motivation, guiding questions, learning objectives.
-
-B. KEGIATAN INTI
-Use Deep Learning syntax + ${model}. Detail: real problem exploration, observation, group discussion, collaboration, analysis, hands-on practice, presentation, reflection, differentiated learning, literacy & numeracy integration.
-
-C. KEGIATAN PENUTUP
-Student reflection, concept reinforcement, conclusion, learning evaluation, follow-up, closing motivation, prayer.
-
-8. ASESMEN
-Complete: diagnostic, formative, summative, attitude/skill/knowledge assessment, rubrics, question grids, HOTS sample questions.
+8. ASESMEN LENGKAP
+Buat rancangan instrumen yang utuh: Asesmen diagnostik (kognitif/non-kognitif), Asesmen formatif (selama proses), Asesmen sumatif (akhir), penilaian sikap, penilaian keterampilan, penilaian pengetahuan, instrumen lembar observasi, rubrik penilaian deskriptif yang detail, kisi-kisi soal, serta contoh soal HOTS konkret untuk tingkat SD.
 
 9. DIFERENSIASI PEMBELAJARAN
-Content differentiation, process differentiation, product differentiation, student needs adaptation.
+Penjelasan teknis implementasi diferensiasi konten, diferensiasi proses, dan diferensiasi produk berdasarkan kesiapan belajar siswa.
 
 10. REMEDIAL DAN PENGAYAAN
-Remedial strategies, enrichment activities, follow-up actions.
+Aktivitas taktis untuk remedial (siswa belum tuntas) dan pengayaan (siswa cepat belajar).
 
 11. REFLEKSI GURU
-Student response, obstacles, successes, strategy evaluation, improvement plan.
+Pertanyaan pemandu refleksi guru mengenai respon siswa, kendala teknis kelas, keberhasilan strategi, dan rencana perbaikan untuk pertemuan berikutnya.
 
-12. LAMPIRAN
-LKPD, teaching materials, learning media, rubrics, assessment tables, observation instruments.
+12. LAMPIRAN SIAP PAKAI
+Wajib lampirkan draft konten: Lembar Kerja Peserta Didik (LKPD) yang menarik untuk anak SD, bahan bacaan/materi ajar ringkas, rubrik/tabel penilaian kosong, dan instrumen observasi siap pakai.
 
-CRITICAL REQUIREMENTS:
-- ALL output MUST be in Bahasa Indonesia
-- Language and activities MUST suit elementary school students
-- Module must be realistic for actual Indonesian classroom implementation
-- Must meet school principal supervision standards
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📎 Format ready for Word/PDF. Start directly with ## MODUL AJAR KURIKULUM MERDEKA
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+🚨 FORMAT KELUARAN MANDATORI:
+- Seluruh dokumen WAJIB menggunakan Bahasa Indonesia.
+- Desain aktivitas harus ramah anak SD, aktif, dan kolaboratif.
+- Gunakan format Markdown (seperti tabel markdown untuk kegiatan dan rubrik agar rapi saat disalin ke Microsoft Word/PDF).
+- Mulai respon secara langsung dari baris pertama dengan judul '## MODUL AJAR KURIKULUM MERDEKA' tanpa salam pembuka AI atau teks pengantar basa-basi dari Anda.`;
 
   document.getElementById('hasilPrompt').textContent=prompt;
   document.getElementById('promptPlaceholder').style.display='none';
