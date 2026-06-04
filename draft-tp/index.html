@@ -604,9 +604,13 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
         <div class="card-title">📚 Mata Pelajaran</div>
         <div class="form-group" style="margin-bottom:0">
           <label>Pilih Mata Pelajaran</label>
-          <select id="mapelSelect">
+          <select id="mapelSelect" onchange="onMapelChange()">
             <option value="">-- Pilih mapel --</option>
           </select>
+        </div>
+        <div class="form-group" id="manualMapelWrap" style="display:none;margin-top:10px;margin-bottom:0">
+          <label>Nama Mata Pelajaran (manual)</label>
+          <input type="text" id="manualMapelInput" placeholder="contoh: Bahasa Daerah" />
         </div>
       </div>
 
@@ -779,6 +783,13 @@ function updateMapelList(){
   if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
 }
 
+function onMapelChange(){
+  const val=document.getElementById('mapelSelect').value;
+  const wrap=document.getElementById('manualMapelWrap');
+  wrap.style.display=val==='__manual__'?'block':'none';
+  if(val==='__manual__') document.getElementById('manualMapelInput').focus();
+}
+
 // Init on load
 document.getElementById('jenisCp').addEventListener('change',updateMapelList);
 document.getElementById('kelas').addEventListener('change',updateMapelList);
@@ -837,9 +848,9 @@ function generateTP(){
 
   const selectedMapel=[];
   if(selVal==='__manual__'){
-    const nm=prompt('Masukkan nama mata pelajaran:','');
-    if(!nm||!nm.trim()){toast('⚠️ Nama mapel tidak boleh kosong!');return;}
-    selectedMapel.push('__manual__:'+nm.trim());
+    const nm=document.getElementById('manualMapelInput').value.trim();
+    if(!nm){toast('⚠️ Isi nama mata pelajaran terlebih dahulu!');return;}
+    selectedMapel.push('__manual__:'+nm);
   } else {
     selectedMapel.push(selVal);
   }
