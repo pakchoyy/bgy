@@ -1,0 +1,6 @@
+# robots.txt — Bantu Guru Yuk
+# https://www.bantuguruyuk.web.id/
+
+User-agent: *
+Allow: /
+Sitemap: https://www.bantuguruyuk.web.id/sitemap.xml

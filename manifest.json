@@ -1,7 +1,7 @@
 {
   "name": "Bantu Guru Yuk",
   "short_name": "Bantu Guru Yuk",
-  "description": "AI Tools untuk Guru SD Indonesia",
+  "description": "Tools digital untuk membantu guru menyelesaikan pekerjaan lebih cepat — jadwal pelajaran, generator soal, LKPD, modul ajar, presensi, dan administrasi sekolah.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -9,12 +9,12 @@
   "theme_color": "#0ea5a0",
   "icons": [
     {
-      "src": "guru-cibisd2.png",
+      "src": "/guru-cibisd2.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "guru-cibisd2.png",
+      "src": "/guru-cibisd2.png",
       "sizes": "512x512",
       "type": "image/png"
     }
