@@ -644,10 +644,10 @@ function autoMapel(){
   let d = ["Umum"];
   if(k==="PAUD") d=["Umum","Nilai Agama dan Moral","Motorik","Kognitif","Bahasa","Sosial Emosional","Seni"];
   else if(k.includes("TK")) d=["Umum","Nilai Agama","Bahasa","Kognitif","Motorik","Seni"];
-  else if(k.includes("SD Kelas 1")||k.includes("SD Kelas 2")) d=["Umum","Pendidikan Agama dan Budi Pekerti","Pendidikan Pancasila","Bahasa Indonesia","Matematika","Seni Budaya","PJOK"];
-  else if(k.includes("SD Kelas 3")||k.includes("SD Kelas 4")||k.includes("SD Kelas 5")||k.includes("SD Kelas 6")) d=["Umum","Pendidikan Agama dan Budi Pekerti","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPAS","Seni Budaya","PJOK"];
+  else if(k.includes("SD Kelas 1")||k.includes("SD Kelas 2")) d=["Umum","Pendidikan Agama dan Budi Pekerti","Pendidikan Pancasila","Bahasa Indonesia","Matematika","Seni Budaya","PJOK","Bahasa Inggris"];
+  else if(k.includes("SD Kelas 3")||k.includes("SD Kelas 4")||k.includes("SD Kelas 5")||k.includes("SD Kelas 6")) d=["Umum","Pendidikan Agama dan Budi Pekerti","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPAS","Seni Budaya","PJOK","Bahasa Inggris"];
   else if(k.includes("SMP")) d=["Umum","Bahasa Indonesia","Matematika","IPA","IPS","Bahasa Inggris"];
-  else if(k.includes("SMA")) d=["Umum","Bahasa Indonesia","Matematika","Biologi","Fisika","Kimia","Sejarah","Ekonomi"];
+  else if(k.includes("SMA")) d=["Umum","Bahasa Indonesia","Matematika","Biologi","Fisika","Kimia","Sejarah","Ekonomi","Bahasa Inggris"];
   mapel.innerHTML = d.map(n=>`<option value="${n}">${n}</option>`).join("");
 }
 
@@ -745,9 +745,19 @@ function generatePrompt(){
   p += "\nTopic: "+materi.value;
   p += "\nIllustration style: "+gaya.value;
   p += extraMedia+extraLKPD+refRule;
+  const isEnglish = mapel.value === "Bahasa Inggris";
+  const outputLanguage = isEnglish ? "English" : "Indonesian";
+
   p += "\n\n=== GENERAL RULES ===";
-  p += "\nAll text content must be in simple Indonesian language.";
-  p += "\nAdjust language difficulty to the level of "+kelas.value+" students.";
+  if(isEnglish){
+    p += "\nAll text content must be written in English.";
+    p += "\nUse natural English, not literal translation.";
+    p += "\nUse vocabulary, grammar, and sentence structures appropriate for "+kelas.value+" students.";
+    p += "\nAll titles, instructions, questions, answer choices, explanations, labels, and answer keys must also be in English.";
+  } else {
+    p += "\nAll text content must be in simple Indonesian language.";
+    p += "\nAdjust language difficulty to the level of "+kelas.value+" students.";
+  }
   p += "\nNo typos allowed.";
   p += "\nPaper size: "+paper;
   p += "\nOrientation: "+orient;
