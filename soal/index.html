@@ -117,6 +117,12 @@ body.dark .gemini-key-box{border-color:#1e40af;background:linear-gradient(135deg
 .btn-pilih-semua{font-size:.69rem;padding:3px 8px;background:var(--gray-100);color:var(--text);border:1px solid var(--border);border-radius:7px;cursor:pointer;margin-bottom:5px;font-weight:600;transition:background .2s;}
 .btn-pilih-semua:hover{background:var(--gray-200);}
 body.dark .btn-pilih-semua{background:#374151;color:#f1f5f9;}
+.materi-mode-toggle{display:flex;gap:4px;margin-bottom:6px;}
+.materi-mode-btn{flex:1;padding:4px 8px;font-size:.69rem;font-weight:700;border:1.5px solid var(--border);border-radius:7px;background:var(--input-bg);color:var(--text-light);cursor:pointer;transition:all .15s;text-align:center;}
+.materi-mode-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+#materiKetikArea{width:100%;min-height:80px;resize:vertical;font-size:.82rem;padding:8px 10px;border:2px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);display:none;}
+#materiKetikArea:focus{border-color:var(--blue);}
+#materiKetikHint{font-size:.68rem;color:var(--text-light);margin-top:3px;display:none;}
 
 /* Tingkat kesulitan */
 .kesulitan-grid{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px;}
@@ -589,10 +595,18 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
       <div class="form-group">
         <label>Materi</label>
-        <button class="btn-pilih-semua" type="button" onclick="pilihSemua()">☑ Pilih Semua</button>
-        <div class="materi-box" id="materiBox">
-          <div class="materi-empty">Pilih kelas dan mata pelajaran.</div>
+        <div class="materi-mode-toggle">
+          <button class="materi-mode-btn active" id="btnModePilih" type="button" onclick="setMateriMode('pilih')">☑ Pilih dari Daftar</button>
+          <button class="materi-mode-btn" id="btnModeKetik" type="button" onclick="setMateriMode('ketik')">✏️ Ketik Manual</button>
         </div>
+        <button class="btn-pilih-semua" type="button" id="btnPilihSemua" onclick="pilihSemua()">☑ Pilih Semua</button>
+        <div class="materi-box-wrap" id="materiBoxWrap">
+          <div class="materi-box" id="materiBox">
+            <div class="materi-empty">Pilih kelas dan mata pelajaran.</div>
+          </div>
+        </div>
+        <textarea id="materiKetikArea" placeholder="Ketik materi secara bebas, pisahkan dengan koma.&#10;Contoh: Pecahan senilai, Operasi hitung campuran, KPK dan FPB"></textarea>
+        <div id="materiKetikHint">💡 Pisahkan materi dengan koma untuk kisi-kisi yang lebih rapi.</div>
       </div>
 
       <div class="form-group">
@@ -1375,7 +1389,20 @@ function renderMateriChecklist(){
   box.innerHTML=list.map((m,i)=>`<label class="cb-label"><input type="checkbox" class="cb-materi" value="${escHtml(m)}" ${i<3?'checked':''}/>${escHtml(m)}</label>`).join('');
 }
 function pilihSemua(){const cbs=document.querySelectorAll('.cb-materi');const all=[...cbs].every(c=>c.checked);cbs.forEach(c=>c.checked=!all);}
-function getMateriTerpilih(){return[...document.querySelectorAll('.cb-materi:checked')].map(c=>c.value).join(', ');}
+function getMateriTerpilih(){
+  const mode=document.getElementById('btnModeKetik')?.classList.contains('active')?'ketik':'pilih';
+  if(mode==='ketik'){return(document.getElementById('materiKetikArea')?.value||'').trim();}
+  return[...document.querySelectorAll('.cb-materi:checked')].map(c=>c.value).join(', ');
+}
+function setMateriMode(mode){
+  const isPilih=mode==='pilih';
+  document.getElementById('btnModePilih').classList.toggle('active',isPilih);
+  document.getElementById('btnModeKetik').classList.toggle('active',!isPilih);
+  document.getElementById('btnPilihSemua').style.display=isPilih?'':'none';
+  document.getElementById('materiBoxWrap').style.display=isPilih?'':'none';
+  document.getElementById('materiKetikArea').style.display=isPilih?'none':'block';
+  document.getElementById('materiKetikHint').style.display=isPilih?'none':'block';
+}
 function getKesulitanTerpilih(){return[...document.querySelectorAll('.cb-kesulitan:checked')].map(c=>c.value).join(', ');}
 function updateOpsiNote(){const k=parseInt(document.getElementById('kelas').value);document.getElementById('opsiNote').textContent=k<=2?'(A–C)':'(A–D)';}
 function getJudulUjian(){
