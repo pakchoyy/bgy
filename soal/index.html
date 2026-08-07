@@ -545,13 +545,15 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         <div class="row-2">
           <div class="form-group">
             <label>Jenis Ujian</label>
-            <select id="jenisUjian">
+            <select id="jenisUjian" onchange="onJenisUjianChange()">
               <option value="Ulangan Harian">Ulangan Harian</option>
               <option value="Sumatif Tengah Semester">Sumatif Tengah Semester</option>
               <option value="Sumatif Akhir Semester">Sumatif Akhir Semester</option>
               <option value="Sumatif Akhir Jenjang">Sumatif Akhir Jenjang</option>
               <option value="Latihan">Latihan</option>
+              <option value="__lain__">✏️ Lainnya (ketik sendiri)</option>
             </select>
+            <input type="text" id="jenisUjianCustom" placeholder="Contoh: Ujian Praktik, Try Out, Remedial..." style="display:none;margin-top:5px;"/>
           </div>
           <div class="form-group">
             <label>Tahun Pelajaran</label>
@@ -586,6 +588,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <div class="form-group">
         <label>Mata Pelajaran</label>
         <select id="mataPelajaran" onchange="onMapelChange()"></select>
+        <input type="text" id="mataPelajaranCustom" placeholder="Ketik nama mata pelajaran..." style="display:none;margin-top:5px;"/>
       </div>
 
       <div class="form-group" id="bahasaDaerahGroup" style="display:none;">
@@ -1225,10 +1228,10 @@ function showTab(tab){
 const MAX_HISTORI=20;
 function simpanHistori(data){
   try{
-    const mapel=document.getElementById('mataPelajaran').value;
+    const mapel=getMapelValue();
     const kelas=document.getElementById('kelas').value;
     const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
-    const jenis=document.getElementById('jenisUjian').value||'Ulangan Harian';
+    const jenis=getJenisUjianValue()||'Ulangan Harian';
     const pg=(data.pilihanGanda||[]).length;
     const isian=(data.isian||[]).length;
     const uraian=(data.uraian||[]).length;
@@ -1351,12 +1354,55 @@ function hapusLogo(inputId,key,thumbId,hintId,btnId){
    FORM DINAMIS
 ════════════════════════════════════════════ */
 function onKelasChange(){updateOpsiNote();renderMapelOptions();renderMateriChecklist();autoSetBloom();toggleBahasaDaerah();}
-function onMapelChange(){renderMateriChecklist();toggleBahasaDaerah();}
+function onMapelChange(){
+  const mapel=document.getElementById('mataPelajaran').value;
+  const customInput=document.getElementById('mataPelajaranCustom');
+  if(customInput){
+    if(mapel==='__tambah__'){
+      customInput.style.display='block';
+      customInput.focus();
+    } else {
+      customInput.style.display='none';
+    }
+  }
+  renderMateriChecklist();
+  toggleBahasaDaerah();
+}
+function onJenisUjianChange(){
+  const jenis=document.getElementById('jenisUjian').value;
+  const customInput=document.getElementById('jenisUjianCustom');
+  if(customInput){
+    if(jenis==='__lain__'){
+      customInput.style.display='block';
+      customInput.focus();
+    } else {
+      customInput.style.display='none';
+    }
+  }
+}
 function onSemesterChange(){renderMateriChecklist();}
 function toggleBahasaDaerah(){
   const mapel=document.getElementById('mataPelajaran').value;
   const grp=document.getElementById('bahasaDaerahGroup');
   if(grp)grp.style.display=mapel==='Muatan Lokal'?'block':'none';
+}
+// Helper: ambil nilai jenisUjian (termasuk custom)
+function getJenisUjianValue(){
+  const sel=document.getElementById('jenisUjian').value;
+  if(sel==='__lain__'){
+    const custom=(document.getElementById('jenisUjianCustom')?.value||'').trim();
+    return custom||'Ulangan Harian';
+  }
+  return sel;
+}
+// Helper: ambil nilai mataPelajaran (termasuk custom)
+function getMapelValue(){
+  const sel=document.getElementById('mataPelajaran').value;
+  if(sel==='__tambah__'){
+    const custom=(document.getElementById('mataPelajaranCustom')?.value||'').trim();
+    return custom||'Mata Pelajaran';
+  }
+  return sel;
 }
 
 // Set level Bloom otomatis sesuai kelas (tapi user tetap bisa ubah manual)
@@ -1377,7 +1423,11 @@ function autoSetBloom(){
 }
 function renderMapelOptions(){
   const kelas=parseInt(document.getElementById('kelas').value);
-  document.getElementById('mataPelajaran').innerHTML=(DB_MAPEL[kelas]||[]).map(m=>`<option value="${m}">${m}</option>`).join('');
+  const opts=(DB_MAPEL[kelas]||[]).map(m=>`<option value="${m}">${m}</option>`).join('');
+  document.getElementById('mataPelajaran').innerHTML=opts+`<option value="__tambah__">✏️ Tambah Sendiri</option>`;
+  // Reset custom input saat kelas ganti
+  const ci=document.getElementById('mataPelajaranCustom');
+  if(ci){ci.style.display='none';ci.value='';}
 }
 function renderMateriChecklist(){
   const kelas=parseInt(document.getElementById('kelas').value);
@@ -1406,10 +1456,13 @@ function setMateriMode(mode){
 function getKesulitanTerpilih(){return[...document.querySelectorAll('.cb-kesulitan:checked')].map(c=>c.value).join(', ');}
 function updateOpsiNote(){const k=parseInt(document.getElementById('kelas').value);document.getElementById('opsiNote').textContent=k<=2?'(A–C)':'(A–D)';}
 function getJudulUjian(){
-  const jenis=document.getElementById('jenisUjian').value;
+  const jenis=getJenisUjianValue();
   const sem=document.getElementById('semester').value;
   const semStr=sem==='1'?'Ganjil':'Genap';
+  // Jenis custom atau non-semester → tampil apa adanya
   if(jenis==='Ulangan Harian'||jenis==='Latihan'||jenis==='Sumatif Akhir Jenjang')return jenis;
+  // Jenis yg diketik sendiri → tidak tambah semester (tidak tahu konteksnya)
+  if(document.getElementById('jenisUjian').value==='__lain__')return jenis;
   return jenis+' '+semStr;
 }
 
@@ -1426,13 +1479,15 @@ async function handleGenerate(){
   const topik=document.getElementById('topikTambahan').value.trim();
   const materiLengkap=topik?`${materi}. Catatan: ${topik}`:materi;
   const kelas=parseInt(document.getElementById('kelas').value);
-  const mapel=document.getElementById('mataPelajaran').value;
+  const mapel=getMapelValue();
   const bahasaDaerahVal=document.getElementById('bahasaDaerah')?.value.trim();
   const mapelLabel=(mapel==='Muatan Lokal'&&bahasaDaerahVal)?`Muatan Lokal — ${bahasaDaerahVal}`:mapel;
   const jmlPG=parseInt(document.getElementById('jmlPG').value)||0;
   const jmlIsian=parseInt(document.getElementById('jmlIsian').value)||0;
   const jmlUraian=parseInt(document.getElementById('jmlUraian').value)||0;
   const opsiPG=kelas<=2?'3 opsi (A, B, C)':'4 opsi (A, B, C, D)';
+  // Template JSON opsi disesuaikan kelas — ini yg mempengaruhi output AI
+  const opsiJsonTemplate=kelas<=2?'["A. ...","B. ...","C. ..."]':'["A. ...","B. ...","C. ...","D. ..."]';
 
   const limitCheck=checkLimit();
   if(!limitCheck.ok){
@@ -1472,7 +1527,7 @@ ${instruksiKelas}
 
 Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
 {
-  "pilihanGanda":[{"soal":"...","opsi":["A. ...","B. ...","C. ...","D. ..."],"jawaban":"A","indikator":"Siswa dapat ...","level":"C2"}],
+  "pilihanGanda":[{"soal":"...","opsi":${opsiJsonTemplate},"jawaban":"A","indikator":"Siswa dapat ...","level":"C2"}],
   "isian":[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C1"}],
   "uraian":[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C4"}]
 }
@@ -2714,8 +2769,10 @@ function autoSaveForm(){
     semester:document.getElementById('semester').value,
     tanggal:document.getElementById('tanggal').value,
     jenisUjian:document.getElementById('jenisUjian').value,
+    jenisUjianCustom:(document.getElementById('jenisUjianCustom')?.value||''),
     kelas:document.getElementById('kelas').value,
     mapel:document.getElementById('mataPelajaran').value,
+    mapelCustom:(document.getElementById('mataPelajaranCustom')?.value||''),
     jmlPG:document.getElementById('jmlPG').value,
     jmlIsian:document.getElementById('jmlIsian').value,
     jmlUraian:document.getElementById('jmlUraian').value,
@@ -2732,9 +2789,21 @@ function restoreAutoSave(){
     if(d.tahunPelajaran)document.getElementById('tahunPelajaran').value=d.tahunPelajaran;
     if(d.semester)document.getElementById('semester').value=d.semester;
     if(d.tanggal)document.getElementById('tanggal').value=d.tanggal;
-    if(d.jenisUjian)document.getElementById('jenisUjian').value=d.jenisUjian;
+    if(d.jenisUjian){
+      document.getElementById('jenisUjian').value=d.jenisUjian;
+      if(d.jenisUjian==='__lain__'&&d.jenisUjianCustom){
+        const ci=document.getElementById('jenisUjianCustom');
+        if(ci){ci.value=d.jenisUjianCustom;ci.style.display='block';}
+      }
+    }
     if(d.kelas){document.getElementById('kelas').value=d.kelas;renderMapelOptions();}
-    if(d.mapel)document.getElementById('mataPelajaran').value=d.mapel;
+    if(d.mapel){
+      document.getElementById('mataPelajaran').value=d.mapel;
+      if(d.mapel==='__tambah__'&&d.mapelCustom){
+        const ci=document.getElementById('mataPelajaranCustom');
+        if(ci){ci.value=d.mapelCustom;ci.style.display='block';}
+      }
+    }
     if(d.jmlPG)document.getElementById('jmlPG').value=d.jmlPG;
     if(d.jmlIsian)document.getElementById('jmlIsian').value=d.jmlIsian;
     if(d.jmlUraian)document.getElementById('jmlUraian').value=d.jmlUraian;
@@ -2743,7 +2812,7 @@ function restoreAutoSave(){
     renderMateriChecklist();
   }catch(e){console.warn('restoreAutoSave:',e);}
 }
-['namaSekolah','tahunPelajaran','semester','tanggal','jenisUjian','kelas','mataPelajaran','jmlPG','jmlIsian','jmlUraian','topikTambahan'].forEach(id=>{
+['namaSekolah','tahunPelajaran','semester','tanggal','jenisUjian','jenisUjianCustom','kelas','mataPelajaran','mataPelajaranCustom','jmlPG','jmlIsian','jmlUraian','topikTambahan'].forEach(id=>{
   const el=document.getElementById(id);if(el)el.addEventListener('change',autoSaveForm);
 });
 document.querySelectorAll('.cb-kesulitan').forEach(c=>c.addEventListener('change',autoSaveForm));
@@ -2797,6 +2866,16 @@ function validateForm(){
   if(pg>30){showError('Jumlah PG maksimal 30 soal.');return false;}
   if(is>20){showError('Jumlah Isian maksimal 20 soal.');return false;}
   if(ur>10){showError('Jumlah Uraian maksimal 10 soal.');return false;}
+  // Validasi custom jenis ujian
+  if(document.getElementById('jenisUjian').value==='__lain__'){
+    const cv=(document.getElementById('jenisUjianCustom')?.value||'').trim();
+    if(!cv){showError('Ketik nama jenis ujian terlebih dahulu.');document.getElementById('jenisUjianCustom')?.focus();return false;}
+  }
+  // Validasi custom mapel
+  if(document.getElementById('mataPelajaran').value==='__tambah__'){
+    const cv=(document.getElementById('mataPelajaranCustom')?.value||'').trim();
+    if(!cv){showError('Ketik nama mata pelajaran terlebih dahulu.');document.getElementById('mataPelajaranCustom')?.focus();return false;}
+  }
   if(!getMateriTerpilih()){showError('Pilih minimal satu materi.');return false;}
   if(!getKesulitanTerpilih()){showError('Pilih minimal satu tingkat kesulitan.');return false;}
   return true;
