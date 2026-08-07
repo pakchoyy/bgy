@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Bantu Guru Yuk | Modul Ajar</title>
+<title>Bantu Guru Yuk | Modul Ajar SD SMP SMA SMK</title>
 <link rel="icon" href="../guru-cibisd2.png" sizes="192x192" type="image/png"/>
 <link rel="shortcut icon" href="../guru-cibisd2.png" type="image/png"/>
 <link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
@@ -98,6 +98,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 /* HEADER */
 header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
 body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+
+/* JENJANG CHIP */
+.jenjang-chip{display:flex;align-items:center;justify-content:center;border:2px solid var(--border);border-radius:10px;padding:8px 4px;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--text-light);transition:all .2s;text-align:center;user-select:none;}
+.jenjang-chip input{display:none;}
+.jenjang-chip span{display:flex;flex-direction:column;align-items:center;gap:2px;}
+.jenjang-chip:has(input:checked){border-color:#0ea5a0;background:rgba(14,165,160,.1);color:#0ea5a0;}
+.jenjang-chip:hover{border-color:#0ea5a0;}
 .header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
 .header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
 .header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
@@ -274,10 +281,12 @@ footer a{color:inherit;text-decoration:underline;}
   <div class="card">
     <div class="card-title">ℹ️ Tentang Aplikasi</div>
     <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Modul Ajar v26.5.2</p>
-    <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Generator Prompt Modul Ajar SD</b> membantu guru SD membuat prompt siap pakai untuk di-paste ke Claude atau Gemini, menghasilkan Modul Ajar lengkap sesuai <b>Kurikulum Merdeka</b>.</p>
+    <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Generator Prompt Modul Ajar SD, SMP, SMA, dan SMK</b> — membantu guru membuat prompt siap pakai untuk di-paste ke Claude atau Gemini, menghasilkan Modul Ajar lengkap sesuai <b>Kurikulum Merdeka</b>.</p>
     <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur</h4>
     <ul style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
-      <li>Generate prompt Modul Ajar SD siap pakai</li>
+      <li>Generate prompt Modul Ajar untuk SD, SMP, SMA, SMK</li>
+      <li>Prompt berbeda per jenjang (konteks, rubrik, kegiatan)</li>
+      <li>SMK: konsentrasi keahlian + jobsheet vokasional</li>
       <li>Sesuai Kurikulum Merdeka (Kemendikdasmen)</li>
       <li>Salin 1 klik → paste ke Claude atau Gemini</li>
       <li>Histori 20 prompt terakhir</li>
@@ -347,6 +356,41 @@ footer a{color:inherit;text-decoration:underline;}
         </div>
 
         <div class="form-group">
+          <label>Jenjang Sekolah</label>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+            <label class="jenjang-chip" id="jc-sd"><input type="radio" name="jenjang" value="SD" checked onchange="onJenjangChange()"/><span>🏫 SD</span></label>
+            <label class="jenjang-chip" id="jc-smp"><input type="radio" name="jenjang" value="SMP" onchange="onJenjangChange()"/><span>🏫 SMP</span></label>
+            <label class="jenjang-chip" id="jc-sma"><input type="radio" name="jenjang" value="SMA" onchange="onJenjangChange()"/><span>🏫 SMA</span></label>
+            <label class="jenjang-chip" id="jc-smk"><input type="radio" name="jenjang" value="SMK" onchange="onJenjangChange()"/><span>🏫 SMK</span></label>
+          </div>
+        </div>
+
+        <!-- Konsentrasi Keahlian (SMK only) -->
+        <div class="form-group" id="konsentrasiWrap" style="display:none;">
+          <label>Konsentrasi Keahlian</label>
+          <select id="konsentrasiKeahlian">
+            <option value="">-- Pilih atau isi manual --</option>
+            <option value="Teknik Komputer dan Jaringan">Teknik Komputer dan Jaringan</option>
+            <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
+            <option value="Multimedia">Multimedia</option>
+            <option value="Akuntansi dan Keuangan Lembaga">Akuntansi dan Keuangan Lembaga</option>
+            <option value="Manajemen Perkantoran dan Layanan Bisnis">Manajemen Perkantoran dan Layanan Bisnis</option>
+            <option value="Bisnis Daring dan Pemasaran">Bisnis Daring dan Pemasaran</option>
+            <option value="Teknik Kendaraan Ringan">Teknik Kendaraan Ringan</option>
+            <option value="Teknik Instalasi Tenaga Listrik">Teknik Instalasi Tenaga Listrik</option>
+            <option value="Kuliner">Kuliner</option>
+            <option value="Perhotelan">Perhotelan</option>
+            <option value="Farmasi Klinis dan Komunitas">Farmasi Klinis dan Komunitas</option>
+            <option value="Keperawatan">Keperawatan</option>
+            <option value="Agribisnis Tanaman">Agribisnis Tanaman</option>
+            <option value="__lainnya_konsentrasi__">Lainnya (isi manual)</option>
+          </select>
+          <div id="konsentrasiManualWrap" style="display:none;margin-top:6px;">
+            <input type="text" id="konsentrasiManual" placeholder="Tulis nama konsentrasi keahlian..."/>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label>Mata Pelajaran</label>
           <select id="mapel" onchange="toggleMapelManual(this.value)">
             <option value="">-- Pilih Mata Pelajaran --</option>
@@ -364,6 +408,10 @@ footer a{color:inherit;text-decoration:underline;}
               <option value="Fase C / Kelas 5 SD" selected>Fase C / Kelas 5</option>
               <option value="Fase C / Kelas 6 SD">Fase C / Kelas 6</option>
             </select>
+          </div>
+          <div class="form-group" id="mataPelajaranTambahanWrap" style="display:none;">
+            <label>Mapel Tambahan <span style="font-size:.65rem;color:var(--text-light);font-weight:400;">(opsional)</span></label>
+            <input type="text" id="mataPelajaranTambahan" placeholder="Misal: Muatan Lokal, Bahasa Daerah..."/>
           </div>
           <div class="form-group">
             <label>Alokasi Waktu</label>
@@ -510,7 +558,7 @@ footer a{color:inherit;text-decoration:underline;}
 </div>
 
 <footer>
-  <div class="footer-title">Modul Ajar SD • Kurikulum Merdeka</div>
+  <div class="footer-title">Modul Ajar SD • SMP • SMA • SMK • Kurikulum Merdeka</div>
   <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.5.2</div>
 
 </footer>
@@ -557,25 +605,127 @@ const sbClient = window.supabase.createClient(
 // MAPEL DINAMIS BERDASARKAN FASE
 // (harus di atas init agar tidak ReferenceError)
 // ============================================================
-const MAPEL_PER_FASE={
-  A:['Bahasa Indonesia','Matematika','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
-  B:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
-  C:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+// ============================================================
+// DATA JENJANG
+// ============================================================
+const DATA_JENJANG={
+  SD:{
+    fase:{
+      A:['Fase A / Kelas 1 SD','Fase A / Kelas 2 SD'],
+      B:['Fase B / Kelas 3 SD','Fase B / Kelas 4 SD'],
+      C:['Fase C / Kelas 5 SD','Fase C / Kelas 6 SD'],
+    },
+    defaultFase:'Fase C / Kelas 5 SD',
+    alokasi:{A:'2 x 35 menit',B:'3 x 35 menit',C:'3 x 35 menit'},
+    defaultAlokasi:'3 x 35 menit',
+    mapel:{
+      A:['Bahasa Indonesia','Matematika','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+      B:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+      C:['Bahasa Indonesia','Matematika','IPAS','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Bahasa Inggris','Lainnya'],
+    },
+    namaSekolahPlaceholder:'Contoh: SD Negeri 1 Magetan',
+    levelLabel:'Sekolah Dasar (SD)',
+    satuanWaktu:35,
+  },
+  SMP:{
+    fase:{
+      D:['Fase D / Kelas 7 SMP','Fase D / Kelas 8 SMP','Fase D / Kelas 9 SMP'],
+    },
+    defaultFase:'Fase D / Kelas 7 SMP',
+    alokasi:{D:'2 x 40 menit'},
+    defaultAlokasi:'2 x 40 menit',
+    mapel:{
+      D:['Bahasa Indonesia','Matematika','IPA','IPS','Bahasa Inggris','PPKn','Pendidikan Agama Islam','PJOK','Seni Budaya','Informatika','Muatan Lokal','Lainnya'],
+    },
+    namaSekolahPlaceholder:'Contoh: SMP Negeri 1 Magetan',
+    levelLabel:'Sekolah Menengah Pertama (SMP)',
+    satuanWaktu:40,
+  },
+  SMA:{
+    fase:{
+      E:['Fase E / Kelas 10 SMA'],
+      F:['Fase F / Kelas 11 SMA','Fase F / Kelas 12 SMA'],
+    },
+    defaultFase:'Fase E / Kelas 10 SMA',
+    alokasi:{E:'2 x 45 menit',F:'2 x 45 menit'},
+    defaultAlokasi:'2 x 45 menit',
+    mapel:{
+      E:['Bahasa Indonesia','Matematika','Bahasa Inggris','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Informatika','Sejarah Indonesia','Lainnya'],
+      F:['Bahasa Indonesia','Matematika','Bahasa Inggris','PPKn','PJOK','Fisika','Kimia','Biologi','Ekonomi','Sejarah','Geografi','Sosiologi','Bahasa Jerman','Bahasa Jepang','Bahasa Mandarin','Lainnya'],
+    },
+    namaSekolahPlaceholder:'Contoh: SMA Negeri 1 Magetan',
+    levelLabel:'Sekolah Menengah Atas (SMA)',
+    satuanWaktu:45,
+  },
+  SMK:{
+    fase:{
+      E:['Fase E / Kelas 10 SMK'],
+      F:['Fase F / Kelas 11 SMK','Fase F / Kelas 12 SMK'],
+    },
+    defaultFase:'Fase E / Kelas 10 SMK',
+    alokasi:{E:'2 x 45 menit',F:'3 x 45 menit'},
+    defaultAlokasi:'2 x 45 menit',
+    mapel:{
+      E:['Bahasa Indonesia','Matematika','Bahasa Inggris','PPKn','PJOK','Seni Budaya','Pendidikan Agama Islam','Informatika','Projek IPAS','Mata Pelajaran Kejuruan','Lainnya'],
+      F:['Bahasa Indonesia','Matematika','Bahasa Inggris','PPKn','PJOK','Mata Pelajaran Kejuruan','Projek Kreatif dan Kewirausahaan','PKL','Lainnya'],
+    },
+    namaSekolahPlaceholder:'Contoh: SMK Negeri 1 Magetan',
+    levelLabel:'Sekolah Menengah Kejuruan (SMK)',
+    satuanWaktu:45,
+  },
 };
-const ALOKASI_PER_FASE={A:'2 x 35 menit',B:'3 x 35 menit',C:'3 x 35 menit'};
+
 let _mapelLainnyaActive=false;
 
-function getFaseFromValue(val){
-  if(val.startsWith('Fase A'))return 'A';
-  if(val.startsWith('Fase B'))return 'B';
-  if(val.startsWith('Fase C'))return 'C';
-  return 'B';
+function getJenjang(){
+  const r=document.querySelector('input[name="jenjang"]:checked');
+  return r?r.value:'SD';
 }
 
-function updateMapelOptions(fase){
+function getFaseKeyFromValue(val){
+  if(val.includes('Fase A'))return 'A';
+  if(val.includes('Fase B'))return 'B';
+  if(val.includes('Fase C'))return 'C';
+  if(val.includes('Fase D'))return 'D';
+  if(val.includes('Fase E'))return 'E';
+  if(val.includes('Fase F'))return 'F';
+  return 'A';
+}
+
+// alias lama masih dipanggil di onFaseChange
+function getFaseFromValue(val){return getFaseKeyFromValue(val);}
+
+function onJenjangChange(){
+  const j=getJenjang();
+  const data=DATA_JENJANG[j];
+  // Update placeholder nama sekolah
+  document.getElementById('namaSekolah').placeholder=data.namaSekolahPlaceholder;
+  // Update fase options
+  const selFase=document.getElementById('faseKelas');
+  selFase.innerHTML='';
+  Object.values(data.fase).flat().forEach((f,i)=>{
+    const o=document.createElement('option');
+    o.value=f;o.textContent=f.replace(/ SD| SMP| SMA| SMK/,'');
+    if(f===data.defaultFase)o.selected=true;
+    selFase.appendChild(o);
+  });
+  // Tampil/sembunyikan konsentrasi SMK
+  document.getElementById('konsentrasiWrap').style.display=j==='SMK'?'block':'none';
+  // Update mapel
+  updateMapelOptions(getFaseKeyFromValue(selFase.value));
+  // Update alokasi default jika belum diedit
+  const aloEl=document.getElementById('alokasiWaktu');
+  if(!aloEl.dataset.edited)aloEl.value=data.defaultAlokasi;
+  // Update header title
+  document.querySelector('h1').innerHTML=`Bantu Guru Yuk | Modul Ajar <span id="hBadge" class="${_isPro?'badge-pro':'badge-free'}">${_isPro?'PRO':'FREE'}</span>`;
+}
+
+function updateMapelOptions(faseKey){
+  const j=getJenjang();
+  const data=DATA_JENJANG[j];
   const sel=document.getElementById('mapel');
   const currentVal=sel.value;
-  const list=MAPEL_PER_FASE[fase]||MAPEL_PER_FASE.B;
+  const list=(data.mapel[faseKey]||Object.values(data.mapel)[0]);
   sel.innerHTML='<option value="">-- Pilih Mata Pelajaran --</option>';
   list.forEach(m=>{
     const opt=document.createElement('option');
@@ -586,6 +736,15 @@ function updateMapelOptions(fase){
   });
   toggleMapelManual(sel.value);
 }
+
+// Handler konsentrasi SMK
+document.addEventListener('DOMContentLoaded',()=>{
+  const selKon=document.getElementById('konsentrasiKeahlian');
+  if(selKon){selKon.addEventListener('change',function(){
+    const w=document.getElementById('konsentrasiManualWrap');
+    if(w)w.style.display=this.value==='__lainnya_konsentrasi__'?'block':'none';
+  });}
+});
 
 function toggleMapelManual(val){
   let manualWrap=document.getElementById('mapelManualWrap');
@@ -604,13 +763,13 @@ function toggleMapelManual(val){
 }
 
 function onFaseChange(){
-  const fase=getFaseFromValue(document.getElementById('faseKelas').value);
-  updateMapelOptions(fase);
-  const alokasiEl=document.getElementById('alokasiWaktu');
-  const defaultValues=Object.values(ALOKASI_PER_FASE);
-  if(!alokasiEl.dataset.edited||defaultValues.includes(alokasiEl.value)){
-    alokasiEl.value=ALOKASI_PER_FASE[fase];
-    delete alokasiEl.dataset.edited;
+  const faseVal=document.getElementById('faseKelas').value;
+  const faseKey=getFaseKeyFromValue(faseVal);
+  const j=getJenjang();
+  updateMapelOptions(faseKey);
+  const aloEl=document.getElementById('alokasiWaktu');
+  if(!aloEl.dataset.edited){
+    aloEl.value=(DATA_JENJANG[j]?.alokasi?.[faseKey])||'2 x 35 menit';
   }
 }
 
@@ -627,7 +786,8 @@ function onFaseChange(){
   checkProStatus();    // ← harus sebelum updateLimitDisplay!
   updateLimitDisplay();
   updateHistoriBadge();
-  onFaseChange();
+  onJenjangChange();  // init jenjang SD dulu, lalu fase & mapel
+
   window.addEventListener('beforeinstallprompt',e=>{
     e.preventDefault();window._dip=e;
     const last=localStorage.getItem('installClosedAt');
@@ -893,97 +1053,64 @@ function getAutoTahunAjaran(){
 // ============================================================
 // GENERATE PROMPT
 // ============================================================
-function generatePrompt(){
-  const errBox=document.getElementById('errorBox');
-  errBox.style.display='none';
+function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi){
+  const tgl=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  const safeMapel=mapel.replace(/\s+/g,'_');
+  const safeFase=fase.replace(/[\s\/]+/g,'_');
+  const namaFile=`Modul_Ajar_${j}_${safeMapel}_${safeFase}.docx`;
+  const konsentrasiLine=konsentrasi?`- Konsentrasi Keahlian: ${konsentrasi}\n`:'';
 
-  const namaSekolah=document.getElementById('namaSekolah').value.trim()||'SD ...';
-  const namaPenyusun=document.getElementById('namaPenyusun').value.trim()||'Guru Kelas';
-  const semester=document.getElementById('semester').value;
-  const mapelRaw=document.getElementById('mapel').value;
-  const mapel=mapelRaw==='__lainnya__'?(document.getElementById('mapelManual')?.value.trim()||'Lainnya'):mapelRaw;
-  const fase=document.getElementById('faseKelas').value;
-  const alokasi=document.getElementById('alokasiWaktu').value.trim()||'2 x 35 menit';
-  const topik=document.getElementById('topikMateri').value.trim();
-  const model=document.getElementById('modelPembelajaran').value;
-  const p5=[...document.querySelectorAll('.cb-p5:checked')].map(c=>c.value).join(', ');
-  const karakteristik=document.getElementById('karakteristikSiswa').value.trim()||'Peserta didik reguler, kelas heterogen';
-  const tahun=getAutoTahunAjaran();
+  const PROMPT_SD=`You are an expert Indonesian elementary school (SD) teacher, curriculum developer, and practitioner of Kurikulum Merdeka with deep knowledge of the latest Indonesian national education standards.
 
-  if(!mapelRaw||mapelRaw==='__lainnya__'&&!document.getElementById('mapelManual')?.value.trim()){errBox.textContent='⚠️ Pilih atau isi mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
-  if(!topik){errBox.textContent='⚠️ Topik / materi pokok belum diisi.';errBox.style.display='block';return;}
-  if(!p5){errBox.textContent='⚠️ Pilih minimal satu dimensi Profil Pelajar Pancasila.';errBox.style.display='block';return;}
+Generate a complete, detailed, systematic, professional, and ready-to-use **MODUL AJAR KURIKULUM MERDEKA SD** with the following identity:
 
-  const lc=checkLimit();
-  if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
-
-  setLoading(true);
-  // Prompt building is sync, but wrap in setTimeout for overlay to render
-  setTimeout(()=>{
-  const prompt=`You are an expert Indonesian elementary school (SD) teacher, curriculum developer, and practitioner of Kurikulum Merdeka with deep knowledge of the latest Indonesian national education standards and school administration.
-
-Generate a complete, detailed, systematic, professional, and ready-to-use **MODUL AJAR KURIKULUM MERDEKA** with the following identity:
-
-**MODULE IDENTITY:**
-- School Name: ${namaSekolah}
-- Author: ${namaPenyusun}
-- Subject: ${mapel}
-- Phase / Grade: ${fase}
+**IDENTITAS MODUL:**
+- Nama Sekolah: ${namaSekolah}
+- Penyusun: ${namaPenyusun}
+- Mata Pelajaran: ${mapel}
+- Fase / Kelas: ${fase}
 - Semester: ${semester}
-- Academic Year: ${tahun}
-- Time Allocation: ${alokasi}
-- Topic / Main Material: ${topik}
+- Tahun Ajaran: ${tahun}
+- Alokasi Waktu: ${alokasi}
+- Topik / Materi Pokok: ${topik}
 
-**CORE GUIDELINES:**
-1. The module must comply with the latest Kurikulum Merdeka standards based on **BSKAP Number 046/H/KR/2025**.
-2. Apply the **Deep Learning** approach (Mindful, Meaningful, Joyful Learning) integrated with the ${model} instructional model.
-3. Include **HOTS**, Differentiated Learning, Meaningful Learning, and Student-Centered Learning throughout.
-4. Student characteristics: ${karakteristik}
-5. Completeness level: comprehensive and highly detailed.
+**PEDOMAN UTAMA:**
+1. Sesuai Kurikulum Merdeka berdasarkan **Permendikdasmen No. 12 Tahun 2024** dan **BSKAP 046/H/KR/2025**.
+2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
+3. Sertakan HOTS, Diferensiasi, Pembelajaran Bermakna, dan Student-Centered Learning.
+4. Karakteristik peserta didik: ${karakteristik}
+5. Dimensi Profil Pelajar Pancasila: ${p5}
 
-Write ALL content in formal academic Indonesian (Bahasa Indonesia formal akademik), natural as a genuine official document:
+Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**, alami seperti dokumen resmi asli:
 
-1. **INFORMASI UMUM** — contextual student characteristics for Indonesian SD, infrastructure (realistic SD conditions), Profil Pelajar Pancasila dimensions (${p5}), target students, learning model/approach/method.
-
-2. **CAPAIAN PEMBELAJARAN (CP)** — complete official CP text from Kurikulum Merdeka for the subject and phase.
-
-3. **TUJUAN PEMBELAJARAN (TP)** — specific measurable objectives using Bloom's Taxonomy KKO at HOTS level, realistic for SD.
-
-4. **PEMAHAMAN BERMAKNA** — real-world benefits of this topic in daily life and students' local environment.
-
-5. **PERTANYAAN PEMANTIK** — minimum 3 contextual questions to spark curiosity, encourage HOTS, relevant to children's daily experiences.
-
-6. **PERSIAPAN PEMBELAJARAN** — interactive learning media, concrete tools & materials, learning resources, supporting technology, teacher preparation steps.
-
-7. **KEGIATAN PEMBELAJARAN** — very detailed, realistic, sequential, with time estimates, teacher actions, and student actions:
-   - A. **PENDAHULUAN**: Greeting & prayer, attendance, contextual apersepsi, cheerful ice breaking typical for SD, learning motivation, pemantik questions, objectives delivery.
-   - B. **INTI**: Concrete step-by-step activities following the ${model} model syntax integrated with DEEP LEARNING elements (real problem exploration, direct observation/media, interactive group discussion, collaboration, case analysis/independent practice, experiment/creative work, presentation, mid-process reflection, communication, creativity, content/process differentiation, literacy & numeracy reinforcement). Include realistic teacher-student dialogue examples.
-   - C. **PENUTUP**: Student reflection, teacher concept reinforcement, joint conclusion, short evaluation/quiz, follow-up, closing motivation, prayer.
-
-8. **ASESMEN LENGKAP** — diagnostic (cognitive/non-cognitive), formative, summative, attitude, skill, and knowledge assessment; observation sheets, descriptive rubrics, question grids, and HOTS sample questions at SD level.
-
-9. **DIFERENSIASI PEMBELAJARAN** — technical ways to differentiate content, process, and product based on student learning readiness.
-
-10. **REMEDIAL DAN PENGAYAAN** — tactical activities for students who have not mastered the material and fast learners.
-
-11. **REFLEKSI GURU** — guiding reflection questions on student responses, technical obstacles, strategy effectiveness, and improvement plans for the next session.
-
-12. **LAMPIRAN SIAP PAKAI** — must contain complete draft content: engaging LKPD for SD, brief subject matter/reading material, blank assessment tables/rubrics ready to fill, ready-to-use observation instruments.
+1. **INFORMASI UMUM** — karakteristik siswa SD kontekstual, sarana-prasarana realistis, model/pendekatan/metode pembelajaran.
+2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka untuk mata pelajaran dan fase ini.
+3. **TUJUAN PEMBELAJARAN (TP)** — menggunakan KKO Taksonomi Bloom level HOTS, terukur, realistis untuk SD.
+4. **PEMAHAMAN BERMAKNA** — manfaat nyata topik dalam kehidupan sehari-hari siswa SD.
+5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan kontekstual memancing rasa ingin tahu dan HOTS.
+6. **PERSIAPAN PEMBELAJARAN** — media, alat/bahan, sumber belajar, langkah persiapan guru.
+7. **KEGIATAN PEMBELAJARAN** — sangat detail, runtut, dengan estimasi waktu:
+   - A. **PENDAHULUAN**: Salam, doa, presensi, apersepsi, ice breaking khas SD, motivasi, pertanyaan pemantik, penyampaian tujuan.
+   - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — eksplorasi masalah nyata, observasi, diskusi kelompok, kolaborasi, analisis kasus, kreativitas, presentasi, refleksi proses, diferensiasi konten/proses. Sertakan contoh dialog guru-siswa.
+   - C. **PENUTUP**: Refleksi siswa, penguatan konsep, kesimpulan bersama, kuis singkat, tindak lanjut, doa.
+8. **ASESMEN LENGKAP** — diagnostik (kognitif/non-kognitif), formatif, sumatif; lembar observasi, rubrik deskriptif, kisi-kisi, soal HOTS level SD.
+9. **DIFERENSIASI PEMBELAJARAN** — teknis diferensiasi konten, proses, produk sesuai kesiapan belajar.
+10. **REMEDIAL DAN PENGAYAAN** — kegiatan taktis untuk siswa belum tuntas dan siswa cepat.
+11. **REFLEKSI GURU** — pertanyaan reflektif tentang respons siswa, kendala, efektivitas strategi.
+12. **LAMPIRAN SIAP PAKAI** — LKPD lengkap khas SD, ringkasan materi, tabel/rubrik asesmen siap isi, instrumen observasi.
 
 ════════════════════════════════════════
 OUTPUT RULES:
-- ALL content MUST be written in formal academic Indonesian (Bahasa Indonesia formal akademik).
-- DO NOT write any greeting, opener, AI disclaimer, or introductory sentence.
-- DO NOT write "Tentu!", "Baik!", "Berikut adalah...", "Dengan senang hati", or anything similar.
-- DO NOT add any explanation, note, or comment between sections.
-- Start the document directly with: ## MODUL AJAR KURIKULUM MERDEKA
-- Use full Markdown formatting (##/### headings, markdown tables for activities & rubrics, bold for important terms).
+- Tulis SEMUA dalam Bahasa Indonesia formal akademik.
+- JANGAN tulis salam, pembuka, disclaimer AI, atau kalimat pengantar apapun.
+- JANGAN tulis "Tentu!", "Baik!", "Berikut adalah...", dsb.
+- Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
+- Gunakan Markdown penuh (##/### heading, tabel markdown untuk kegiatan & rubrik, bold untuk istilah penting).
 
 ════════════════════════════════════════
-SIGNATURE PAGE (HALAMAN PENGESAHAN):
-- At the very end of the document, add a signature page with this EXACT format (do NOT duplicate headers):
+HALAMAN PENGESAHAN (di akhir dokumen):
 
-${namaSekolah}, ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}
+${namaSekolah}, ${tgl}
 
 Mengetahui,
 Kepala ${namaSekolah}
@@ -999,37 +1126,276 @@ Guru Kelas,
 (${namaPenyusun})
 NIP. ____________________
 
-- Use a simple 2-column table in the .docx for the two signatures side by side (Kepala Sekolah kiri, Guru Kelas kanan).
-- Do NOT repeat "Mengetahui, Kepala ${namaSekolah}" twice. Only write it ONCE at the top of the signature block.
+Buat tabel 2 kolom di .docx untuk tanda tangan berdampingan. Tulis "Mengetahui" hanya SEKALI.
 
 ════════════════════════════════════════
-AFTER COMPLETING THE FULL MODULE CONTENT:
-
-1. Immediately use the **file creation tool** to save the entire module as a downloadable **.docx file** — do this automatically, without waiting for any additional instruction from the user.
-2. Name the file: Modul_Ajar_${mapel.replace(/\s+/g,'_')}_${fase.replace(/[\s\/]+/g,'_')}.docx
-3. After the file is created and ready to download, inform the user with a short message:
-   "✅ Modul Ajar selesai disusun. File Word (.docx) sudah siap diunduh di atas."
+SETELAH MODUL SELESAI:
+1. Gunakan file creation tool untuk simpan sebagai .docx secara otomatis.
+2. Nama file: ${namaFile}
+3. Informasikan: "✅ Modul Ajar selesai disusun. File Word (.docx) sudah siap diunduh di atas."
 ════════════════════════════════════════`;
 
-  document.getElementById('hasilPrompt').textContent=prompt;
-  document.getElementById('promptPlaceholder').style.display='none';
-  document.getElementById('promptContent').style.display='block';
+  const PROMPT_SMP=`You are an expert Indonesian junior high school (SMP) teacher, curriculum developer, and practitioner of Kurikulum Merdeka with deep knowledge of the latest Indonesian national education standards.
 
-  if(!isPro()) incrementDaily();
-  simpanHistori(prompt,mapel,fase,topik);
-  setLoading(false);
-  updateLimitDisplay();
-  updateHistoriBadge();
+Generate a complete, detailed, systematic, professional, and ready-to-use **MODUL AJAR KURIKULUM MERDEKA SMP** with the following identity:
 
-  gaEvent('generate_prompt_modul_ajar',{mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
+**IDENTITAS MODUL:**
+- Nama Sekolah: ${namaSekolah}
+- Penyusun: ${namaPenyusun}
+- Mata Pelajaran: ${mapel}
+- Fase / Kelas: ${fase}
+- Semester: ${semester}
+- Tahun Ajaran: ${tahun}
+- Alokasi Waktu: ${alokasi}
+- Topik / Materi Pokok: ${topik}
 
-  document.getElementById('generateFeedback').textContent='✅ Prompt siap! Salin lalu paste ke Claude.';
-  setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);
+**PEDOMAN UTAMA:**
+1. Sesuai Kurikulum Merdeka berdasarkan **Permendikdasmen No. 12 Tahun 2024** dan **BSKAP 046/H/KR/2025**.
+2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
+3. Sertakan HOTS, Diferensiasi, Literasi-Numerasi, dan Student-Centered Learning.
+4. Karakteristik peserta didik: ${karakteristik}
+5. Dimensi Profil Pelajar Pancasila: ${p5}
 
-  if(window.innerWidth<900){
-    document.getElementById('hasilCard').scrollIntoView({behavior:'smooth',block:'start'});
-  }
-  },2500); // 2500ms overlay for feel
+Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
+
+1. **INFORMASI UMUM** — karakteristik siswa SMP kontekstual, kondisi sarana-prasarana, model/pendekatan/metode.
+2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka Fase D untuk mata pelajaran ini.
+3. **TUJUAN PEMBELAJARAN (TP)** — KKO Taksonomi Bloom level HOTS, terukur, realistis untuk SMP.
+4. **PEMAHAMAN BERMAKNA** — kaitan materi dengan kehidupan nyata dan isu kontekstual siswa SMP.
+5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan mendalam yang memancing berpikir kritis remaja.
+6. **PERSIAPAN PEMBELAJARAN** — media digital/non-digital, alat/bahan, sumber belajar, persiapan guru.
+7. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan estimasi waktu per menit:
+   - A. **PENDAHULUAN**: Salam, doa, presensi, apersepsi kontekstual, motivasi belajar, pertanyaan pemantik, penyampaian tujuan & manfaat.
+   - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — eksplorasi fenomena nyata, literasi sumber, diskusi kritis kelompok, kolaborasi, analisis mendalam, presentasi, umpan balik antarteman, refleksi tengah pembelajaran. Diferensiasi konten/proses. Sertakan contoh dialog guru-siswa.
+   - C. **PENUTUP**: Refleksi kritis siswa, penguatan konsep oleh guru, kesimpulan bersama, evaluasi formatif, tindak lanjut (PR/proyek mini), motivasi, doa.
+8. **ASESMEN LENGKAP** — diagnostik, formatif (observasi, peer assessment), sumatif; rubrik analitik, kisi-kisi, soal HOTS level SMP (C4–C6).
+9. **DIFERENSIASI PEMBELAJARAN** — konten, proses, produk sesuai kesiapan, minat, dan profil belajar siswa SMP.
+10. **REMEDIAL DAN PENGAYAAN** — program remedial terstruktur dan pengayaan berbasis proyek/eksplorasi mandiri.
+11. **REFLEKSI GURU** — refleksi mendalam tentang efektivitas pembelajaran, respons siswa, perbaikan.
+12. **LAMPIRAN SIAP PAKAI** — LKPD investigatif, ringkasan materi, rubrik lengkap siap isi, instrumen penilaian diri/antarteman.
+
+════════════════════════════════════════
+OUTPUT RULES:
+- Tulis SEMUA dalam Bahasa Indonesia formal akademik.
+- JANGAN tulis pembuka, salam, atau disclaimer AI apapun.
+- Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
+- Gunakan Markdown penuh (heading, tabel, bold).
+
+════════════════════════════════════════
+HALAMAN PENGESAHAN:
+
+${namaSekolah}, ${tgl}
+
+Mengetahui,
+Kepala ${namaSekolah}
+
+
+(________________________)
+NIP. ____________________
+
+
+Guru Mata Pelajaran,
+
+
+(${namaPenyusun})
+NIP. ____________________
+
+════════════════════════════════════════
+SETELAH SELESAI: simpan otomatis sebagai ${namaFile}, lalu informasikan singkat kepada pengguna.
+════════════════════════════════════════`;
+
+  const PROMPT_SMA=`You are an expert Indonesian senior high school (SMA) teacher, curriculum developer, and practitioner of Kurikulum Merdeka with deep knowledge of the latest Indonesian national education standards.
+
+Generate a complete, detailed, systematic, professional, and ready-to-use **MODUL AJAR KURIKULUM MERDEKA SMA** with the following identity:
+
+**IDENTITAS MODUL:**
+- Nama Sekolah: ${namaSekolah}
+- Penyusun: ${namaPenyusun}
+- Mata Pelajaran: ${mapel}
+- Fase / Kelas: ${fase}
+- Semester: ${semester}
+- Tahun Ajaran: ${tahun}
+- Alokasi Waktu: ${alokasi}
+- Topik / Materi Pokok: ${topik}
+
+**PEDOMAN UTAMA:**
+1. Sesuai Kurikulum Merdeka berdasarkan **Permendikdasmen No. 12 Tahun 2024** dan **BSKAP 046/H/KR/2025**.
+2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
+3. Sertakan HOTS tingkat tinggi, berpikir ilmiah, literasi digital, dan Student-Centered Learning.
+4. Karakteristik peserta didik: ${karakteristik}
+5. Dimensi Profil Pelajar Pancasila: ${p5}
+
+Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
+
+1. **INFORMASI UMUM** — karakteristik siswa SMA kontekstual, kondisi fasilitas, model/pendekatan/metode.
+2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka ${fase.includes('Fase E')?'Fase E':'Fase F'} untuk mata pelajaran ini.
+3. **TUJUAN PEMBELAJARAN (TP)** — KKO Bloom level C4–C6 (analisis, evaluasi, kreasi), terukur dan ambisius untuk SMA.
+4. **PEMAHAMAN BERMAKNA** — relevansi materi terhadap karier, perguruan tinggi, dan kehidupan global siswa SMA.
+5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan filosofis/saintifik yang memancing analisis kritis mendalam.
+6. **PERSIAPAN PEMBELAJARAN** — media digital interaktif, referensi ilmiah, platform pembelajaran, persiapan guru.
+7. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan estimasi waktu:
+   - A. **PENDAHULUAN**: Apersepsi intelektual, kontekstualisasi isu aktual/global, motivasi academic goals, pertanyaan pemantik, penyampaian tujuan.
+   - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — studi kasus kompleks, analisis data/teks ilmiah, debat argumentatif, kolaborasi lintas perspektif, produksi karya/solusi inovatif, presentasi akademik, peer review, refleksi epistemik. Diferensiasi sesuai jalur/minat siswa SMA.
+   - C. **PENUTUP**: Sintesis konseptual, evaluasi kritis mandiri, portofolio mini, tindak lanjut riset/proyek, motivasi.
+8. **ASESMEN LENGKAP** — diagnostik, formatif portofolio, sumatif berbasis proyek; rubrik analitik holistik, soal HOTS C5–C6, penilaian esai argumentatif.
+9. **DIFERENSIASI PEMBELAJARAN** — konten akademik, jalur eksplorasi, produk sesuai minat/rencana studi lanjut.
+10. **REMEDIAL DAN PENGAYAAN** — remedial konseptual terstruktur, pengayaan berbasis riset mandiri dan olimpiade.
+11. **REFLEKSI GURU** — evaluasi mendalam efektivitas, pencapaian KKO, dan rencana peningkatan.
+12. **LAMPIRAN SIAP PAKAI** — LKPD analitik, bahan bacaan ilmiah singkat, rubrik esai/proyek, instrumen penilaian diri.
+
+════════════════════════════════════════
+OUTPUT RULES:
+- Tulis SEMUA dalam Bahasa Indonesia formal akademik.
+- JANGAN tulis pembuka, salam, atau disclaimer apapun.
+- Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
+- Gunakan Markdown penuh.
+
+════════════════════════════════════════
+HALAMAN PENGESAHAN:
+
+${namaSekolah}, ${tgl}
+
+Mengetahui,
+Kepala ${namaSekolah}
+
+
+(________________________)
+NIP. ____________________
+
+
+Guru Mata Pelajaran,
+
+
+(${namaPenyusun})
+NIP. ____________________
+
+════════════════════════════════════════
+SETELAH SELESAI: simpan otomatis sebagai ${namaFile}, lalu informasikan singkat kepada pengguna.
+════════════════════════════════════════`;
+
+  const PROMPT_SMK=`You are an expert Indonesian vocational school (SMK) teacher, curriculum developer, and practitioner of Kurikulum Merdeka with deep knowledge of the latest Indonesian national education standards and vocational education.
+
+Generate a complete, detailed, systematic, professional, and ready-to-use **MODUL AJAR KURIKULUM MERDEKA SMK** with the following identity:
+
+**IDENTITAS MODUL:**
+- Nama Sekolah: ${namaSekolah}
+- Penyusun: ${namaPenyusun}
+- Mata Pelajaran: ${mapel}
+${konsentrasiLine}- Fase / Kelas: ${fase}
+- Semester: ${semester}
+- Tahun Ajaran: ${tahun}
+- Alokasi Waktu: ${alokasi}
+- Topik / Materi Pokok: ${topik}
+
+**PEDOMAN UTAMA:**
+1. Sesuai Kurikulum Merdeka SMK berdasarkan **Permendikdasmen No. 12 Tahun 2024**, **BSKAP 046/H/KR/2025**, dan **Spektrum Keahlian SMK**.
+2. Terapkan pendekatan **Teaching Factory (TeFa) / Project Based Learning** terintegrasi model ${model} dan Deep Learning.
+3. Orientasi DUDI (Dunia Usaha dan Dunia Industri), kompetensi vokasional, dan link-and-match.
+4. Karakteristik peserta didik: ${karakteristik}
+5. Dimensi Profil Pelajar Pancasila: ${p5}
+
+Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
+
+1. **INFORMASI UMUM** — karakteristik siswa SMK kontekstual, kondisi bengkel/lab/fasilitas vokasional, relevansi DUDI.
+2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka SMK ${fase.includes('Fase E')?'Fase E':'Fase F'} untuk mata pelajaran${konsentrasi?' konsentrasi '+konsentrasi:' ini'}.
+3. **TUJUAN PEMBELAJARAN (TP)** — kompetensi vokasional terukur (kognitif + psikomotor + afektif) sesuai standar industri.
+4. **PEMAHAMAN BERMAKNA** — kaitan langsung materi dengan pekerjaan nyata di industri dan peluang wirausaha.
+5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan berbasis skenario industri/kewirausahaan yang memancing berpikir profesional.
+6. **PERSIAPAN PEMBELAJARAN** — peralatan bengkel/lab/alat praktik, K3, SOP, media digital, sumber industri.
+7. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan estimasi waktu (termasuk waktu praktik):
+   - A. **PENDAHULUAN**: Apel/briefing ala industri, pengecekan K3, apersepsi konteks industri, motivasi karier, penyampaian tujuan dan kompetensi yang akan dicapai.
+   - B. **INTI**: Tahapan model ${model} terintegrasi Teaching Factory — demonstrasi teknik oleh guru/instruktur, praktik terbimbing, praktik mandiri, quality control, problem solving nyata, kolaborasi tim kerja, dokumentasi hasil, presentasi produk/karya. Integrasi K3 di setiap tahap.
+   - C. **PENUTUP**: Evaluasi produk/hasil praktik, refleksi profesi, pembersihan area kerja (5R), tindak lanjut PKL/proyek, motivasi.
+8. **ASESMEN LENGKAP** — asesmen kompetensi vokasional (teori + praktik); rubrik kinerja/produk standar industri, checklist K3, uji kompetensi tertulis dan praktik, portofolio vokasional.
+9. **DIFERENSIASI PEMBELAJARAN** — diferensiasi sesuai kecepatan penguasaan skill, modalitas belajar, dan jalur karier (bekerja/kuliah/wirausaha).
+10. **REMEDIAL DAN PENGAYAAN** — remedial praktik terbimbing, pengayaan berupa proyek industri nyata atau sertifikasi kompetensi.
+11. **REFLEKSI GURU** — evaluasi pencapaian kompetensi vokasional, kesesuaian dengan standar DUDI, perbaikan SOP.
+12. **LAMPIRAN SIAP PAKAI** — Jobsheet/LKPD praktik lengkap (langkah kerja, K3, gambar kerja), rubrik penilaian produk/kinerja, instrumen observasi sikap kerja, format laporan praktik siswa.
+
+════════════════════════════════════════
+OUTPUT RULES:
+- Tulis SEMUA dalam Bahasa Indonesia formal akademik.
+- JANGAN tulis pembuka, salam, atau disclaimer apapun.
+- Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
+- Gunakan Markdown penuh.
+
+════════════════════════════════════════
+HALAMAN PENGESAHAN:
+
+${namaSekolah}, ${tgl}
+
+Mengetahui,
+Kepala ${namaSekolah}
+
+
+(________________________)
+NIP. ____________________
+
+
+Guru / Instruktur,
+
+
+(${namaPenyusun})
+NIP. ____________________
+
+════════════════════════════════════════
+SETELAH SELESAI: simpan otomatis sebagai ${namaFile}, lalu informasikan singkat kepada pengguna.
+════════════════════════════════════════`;
+
+  const MAP={SD:PROMPT_SD,SMP:PROMPT_SMP,SMA:PROMPT_SMA,SMK:PROMPT_SMK};
+  return MAP[j]||PROMPT_SD;
+}
+
+function generatePrompt(){
+  const errBox=document.getElementById('errorBox');
+  errBox.style.display='none';
+
+  const j=getJenjang();
+  const namaSekolah=document.getElementById('namaSekolah').value.trim()||(j+' ...');
+  const namaPenyusun=document.getElementById('namaPenyusun').value.trim()||'Guru';
+  const semester=document.getElementById('semester').value;
+  const mapelRaw=document.getElementById('mapel').value;
+  const mapel=mapelRaw==='__lainnya__'?(document.getElementById('mapelManual')?.value.trim()||'Lainnya'):mapelRaw;
+  const fase=document.getElementById('faseKelas').value;
+  const alokasi=document.getElementById('alokasiWaktu').value.trim()||DATA_JENJANG[j].defaultAlokasi;
+  const topik=document.getElementById('topikMateri').value.trim();
+  const model=document.getElementById('modelPembelajaran').value;
+  const p5=[...document.querySelectorAll('.cb-p5:checked')].map(c=>c.value).join(', ');
+  const karakteristik=document.getElementById('karakteristikSiswa').value.trim()||'Peserta didik reguler, kelas heterogen';
+  const tahun=getAutoTahunAjaran();
+  const konsentrasiRaw=document.getElementById('konsentrasiKeahlian')?.value||'';
+  const konsentrasi=konsentrasiRaw==='__lainnya_konsentrasi__'?(document.getElementById('konsentrasiManual')?.value.trim()||''):konsentrasiRaw;
+
+  if(!mapelRaw||mapelRaw==='__lainnya__'&&!document.getElementById('mapelManual')?.value.trim()){errBox.textContent='⚠️ Pilih atau isi mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
+  if(!topik){errBox.textContent='⚠️ Topik / materi pokok belum diisi.';errBox.style.display='block';return;}
+  if(!p5){errBox.textContent='⚠️ Pilih minimal satu dimensi Profil Pelajar Pancasila.';errBox.style.display='block';return;}
+
+  const lc=checkLimit();
+  if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
+
+  setLoading(true);
+  setTimeout(()=>{
+    const prompt=buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi);
+
+    document.getElementById('hasilPrompt').textContent=prompt;
+    document.getElementById('promptPlaceholder').style.display='none';
+    document.getElementById('promptContent').style.display='block';
+
+    if(!isPro()) incrementDaily();
+    simpanHistori(prompt,mapel,fase,topik);
+    setLoading(false);
+    updateLimitDisplay();
+    updateHistoriBadge();
+
+    gaEvent('generate_prompt_modul_ajar',{jenjang:j,mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
+
+    document.getElementById('generateFeedback').textContent='✅ Prompt siap! Salin lalu paste ke Claude.';
+    setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);
+
+    if(window.innerWidth<900){
+      document.getElementById('hasilCard').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  },2500);
 }
 
 // ============================================================
