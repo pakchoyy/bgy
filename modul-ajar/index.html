@@ -439,14 +439,16 @@ footer a{color:inherit;text-decoration:underline;}
         </div>
 
         <div class="form-group">
-          <label>Profil Pelajar Pancasila</label>
+          <label>Dimensi Profil Lulusan</label>
           <div class="dim-checks">
-            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Beriman, Bertakwa kepada Tuhan YME dan Berakhlak Mulia"/>Beriman &amp; Berakhlak</label>
-            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Berkebinekaan Global" checked/>Berkebinekaan Global</label>
-            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Bergotong Royong" checked/>Bergotong Royong</label>
-            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Mandiri"/>Mandiri</label>
-            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Bernalar Kritis" checked/>Bernalar Kritis</label>
-            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Kreatif"/>Kreatif</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Keimanan dan Ketakwaan terhadap Tuhan YME" checked/>Keimanan &amp; Ketakwaan</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Kewargaan" checked/>Kewargaan</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Penalaran Kritis" checked/>Penalaran Kritis</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Kreativitas"/>Kreativitas</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Kolaborasi"/>Kolaborasi</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Kemandirian"/>Kemandirian</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Kesehatan"/>Kesehatan</label>
+            <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Komunikasi"/>Komunikasi</label>
           </div>
         </div>
 
@@ -1079,7 +1081,7 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
 3. Sertakan HOTS, Diferensiasi, Pembelajaran Bermakna, dan Student-Centered Learning.
 4. Karakteristik peserta didik: ${karakteristik}
-5. Dimensi Profil Pelajar Pancasila: ${p5}
+5. Dimensi Profil Lulusan: ${p5}
 
 Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**, alami seperti dokumen resmi asli:
 
@@ -1154,7 +1156,7 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
 3. Sertakan HOTS, Diferensiasi, Literasi-Numerasi, dan Student-Centered Learning.
 4. Karakteristik peserta didik: ${karakteristik}
-5. Dimensi Profil Pelajar Pancasila: ${p5}
+5. Dimensi Profil Lulusan: ${p5}
 
 Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
 
@@ -1223,7 +1225,7 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
 3. Sertakan HOTS tingkat tinggi, berpikir ilmiah, literasi digital, dan Student-Centered Learning.
 4. Karakteristik peserta didik: ${karakteristik}
-5. Dimensi Profil Pelajar Pancasila: ${p5}
+5. Dimensi Profil Lulusan: ${p5}
 
 Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
 
@@ -1292,7 +1294,7 @@ ${konsentrasiLine}- Fase / Kelas: ${fase}
 2. Terapkan pendekatan **Teaching Factory (TeFa) / Project Based Learning** terintegrasi model ${model} dan Deep Learning.
 3. Orientasi DUDI (Dunia Usaha dan Dunia Industri), kompetensi vokasional, dan link-and-match.
 4. Karakteristik peserta didik: ${karakteristik}
-5. Dimensi Profil Pelajar Pancasila: ${p5}
+5. Dimensi Profil Lulusan: ${p5}
 
 Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
 
@@ -1368,7 +1370,7 @@ function generatePrompt(){
 
   if(!mapelRaw||mapelRaw==='__lainnya__'&&!document.getElementById('mapelManual')?.value.trim()){errBox.textContent='⚠️ Pilih atau isi mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
   if(!topik){errBox.textContent='⚠️ Topik / materi pokok belum diisi.';errBox.style.display='block';return;}
-  if(!p5){errBox.textContent='⚠️ Pilih minimal satu dimensi Profil Pelajar Pancasila.';errBox.style.display='block';return;}
+  if(!p5){errBox.textContent='⚠️ Pilih minimal satu Dimensi Profil Lulusan.';errBox.style.display='block';return;}
 
   const lc=checkLimit();
   if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
