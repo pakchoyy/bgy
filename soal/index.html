@@ -577,6 +577,15 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
       <div class="card-title"><span>⚙️</span> Pengaturan Soal</div>
       <div class="form-group">
+        <label>Jenjang</label>
+        <select id="jenjang" onchange="onJenjangChange()">
+          <option value="SD" selected>SD (Sekolah Dasar)</option>
+          <option value="SMP">SMP (Sekolah Menengah Pertama)</option>
+          <option value="SMA">SMA (Sekolah Menengah Atas)</option>
+          <option value="SMK">SMK (Sekolah Menengah Kejuruan)</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>Kelas</label>
         <select id="kelas" onchange="onKelasChange()">
           <option value="1">1</option><option value="2" selected>2</option>
@@ -818,6 +827,92 @@ const DB_MAPEL={
   4:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPAS","PJOK","Seni Musik","Seni Rupa","Seni Tari","Bahasa Inggris","Muatan Lokal"],
   5:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPAS","PJOK","Seni Musik","Seni Rupa","Seni Tari","Bahasa Inggris","Koding & KA","Muatan Lokal"],
   6:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPAS","PJOK","Seni Musik","Seni Rupa","Seni Tari","Bahasa Inggris","Koding & KA","Muatan Lokal"]
+};
+
+const DB_MAPEL_SMP={
+  7:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPA","IPS","Bahasa Inggris","PJOK","Seni Budaya","Prakarya","Muatan Lokal"],
+  8:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPA","IPS","Bahasa Inggris","PJOK","Seni Budaya","Prakarya","Muatan Lokal"],
+  9:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPA","IPS","Bahasa Inggris","PJOK","Seni Budaya","Prakarya","Muatan Lokal"]
+};
+const DB_MAPEL_SMA={
+  10:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","IPA Terpadu","IPS Terpadu","Bahasa Inggris","PJOK","Seni Budaya","Informatika","Sejarah Indonesia","Muatan Lokal"],
+  11:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","Fisika","Kimia","Biologi","Ekonomi","Sosiologi","Geografi","Sejarah","Bahasa Inggris","PJOK","Seni Budaya","Informatika"],
+  12:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","Fisika","Kimia","Biologi","Ekonomi","Sosiologi","Geografi","Sejarah","Bahasa Inggris","PJOK","Seni Budaya","Informatika"]
+};
+const DB_MAPEL_SMK={
+  10:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","Bahasa Inggris","PJOK","Seni Budaya","Informatika","Dasar-Dasar Program Keahlian"],
+  11:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","Bahasa Inggris","PJOK","Mata Pelajaran Kejuruan / Konsentrasi"],
+  12:["Pendidikan Agama Islam & BP","Pendidikan Agama Kristen & BP","Pendidikan Pancasila","Bahasa Indonesia","Matematika","Bahasa Inggris","PJOK","Mata Pelajaran Kejuruan / Konsentrasi","Projek Kreatif & Kewirausahaan"]
+};
+
+/* ── DB_MATERI SMP/SMA/SMK — ringkasan per semester, user tetap bisa ketik manual ── */
+const DB_MATERI_SMP={
+  7:{
+    "Pendidikan Agama Islam & BP":{1:["Al-Qur'an dan Hadis: membaca tartil","Akidah: iman kepada Allah dan asmaul husna","Akhlak: ikhlas, sabar, syukur, pemaaf","Fiqih: bersuci dari hadas dan najis","Sejarah Islam: Nabi Muhammad periode Makkah"],2:["Al-Qur'an: surah-surah pilihan tentang alam","Akidah: iman kepada malaikat","Akhlak: rendah hati, santun, hemat, peduli","Fiqih: salat wajib dan salat jumat","Sejarah Islam: Nabi Muhammad periode Madinah"]},
+    "Pendidikan Pancasila":{1:["Sejarah kelahiran Pancasila","Nilai-nilai Pancasila dalam kehidupan","Norma dan aturan dalam masyarakat"],2:["Kebinekaan dan persatuan Indonesia","Hak dan kewajiban warga negara","Semangat sumpah pemuda"]},
+    "Bahasa Indonesia":{1:["Teks deskripsi: struktur dan kebahasaan","Teks cerita imajinasi/fantasi","Teks prosedur: urutan dan langkah","Teks laporan hasil observasi"],2:["Teks puisi: unsur dan maknanya","Teks fabel dan legenda","Surat pribadi dan surat dinas","Literasi buku fiksi dan nonfiksi"]},
+    "Matematika":{1:["Bilangan bulat dan pecahan","Himpunan","Bentuk aljabar","Persamaan dan pertidaksamaan linear satu variabel"],2:["Perbandingan (senilai dan berbalik nilai)","Aritmetika sosial","Garis dan sudut","Bangun datar (segiempat dan segitiga)"]},
+    "IPA":{1:["Objek IPA dan pengamatannya","Klasifikasi makhluk hidup","Zat dan perubahannya","Suhu dan kalor"],2:["Energi dalam sistem kehidupan","Sistem organisasi kehidupan","Interaksi makhluk hidup dengan lingkungan","Pencemaran lingkungan"]},
+    "IPS":{1:["Kondisi geografis Indonesia","Potensi sumber daya alam Indonesia","Keberagaman etnik dan budaya","Kehidupan masyarakat praaksara"],2:["Kehidupan masyarakat Hindu-Buddha","Kehidupan masyarakat Islam di Indonesia","Kondisi alam dan aktivitas penduduk","Konektivitas antarruang"]},
+    "Bahasa Inggris":{1:["Greeting and introduction","Family and personal description","Simple present tense","Daily activities"],2:["There is / there are","Present continuous tense","Descriptive text","Procedure text"]},
+    "PJOK":{1:["Permainan bola besar (sepak bola, bola voli, basket)","Atletik: jalan cepat dan lari","Aktivitas kebugaran jasmani"],2:["Permainan bola kecil (bulu tangkis, tenis meja)","Senam lantai dan senam ritmik","Renang gaya bebas","Pencegahan penyakit dan NAPZA"]},
+    "Seni Budaya":{1:["Menggambar flora, fauna, alam benda","Menyanyi lagu solo dan unisono","Gerak tari: ruang, waktu, tenaga","Teater: pantomim dan permainan peran"],2:["Menggambar ragam hias","Ansambel musik sederhana","Tari tradisional daerah","Naskah drama pendek"]}
+  },
+  8:{
+    "Bahasa Indonesia":{1:["Teks berita: struktur dan kaidah","Teks iklan, slogan, poster","Teks eksposisi: argumen dan fakta","Teks puisi: rima dan irama"],2:["Teks eksplanasi: fenomena alam/sosial","Teks ulasan: buku, film, karya","Teks persuasi: ajakan dan bujukan","Drama: naskah dan pementasan"]},
+    "Matematika":{1:["Pola bilangan","Koordinat Kartesius","Relasi dan fungsi","Persamaan garis lurus"],2:["Sistem persamaan linear dua variabel","Teorema Pythagoras","Lingkaran","Bangun ruang sisi datar"]},
+    "IPA":{1:["Gerak benda dan makhluk hidup","Struktur dan fungsi tumbuhan","Sistem gerak pada manusia","Pesawat sederhana"],2:["Tekanan zat","Sistem pernapasan manusia","Sistem ekskresi manusia","Getaran, gelombang, dan bunyi"]},
+    "IPS":{1:["Mobilitas sosial","Pluralitas masyarakat Indonesia","Konflik dan integrasi sosial","Perdagangan internasional"],2:["Perubahan masyarakat zaman kolonial","Munculnya nasionalisme Indonesia","Pergerakan kebangsaan","Ekonomi kreatif dan globalisasi"]}
+  },
+  9:{
+    "Bahasa Indonesia":{1:["Teks laporan percobaan","Teks pidato persuasif","Cerpen: unsur intrinsik dan ekstrinsik","Teks tanggapan kritis"],2:["Novel remaja: unsur pembangun","Teks diskusi: pendapat pro dan kontra","Teks cerita inspiratif","Literasi kritis media"]},
+    "Matematika":{1:["Perpangkatan dan bentuk akar","Persamaan kuadrat","Fungsi kuadrat","Transformasi geometri"],2:["Kesebangunan dan kekongruenan","Bangun ruang sisi lengkung","Statistika","Peluang"]},
+    "IPA":{1:["Sistem reproduksi manusia","Sistem reproduksi tumbuhan dan hewan","Pewarisan sifat (genetika)","Listrik statis"],2:["Listrik dinamis","Kemagnetan","Bioteknologi","Partikel penyusun materi"]},
+    "IPS":{1:["Perubahan sosial budaya di era globalisasi","Uang dan lembaga keuangan","Perdagangan bebas: ASEAN, MEA, WTO","Ketergantungan antarruang dan waktu"],2:["Indonesia masa awal kemerdekaan","Perjuangan mempertahankan kemerdekaan","Masa Demokrasi Liberal dan Terpimpin","Indonesia era Reformasi"]}
+  }
+};
+const DB_MATERI_SMA={
+  10:{
+    "Bahasa Indonesia":{1:["Laporan hasil observasi","Teks eksposisi: argumen dan tesis","Anekdot: struktur dan fungsi sosial","Hikayat: nilai-nilai dan keterkaitan"],2:["Negosiasi: struktur dan kaidah","Biografi: nilai dan pola penyajian","Puisi baru: diksi dan majas","Cerpen: unsur pembangun"]},
+    "Matematika":{1:["Eksponen dan logaritma","Persamaan dan pertidaksamaan eksponen","Sistem persamaan linear tiga variabel","Matriks: operasi dan determinan"],2:["Transformasi fungsi","Trigonometri: perbandingan dan identitas","Vektor: operasi dan aplikasi","Komposisi fungsi dan fungsi invers"]},
+    "IPA Terpadu":{1:["Hakikat ilmu kimia dan keselamatan lab","Struktur atom dan sistem periodik","Ikatan kimia","Larutan elektrolit dan nonelektrolit"],2:["Reaksi redoks","Tatanama senyawa dan persamaan reaksi","Besaran pokok dan turunan","Gerak lurus dan gerak melingkar"]},
+    "IPS Terpadu":{1:["Sejarah sebagai ilmu dan kisah","Konsep wilayah dan tata ruang","Manusia sebagai makhluk sosial","Pembentukan kelompok sosial"],2:["Perdagangan dan perubahan masyarakat","Masuknya Islam ke Nusantara","Dinamika atmosfer dan dampak bagi kehidupan","Ragam gejala sosial"]},
+    "Bahasa Inggris":{1:["Narrative text: legend and myth","Recount text: personal and factual","Simple past tense and past continuous","Report text: natural phenomena"],2:["Analytical exposition","Passive voice","Conditional sentences type 1 & 2","Descriptive and comparison"]},
+    "Informatika":{1:["Berpikir komputasional","Teknologi informasi dan komunikasi","Sistem komputer","Jaringan komputer dan internet"],2:["Analisis data","Algoritma dan pemrograman dasar","Dampak sosial informatika","Kolaborasi dan komunikasi digital"]}
+  },
+  11:{
+    "Fisika":{1:["Kinematika gerak parabola","Dinamika rotasi dan keseimbangan","Elastisitas dan hukum Hooke","Fluida statis dan dinamis"],2:["Gelombang mekanik","Gelombang bunyi","Termodinamika","Optik geometri"]},
+    "Kimia":{1:["Laju reaksi","Kesetimbangan kimia","Asam basa (Arrhenius, Brønsted-Lowry, Lewis)","Larutan penyangga"],2:["Hidrolisis garam","Kelarutan dan hasil kali kelarutan","Sistem koloid","Termokimia: entalpi dan hukum Hess"]},
+    "Biologi":{1:["Sel: struktur, fungsi, transport membran","Jaringan tumbuhan dan hewan","Sistem gerak: tulang, otot, sendi","Sistem sirkulasi darah dan limfa"],2:["Sistem pencernaan","Sistem pernapasan","Sistem ekskresi","Sistem koordinasi: saraf, hormon, indra"]},
+    "Matematika":{1:["Fungsi komposisi dan invers","Limit fungsi","Turunan fungsi","Aplikasi turunan: nilai ekstrim, kecepatan"],2:["Integral tak tentu","Integral tentu","Aplikasi integral: luas dan volume","Barisan dan deret"]},
+    "Ekonomi":{1:["Ketenagakerjaan dan pengangguran","Pendapatan nasional","APBN dan APBD","Perpajakan nasional"],2:["Indeks harga dan inflasi","Pertumbuhan dan pembangunan ekonomi","Pasar modal","Perdagangan internasional"]},
+    "Bahasa Indonesia":{1:["Prosedur kompleks: struktur dan kaidah","Teks editorial: opini dan fakta","Novel sejarah: nilai dan kebahasaan","Drama: struktur dan unsur pembangun"],2:["Puisi: musikalisasi dan apresiasi","Artikel ilmiah populer","Buku nonfiksi: simpulan dan pandangan","Kritik dan esai sastra"]}
+  },
+  12:{
+    "Fisika":{1:["Listrik statis: hukum Coulomb dan medan listrik","Kapasitor","Listrik dinamis: rangkaian dan hukum Kirchhoff","Kemagnetan dan induksi Faraday"],2:["Arus bolak-balik","Radiasi elektromagnetik","Fisika modern: relativitas dan efek fotolistrik","Fisika inti: radioaktivitas"]},
+    "Kimia":{1:["Sifat koligatif larutan","Redoks dan elektrokimia","Kimia unsur: gas mulia, halogen, alkali","Senyawa karbon: alkana, alkena, alkuna"],2:["Gugus fungsi senyawa karbon","Benzena dan turunannya","Makromolekul: karbohidrat, protein, lipid, polimer","Kimia lingkungan dan hijau"]},
+    "Biologi":{1:["Sistem reproduksi manusia","Sistem imun","Pertumbuhan dan perkembangan","Metabolisme: enzim, fotosintesis, respirasi"],2:["Genetika: hukum Mendel, penyimpangan","Mutasi dan evolusi","Bioteknologi konvensional dan modern","Ekologi: ekosistem dan perubahan lingkungan"]},
+    "Matematika":{1:["Statistika: distribusi frekuensi dan ukuran pemusatan","Peluang: permutasi, kombinasi, binomial","Program linear","Matriks lanjutan: transformasi"],2:["Geometri analitik: jarak dan sudut","Trigonometri lanjutan: aturan sinus dan cosinus","Limit trigonometri","Integral lanjutan: substitusi dan parsial"]},
+    "Bahasa Indonesia":{1:["Surat lamaran kerja: struktur dan kaidah","Teks cerita sejarah","Teks editorial dan opini","Informasi dalam ceramah"],2:["Novel terjemahan: nilai dan perbandingan","Puisi: penafsiran dan apresiasi","Resensi dan ulasan kritis","Debat: tata cara dan strategi"]}
+  }
+};
+const DB_MATERI_SMK={
+  10:{
+    "Bahasa Indonesia":{1:["Laporan hasil observasi","Teks eksposisi","Anekdot dan hikayat","Negosiasi"],2:["Biografi tokoh","Puisi baru","Cerpen","Teks prosedur kompleks"]},
+    "Matematika":{1:["Eksponen dan logaritma","Matriks","Barisan dan deret","Sistem persamaan linear"],2:["Trigonometri dasar","Transformasi geometri","Statistika deskriptif","Peluang"]},
+    "Bahasa Inggris":{1:["Greeting, introduction, and daily activities","Descriptive text: person, place, thing","Simple present and past tense","Procedure text"],2:["Narrative text","Report text","Passive voice","Job application and interview"]},
+    "Dasar-Dasar Program Keahlian":{1:["Pengenalan bidang keahlian","K3 (Kesehatan dan Keselamatan Kerja)","Dasar-dasar teknologi dan rekayasa","Komunikasi dalam dunia kerja"],2:["Kewirausahaan dasar","Etika profesi","Pengelolaan informasi digital","Praktik dasar keahlian"]}
+  },
+  11:{
+    "Bahasa Indonesia":{1:["Teks prosedur lanjutan","Teks eksplanasi fenomena teknis","Teks ceramah dan pidato","Negosiasi dalam konteks kerja"],2:["Teks ulasan karya","Artikel ilmiah populer","Drama dan monolog","Literasi kritis"]},
+    "Matematika":{1:["Fungsi dan grafik","Persamaan dan pertidaksamaan kuadrat","Limit fungsi","Turunan fungsi"],2:["Integral dasar","Vektor dan matriks lanjutan","Statistika inferensial","Aplikasi matematika dalam bidang keahlian"]},
+    "Mata Pelajaran Kejuruan / Konsentrasi":{1:["Kompetensi inti konsentrasi keahlian I","Praktik produktif keahlian I","Proyek berbasis masalah I","K3 lanjutan dan regulasi industri"],2:["Kompetensi inti konsentrasi keahlian II","Praktik produktif keahlian II","Kolaborasi industri dan sekolah","Portofolio keahlian"]}
+  },
+  12:{
+    "Bahasa Indonesia":{1:["Surat lamaran kerja","Teks cerita sejarah","Editorial dan teks opini","Debat dan diskusi ilmiah"],2:["Novel dan kajian sastra","Puisi dan apresiasi","Resensi kritis","Persiapan dunia kerja dan komunikasi profesional"]},
+    "Mata Pelajaran Kejuruan / Konsentrasi":{1:["Pendalaman konsentrasi keahlian I","Praktik industri lanjutan","Uji kompetensi keahlian (UKK)","Projek akhir keahlian I"],2:["Pendalaman konsentrasi keahlian II","Laporan praktik kerja lapangan","Projek kreatif dan kewirausahaan","Persiapan sertifikasi kompetensi"]},
+    "Projek Kreatif & Kewirausahaan":{1:["Identifikasi peluang usaha","Analisis kelayakan bisnis","Perencanaan usaha (business plan)","Manajemen produksi"],2:["Pemasaran digital","Pengelolaan keuangan usaha","Pitching dan presentasi bisnis","Evaluasi dan pengembangan usaha"]}
+  }
 };
 
 /* ═══ DB_MATERI — Sinkron CP KepKaBSKAP 046/H/KR/2025 (Fase A=Kl.1-2, B=Kl.3-4, C=Kl.5-6) ═══ */
@@ -1230,7 +1325,7 @@ function simpanHistori(data){
   try{
     const mapel=getMapelValue();
     const kelas=document.getElementById('kelas').value;
-    const namaSekolah=document.getElementById('namaSekolah').value||'SDN ---';
+    const namaSekolah=document.getElementById('namaSekolah').value||(getSatuanPendidikan()+'N ---');
     const jenis=getJenisUjianValue()||'Ulangan Harian';
     const pg=(data.pilihanGanda||[]).length;
     const isian=(data.isian||[]).length;
@@ -1405,27 +1500,93 @@ function getMapelValue(){
   return sel;
 }
 
+// Helpers jenjang
+function getJenjang(){return document.getElementById('jenjang')?.value||'SD';}
+function getDBMapel(){
+  const j=getJenjang();
+  if(j==='SMP')return DB_MAPEL_SMP;
+  if(j==='SMA')return DB_MAPEL_SMA;
+  if(j==='SMK')return DB_MAPEL_SMK;
+  return DB_MAPEL;
+}
+function getDBMateri(){
+  const j=getJenjang();
+  if(j==='SMP')return DB_MATERI_SMP;
+  if(j==='SMA')return DB_MATERI_SMA;
+  if(j==='SMK')return DB_MATERI_SMK;
+  return DB_MATERI;
+}
+function getFaseLabel(kelas,jenjang){
+  if(jenjang==='SD'){
+    return kelas<=2?'Fase A':(kelas<=4?'Fase B':'Fase C');
+  }
+  if(jenjang==='SMP') return 'Fase D';
+  if(jenjang==='SMA') return kelas===10?'Fase E':'Fase F';
+  if(jenjang==='SMK') return kelas===10?'Fase E':'Fase F';
+  return '';
+}
+function getSatuanPendidikan(){
+  const j=getJenjang();
+  if(j==='SMP') return 'SMP';
+  if(j==='SMA') return 'SMA';
+  if(j==='SMK') return 'SMK';
+  return 'SD';
+}
+function onJenjangChange(){
+  const j=getJenjang();
+  const kelasEl=document.getElementById('kelas');
+  // Update opsi kelas
+  let kelasOpts='';
+  if(j==='SD'){
+    kelasOpts='<option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>';
+  }else{
+    const start=j==='SMP'?7:10;
+    const end=j==='SMP'?9:12;
+    for(let k=start;k<=end;k++){
+      kelasOpts+=`<option value="${k}"${k===start?' selected':''}>${k}</option>`;
+    }
+  }
+  kelasEl.innerHTML=kelasOpts;
+  // Update nama sekolah placeholder
+  const nsEl=document.getElementById('namaSekolah');
+  if(nsEl){
+    if(j==='SMP') nsEl.placeholder='SMPN Maju Jaya 1';
+    else if(j==='SMA') nsEl.placeholder='SMAN Maju Jaya 1';
+    else if(j==='SMK') nsEl.placeholder='SMKN Maju Jaya 1';
+    else nsEl.placeholder='SDN Maju Jaya 01';
+  }
+  renderMapelOptions();
+  onMapelChange();
+  autoSetBloom();
+  updateOpsiNote();
+}
+
 // Set level Bloom otomatis sesuai kelas (tapi user tetap bisa ubah manual)
 function autoSetBloom(){
   const kelas=parseInt(document.getElementById('kelas').value)||1;
+  const j=getJenjang();
   const cbs=[...document.querySelectorAll('.cb-kesulitan')];
-  // Uncheck semua dulu
   cbs.forEach(cb=>cb.checked=false);
-  // Ceklist otomatis sesuai kelas — semua C1-C6 tetap tampil, hanya default-nya berbeda
   let aktif=[];
-  if(kelas<=2)      aktif=['C1','C2'];            // Fase A
-  else if(kelas<=4) aktif=['C1','C2','C3'];       // Fase B
-  else              aktif=['C2','C3','C4','C5'];  // Fase C
+  if(j==='SD'){
+    if(kelas<=2)      aktif=['C1','C2'];
+    else if(kelas<=4) aktif=['C1','C2','C3'];
+    else              aktif=['C2','C3','C4','C5'];
+  }else if(j==='SMP'){
+    aktif=['C2','C3','C4'];
+  }else{
+    aktif=['C3','C4','C5','C6']; // SMA/SMK lebih HOTS
+  }
   cbs.forEach(cb=>{
-    const lvl=cb.value.split('-')[0]; // "C1-Mengingat" → "C1"
+    const lvl=cb.value.split('-')[0];
     if(aktif.includes(lvl)) cb.checked=true;
   });
 }
 function renderMapelOptions(){
   const kelas=parseInt(document.getElementById('kelas').value);
-  const opts=(DB_MAPEL[kelas]||[]).map(m=>`<option value="${m}">${m}</option>`).join('');
+  const db=getDBMapel();
+  const opts=(db[kelas]||[]).map(m=>`<option value="${m}">${m}</option>`).join('');
   document.getElementById('mataPelajaran').innerHTML=opts+`<option value="__tambah__">✏️ Tambah Sendiri</option>`;
-  // Reset custom input saat kelas ganti
   const ci=document.getElementById('mataPelajaranCustom');
   if(ci){ci.style.display='none';ci.value='';}
 }
@@ -1434,8 +1595,9 @@ function renderMateriChecklist(){
   const mapel=document.getElementById('mataPelajaran').value;
   const sem=parseInt(document.getElementById('semester').value);
   const box=document.getElementById('materiBox');
-  const list=(DB_MATERI[kelas]&&DB_MATERI[kelas][mapel]&&DB_MATERI[kelas][mapel][sem])?DB_MATERI[kelas][mapel][sem]:[];
-  if(!list.length){box.innerHTML='<div class="materi-empty">Belum ada data materi.</div>';return;}
+  const db=getDBMateri();
+  const list=(db[kelas]&&db[kelas][mapel]&&db[kelas][mapel][sem])?db[kelas][mapel][sem]:[];
+  if(!list.length){box.innerHTML='<div class="materi-empty">Belum ada data materi — ketik manual di bawah.</div>';return;}
   box.innerHTML=list.map((m,i)=>`<label class="cb-label"><input type="checkbox" class="cb-materi" value="${escHtml(m)}" ${i<3?'checked':''}/>${escHtml(m)}</label>`).join('');
 }
 function pilihSemua(){const cbs=document.querySelectorAll('.cb-materi');const all=[...cbs].every(c=>c.checked);cbs.forEach(c=>c.checked=!all);}
@@ -1454,7 +1616,12 @@ function setMateriMode(mode){
   document.getElementById('materiKetikHint').style.display=isPilih?'none':'block';
 }
 function getKesulitanTerpilih(){return[...document.querySelectorAll('.cb-kesulitan:checked')].map(c=>c.value).join(', ');}
-function updateOpsiNote(){const k=parseInt(document.getElementById('kelas').value);document.getElementById('opsiNote').textContent=k<=2?'(A–C)':'(A–D)';}
+function updateOpsiNote(){
+  const k=parseInt(document.getElementById('kelas').value);
+  const j=getJenjang();
+  const note=(j==='SD'&&k<=2)?'(A–C)':'(A–D)';
+  document.getElementById('opsiNote').textContent=note;
+}
 function getJudulUjian(){
   const jenis=getJenisUjianValue();
   const sem=document.getElementById('semester').value;
@@ -1479,15 +1646,16 @@ async function handleGenerate(){
   const topik=document.getElementById('topikTambahan').value.trim();
   const materiLengkap=topik?`${materi}. Catatan: ${topik}`:materi;
   const kelas=parseInt(document.getElementById('kelas').value);
+  const jenjang=getJenjang();
   const mapel=getMapelValue();
   const bahasaDaerahVal=document.getElementById('bahasaDaerah')?.value.trim();
   const mapelLabel=(mapel==='Muatan Lokal'&&bahasaDaerahVal)?`Muatan Lokal — ${bahasaDaerahVal}`:mapel;
   const jmlPG=parseInt(document.getElementById('jmlPG').value)||0;
   const jmlIsian=parseInt(document.getElementById('jmlIsian').value)||0;
   const jmlUraian=parseInt(document.getElementById('jmlUraian').value)||0;
-  const opsiPG=kelas<=2?'3 opsi (A, B, C)':'4 opsi (A, B, C, D)';
-  // Template JSON opsi disesuaikan kelas — ini yg mempengaruhi output AI
-  const opsiJsonTemplate=kelas<=2?'["A. ...","B. ...","C. ..."]':'["A. ...","B. ...","C. ...","D. ..."]';
+  const isSDKecil=(jenjang==='SD'&&kelas<=2);
+  const opsiPG=isSDKecil?'3 opsi (A, B, C)':'4 opsi (A, B, C, D)';
+  const opsiJsonTemplate=isSDKecil?'["A. ...","B. ...","C. ..."]':'["A. ...","B. ...","C. ...","D. ..."]';
 
   const limitCheck=checkLimit();
   if(!limitCheck.ok){
@@ -1496,19 +1664,43 @@ async function handleGenerate(){
   }
   hideError();setLoading(true);showGenerateFeedback('🤖 AI sedang membuat soal...',0);
 
-  const gaya=kelas<=2?'Gunakan kalimat sangat pendek dan sederhana, cocok untuk siswa baru membaca.':kelas<=4?'Gunakan kalimat campuran (narasi singkat dan langsung).':'Gunakan soal kontekstual dan HOTS (berpikir tingkat tinggi).';
-  const instruksiKelas = parseInt(kelas) >= 5
-    ? `\nKarena ini kelas ${kelas} (kelas tinggi SD), terapkan ketentuan berikut:
+  let gaya, instruksiKelas;
+  if(jenjang==='SD'){
+    gaya=kelas<=2?'Gunakan kalimat sangat pendek dan sederhana, cocok untuk siswa baru membaca.':kelas<=4?'Gunakan kalimat campuran (narasi singkat dan langsung).':'Gunakan soal kontekstual dan HOTS (berpikir tingkat tinggi).';
+    instruksiKelas=kelas>=5
+      ?`\nKarena ini kelas ${kelas} (kelas tinggi SD), terapkan ketentuan berikut:
 - Kalimat soal HARUS panjang dan kontekstual — buat soal berbentuk narasi/wacana singkat atau situasi nyata sebelum pertanyaan inti (minimal 2–3 kalimat per soal PG dan isian, minimal 4–5 kalimat untuk uraian)
 - Gunakan data, angka, atau kutipan teks pendek sebagai stimulus soal
 - Hindari soal satu kalimat langsung — selalu beri konteks atau latar situasi
 - Soal uraian harus menuntut penjelasan, analisis, atau langkah penyelesaian yang rinci
 - Opsi PG harus homogen (panjang mirip, tidak ada yang jelas salah secara trivial)
 - Prioritaskan level C3–C5 sesuai checklist tingkat kesulitan`
-    : `\nUntuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
+      :`\nUntuk kelas 1-2, array opsi hanya 3 elemen (A, B, C).`;
+  }else if(jenjang==='SMP'){
+    gaya='Gunakan soal kontekstual, bisa berupa wacana/data pendek sebagai stimulus, cocok untuk siswa SMP.';
+    instruksiKelas=`\nKetentuan soal SMP kelas ${kelas}:
+- Soal harus berbasis konteks kehidupan nyata atau fenomena yang relevan bagi remaja
+- PG minimal 2 kalimat (ada stimulus + pertanyaan), isian minimal 1 kalimat kontekstual, uraian minimal 3 kalimat
+- Opsi PG harus homogen dan tidak ada yang trivial salah
+- Soal uraian harus menuntut penjelasan atau langkah berpikir
+- Prioritaskan C3–C4 sesuai checklist`;
+  }else{
+    // SMA/SMK
+    gaya='Gunakan soal berbasis masalah (problem-based), HOTS, wacana/data/grafik sebagai stimulus, sesuai jenjang SMA/SMK.';
+    instruksiKelas=`\nKetentuan soal ${jenjang} kelas ${kelas}:
+- Setiap soal PG WAJIB memiliki stimulus (wacana, data, grafik deskripsi, atau situasi masalah) sebelum pertanyaan
+- Isian harus berbasis penerapan konsep, bukan hafalan
+- Uraian harus menuntut analisis, evaluasi, atau kreasi (C4–C6)
+- Opsi PG harus sangat homogen — panjang mirip, semua plausibel, tidak ada jawaban jelas salah
+- Soal harus mencerminkan konteks nyata, industri, atau kehidupan sehari-hari siswa ${jenjang}
+- Untuk SMK, boleh menggunakan konteks dunia kerja/industri sesuai mata pelajaran`;
+  }
 
-  const prompt=`Kamu adalah guru SD berpengalaman yang membuat soal Kurikulum Merdeka.
-Buatkan soal untuk siswa kelas ${kelas} SD.
+  const satuanPendidikan=getSatuanPendidikan();
+  const faseLabel=getFaseLabel(kelas,jenjang);
+
+  const prompt=`Kamu adalah guru ${satuanPendidikan} berpengalaman yang membuat soal Kurikulum Merdeka.
+Buatkan soal untuk siswa kelas ${kelas} ${satuanPendidikan} (${faseLabel}).
 Mata Pelajaran: ${mapelLabel}
 Materi: ${materiLengkap}
 Tingkat kesulitan: ${kesulitan}
@@ -1521,7 +1713,7 @@ Gaya penulisan soal: ${gaya}
 
 Aturan:
 - Gunakan Bahasa Indonesia yang baik dan benar
-- Sesuaikan tingkat kesulitan dengan kelas ${kelas} SD
+- Sesuaikan tingkat kesulitan dengan kelas ${kelas} ${satuanPendidikan}
 - Kalimat soal harus jelas dan tidak ambigu
 ${instruksiKelas}
 
@@ -1561,7 +1753,7 @@ Field "indikator" diisi kalimat singkat "Siswa dapat [kata kerja] ..." sesuai le
     soalData=data;
     if(!isPro())incrementDaily();
     saveToBank(kelas,mapel,materi,data);
-    gaEvent('generate_soal',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,jumlah_pg:jmlPG,jumlah_isian:jmlIsian,jumlah_uraian:jmlUraian,tipe_user:isPro()?'pro':'free'});
+    gaEvent('generate_soal',{jenjang:jenjang,kelas:'Kelas '+kelas,mata_pelajaran:mapel,jumlah_pg:jmlPG,jumlah_isian:jmlIsian,jumlah_uraian:jmlUraian,tipe_user:isPro()?'pro':'free'});
 
     buildHalaman(soalData);
     currentPage=0;showPage(0);
@@ -1721,7 +1913,7 @@ function buildHalaman(data){
 function buildKunciPage(data,pg,isian,uraian){
   const mapel=escHtml(document.getElementById('mataPelajaran').value);
   const kelas=escHtml(document.getElementById('kelas').value);
-  const namaSekolah=escHtml(document.getElementById('namaSekolah').value||'SDN ---');
+  const namaSekolah=escHtml(document.getElementById('namaSekolah').value||(getSatuanPendidikan()+'N ---'));
   const judulUjian=escHtml(getJudulUjian());
   // Bobot skor standar
   const bobotPG=1,bobotIsian=2,bobotUraian=4;
@@ -1730,11 +1922,13 @@ function buildKunciPage(data,pg,isian,uraian){
   const totalUraian=uraian.length*bobotUraian;
   const totalSkor=totalPG+totalIsian+totalUraian;
   const kelasNum=parseInt(document.getElementById('kelas').value)||1;
-  const fase=kelasNum<=2?'Fase A':(kelasNum<=4?'Fase B':'Fase C');
+  const jenjangKunci=getJenjang();
+  const satuanKunci=getSatuanPendidikan();
+  const fase=getFaseLabel(kelasNum,jenjangKunci);
   let html=`
   <div class="kunci-page-header">KUNCI JAWABAN</div>
   <div class="kunci-page-sub">${judulUjian} — ${namaSekolah}</div>
-  <div class="kunci-page-sub" style="margin-bottom:4px;">${mapel} &nbsp;|&nbsp; Kelas ${kelas} SD / ${fase}</div>
+  <div class="kunci-page-sub" style="margin-bottom:4px;">${mapel} &nbsp;|&nbsp; Kelas ${kelas} ${satuanKunci} / ${fase}</div>
   <div class="kunci-page-sub" style="margin-bottom:12px;font-size:9pt;color:#555;">Bobot: PG=${bobotPG}pt &nbsp;|&nbsp; Isian=${bobotIsian}pt &nbsp;|&nbsp; Uraian=${bobotUraian}pt &nbsp;|&nbsp; <strong>Total Skor Maksimal: ${totalSkor}</strong></div>
   <div class="kunci-page-line"></div>`;
   if(pg.length>0){
@@ -1765,11 +1959,13 @@ function buildKisiKisiPage(data,pg,isian,uraian){
   const mapel=escHtml(document.getElementById('mataPelajaran').value);
   const kelasNum=parseInt(document.getElementById('kelas').value)||1;
   const kelas=String(kelasNum);
-  const namaSekolah=escHtml(document.getElementById('namaSekolah').value||'SDN ---');
+  const jenjangKisi=getJenjang();
+  const satuanKisi=getSatuanPendidikan();
+  const namaSekolah=escHtml(document.getElementById('namaSekolah').value||satuanKisi+'N ---');
   const judulUjian=escHtml(getJudulUjian());
   const sem=document.getElementById('semester').value;
   const tp=escHtml(document.getElementById('tahunPelajaran').value||'');
-  const fase=kelasNum<=2?'Fase A (Kelas I–II)':(kelasNum<=4?'Fase B (Kelas III–IV)':'Fase C (Kelas V–VI)');
+  const fase=getFaseLabel(kelasNum,jenjangKisi)+(jenjangKisi==='SD'?' (Kelas '+(kelasNum<=2?'I–II':kelasNum<=4?'III–IV':'V–VI')+')':'');
 
   // Materi terpilih: pecah per-koma untuk distribusi ke soal
   const materiArr=(lastMateriTerpilih||mapel).split(',').map(s=>s.trim()).filter(Boolean);
@@ -1818,8 +2014,8 @@ function buildKisiKisiPage(data,pg,isian,uraian){
   return `
   <div class="kisi-page-header">KISI-KISI SOAL</div>
   <div class="kisi-page-sub">${judulUjian} — ${namaSekolah}</div>
-  <div class="kisi-page-sub" style="margin-bottom:4px;">${mapel} &nbsp;|&nbsp; Kelas ${kelas} SD / ${fase} &nbsp;|&nbsp; Semester ${sem} &nbsp;|&nbsp; T.P. ${tp}</div>
-  <div class="kisi-page-sub" style="margin-bottom:2px;font-style:italic;font-size:9pt;">Acuan: KepKaBSKAP No. 046/H/KR/2025 &nbsp;|&nbsp; Total: ${totalSoal} soal (${distribusi})</div>
+  <div class="kisi-page-sub" style="margin-bottom:4px;">${mapel} &nbsp;|&nbsp; Kelas ${kelas} ${satuanKisi} / ${fase} &nbsp;|&nbsp; Semester ${sem} &nbsp;|&nbsp; T.P. ${tp}</div>
+  <div class="kisi-page-sub" style="margin-bottom:2px;font-style:italic;font-size:9pt;">Acuan: Kurikulum Merdeka &nbsp;|&nbsp; Total: ${totalSoal} soal (${distribusi})</div>
   <div class="kisi-page-line"></div>
   <table class="kisi-table">
     <thead>
@@ -1869,7 +2065,9 @@ function buildPromptGambarPage(data,pg,isian,uraian){
   soalBergambar.forEach(s=>{
     const soalPendek=stripHtml(s.soal).replace(/\s+/g,' ').trim();
     const snippet=soalPendek.length>120?soalPendek.substring(0,120)+'…':soalPendek;
-    const promptTeks=`Buatkan ilustrasi gambar sederhana, gaya kartun ramah anak SD kelas ${kelas}, bergaris tegas, warna cerah, latar putih. Gambar harus menunjukkan: ${soalPendek.substring(0,200)}. Ukuran: persegi atau landscape 4:3. Jangan tambahkan teks atau label di gambar.`;
+    const jenjangGambar=getJenjang();
+    const gayaGambar=jenjangGambar==='SD'?`gaya kartun ramah anak SD kelas ${kelas}, bergaris tegas, warna cerah`:`gaya ilustrasi edukatif jenjang ${jenjangGambar}, bersih, informatif, warna netral`;
+    const promptTeks=`Buatkan ilustrasi gambar sederhana, ${gayaGambar}, latar putih. Gambar harus menunjukkan: ${soalPendek.substring(0,200)}. Ukuran: persegi atau landscape 4:3. Jangan tambahkan teks atau label di gambar.`;
 
     const rowBg=s.prioritas?'background:#fff7ed;':'';
     const noBg=s.prioritas?'background:#ea580c;color:#fff;':'background:#e5e7eb;color:#374151;';
@@ -1894,7 +2092,7 @@ function buildPromptGambarPage(data,pg,isian,uraian){
   return `
   <div style="font-family:'Times New Roman',serif;">
     <div class="kisi-page-header" style="color:#1a4f8a;">💡 PROMPT GENERATE GAMBAR SOAL</div>
-    <div class="kisi-page-sub">${mapel} — Kelas ${kelas} SD</div>
+    <div class="kisi-page-sub">${mapel} — Kelas ${kelas} ${escHtml(getSatuanPendidikan())}</div>
     <div class="kisi-page-line" style="border-color:#1a4f8a;"></div>
 
     <div style="background:#fff8e6;border:1.5px solid #f59e0b;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:9pt;font-family:'Segoe UI',sans-serif;line-height:1.7;">
@@ -2138,8 +2336,11 @@ async function exportWord(){
   const mapel       = document.getElementById('mataPelajaran').value;
   const kelas       = document.getElementById('kelas').value;
   const kelasNum    = parseInt(kelas)||1;
-  const fase        = kelasNum<=2?'A':kelasNum<=4?'B':'C';
-  const namaSekolah = document.getElementById('namaSekolah').value||'SDN ---';
+  const jenjangWord = getJenjang();
+  const satuanWord  = getSatuanPendidikan();
+  const faseWord    = getFaseLabel(kelasNum,jenjangWord).replace('Fase ','');
+  const fase        = faseWord; // untuk kompatibilitas kode di bawah
+  const namaSekolah = document.getElementById('namaSekolah').value||satuanWord+'N ---';
   const tahun       = document.getElementById('tahunPelajaran').value||'2025/2026';
   const judulUjian  = getJudulUjian();
   const tanggal     = document.getElementById('tanggal').value
@@ -2312,7 +2513,7 @@ async function exportWord(){
     tblRow([
       idCell('Kelas / Fase',labelW,false),
       sepCell(),
-      idCell(kelas+' / Fase '+fase,valueW,true),
+      idCell(kelas+' '+satuanWord+' / Fase '+fase,valueW,true),
       idCell('',spacerW,false),
       idCell('No. Absen',labelRW,false),
       sepCell(),
@@ -2433,7 +2634,7 @@ async function exportWord(){
   const kP=[];
   kP.push(P([T('KUNCI JAWABAN',{bold:true,size:28})],{align:'center',after:40}));
   kP.push(P([T(judulUjian+' — '+namaSekolah,{size:22})],{align:'center',after:20}));
-  kP.push(P([T(mapel+' | Kelas '+kelas+' / Fase '+fase,{size:20})],{align:'center',after:20}));
+  kP.push(P([T(mapel+' | Kelas '+kelas+' '+satuanWord+' / Fase '+fase,{size:20})],{align:'center',after:20}));
   kP.push(P([T('Bobot: PG='+bobotPG+'pt | Isian='+bobotIsian+'pt | Uraian='+bobotUraian+'pt | Total Skor Maks: '+totalSkor,{size:18,italic:true})],{align:'center',after:80}));
   pushHR(kP);
   if(pg.length>0){
@@ -2472,7 +2673,7 @@ async function exportWord(){
 
   kkP.push(P([T('KISI-KISI SOAL',{bold:true,size:28})],{align:'center',after:40}));
   kkP.push(P([T(judulUjian+' — '+namaSekolah,{size:22})],{align:'center',after:20}));
-  kkP.push(P([T(mapel+' | Kelas '+kelas+' / Fase '+fase,{size:20})],{align:'center',after:80}));
+  kkP.push(P([T(mapel+' | Kelas '+kelas+' '+satuanWord+' / Fase '+fase,{size:20})],{align:'center',after:80}));
   pushHR(kkP);
 
   const kkCW=[360,1200,4800,800,800,700];
@@ -2533,7 +2734,7 @@ async function exportWord(){
     }
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
-    a.href=url;a.download='Soal_'+mapel+'_Kelas'+kelas+'.docx';
+    a.href=url;a.download='Soal_'+mapel+'_Kelas'+kelas+'_'+satuanWord+'.docx';
     document.body.appendChild(a);a.click();
     setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
   }catch(e){
@@ -2585,14 +2786,16 @@ function copyContent(){
    BUILD DOC HEADER
 ════════════════════════════════════════════ */
 function buildDocHeader(){
-  const namaSekolah=escHtml(document.getElementById('namaSekolah').value||'SDN ---');
+  const namaSekolah=escHtml(document.getElementById('namaSekolah').value||(getSatuanPendidikan()+'N ---'));
   const tahun=escHtml(document.getElementById('tahunPelajaran').value||'2025/2026');
   const mapel=escHtml(document.getElementById('mataPelajaran').value);
   const kelasNum=parseInt(document.getElementById('kelas').value)||1;
   const kelas=String(kelasNum);
+  const jenjangHdr=getJenjang();
+  const satuanHdr=getSatuanPendidikan();
   const semester=document.getElementById('semester').value;
   const semStr=semester==='1'?'Ganjil':'Genap';
-  const fase=kelasNum<=2?'A':kelasNum<=4?'B':'C';
+  const fase=getFaseLabel(kelasNum,jenjangHdr).replace('Fase ','');
   const tanggal=document.getElementById('tanggal').value
     ?new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
     :'...................................';
@@ -2612,7 +2815,7 @@ function buildDocHeader(){
   <div class="doc-header-line"></div>
   <table class="doc-identitas-table">
     <tr><td class="id-label">Mata Pelajaran</td><td class="id-sep">:</td><td class="id-value">${mapel}</td><td style="width:14px;"></td><td class="id-label">Nama</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
-    <tr><td class="id-label">Kelas / Fase</td><td class="id-sep">:</td><td class="id-value">${kelas} / Fase ${fase}</td><td></td><td class="id-label">No. Absen</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+    <tr><td class="id-label">Kelas / Fase</td><td class="id-sep">:</td><td class="id-value">${kelas} ${satuanHdr} / Fase ${fase}</td><td></td><td class="id-label">No. Absen</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
     <tr><td class="id-label">Tanggal</td><td class="id-sep">:</td><td class="id-value">${escHtml(tanggal)}</td><td></td><td class="id-label">Nilai</td><td class="id-sep">:</td><td class="id-value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
   </table>
   <div class="doc-identitas-line"></div>`;
