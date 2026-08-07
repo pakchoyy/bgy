@@ -1,15 +1,3 @@
-Siap, cik! Ini adalah kode `index.html` final yang sudah diperbarui secara menyeluruh.
-
-Pembaruan yang sudah dimasukkan ke dalam kode ini:
-
-1. **Opsi CP Baru (Agama 2026)**: Sudah ditambahkan di pilihan "Jenis CP" khusus untuk aturan BKPDM Nomor 020 Tahun 2026.
-2. **Jenjang SMP & SMA (Kelas 7–12)**: Sudah ditambahkan di pilihan "Kelas".
-3. **Karakter e-Rapor**: Semua redaksi Tujuan Pembelajaran (TP) yang baru sudah dipadatkan agar di bawah 100 karakter.
-4. **Data Bank TP**: Sudah diisi format TP untuk SMP, SMA, serta TP khusus Agama dengan fokus akhlak/karakter sesuai CP 2026.
-
-Silakan salin semua kode di bawah ini dan timpa (replace) isi file `index.html` cik:
-
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -93,9 +81,10 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 @media(max-width:960px){.two-col{grid-template-columns:1fr;}}
 .col-left{display:flex;flex-direction:column;gap:12px;}
 .col-right{min-width:0;}
+/* A5-ish portrait card — no scroll */
 .col-right .card{width:100%;min-height:210mm;box-sizing:border-box;}
 
-/* PAGE HOME */
+/* PAGE HOME wrapper */
 #pageHome{padding:14px;}
 @media(min-width:641px){#pageHome{padding:20px;}}
 .page-home-inner{max-width:1280px;margin:0 auto;}
@@ -116,27 +105,60 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
 input[type=text],select,textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:.84rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+textarea{resize:vertical;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 @media(max-width:400px){.row-2{grid-template-columns:1fr;}}
+
+/* MAPEL LIST — checkboxes */
+.mapel-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto;padding-right:2px;}
+.mapel-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;background:var(--input-bg);}
+.mapel-item:hover{border-color:var(--blue);background:rgba(14,165,160,.05);}
+.mapel-item.checked{border-color:var(--blue);background:rgba(14,165,160,.08);}
+.mapel-item input[type=checkbox]{accent-color:var(--blue);width:15px;height:15px;cursor:pointer;flex-shrink:0;}
+.mapel-item label{font-size:.8rem;font-weight:600;color:var(--text);cursor:pointer;margin:0;text-transform:none;letter-spacing:0;}
+.mapel-item.manual-row{flex-direction:column;align-items:flex-start;gap:6px;}
+.mapel-item.manual-row .row-top{display:flex;align-items:center;gap:8px;width:100%;}
+.mapel-item.manual-row input[type=text]{margin-top:2px;font-size:.8rem;}
+.mapel-hint{font-size:.65rem;color:var(--text-light);margin-top:4px;}
+
+/* GAYA PILIHAN */
+.gaya-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:4px;}
+.gaya-btn{border:1.5px solid var(--border);border-radius:9px;padding:9px 6px;cursor:pointer;transition:all .2s;background:var(--input-bg);text-align:center;font-size:.72rem;font-weight:700;color:var(--text);}
+.gaya-btn:hover{border-color:var(--blue);background:rgba(14,165,160,.05);}
+.gaya-btn.active{border-color:var(--blue);background:rgba(14,165,160,.1);color:var(--blue);}
+.gaya-btn .gi{font-size:18px;display:block;margin-bottom:2px;}
 
 /* TOMBOL GENERATE */
 .btn-generate{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(--grad);color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 18px rgba(14,165,160,.3);letter-spacing:.3px;}
 .btn-generate:hover{transform:translateY(-1px);opacity:.93;box-shadow:0 6px 24px rgba(14,165,160,.4);}
+@media(max-width:600px){.btn-generate{padding:16px 12px;font-size:1.05rem;}}
 .btn-reset{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;background:transparent;color:var(--text-light);border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;}
 .btn-reset:hover{border-color:var(--blue);color:var(--blue);}
 
-/* HASIL */
+/* TOMBOL KECIL */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.79rem;cursor:pointer;transition:all .2s;}
+.btn-outline{border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue);}
 .btn-teal{background:var(--grad);color:#fff;}
 .btn-teal:hover{opacity:.88;}
+.btn-pdf{border:1.5px solid #ef4444!important;color:#ef4444!important;background:rgba(239,68,68,.06)!important;}
+.btn-pdf:hover{background:rgba(239,68,68,.12)!important;}
 .action-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+
+/* PLACEHOLDER HASIL */
 .hasil-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:320px;color:var(--text-light);gap:12px;border:2px dashed var(--border);border-radius:12px;}
 .hasil-placeholder .ph-icon{font-size:3rem;opacity:.3;}
 .hasil-placeholder p{font-size:.83rem;text-align:center;line-height:1.6;}
+
+/* INFO PILLS */
 .info-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
 .pill{display:inline-block;background:rgba(14,165,160,.08);color:var(--blue-dark);font-size:.65rem;padding:4px 10px;border-radius:99px;font-weight:600;border:1px solid rgba(14,165,160,.22);}
+
+/* HASIL HEADER */
 .hasil-header{margin-bottom:14px;}
 .hasil-title{font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:8px;}
+
+/* TP SECTION */
 .tp-section{margin-bottom:22px;}
 .tp-section-title{font-size:.75rem;font-weight:800;color:var(--blue-dark);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding:6px 10px;background:rgba(14,165,160,.07);border-radius:7px;border-left:3px solid var(--blue);}
 .tp-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;margin-bottom:7px;transition:background .15s;}
@@ -152,27 +174,307 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 body.dark #toast{background:#f1f5f9;color:#1e293b;}
 
-/* FOOTER & MISC */
+/* FOOTER */
 footer{background:var(--grad);padding:18px 20px;text-align:center;}
 .footer-title{font-weight:700;font-size:.9rem;color:#fff;margin-bottom:3px;}
 .footer-sub{font-size:.78rem;color:rgba(255,255,255,.8);}
 .footer-link{color:#fff;text-decoration:none;font-weight:700;cursor:pointer;}
+.footer-link:hover{text-decoration:underline;opacity:.85;}
+
+/* MODAL TENTANG */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--card-bg);border-radius:16px;padding:24px;max-width:380px;width:90%;box-shadow:var(--shadow-lg);position:relative;}
+.modal-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.modal-body{font-size:.83rem;color:var(--text);line-height:1.7;}
+.modal-body a{color:var(--blue-dark);font-weight:700;}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--text-light);}
+
+/* PAGE SYSTEM */
+.page{display:none;max-width:780px;margin:0 auto;padding:20px;}
+.page.active{display:block;}
+#pageHome{display:block;max-width:1280px;margin:0 auto;padding:20px;width:100%;}
+#pageHome.hidden{display:none;}
 .page-card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;border:1px solid var(--border);}
 .page-card-title{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
 .page-ver{font-size:.7rem;color:var(--text-light);margin-bottom:16px;}
-.page-card p, .page-card ul{font-size:.85rem;color:var(--text);line-height:1.7;margin-bottom:10px;}
-.page-card ul{padding-left:20px;}
+.page-card p{font-size:.85rem;color:var(--text);line-height:1.7;margin-bottom:10px;}
+.page-card ul{padding-left:20px;font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:10px;}
+.page-card .feat-title{font-size:.88rem;font-weight:800;color:var(--text);margin:14px 0 6px;}
 .kontak-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
 .btn-wa{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:#25d366;color:#fff;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;}
+.btn-wa:hover{background:#1fb855;}
 .btn-tiktok{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;background:#111;color:#fff;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;}
+.btn-tiktok:hover{background:#333;}
+
+/* INSTALL BANNER (MODAL TENGAH) */
+#installBanner{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(4px);
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+#installBanner.show{display:flex;}
+.install-banner-inner{
+  background:var(--card-bg);
+  border:1.5px solid var(--border);
+  border-radius:16px;
+  box-shadow:var(--shadow-lg);
+  padding:24px;
+  width:100%;
+  max-width:380px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:16px;
+  animation:zoomIn .3s cubic-bezier(0.34, 1.56, 0.64, 1) ease;
+}
+@keyframes zoomIn{from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);}}
+.install-banner-icon{
+  width:64px;
+  height:64px;
+  border-radius:16px;
+  object-fit:contain;
+  box-shadow:0 4px 12px rgba(14,165,160,0.15);
+}
+.install-banner-text{
+  color:var(--text);
+}
+.install-banner-text strong{
+  display:block;
+  font-size:1.1rem;
+  font-weight:800;
+  margin-bottom:6px;
+}
+.install-banner-text span{
+  font-size:.82rem;
+  color:var(--text-light);
+  line-height:1.4;
+}
+.install-banner-btns{
+  display:flex;
+  gap:10px;
+  width:100%;
+  margin-top:4px;
+}
+.btn-install-yes{
+  flex:1;
+  background:var(--grad);
+  color:#fff;
+  font-weight:700;
+  font-size:.85rem;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(14,165,160,0.2);
+  transition:all .2s;
+}
+.btn-install-yes:hover{
+  transform:translateY(-1px);
+  opacity:.9;
+}
+.btn-install-no{
+  flex:1;
+  background:var(--input-bg);
+  color:var(--text);
+  font-weight:700;
+  font-size:.85rem;
+  padding:10px;
+  border-radius:10px;
+  border:1.5px solid var(--border);
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-install-no:hover{
+  background:var(--border);
+}
+
+/* HINT BOX */
 .hint-box{background:rgba(14,165,160,.06);border:1.5px solid rgba(14,165,160,.2);border-radius:var(--radius);padding:12px 16px;font-size:.78rem;color:var(--text);line-height:1.5;}
 .hint-box strong{color:var(--blue-dark);}
+
+/* SCROLLBAR */
+.mapel-list::-webkit-scrollbar{width:4px;}
+.mapel-list::-webkit-scrollbar-track{background:transparent;}
+.mapel-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+
+/* ── PREMIUM SCROLLING TICKER BY PAK CHOY ── */
+.ticker-wrap {
+  width: 100%;
+  background: linear-gradient(90deg, #fbbf24, #f59e0b, #fbbf24);
+  background-size: 200% 100%;
+  animation: ticker-bg-shift 6s linear infinite;
+  color: #1e293b;
+  padding: 9px 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05), 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  z-index: 200;
+  border-top: 2px solid rgba(255, 255, 255, 0.35);
+  border-bottom: 2px solid rgba(0,0,0,0.06);
+}
+@keyframes ticker-bg-shift {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+.ticker-title {
+  background: linear-gradient(135deg, #0ea5a0, #0d7a8a);
+  color: #ffffff;
+  padding: 5px 13px;
+  font-weight: 900;
+  border-radius: 7px;
+  margin-left: 14px;
+  margin-right: 14px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(14,165,160,0.4);
+  animation: ticker-pulse 2s infinite;
+  white-space: nowrap;
+}
+@keyframes ticker-pulse {
+  0%,100% { transform: scale(1); box-shadow: 0 2px 8px rgba(14,165,160,0.4); }
+  50% { transform: scale(1.06); box-shadow: 0 4px 14px rgba(14,165,160,0.6); }
+}
+.ticker-scroll {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  width: 100%;
+}
+.ticker-content {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-animation 40s linear infinite;
+  cursor: pointer;
+  text-decoration: none;
+  color: #1e293b;
+  padding-left: 10px;
+}
+.ticker-content:hover {
+  animation-play-state: paused;
+  color: #0f172a;
+}
+@keyframes ticker-animation {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.ticker-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 20px;
+}
+.ticker-link span {
+  background: #0ea5a0;
+  color: #ffffff;
+  padding: 3px 12px;
+  border-radius: 20px;
+  margin-left: 8px;
+  font-size: 0.78rem;
+  transition: all 0.2s ease;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(14,165,160,0.35);
+}
+.ticker-content:hover .ticker-link span {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+/* FEEDBACK SECTION */
+
+.feedback-bar {
+  background: linear-gradient(135deg, rgba(14,165,160,0.06), rgba(13,122,138,0.06));
+  border-top: 1.5px solid rgba(14,165,160,0.15);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.feedback-bar-text {
+  font-size: .8rem;
+  color: var(--text-light);
+}
+.feedback-bar-text strong {
+  color: var(--text);
+}
+.btn-feedback-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: #25d366;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(37,211,102,0.3);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.btn-feedback-wa:hover {
+  background: #1fb855;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(37,211,102,0.4);
+}
+.btn-feedback-bgy {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: var(--grad);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(14,165,160,0.25);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.btn-feedback-bgy:hover {
+  opacity: .88;
+  transform: translateY(-1px);
+}
 </style>
 </head>
 <body>
 
 <div id="menuOverlay" onclick="closeMenu()"></div>
 <div id="toast"></div>
+
+<!-- INSTALL BANNER -->
+<div id="installBanner">
+  <div class="install-banner-inner">
+    <img src="./guru-cibisd2.png" class="install-banner-icon" onerror="this.style.display='none'">
+    <div class="install-banner-text">
+      <strong>Install Draft TP BGY</strong>
+      <span>Akses cepat tanpa buka browser 🚀</span>
+    </div>
+    <div class="install-banner-btns">
+      <button class="btn-install-yes" onclick="doInstall()">Install</button>
+      <button class="btn-install-no" onclick="dismissBanner()">Nanti</button>
+    </div>
+  </div>
+</div>
 
 <!-- LOADING OVERLAY -->
 <div id="prosesOverlay">
@@ -183,7 +485,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     <div class="go-ring go-ring1"></div>
     <div class="go-ring go-ring2"></div>
     <div class="go-ring go-ring3"></div>
-    <div class="go-icon">🏫</div>
+    <div class="go-icon"><img src="./guru-cibisd2.png" style="width:44px;height:44px;object-fit:contain;border-radius:8px;" onerror="this.outerHTML='🏫'"></div>
   </div>
   <div class="go-title">Menyusun Draft TP...</div>
   <div class="go-sub">Memilih dari bank TP kurikulum</div>
@@ -198,8 +500,9 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 <header>
   <div class="header-inner">
     <div class="header-brand">
-      <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏫</div>
-      <h1 class="header-title-inline">Bantu Guru Yuk <span class="hdr-sep">|</span> Draft TP</h1>
+      <img src="./guru-cibisd2.png" alt="Guru Cibi" class="header-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="logo-box-fallback" style="display:none;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏫</div>
+      <h1 class="header-title-inline">Bantu Guru Yuk <span class="hdr-sep">|</span> Draft Tujuan Pembelajaran</h1>
     </div>
     <div class="header-right">
       <button class="hdr-btn" id="darkBtn" onclick="toggleDark()" title="Dark Mode">🌙</button>
@@ -209,6 +512,9 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
         <div class="dropdown-divider"></div>
         <button class="dropdown-item" onclick="showPage('tentang');closeMenu()">ℹ️ Tentang</button>
         <button class="dropdown-item" onclick="showPage('kontak');closeMenu()">💬 Kontak</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" id="installBgyItem" onclick="installBGY();closeMenu()">📲 Install BGY</button>
+        <button class="dropdown-item" onclick="window.open('https://bantuguruyuk.web.id','_blank');closeMenu()">🌐 bantuguruyuk.web.id</button>
       </div>
     </div>
   </div>
@@ -220,13 +526,16 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
   <div class="page-card">
     <div class="page-card-title">ℹ️ Tentang Aplikasi</div>
     <div class="page-ver">Bantu Guru Yuk — Draft TP · v26.6.0</div>
-    <p><strong>Aplikasi Draft TP</strong> membantu guru menyusun Tujuan Pembelajaran sesuai Kurikulum Merdeka (< 100 karakter untuk e-Rapor).</p>
+    <p><strong>Aplikasi Draft TP</strong> hadir untuk membantu guru menyusun Tujuan Pembelajaran sesuai Kurikulum Merdeka secara cepat dan akurat.</p>
+    <div class="feat-title">✨ Fitur Unggulan</div>
     <ul>
-      <li>Mendukung CP Baru (BSKAP 046/2025)</li>
-      <li>Mendukung CP Agama (BKPDM 020/2026)</li>
-      <li>Bank TP untuk SD, SMP, SMA (Kelas 1–12)</li>
+      <li>Mendukung CP Baru (BSKAP 046/2025) &amp; CP Agama (BKPDM 020/2026)</li>
+      <li>Bank TP untuk semua jenjang (SD, SMP, SMA)</li>
+      <li>Hasil sudah dipadatkan (&lt; 100 karakter) langsung bisa disalin ke e-Rapor</li>
+      <li>Dark mode &amp; responsif di HP dan laptop</li>
     </ul>
-    <p>Dibuat oleh <strong>Pak Choyy</strong></p>
+    <p>Dibuat oleh <strong>Pak Choyy</strong> · BGY Tools</p>
+    <p>🏠 <a href="https://bantuguruyuk.web.id" target="_blank">bantuguruyuk.web.id</a></p>
   </div>
   </div>
 </div>
@@ -247,13 +556,16 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 
 <div id="pageHome">
   <div class="page-home-inner">
+  <!-- HINT -->
   <div class="hint-box hint-wrap">
-    💡 <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>✨ Generate Draft TP</strong>
+    💡 <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>✨ Generate Draft TP</strong> → Salin ke erapor 🎉
   </div>
   <div class="two-col">
 
     <!-- KOLOM KIRI -->
     <div class="col-left">
+
+      <!-- CARD: Identitas -->
       <div class="card">
         <div class="card-title">📋 Identitas Tujuan Pembelajaran</div>
 
@@ -294,6 +606,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
         </div>
       </div>
 
+      <!-- CARD: Pilih Mapel -->
       <div class="card">
         <div class="card-title">📚 Mata Pelajaran</div>
         <div class="form-group" style="margin-bottom:0">
@@ -304,13 +617,19 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
         </div>
         <div class="form-group" id="manualMapelWrap" style="display:none;margin-top:10px;margin-bottom:0">
           <label>Nama Mata Pelajaran (manual)</label>
-          <input type="text" id="manualMapelInput" placeholder="contoh: Muatan Lokal" />
+          <input type="text" id="manualMapelInput" placeholder="contoh: Bahasa Daerah" />
         </div>
       </div>
 
-      <button class="btn-generate" onclick="generateTP()">✨ Generate Draft TP</button>
+      <!-- TOMBOL GENERATE -->
+      <button class="btn-generate" onclick="generateTP()">
+        ✨ Generate Draft TP
+      </button>
+
+      <!-- RESET -->
       <button class="btn-reset" onclick="resetForm()">🔄 Reset Form</button>
-    </div>
+
+    </div><!-- /col-left -->
 
     <!-- KOLOM KANAN: HASIL -->
     <div class="col-right" id="colRight">
@@ -333,71 +652,379 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     </div>
 
   </div>
+  </div><!-- /page-home-inner -->
+</div><!-- /pageHome -->
+
+<!-- FEEDBACK BAR -->
+<div class="feedback-bar">
+  <span class="feedback-bar-text">💡 <strong>Ada saran atau perbaikan Draft TP?</strong></span>
+  <a href="https://wa.me/6289530713597" target="_blank" class="btn-feedback-wa">
+    💬 Kirim Kritik & Saran
+  </a>
+</div>
+
+<!-- ── PREMIUM RUNNING TEXT TICKER ── -->
+<div class="ticker-wrap">
+  <div class="ticker-title">✨ BGY</div>
+  <div class="ticker-scroll">
+    <a href="https://bantuguruyuk.web.id" target="_blank" class="ticker-content">
+      <span class="ticker-link">🎯 Buat soal PG, isian &amp; uraian otomatis?</span>
+      <span class="ticker-link">📄 Prompt LKPD siap pakai dalam hitungan detik?</span>
+      <span class="ticker-link">📚 Modul kokurikuler langsung jadi tanpa ribet?</span>
+      <span class="ticker-link">📊 Nilai siswa naik otomatis pakai Katrol Nilai?</span>
+      <span class="ticker-link">🚀 Semua ada di <strong style="color:#0d4a47">bantuguruyuk.web.id</strong> <span>Coba Sekarang →</span></span>
+      &nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;&nbsp;
+      <span class="ticker-link">🎯 Buat soal PG, isian &amp; uraian otomatis?</span>
+      <span class="ticker-link">📄 Prompt LKPD siap pakai dalam hitungan detik?</span>
+      <span class="ticker-link">📚 Modul kokurikuler langsung jadi tanpa ribet?</span>
+      <span class="ticker-link">📊 Nilai siswa naik otomatis pakai Katrol Nilai?</span>
+      <span class="ticker-link">🚀 Semua ada di <strong style="color:#0d4a47">bantuguruyuk.web.id</strong> <span>Coba Sekarang →</span></span>
+      &nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;&nbsp;
+    </a>
   </div>
 </div>
 
 <footer>
   <div class="footer-title">Draft Tujuan Pembelajaran</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by pak.choyy · v26.6.0</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a class="footer-link" onclick="window.open('https://www.tiktok.com/@pak.choyy','_blank')">pak.choyy</a> · v26.6.0</div>
 </footer>
 
 <script>
 /* ════════════════════════════
-   BANK DATA TP (<100 Karakter)
+   BANK DATA TP UTUH + BARU
 ════════════════════════════ */
 const BANK = {
   "lama": {
-    "1": { "1": { "Bahasa Indonesia": ["Menyimak teks lisan pendek", "Membaca teks informasi lancar", "Menulis kalimat kapital"] }, "2": { "Bahasa Indonesia": ["Menyampaikan pendapat", "Membaca puisi dasar", "Menulis teks pengalaman"] } },
-    "2": { "1": { "Bahasa Indonesia": ["Menyimak narasi pendek", "Membaca kosakata baru", "Menulis kalimat titik"] }, "2": { "Bahasa Indonesia": ["Membaca puisi lancar", "Menggunakan kata tanya"] } },
-    "7": {
+    "1": {
       "1": {
-        "Bahasa Indonesia": ["Menganalisis teks deskripsi", "Menyimpulkan isi teks narasi lisan", "Menulis teks prosedur"],
-        "Matematika": ["Operasi hitung bilangan bulat", "Menyelesaikan rasio dan proporsi", "Menerapkan konsep aljabar"]
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 50", "Menulis lambang bilangan hingga 50", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
       },
       "2": {
-        "Bahasa Indonesia": ["Menganalisis unsur puisi", "Menulis surat resmi", "Meresensi buku fiksi"],
-        "Matematika": ["Sistem persamaan linear", "Menghitung volume bangun ruang", "Menentukan peluang kejadian"]
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 25", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 25", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
       }
     },
-    "10": {
+    "2": {
       "1": {
-        "Bahasa Indonesia": ["Mengevaluasi laporan", "Menulis eksposisi logis", "Menyampaikan argumen debat"],
-        "Matematika": ["Menyelesaikan eksponen", "Menganalisis deret aritmetika", "Menyajikan data distribusi"]
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 100", "Menulis lambang bilangan hingga 100", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
       },
       "2": {
-        "Bahasa Indonesia": ["Menganalisis negosiasi bisnis", "Menulis biografi tokoh", "Mengkritisi ulasan seni"],
-        "Matematika": ["Menerapkan trigonometri", "Menyelesaikan fungsi kuadrat", "Model matematika linier"]
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 50", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 50", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "3": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 150", "Menulis lambang bilangan hingga 150", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 75", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 75", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "4": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 200", "Menulis lambang bilangan hingga 200", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 100", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 100", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "5": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 250", "Menulis lambang bilangan hingga 250", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 125", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 125", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "6": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 300", "Menulis lambang bilangan hingga 300", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 150", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 150", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
       }
     }
   },
   "baru": {
-    "1": { "1": { "Bahasa Indonesia": ["Menyimak teks lisan", "Membaca lancar", "Menulis dengan huruf kapital"] }, "2": { "Bahasa Indonesia": ["Bicara santun", "Tanya jawab lisan"] } },
-    "2": { "1": { "Bahasa Indonesia": ["Menyimak cerita pendek", "Menulis pengalaman", "Kosakata baru"] }, "2": { "Bahasa Indonesia": ["Puisi anak", "Kata tanya yang tepat"] } },
+    "1": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 50", "Menulis lambang bilangan hingga 50", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 25", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 25", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "2": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 100", "Menulis lambang bilangan hingga 100", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 50", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 50", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "3": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 150", "Menulis lambang bilangan hingga 150", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 75", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 75", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "4": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 200", "Menulis lambang bilangan hingga 200", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 100", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 100", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "5": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 250", "Menulis lambang bilangan hingga 250", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 125", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 125", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
+    "6": {
+      "1": {
+        "Bahasa Indonesia": ["Menyimak teks naratif pendek lisan", "Menjelaskan kembali isi teks naratif", "Membaca lancar teks informasi", "Memahami arti kosakata baru teks", "Menulis kalimat berhuruf kapital", "Menulis kalimat bertanda titik", "Menemukan informasi pada dekripsi", "Menceritakan pengalaman pribadi"],
+        "Matematika": ["Membaca lambang bilangan hingga 300", "Menulis lambang bilangan hingga 300", "Menentukan nilai tempat ratusan", "Menentukan nilai tempat puluhan", "Menentukan nilai tempat satuan", "Membandingkan dua bilangan cacah", "Mengurutkan sekelompok bilangan", "Menghitung penjumlahan hingga 50", "Menghitung pengurangan hingga 50"],
+        "Pendidikan Pancasila": ["Menyebutkan identitas diri asal hobi", "Menjelaskan penerapan sila di rumah", "Menjelaskan penerapan sila di sekolah", "Menerima perbedaan ciri fisik teman", "Menerima perbedaan hobi antar teman", "Mengenal simbol keberagaman agama", "Menghargai perbedaan simbol agama", "Mempraktikkan hidup rukun di kelas"],
+        "Pendidikan Agama Islam (PAI)": ["Membaca Al-Quddus beserta artinya", "Membaca As-Salam beserta artinya", "Mencontoh perilaku kasih sayang", "Mempraktikkan tata cara wudhu", "Menghafal urutan doa selesai wudhu", "Mencontoh akhlak terpuji harian"],
+        "Pendidikan Agama Kristen": ["Menerima keterbatasan diri sendiri", "Menunjukkan sikap disiplin rumah", "Menunjukkan sikap disiplin sekolah", "Bersyukur atas kehadiran guru", "Menerapkan kasih dalam pertemanan"],
+        "PJOK": ["Mempraktikkan gerak melempar bola", "Mempraktikkan gerak menangkap bola", "Mempraktikkan gerak menendang bola", "Menjaga kebersihan ruang kelas", "Menjaga kebersihan halaman sekolah", "Mempraktikkan gerak berjalan lurus"],
+        "Seni Rupa": ["Mengenal elemen warna sekunder karya", "Mengidentifikasi unsur rupa sekitar", "Membuat gambar dekoratif tumbuhan", "Mewarnai gambar kombinasi serasi", "Membuat garis lengkung dekoratif"],
+        "Seni Musik": ["Menirukan pola melodi instrumen", "Mengenali ragam alat musik melodis", "Memainkan pola irama rata musik", "Melakukan umpan balik praktik teman"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      },
+      "2": {
+        "Bahasa Indonesia": ["Menyampaikan pendapat secara santun", "Menyampaikan sanggahan saat diskusi", "Mengajukan pertanyaan secara sopan", "Membaca puisi artikulasi jelas", "Menulis teks pengalaman pribadi", "Menggunakan kata tanya dalam kalimat"],
+        "Matematika": ["Menjelaskan konsep perkalian cacah", "Menghitung perkalian sampai angka 150", "Menjelaskan konsep pembagian cacah", "Menghitung pembagian sampai angka 150", "Mengidentifikasi bangun ruang kubus", "Mengidentifikasi bangun ruang balok", "Menghitung jumlah sisi bangun ruang", "Membaca waktu tepat jam analog", "Membaca waktu setengah jam analog"],
+        "Pendidikan Pancasila": ["Menunjukkan sikap peduli lingkungan", "Mengidentifikasi perilaku jaga lingkungan", "Mempraktikkan jaga lingkungan bersih", "Mengidentifikasi kerja sama rumah", "Mengidentifikasi kerja sama sekolah", "Mengenal produk kerajinan daerah", "Mengenal pakaian adat daerah asal", "Menghargai keberagaman suku sekitar"],
+        "Pendidikan Agama Islam (PAI)": ["Menghafal Surah Al-Asr dengan lancar", "Menjelaskan kisah Nabi Muhammad Saw", "Mempraktikkan gerakan sholat subuh", "Mempraktikkan gerakan sholat maghrib", "Menghafal bacaan takbiratul ihram"],
+        "Pendidikan Agama Kristen": ["Menunjukkan sikap tolong-menolong", "Mempraktikkan kerja sama kelompok", "Bersyukur atas alam ciptaan Allah", "Menjaga kelestarian tumbuhan rumah"],
+        "PJOK": ["Mempraktikkan gerak keseimbangan", "Mempraktikkan gerak kelenturan dasar", "Mengikuti aturan keselamatan air", "Mempraktikkan gerak mengapung kolam"],
+        "Seni Rupa": ["Membuat cetak tinggi pelepah daun", "Membuat cetak tinggi dari buah", "Membuat karya tiga dimensi maket", "Menggunakan bahan alam hiasan"],
+        "Seni Musik": ["Membuat bunyi teratur tubuh", "Membuat pola irama barang bekas", "Menyanyikan lagu daerah intonasi", "Menunjukkan ekspresi gembira musik"],
+        "Seni Tari": ["Mengidentifikasi unsur gerak tari melalui pengamatan", "Menirukan gerak anggota tubuh sesuai irama", "Melakukan gerak tari dasar secara mandiri", "Mengekspresikan diri melalui gerak tari yang kreatif", "Menunjukkan percaya diri saat menampilkan gerak tari", "Mengapresiasi karya tari sederhana teman sekelas"]
+      }
+    },
     "7": {
       "1": {
-        "Bahasa Indonesia": ["Menganalisis teks deskripsi", "Menyimpulkan isi teks narasi lisan", "Menulis teks prosedur"],
-        "Matematika": ["Operasi hitung bilangan bulat", "Menyelesaikan rasio dan proporsi", "Menerapkan konsep aljabar"],
-        "Pendidikan Pancasila": ["Sejarah perumusan Pancasila", "Menerapkan nilai Pancasila", "Mengidentifikasi norma"]
+        "Bahasa Indonesia": ["Menganalisis teks deskripsi", "Menyimpulkan isi teks narasi lisan", "Menulis teks prosedur", "Mempresentasikan ide dengan bahasa santun", "Menemukan makna kosakata baru dalam teks"],
+        "Matematika": ["Melakukan operasi hitung bilangan bulat", "Menyelesaikan masalah rasio dan proporsi", "Menerapkan konsep aljabar dalam masalah", "Menyajikan data dalam bentuk diagram", "Menentukan luas bangun datar gabungan"],
+        "Pendidikan Pancasila": ["Menganalisis sejarah perumusan Pancasila", "Menerapkan nilai Pancasila di masyarakat", "Mengidentifikasi norma yang berlaku", "Menunjukkan sikap toleransi beragama"],
+        "Informatika": ["Memahami fungsi perangkat keras komputer", "Menggunakan aplikasi pengolah kata", "Menerapkan logika dasar pemrograman", "Memahami etika berkomunikasi digital"]
       },
       "2": {
-        "Bahasa Indonesia": ["Menganalisis unsur puisi", "Menulis surat resmi", "Meresensi buku fiksi"],
-        "Matematika": ["Sistem persamaan linear", "Menghitung volume bangun ruang", "Menentukan peluang kejadian"]
+        "Bahasa Indonesia": ["Menganalisis unsur intrinsik puisi", "Menulis surat resmi dan pribadi", "Menyimpulkan isi berita lisan", "Meresensi buku fiksi dan nonfiksi"],
+        "Matematika": ["Menyelesaikan sistem persamaan linear", "Menganalisis sudut pada garis sejajar", "Menghitung volume bangun ruang", "Menentukan peluang suatu kejadian"]
       }
     },
-    "8": { "1": { "Bahasa Indonesia": ["Menulis teks berita", "Menganalisis iklan"], "Matematika": ["Pola bilangan", "Koordinat kartesius"] }, "2": { "Bahasa Indonesia": ["Teks persuasi", "Teks ulasan"], "Matematika": ["Teorema Pythagoras", "Lingkaran"] } },
-    "9": { "1": { "Bahasa Indonesia": ["Teks laporan percobaan", "Pidato persuasif"], "Matematika": ["Perpangkatan", "Persamaan kuadrat"] }, "2": { "Bahasa Indonesia": ["Cerita inspiratif", "Teks diskusi"], "Matematika": ["Kesebangunan", "Bangun ruang sisi lengkung"] } },
+    "8": {
+      "1": { "Bahasa Indonesia": ["Menulis teks berita", "Menganalisis iklan"], "Matematika": ["Pola bilangan", "Koordinat kartesius"] },
+      "2": { "Bahasa Indonesia": ["Teks persuasi", "Teks ulasan"], "Matematika": ["Teorema Pythagoras", "Lingkaran"] }
+    },
+    "9": {
+      "1": { "Bahasa Indonesia": ["Teks laporan percobaan", "Pidato persuasif"], "Matematika": ["Perpangkatan", "Persamaan kuadrat"] },
+      "2": { "Bahasa Indonesia": ["Cerita inspiratif", "Teks diskusi"], "Matematika": ["Kesebangunan", "Bangun ruang sisi lengkung"] }
+    },
     "10": {
       "1": {
-        "Bahasa Indonesia": ["Mengevaluasi laporan", "Menulis eksposisi logis", "Menyampaikan argumen debat"],
-        "Matematika": ["Menyelesaikan eksponen", "Menganalisis deret aritmetika", "Menyajikan data distribusi"]
+        "Bahasa Indonesia": ["Mengevaluasi informasi teks laporan", "Menulis teks eksposisi secara logis", "Menyampaikan argumen dalam debat", "Menganalisis struktur teks anekdot", "Menyusun teks hikayat menjadi cerpen"],
+        "Matematika": ["Menyelesaikan bentuk eksponen dan logaritma", "Menganalisis barisan dan deret aritmetika", "Menyelesaikan masalah vektor dasar", "Menyajikan data dalam tabel distribusi"],
+        "Pendidikan Pancasila": ["Menganalisis fungsi Pancasila sebagai ideologi", "Menerapkan konstitusi UUD 1945", "Mengevaluasi pelanggaran hak asasi manusia", "Mengusulkan solusi konflik sosial"],
+        "Bahasa Inggris": ["Menganalisis teks naratif lisan", "Menyusun teks deskriptif tempat wisata", "Merespons percakapan transaksional", "Mempresentasikan opini secara lisan"]
       },
       "2": {
-        "Bahasa Indonesia": ["Menganalisis negosiasi bisnis", "Menulis biografi tokoh", "Mengkritisi ulasan seni"],
-        "Matematika": ["Menerapkan trigonometri", "Menyelesaikan fungsi kuadrat", "Model matematika linier"]
+        "Bahasa Indonesia": ["Menganalisis teks negosiasi bisnis", "Menulis teks biografi tokoh inspiratif", "Mendemonstrasikan pembacaan puisi", "Mengkritisi isi teks ulasan karya seni"],
+        "Matematika": ["Menerapkan trigonometri pada segitiga", "Menyelesaikan fungsi kuadrat", "Menganalisis peluang kejadian majemuk", "Menyelesaikan model matematika linier"]
       }
     },
-    "11": { "1": { "Bahasa Indonesia": ["Teks prosedur kompleks", "Teks eksplanasi"], "Matematika": ["Induksi matematika", "Program linear"] }, "2": { "Bahasa Indonesia": ["Proposal ilmiah", "Karya ilmiah"], "Matematika": ["Matriks", "Transformasi geometri"] } },
-    "12": { "1": { "Bahasa Indonesia": ["Surat lamaran kerja", "Teks sejarah"], "Matematika": ["Geometri ruang", "Statistika deskriptif"] }, "2": { "Bahasa Indonesia": ["Artikel opini", "Kritik dan esai"], "Matematika": ["Kaidah pencacahan", "Peluang kejadian"] } }
+    "11": {
+      "1": { "Bahasa Indonesia": ["Teks prosedur kompleks", "Teks eksplanasi"], "Matematika": ["Induksi matematika", "Program linear"] },
+      "2": { "Bahasa Indonesia": ["Proposal ilmiah", "Karya ilmiah"], "Matematika": ["Matriks", "Transformasi geometri"] }
+    },
+    "12": {
+      "1": { "Bahasa Indonesia": ["Surat lamaran kerja", "Teks sejarah"], "Matematika": ["Geometri ruang", "Statistika deskriptif"] },
+      "2": { "Bahasa Indonesia": ["Artikel opini", "Kritik dan esai"], "Matematika": ["Kaidah pencacahan", "Peluang kejadian"] }
+    }
   },
   "agama2026": {
     "1": { "1": { "Pend. Agama Islam": ["Menerapkan kasih sayang", "Mengenal sifat mulia Allah", "Mempraktikkan adab baik"], "Pend. Agama Kristen": ["Menerapkan nilai kasih", "Mengenal ciptaan Tuhan", "Berperilaku disiplin"] }, "2": { "Pend. Agama Islam": ["Toleransi dengan teman", "Menghormati orang tua"], "Pend. Agama Kristen": ["Menolong sesama teman", "Menghormati guru"] } },
@@ -626,5 +1253,3 @@ function showPage(page){
 </script>
 </body>
 </html>
-
-```
