@@ -195,7 +195,10 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
   position: relative;
   z-index: 10;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(14,165,160,.2) transparent;
 }
 
 /* Subtle grain texture overlay */
@@ -714,9 +717,13 @@ a { text-decoration: none; color: inherit; }
   letter-spacing: .8px; text-transform: uppercase;
 }
 .badge-active { background: var(--teal,#0ea5a0); color: #fff; }
-.badge-soon { background: var(--cream-2); color: var(--txt-3); border: 1px solid var(--border); }
+.badge-free   { background: #22c55e; color: #fff; }
+.badge-limit  { background: #f59e0b; color: #fff; }
+.badge-soon   { background: var(--cream-2); color: var(--txt-3); border: 1px solid var(--border); }
 [data-theme="dark"] .badge-active { background: rgba(14,165,160,.2); color: #5eead4; }
-[data-theme="dark"] .badge-soon { background: rgba(14,165,160,.04); border-color: var(--border); }
+[data-theme="dark"] .badge-free   { background: rgba(34,197,94,.2); color: #86efac; }
+[data-theme="dark"] .badge-limit  { background: rgba(245,158,11,.2); color: #fcd34d; }
+[data-theme="dark"] .badge-soon   { background: rgba(14,165,160,.04); border-color: var(--border); }
 
 .tool-name {
   font-size: .86rem; font-weight: 700;
@@ -830,6 +837,10 @@ a { text-decoration: none; color: inherit; }
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
 .hero       { animation: fadeUp .5s ease both; }
 .tools-grid { animation: fadeUp .5s .1s ease both; }
 .bottom-row { animation: fadeUp .5s .18s ease both; }
@@ -858,12 +869,20 @@ a { text-decoration: none; color: inherit; }
   .hero-right { width: 100%; }
   .bottom-row { grid-template-columns: 1fr; }
   .tools-grid { grid-template-columns: 1fr 1fr; }
+  .creator-card { flex-direction: column; text-align: center; }
+  .creator-links { justify-content: center; }
+  .creator-card::after { display: none; }
 }
 @media (max-width: 520px) {
   .tools-grid { grid-template-columns: 1fr; }
+  .testimonial-grid { grid-template-columns: 1fr; }
   .hero-btns { flex-direction: column; }
   .btn-hero { justify-content: center; }
   .hero-title { font-size: 1.6rem; }
+  .trust-bar { flex-wrap: wrap; gap: 14px; }
+  .trust-divider { display: none; }
+  .trust-item { min-width: 80px; }
+  .install-btn-label { display: none; }
 }
 
 .tool-card.tool-card-featured {
@@ -877,6 +896,126 @@ a { text-decoration: none; color: inherit; }
 [data-theme="dark"] .tool-card.tool-card-featured {
   background: linear-gradient(135deg, var(--surface), rgba(14,165,160,.06));
 }
+
+/* ─── BADGE LEGEND ─── */
+.badge-legend {
+  font-size: .72rem; color: var(--txt-3);
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+/* ─── TRUST BAR ─── */
+.trust-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 18px 24px;
+  flex-shrink: 0;
+  gap: 12px;
+}
+.trust-item { text-align: center; flex: 1; }
+.trust-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 700;
+  color: var(--teal, #0ea5a0);
+  line-height: 1;
+}
+.trust-num span { font-size: 1rem; }
+.trust-lbl { font-size: .64rem; color: var(--txt-3); font-weight: 600; margin-top: 4px; letter-spacing: .4px; text-transform: uppercase; }
+.trust-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
+
+/* ─── TESTIMONIALS ─── */
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  flex-shrink: 0;
+}
+.testi-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+  transition: var(--trans);
+}
+.testi-card:hover {
+  border-color: var(--teal, #0ea5a0);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.testi-stars { color: #f59e0b; font-size: .85rem; letter-spacing: 1px; }
+.testi-text {
+  font-size: .78rem; color: var(--txt-2);
+  line-height: 1.65; flex: 1;
+  font-style: italic;
+}
+.testi-footer { display: flex; align-items: center; gap: 10px; margin-top: auto; }
+.testi-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .82rem; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+}
+.testi-name { font-size: .78rem; font-weight: 700; color: var(--txt-1); }
+.testi-role { font-size: .65rem; color: var(--txt-3); margin-top: 1px; }
+
+/* ─── CREATOR CARD ─── */
+.creator-card {
+  display: flex; align-items: center; gap: 20px;
+  background: linear-gradient(135deg, var(--surface), rgba(14,165,160,.04));
+  border: 1.5px solid rgba(14,165,160,.25);
+  border-radius: var(--r-md);
+  padding: 22px 24px;
+  flex-shrink: 0;
+  position: relative; overflow: hidden;
+}
+.creator-card::after {
+  content: '✦';
+  position: absolute; right: 24px; bottom: 16px;
+  font-size: 3rem; color: rgba(14,165,160,.06);
+  pointer-events: none;
+}
+.creator-avatar {
+  font-size: 2.4rem;
+  width: 60px; height: 60px;
+  background: rgba(14,165,160,.1);
+  border: 2px solid rgba(14,165,160,.25);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.creator-body { flex: 1; }
+.creator-tag {
+  font-size: .6rem; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--teal, #0ea5a0);
+  margin-bottom: 5px;
+}
+.creator-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--txt-1); margin-bottom: 6px;
+}
+.creator-desc {
+  font-size: .76rem; color: var(--txt-3);
+  line-height: 1.65; margin-bottom: 12px; max-width: 540px;
+}
+.creator-links { display: flex; gap: 8px; flex-wrap: wrap; }
+.creator-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px;
+  border-radius: var(--r-sm);
+  background: rgba(14,165,160,.08);
+  border: 1px solid rgba(14,165,160,.2);
+  color: var(--teal, #0ea5a0);
+  font-size: .74rem; font-weight: 700;
+  text-decoration: none;
+  transition: var(--trans);
+}
+.creator-link:hover { background: rgba(14,165,160,.16); }
 
 /* ─── INSTALL BANNER ─── */
 .install-banner {
@@ -942,33 +1081,21 @@ a { text-decoration: none; color: inherit; }
     <div class="sb-logo"><img src="guru-cibisd2.png" alt="Logo BGY" /></div>
     <div class="sb-brand-text">
       <div class="sb-name">Bantu Guru Yuk</div>
-      <div class="sb-sub">AI Tools untuk Guru SD</div>
+      <div class="sb-sub">AI Tools untuk Semua Guru</div>
     </div>
   </div>
 
   <div class="sb-section">Menu Utama</div>
-
   <a href="/" class="nav-item active">
     <div class="nav-icon">🏠</div>
     Dashboard
   </a>
-  <a href="/lkpd" class="nav-item">
-    <div class="nav-icon">📘</div>
-    Generator Prompt LKPD
-  </a>
-  <a href="/kokurikuler" class="nav-item">
-    <div class="nav-icon">🎭</div>
-    Buat Prompt Kokurikuler
-  </a>
-  <a href="/soal" class="nav-item">
-    <div class="nav-icon">📝</div>
-    Buat Soal
-  </a>
-  <a href="/katrol-nilai" class="nav-item">
-    <div class="nav-icon">📊</div>
-    Katrol Nilai
-  </a>
 
+  <div class="sb-section">Persiapan Mengajar</div>
+  <a href="https://presiswa.bantuguruyuk.web.id" class="nav-item">
+    <div class="nav-icon">📋</div>
+    Presensi Digital
+  </a>
   <a href="/draft-tp" class="nav-item">
     <div class="nav-icon">📄</div>
     Draft TP
@@ -977,9 +1104,29 @@ a { text-decoration: none; color: inherit; }
     <div class="nav-icon">🗓️</div>
     Buat Prompt Modul Ajar
   </a>
-  <a href="https://presiswa.bantuguruyuk.web.id" class="nav-item">
-    <div class="nav-icon">📋</div>
-    Presensi Digital
+  <a href="/lkpd" class="nav-item">
+    <div class="nav-icon">📘</div>
+    Generator Prompt LKPD
+  </a>
+
+  <div class="sb-section">Pembelajaran</div>
+  <a href="/soal" class="nav-item">
+    <div class="nav-icon">📝</div>
+    Buat Soal
+  </a>
+  <a href="https://bmedia.bantuguruyuk.web.id/buat" class="nav-item">
+    <div class="nav-icon">🎮</div>
+    Buat Prompt Game
+  </a>
+  <a href="/kokurikuler" class="nav-item">
+    <div class="nav-icon">🎭</div>
+    Buat Prompt Kokurikuler
+  </a>
+
+  <div class="sb-section">Administrasi</div>
+  <a href="/katrol-nilai" class="nav-item">
+    <div class="nav-icon">📊</div>
+    Katrol Nilai
   </a>
   <a href="https://bjadwal.bantuguruyuk.web.id" class="nav-item">
     <div class="nav-icon">📅</div>
@@ -1006,6 +1153,9 @@ a { text-decoration: none; color: inherit; }
     </div>
     <div class="topbar-right">
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti tema">🌙</button>
+      <button id="installTopbarBtn" onclick="doInstall()" class="btn-topbar btn-outline" title="Install aplikasi" style="display:none;gap:6px;">
+        📲 <span class="install-btn-label">Install App</span>
+      </button>
       <a href="https://wa.me/6289530713597" target="_blank" class="btn-topbar btn-icon-only" title="Hubungi via WhatsApp">💬</a>
     </div>
   </div>
@@ -1019,7 +1169,7 @@ a { text-decoration: none; color: inherit; }
     <span class="hero-ast" style="bottom:16px;right:240px;font-size:1.6rem;opacity:.07;">✦</span>
 
     <div class="hero-left">
-      <div class="hero-eyebrow">✦ AI Tools untuk Guru SD Indonesia</div>
+      <div class="hero-eyebrow">✦ AI Tools untuk Semua Guru Indonesia</div>
       <div class="hero-title">
         Selamat Datang,<br><em>Guru Hebat!</em>
       </div>
@@ -1041,7 +1191,7 @@ a { text-decoration: none; color: inherit; }
       <div class="stamp-card">
         <div class="stamp-new">Baru</div>
         <div class="stamp-icon">📚</div>
-        <div class="stamp-num">8</div>
+        <div class="stamp-num">9</div>
         <div class="stamp-lbl">Fitur Aktif</div>
         <hr class="stamp-hr">
         <div class="quote-slider" id="quoteSlider">
@@ -1067,56 +1217,37 @@ a { text-decoration: none; color: inherit; }
   <!-- Section header -->
   <div class="sec-header">
     <div class="sec-line"></div>
-    <div class="sec-label">✦ Fitur Tersedia — Klik untuk mulai</div>
+    <div class="sec-label">✦ Mulai dari sini — ikuti urutan alur kerja guru</div>
     <div class="sec-line"></div>
+  </div>
+  <div class="badge-legend">
+    <span class="tool-badge badge-free" style="font-size:.6rem;">Gratis Full</span> Tidak perlu akun Pro
+    <span style="margin:0 6px;color:var(--border-2);">·</span>
+    <span class="tool-badge badge-limit" style="font-size:.6rem;">Gratis · Ada Limit</span> Bisa coba gratis, unlimited butuh Pro
   </div>
 
   <!-- Tools -->
+  <!-- Group: Persiapan Mengajar -->
+  <div class="sec-header" style="margin-top:4px;">
+    <div class="sec-line"></div>
+    <div class="sec-label">📋 Persiapan Mengajar</div>
+    <div class="sec-line"></div>
+  </div>
   <div class="tools-grid">
-    <a href="/soal" class="tool-card">
+    <a href="https://presiswa.bantuguruyuk.web.id" class="tool-card">
       <div class="tool-card-top">
-        <div class="tool-icon-wrap">📝</div>
-        <span class="tool-badge badge-active">Aktif</span>
+        <div class="tool-icon-wrap">📋</div>
+        <span class="tool-badge badge-limit">Gratis · Ada Limit</span>
       </div>
-      <div class="tool-name">Buat Soal</div>
-      <div class="tool-desc">Generate soal PG, isian &amp; uraian otomatis sesuai Kurikulum Merdeka. Ekspor ke Word &amp; PDF.</div>
-      <div class="tool-arrow">→</div>
-    </a>
-
-    <a href="/lkpd" class="tool-card">
-      <div class="tool-card-top">
-        <div class="tool-icon-wrap">📘</div>
-        <span class="tool-badge badge-active">Aktif</span>
-      </div>
-      <div class="tool-name">Generator Prompt LKPD</div>
-      <div class="tool-desc">Buat Lembar Kerja Peserta Didik dengan prompt AI dan generate gambar media ajar.</div>
-      <div class="tool-arrow">→</div>
-    </a>
-
-    <a href="/kokurikuler" class="tool-card">
-      <div class="tool-card-top">
-        <div class="tool-icon-wrap">🎭</div>
-        <span class="tool-badge badge-active">Aktif</span>
-      </div>
-      <div class="tool-name">Buat Prompt Kokurikuler</div>
-      <div class="tool-desc">Buat prompt modul kegiatan kokurikuler yang kreatif dan sesuai jenjang SD.</div>
-      <div class="tool-arrow">→</div>
-    </a>
-
-    <a href="/katrol-nilai" class="tool-card tool-card-featured">
-      <div class="tool-card-top">
-        <div class="tool-icon-wrap" style="background:rgba(14,165,160,.12);border-color:rgba(14,165,160,.25);">📊</div>
-        <span class="tool-badge badge-active">Aktif</span>
-      </div>
-      <div class="tool-name">Katrol Nilai</div>
-      <div class="tool-desc">Hitung &amp; katrol nilai siswa otomatis — input nilai mentah, dapatkan hasil akhir yang adil &amp; proporsional.</div>
+      <div class="tool-name">Presensi Digital</div>
+      <div class="tool-desc">Kelola absensi siswa digital, rekap otomatis per bulan &amp; unduh laporan.</div>
       <div class="tool-arrow">→</div>
     </a>
 
     <a href="/draft-tp" class="tool-card">
       <div class="tool-card-top">
         <div class="tool-icon-wrap">📄</div>
-        <span class="tool-badge badge-active">Aktif</span>
+        <span class="tool-badge badge-free">Gratis Full</span>
       </div>
       <div class="tool-name">Draft TP</div>
       <div class="tool-desc">Buat draf Tujuan Pembelajaran sesuai Kurikulum Merdeka, cepat dan terstruktur.</div>
@@ -1126,32 +1257,187 @@ a { text-decoration: none; color: inherit; }
     <a href="/modul-ajar" class="tool-card">
       <div class="tool-card-top">
         <div class="tool-icon-wrap">🗓️</div>
-        <span class="tool-badge badge-active">Aktif</span>
+        <span class="tool-badge badge-limit">Gratis · Ada Limit</span>
       </div>
       <div class="tool-name">Buat Prompt Modul Ajar</div>
       <div class="tool-desc">Buat prompt Modul Ajar lengkap sesuai format Kurikulum Merdeka, siap digunakan di kelas.</div>
       <div class="tool-arrow">→</div>
     </a>
 
-    <a href="https://presiswa.bantuguruyuk.web.id" class="tool-card">
+    <a href="/lkpd" class="tool-card">
       <div class="tool-card-top">
-        <div class="tool-icon-wrap">📋</div>
-        <span class="tool-badge badge-active">Aktif</span>
+        <div class="tool-icon-wrap">📘</div>
+        <span class="tool-badge badge-limit">Gratis · Ada Limit</span>
       </div>
-      <div class="tool-name">Presensi Digital</div>
-      <div class="tool-desc">Kelola absensi siswa digital, rekap otomatis per bulan &amp; unduh laporan.</div>
+      <div class="tool-name">Generator Prompt LKPD</div>
+      <div class="tool-desc">Buat Lembar Kerja Peserta Didik dengan prompt AI dan generate gambar media ajar.</div>
+      <div class="tool-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- Group: Pembelajaran -->
+  <div class="sec-header" style="margin-top:4px;">
+    <div class="sec-line"></div>
+    <div class="sec-label">🎮 Pembelajaran</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="tools-grid">
+    <a href="/soal" class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">📝</div>
+        <span class="tool-badge badge-limit">Gratis · Ada Limit</span>
+      </div>
+      <div class="tool-name">Buat Soal</div>
+      <div class="tool-desc">Generate soal PG, isian &amp; uraian otomatis sesuai Kurikulum Merdeka. Ekspor ke Word &amp; PDF.</div>
+      <div class="tool-arrow">→</div>
+    </a>
+
+    <a href="https://bmedia.bantuguruyuk.web.id/buat" class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">🎮</div>
+        <span class="tool-badge badge-limit">Gratis · Ada Limit</span>
+      </div>
+      <div class="tool-name">Buat Prompt Game</div>
+      <div class="tool-desc">Generate prompt game edukatif interaktif untuk media ajar yang menarik dan menyenangkan.</div>
+      <div class="tool-arrow">→</div>
+    </a>
+
+    <a href="/kokurikuler" class="tool-card">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap">🎭</div>
+        <span class="tool-badge badge-limit">Gratis · Ada Limit</span>
+      </div>
+      <div class="tool-name">Buat Prompt Kokurikuler</div>
+      <div class="tool-desc">Buat prompt modul kegiatan kokurikuler yang kreatif dan sesuai jenjang.</div>
+      <div class="tool-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- Group: Administrasi -->
+  <div class="sec-header" style="margin-top:4px;">
+    <div class="sec-line"></div>
+    <div class="sec-label">📊 Administrasi</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="tools-grid">
+    <a href="/katrol-nilai" class="tool-card tool-card-featured">
+      <div class="tool-card-top">
+        <div class="tool-icon-wrap" style="background:rgba(14,165,160,.12);border-color:rgba(14,165,160,.25);">📊</div>
+        <span class="tool-badge badge-free">Gratis Full</span>
+      </div>
+      <div class="tool-name">Katrol Nilai</div>
+      <div class="tool-desc">Hitung &amp; katrol nilai siswa otomatis — input nilai mentah, dapatkan hasil akhir yang adil &amp; proporsional.</div>
       <div class="tool-arrow">→</div>
     </a>
 
     <a href="https://bjadwal.bantuguruyuk.web.id" class="tool-card">
       <div class="tool-card-top">
         <div class="tool-icon-wrap">📅</div>
-        <span class="tool-badge badge-active">Aktif</span>
+        <span class="tool-badge badge-free">Gratis Full</span>
       </div>
       <div class="tool-name">Buat Jadwal</div>
       <div class="tool-desc">Generate jadwal pelajaran dengan mudah dan otomatis tanpa bentrok. Export PDF &amp; Excel.</div>
       <div class="tool-arrow">→</div>
     </a>
+  </div>
+
+  <!-- ── TRUST BAR ── -->
+  <div class="trust-bar">
+    <div class="trust-item">
+      <div class="trust-num">9</div>
+      <div class="trust-lbl">Tools Tersedia</div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-num">3</div>
+      <div class="trust-lbl">Gratis Full</div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-num">6</div>
+      <div class="trust-lbl">Freemium</div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-num">✓</div>
+      <div class="trust-lbl">Kurikulum Merdeka</div>
+    </div>
+  </div>
+
+  <!-- ── KATA GURU — hidden, siap Supabase ── -->
+  <!-- TODO: sambungkan ke Supabase, fetch reviews dari tabel 'testimonials', render dynamic -->
+  <div id="testiSection" style="display:none;">
+    <div class="sec-header">
+      <div class="sec-line"></div>
+      <div class="sec-label">⭐ Kata Guru yang Sudah Pakai</div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="testimonial-grid" id="testiGrid">
+      <!-- Placeholder cards — ganti dengan fetch dari Supabase -->
+      <!-- 
+        Struktur tabel Supabase yang disarankan:
+        testimonials (id, name, role, school, province, text, rating, created_at, approved)
+        Query: SELECT * FROM testimonials WHERE approved = true ORDER BY created_at DESC LIMIT 4
+      -->
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Buat soal yang biasanya habis 2 jam, sekarang cuma 10 menit. Hasilnya sudah sesuai Kurikulum Merdeka dan tinggal edit sedikit!"</div>
+        <div class="testi-footer">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);">S</div>
+          <div>
+            <div class="testi-name">Guru SD · DIY</div>
+            <div class="testi-role">via WhatsApp</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"LKPD-nya keren, anak-anak lebih semangat. Promptnya langsung bisa dipakai di ChatGPT, tidak perlu ribet lagi."</div>
+        <div class="testi-footer">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706);">A</div>
+          <div>
+            <div class="testi-name">Guru IPA · Jawa Timur</div>
+            <div class="testi-role">via WhatsApp</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Presensi digitalnya simpel, rekap bulanan langsung bisa diunduh. Tidak rekap manual di Excel lagi!"</div>
+        <div class="testi-footer">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#2d6a7f,#0d2b3e);">R</div>
+          <div>
+            <div class="testi-name">Wali Kelas · Jawa Barat</div>
+            <div class="testi-role">via WhatsApp</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"Modul ajar yang biasanya bikin pusing, sekarang selesai dalam hitungan menit. Makasih Pak Choyy!"</div>
+        <div class="testi-footer">
+          <div class="testi-avatar" style="background:linear-gradient(135deg,#0ea5a0,#2d6a7f);">D</div>
+          <div>
+            <div class="testi-name">Guru Matematika · Jawa Barat</div>
+            <div class="testi-role">via WhatsApp</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── KREATOR CARD ── -->
+  <div class="creator-card">
+    <div class="creator-avatar">👨‍🏫</div>
+    <div class="creator-body">
+      <div class="creator-tag">✦ Dibuat oleh Guru, untuk Guru</div>
+      <div class="creator-name">Pak Choyy</div>
+      <div class="creator-desc">Guru SD aktif yang paham betul betapa sibuknya administrasi guru. Platform ini lahir dari kebutuhan nyata di kelas — bukan dari perusahaan teknologi.</div>
+      <div class="creator-links">
+        <a href="https://tiktok.com/@pak.choyy" target="_blank" class="creator-link">🎵 @pak.choyy di TikTok</a>
+        <a href="https://wa.me/6289530713597" target="_blank" class="creator-link">💬 Chat WhatsApp</a>
+      </div>
+    </div>
   </div>
 
   <!-- Install App Banner — muncul kalau belum install -->
@@ -1178,29 +1464,29 @@ a { text-decoration: none; color: inherit; }
         <div class="update-item">
           <div class="update-dot dot-green"></div>
           <div>
-            <div class="ut-title">Export Word diperbaiki</div>
-            <div class="ut-sub">Kop surat kini tampil rapi di Microsoft Word — April 2026</div>
+            <div class="ut-title">🎮 Buat Prompt Game diluncurkan</div>
+            <div class="ut-sub">Generator prompt game edukatif interaktif kini tersedia — Agustus 2026</div>
           </div>
         </div>
         <div class="update-item">
           <div class="update-dot dot-gold"></div>
           <div>
-            <div class="ut-title">Default Kelas 2 &amp; Bahasa Indonesia</div>
-            <div class="ut-sub">Form Buat Soal otomatis pilih kelas 2 saat pertama buka</div>
+            <div class="ut-title">Platform kini untuk semua jenjang</div>
+            <div class="ut-sub">Tidak lagi khusus SD — SD, SMP, SMA, SMK semua bisa pakai — Agustus 2026</div>
           </div>
         </div>
         <div class="update-item">
           <div class="update-dot dot-brown"></div>
           <div>
-            <div class="ut-title">Error handling API lebih baik</div>
-            <div class="ut-sub">Pesan error kini lebih informatif ketika API gagal</div>
+            <div class="ut-title">Navbar dikelompokkan per alur kerja</div>
+            <div class="ut-sub">Menu kini tersusun: Persiapan → Pembelajaran → Administrasi</div>
           </div>
         </div>
         <div class="update-item">
           <div class="update-dot dot-dark"></div>
           <div>
-            <div class="ut-title">Dashboard baru diluncurkan</div>
-            <div class="ut-sub">Landing page upgrade dengan tampilan Edu-Retro — April 2026</div>
+            <div class="ut-title">Export Word diperbaiki</div>
+            <div class="ut-sub">Kop surat kini tampil rapi di Microsoft Word — April 2026</div>
           </div>
         </div>
       </div>
@@ -1210,12 +1496,12 @@ a { text-decoration: none; color: inherit; }
       <div class="card-title">✦ Info Platform</div>
       <div class="stat-grid">
         <div class="stat-item">
-          <div class="stat-num">8</div>
+          <div class="stat-num">9</div>
           <div class="stat-lbl">Fitur Aktif</div>
         </div>
         <div class="stat-item">
-          <div class="stat-num">6</div>
-          <div class="stat-lbl">Kelas SD</div>
+          <div class="stat-num">SD–SMA</div>
+          <div class="stat-lbl">Semua Jenjang</div>
         </div>
       </div>
       <a href="https://tiktok.com/@pak.choyy" target="_blank" class="social-btn">🎵 @pak.choyy di TikTok</a>
@@ -1320,6 +1606,8 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   setTimeout(showInstallBanner, 1200);
+  const btn = document.getElementById('installTopbarBtn');
+  if (btn) btn.style.display = 'flex';
 });
 
 function dismissBanner() {
@@ -1339,7 +1627,18 @@ async function doInstall() {
   }
 }
 
-window.addEventListener('appinstalled', dismissBanner);
+window.addEventListener('appinstalled', () => {
+  dismissBanner();
+  const btn = document.getElementById('installTopbarBtn');
+  if (btn) btn.style.display = 'none';
+});
+
+/* ─── Install Popup ─── */
+function closeInstallPopup() {
+  const popup = document.getElementById('installPopup');
+  if (popup) popup.style.display = 'none';
+  sessionStorage.setItem('popup-dismissed', '1');
+}
 
 /* ─── Register Service Worker ─── */
 if ('serviceWorker' in navigator) {
