@@ -3223,7 +3223,14 @@ async function verifikasiKode(){
     if(error) throw error;
     if(!data){ msg.innerText="❌ Email/kode tidak cocok. Cek kembali."; msg.style.color="red"; return; }
 
-    if(!subscriptionIsActive(data)){msg.innerText='❌ Akses belum aktif atau masa langganan telah habis. Hubungi admin untuk perpanjangan.';msg.style.color='red';return;}
+    if(!subscriptionIsActive(data)){
+      if(!data.is_pro&&!data.plan_type){
+        const activeUntil=new Date();activeUntil.setFullYear(activeUntil.getFullYear()+1);
+        const patch={is_pro:true,plan_type:'annual',purchased_at:new Date().toISOString(),active_until:activeUntil.toISOString()};
+        const {error:updErr}=await sb.from('users').update(patch).eq('id',data.id);
+        if(updErr)throw updErr;Object.assign(data,patch);
+      }else{msg.innerText='❌ Masa langganan telah habis. Silakan lakukan perpanjangan.';msg.style.color='red';return;}
+    }
 
     msg.innerText="✅ Aktivasi berhasil! Selamat menikmati Pro 🎉"; msg.style.color="green";
     localStorage.setItem("pro_email", email);

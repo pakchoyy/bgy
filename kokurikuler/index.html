@@ -905,7 +905,16 @@ async function aktivasiPro(){
       gaEvent('aktivasi_pro_kokurikuler',{kode});
       return;
     }
-    msg.textContent='❌ Kode ditemukan, tetapi belum diaktifkan admin atau masa langganan telah habis.';
+    if(!data.is_pro && !data.plan_type){
+      const activeUntil=new Date();activeUntil.setFullYear(activeUntil.getFullYear()+1);
+      const patch={is_pro:true,plan_type:'annual',purchased_at:new Date().toISOString(),active_until:activeUntil.toISOString()};
+      const {error:updErr}=await sbClient.from('users').update(patch).eq('id',data.id);
+      if(updErr)throw updErr;
+      Object.assign(data,patch);savePro(data);
+      msg.textContent='✅ Aktivasi berhasil! Pro tahunan aktif selama 1 tahun. 🎉';
+      msg.style.color='#059669';updateLimitDisplay();gaEvent('aktivasi_pro_kokurikuler',{kode});return;
+    }
+    msg.textContent='❌ Masa langganan telah habis. Silakan lakukan perpanjangan.';
     msg.style.color='#dc2626';
   }catch(e){
     msg.textContent='❌ Gagal terhubung ke server. Cek koneksi internet.';

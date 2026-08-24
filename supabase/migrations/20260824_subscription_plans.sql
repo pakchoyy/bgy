@@ -43,4 +43,5 @@ commit;
 -- CONTOH aktivasi / perpanjangan pembeli baru SETELAH pembayaran Lynk terverifikasi.
 -- Ubah nilai email, access, code, dan tanggal sesuai transaksi.
 -- Untuk perpanjangan, gunakan UPDATE dengan active_until = greatest(active_until, now()) + interval '1 year'.
--- Jangan membuka kebijakan RLS yang mengizinkan browser mengubah is_pro atau active_until.
+-- Aktivasi aplikasi hanya mengubah kode pending (is_pro=false, plan_type=null) satu kali.
+-- Paket annual yang kedaluwarsa tidak diperpanjang otomatis oleh kode lama.

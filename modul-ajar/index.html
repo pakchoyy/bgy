@@ -1026,7 +1026,14 @@ async function verifikasiKode(){
   try{
     const{data,error}=await sbClient.from('users').select('*').eq('code',kode).eq('email',email).eq('access','modul_ajar').single();
     if(error||!data){msgEl.style.color='#dc2626';msgEl.textContent='❌ Email atau kode tidak cocok.';return;}
-    if(!subscriptionIsActive(data)){msgEl.style.color='#dc2626';msgEl.textContent='❌ Akses belum aktif atau masa langganan telah habis. Hubungi admin untuk perpanjangan.';return;}
+    if(!subscriptionIsActive(data)){
+      if(!data.is_pro&&!data.plan_type){
+        const activeUntil=new Date();activeUntil.setFullYear(activeUntil.getFullYear()+1);
+        const patch={is_pro:true,plan_type:'annual',purchased_at:new Date().toISOString(),active_until:activeUntil.toISOString()};
+        const{error:updErr}=await sbClient.from('users').update(patch).eq('id',data.id);
+        if(updErr)throw updErr;Object.assign(data,patch);
+      }else{msgEl.style.color='#dc2626';msgEl.textContent='❌ Masa langganan telah habis. Silakan lakukan perpanjangan.';return;}
+    }
     localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,kode,email,plan_type:data.plan_type,active_until:data.active_until}));
     _setProAktif(true);
     msgEl.style.color='#15803d';msgEl.textContent='✅ Aktivasi berhasil! Selamat menjadi PRO 🎉';
