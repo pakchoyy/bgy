@@ -112,12 +112,12 @@ body.dark .prompt-result{background:#0f172a;}
 .prompt-placeholder .ph-icon{font-size:2.5rem;opacity:.4;}
 .prompt-placeholder p{font-size:.82rem;text-align:center;}
 .notif-box{background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:600;text-align:center;display:none;margin-top:8px;}
-.aktivasi-box{border:1.5px dashed #0ea5a0;border-radius:10px;padding:12px 14px;background:rgba(14,165,160,.04);margin-top:8px;}
-.aktivasi-box .ak-label{font-size:.78rem;font-weight:700;color:#0d7a8a;margin-bottom:3px;}
+.aktivasi-box{border:2px solid #f59e0b;border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(14,165,160,.04));margin-top:8px;box-shadow:0 2px 12px rgba(245,158,11,.15);}
+.aktivasi-box .ak-label{font-size:.78rem;font-weight:800;color:#d97706;margin-bottom:5px;}
 .aktivasi-box .ak-sub{font-size:.71rem;color:var(--text-light);margin-bottom:8px;}
 .aktivasi-row{display:flex;gap:6px;}
 .aktivasi-row input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;}
-.aktivasi-row button{background:linear-gradient(135deg,#0ea5a0,#2d6a7f);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+.aktivasi-row button{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(245,158,11,.3);}
 .histori-item{border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:7px;background:var(--input-bg);cursor:pointer;transition:all .2s;}
 .histori-item:hover{border-color:var(--blue);background:rgba(59,130,246,.04);}
 .histori-item .hi-meta{font-size:.69rem;color:var(--text-light);margin-bottom:2px;}
@@ -347,7 +347,7 @@ footer a{color:inherit;text-decoration:underline;}
         <!-- TAB SWITCHER -->
         <div style="display:flex;gap:4px;margin-bottom:10px;background:#f1f5f9;border-radius:8px;padding:3px;">
           <button id="tabKodeBtn" onclick="switchAktivasiTab('kode')"
-            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:#0ea5a0;color:#fff;transition:all .2s;">
+            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:#f59e0b;color:#fff;transition:all .2s;">
             🔑 Kode Aktivasi
           </button>
           <button id="tabEmailBtn" onclick="switchAktivasiTab('email')"
@@ -358,7 +358,7 @@ footer a{color:inherit;text-decoration:underline;}
 
         <!-- PANEL KODE -->
         <div id="panelKode">
-          <div class="ak-sub"><a href="https://bantuguruyuk.web.id/aktvs-kkrklr.html" target="_blank" style="color:#0ea5a0;font-weight:700;">Klik disini</a> untuk dapatkan kode aktivasi.</div>
+          <div class="ak-sub"><a href="https://bantuguruyuk.web.id/aktvs-kkrklr.html" target="_blank" rel="noopener noreferrer" style="color:#d97706;font-weight:700;">Klik di sini</a> untuk mendapatkan kode aktivasi.</div>
           <div class="aktivasi-row">
             <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..."/>
             <button onclick="aktivasiPro()">Aktifkan</button>
@@ -833,9 +833,9 @@ function switchAktivasiTab(tab){
   const isKode=tab==='kode';
   document.getElementById('panelKode').style.display=isKode?'block':'none';
   document.getElementById('panelEmail').style.display=isKode?'none':'block';
-  document.getElementById('tabKodeBtn').style.background=isKode?'#0ea5a0':'transparent';
+  document.getElementById('tabKodeBtn').style.background=isKode?'#f59e0b':'transparent';
   document.getElementById('tabKodeBtn').style.color=isKode?'#fff':'#64748b';
-  document.getElementById('tabEmailBtn').style.background=isKode?'transparent':'#0ea5a0';
+  document.getElementById('tabEmailBtn').style.background=isKode?'transparent':'#f59e0b';
   document.getElementById('tabEmailBtn').style.color=isKode?'#64748b':'#fff';
   document.getElementById('aktivasiMsg').textContent='';
 }
