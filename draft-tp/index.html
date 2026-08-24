@@ -12,6 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="./guru-cibisd2.png">
 <meta name="description" content="Draft Tujuan Pembelajaran untuk Guru SD, SMP, SMA - Kurikulum Merdeka"/>
+<script>if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed-mode');</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -27,6 +28,9 @@ body.dark{
   --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;overflow-x:hidden;}
+html.embed-mode header,html.embed-mode #installBanner,html.embed-mode .feedback-bar,html.embed-mode .ticker-wrap,html.embed-mode footer{display:none!important;}
+html.embed-mode #pageHome{padding-top:6px;}
+html.embed-mode body{min-height:auto;}
 
 /* HEADER */
 header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
