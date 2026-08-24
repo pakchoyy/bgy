@@ -645,12 +645,12 @@ a { text-decoration: none; color: inherit; }
   line-height: 1.6;
 }
 .quote-dots { display: flex; gap: 5px; margin-top: 12px; }
-.quote-dots span {
+.quote-dots button {
   width: 4px; height: 4px; border-radius: 50%;
   background: rgba(255,255,255,.25);
-  cursor: pointer; transition: all .3s;
+  cursor: pointer; transition: all .3s; border: 0; padding: 0;
 }
-.quote-dots span.dot-a {
+.quote-dots button.dot-a {
   background: #fff;
   width: 14px; border-radius: 2px;
 }
@@ -695,6 +695,10 @@ a { text-decoration: none; color: inherit; }
   box-shadow: 0 8px 28px rgba(13,122,138,.12);
 }
 .tool-card.coming-soon { opacity: .5; pointer-events: none; }
+.tool-card[hidden] { display:none; }
+
+/* ─── ONBOARDING & TOOL FINDER ─── */
+.starter-card{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;background:var(--surface);border:1.5px solid rgba(14,165,160,.25);border-radius:var(--r-md);padding:16px 18px}.starter-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:rgba(14,165,160,.1);border-radius:var(--r-sm);font-size:1.25rem}.starter-title{font-size:.87rem;font-weight:700;color:var(--txt-1)}.starter-desc{font-size:.73rem;color:var(--txt-3);line-height:1.5;margin-top:3px}.starter-steps{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.starter-step{font-size:.65rem;font-weight:700;color:var(--teal);background:rgba(14,165,160,.08);border-radius:99px;padding:4px 8px}.btn-guide{padding:9px 13px;border:1.5px solid var(--teal);background:transparent;border-radius:var(--r-sm);color:var(--teal);font:700 .76rem 'DM Sans',sans-serif;cursor:pointer;white-space:nowrap}.tool-finder{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.tool-search{flex:1 1 230px;min-width:0;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--surface);color:var(--txt-1);font:.8rem 'DM Sans',sans-serif;outline:none}.tool-search:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,165,160,.12)}.category-filters,.recent-list{display:flex;gap:6px;flex-wrap:wrap}.filter-btn{border:1px solid var(--border);background:var(--surface);color:var(--txt-2);padding:8px 10px;border-radius:99px;font:700 .68rem 'DM Sans',sans-serif;cursor:pointer}.filter-btn:hover,.filter-btn.active{color:#fff;background:var(--teal);border-color:var(--teal)}.recent-tools{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px}.recent-tools[hidden]{display:none}.recent-link{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--border);color:var(--txt-2);font-size:.72rem;font-weight:700}.site-footer{text-align:center;color:var(--txt-3);font-size:.7rem;line-height:1.7;padding:4px 0 0}.site-footer a{color:var(--teal);font-weight:700}.guide-dialog{width:min(520px,calc(100% - 32px));border:0;border-radius:var(--r-lg);padding:0;background:var(--surface);color:var(--txt-1);box-shadow:var(--shadow-lg)}.guide-dialog::backdrop{background:rgba(6,18,32,.62)}.guide-body{padding:24px}.guide-body h2{font:700 1.3rem 'Playfair Display',serif;margin-bottom:8px}.guide-body p{color:var(--txt-3);font-size:.8rem;line-height:1.6}.guide-list{display:grid;gap:10px;margin:18px 0}.guide-item{display:flex;gap:10px;padding:10px;background:var(--surface-2);border-radius:var(--r-sm);font-size:.78rem;color:var(--txt-2);line-height:1.5}.guide-close{width:100%;padding:10px;border:0;border-radius:var(--r-sm);background:var(--grad);color:#fff;font:700 .8rem 'DM Sans',sans-serif;cursor:pointer}
 
 .tool-card-top {
   display: flex; align-items: flex-start; justify-content: space-between;
@@ -1152,11 +1156,11 @@ a { text-decoration: none; color: inherit; }
       <div class="topbar-wordmark">Bantu Guru <em>Yuk!</em></div>
     </div>
     <div class="topbar-right">
-      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti tema">🌙</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti tema" aria-label="Ganti tema">🌙</button>
       <button id="installTopbarBtn" onclick="doInstall()" class="btn-topbar btn-outline" title="Install aplikasi" style="display:none;gap:6px;">
         📲 <span class="install-btn-label">Install App</span>
       </button>
-      <a href="https://wa.me/6289530713597" target="_blank" class="btn-topbar btn-icon-only" title="Hubungi via WhatsApp">💬</a>
+      <a href="https://wa.me/6289530713597" target="_blank" rel="noopener noreferrer" class="btn-topbar btn-icon-only" title="Hubungi via WhatsApp" aria-label="Hubungi via WhatsApp">💬</a>
     </div>
   </div>
 
@@ -1170,9 +1174,9 @@ a { text-decoration: none; color: inherit; }
 
     <div class="hero-left">
       <div class="hero-eyebrow">✦ AI Tools untuk Semua Guru Indonesia</div>
-      <div class="hero-title">
+      <h1 class="hero-title">
         Selamat Datang,<br><em>Guru Hebat!</em>
-      </div>
+      </h1>
       <div class="hero-desc">
         Buat soal, LKPD, dan modul pembelajaran dengan bantuan AI — cepat, gratis, dan sesuai Kurikulum Merdeka.
       </div>
@@ -1206,9 +1210,9 @@ a { text-decoration: none; color: inherit; }
           </div>
         </div>
         <div class="quote-dots" id="quoteDots">
-          <span class="dot-a" onclick="goToSlide(0)"></span>
-          <span onclick="goToSlide(1)"></span>
-          <span onclick="goToSlide(2)"></span>
+          <button class="dot-a" onclick="goToSlide(0)" aria-label="Kutipan 1"></button>
+          <button onclick="goToSlide(1)" aria-label="Kutipan 2"></button>
+          <button onclick="goToSlide(2)" aria-label="Kutipan 3"></button>
         </div>
       </div>
     </div>
@@ -1225,6 +1229,15 @@ a { text-decoration: none; color: inherit; }
     <span style="margin:0 6px;color:var(--border-2);">·</span>
     <span class="tool-badge badge-limit" style="font-size:.6rem;">Gratis · Ada Limit</span> Bisa coba gratis, unlimited butuh Pro
   </div>
+
+  <section class="starter-card" aria-labelledby="starterTitle">
+    <div class="starter-icon" aria-hidden="true">🚀</div><div><div class="starter-title" id="starterTitle">Baru pertama kali menggunakan BGY?</div><div class="starter-desc">Pilih alat sesuai kebutuhan, isi form singkat, lalu gunakan atau unduh hasilnya.</div><div class="starter-steps"><span class="starter-step">1. Pilih alat</span><span class="starter-step">2. Isi form</span><span class="starter-step">3. Tinjau hasil</span></div></div><button class="btn-guide" onclick="openGuide()">Lihat panduan</button>
+  </section>
+  <div class="tool-finder" aria-label="Cari fitur">
+    <input class="tool-search" id="toolSearch" type="search" placeholder="Cari fitur: soal, jadwal, presensi..." autocomplete="off" aria-label="Cari fitur" oninput="filterTools()">
+    <div class="category-filters" role="group" aria-label="Kategori fitur"><button class="filter-btn active" type="button" onclick="setCategory('all',this)">Semua</button><button class="filter-btn" type="button" onclick="setCategory('asesmen',this)">Asesmen</button><button class="filter-btn" type="button" onclick="setCategory('perangkat',this)">Perangkat Ajar</button><button class="filter-btn" type="button" onclick="setCategory('administrasi',this)">Administrasi</button></div>
+  </div>
+  <section class="recent-tools" id="recentTools" hidden aria-labelledby="recentTitle"><div class="card-title" id="recentTitle">◷ Terakhir digunakan</div><div class="recent-list" id="recentList"></div></section>
 
   <!-- Tools -->
   <!-- Group: Persiapan Mengajar -->
@@ -1434,8 +1447,8 @@ a { text-decoration: none; color: inherit; }
       <div class="creator-name">Pak Choyy</div>
       <div class="creator-desc">Guru SD aktif yang paham betul betapa sibuknya administrasi guru. Platform ini lahir dari kebutuhan nyata di kelas — bukan dari perusahaan teknologi.</div>
       <div class="creator-links">
-        <a href="https://tiktok.com/@pak.choyy" target="_blank" class="creator-link">🎵 @pak.choyy di TikTok</a>
-        <a href="https://wa.me/6289530713597" target="_blank" class="creator-link">💬 Chat WhatsApp</a>
+        <a href="https://tiktok.com/@pak.choyy" target="_blank" rel="noopener noreferrer" class="creator-link">🎵 @pak.choyy di TikTok</a>
+        <a href="https://wa.me/6289530713597" target="_blank" rel="noopener noreferrer" class="creator-link">💬 Chat WhatsApp</a>
       </div>
     </div>
   </div>
@@ -1504,13 +1517,18 @@ a { text-decoration: none; color: inherit; }
           <div class="stat-lbl">Semua Jenjang</div>
         </div>
       </div>
-      <a href="https://tiktok.com/@pak.choyy" target="_blank" class="social-btn">🎵 @pak.choyy di TikTok</a>
-      <a href="https://wa.me/6289530713597" target="_blank" class="social-btn">💬 Chat WhatsApp</a>
+      <a href="https://tiktok.com/@pak.choyy" target="_blank" rel="noopener noreferrer" class="social-btn">🎵 @pak.choyy di TikTok</a>
+      <a href="https://wa.me/6289530713597" target="_blank" rel="noopener noreferrer" class="social-btn">💬 Chat WhatsApp</a>
     </div>
 
   </div>
 
+  <footer class="site-footer"><a href="#" onclick="openGuide();return false;">Panduan</a> · <a href="/privasi.html">Kebijakan Privasi</a> · <a href="https://wa.me/6289530713597?text=Halo%20Pak%20Choyy%2C%20saya%20punya%20saran%20untuk%20BGY." target="_blank" rel="noopener noreferrer">Saran &amp; Lapor Masalah</a><br>Hasil dari AI perlu ditinjau dan disesuaikan oleh guru sebelum digunakan di kelas.</footer>
+
 </main>
+
+<dialog class="guide-dialog" id="guideDialog"><div class="guide-body"><h2>Panduan cepat BGY</h2><p>Pilih alat sesuai kebutuhan, isi form, lalu tinjau hasil sebelum digunakan.</p><div class="guide-list"><div class="guide-item">🧭 <span><strong>Pilih alat.</strong> Gunakan pencarian atau kategori untuk menemukan kebutuhanmu.</span></div><div class="guide-item">✍️ <span><strong>Isi form.</strong> Masukkan kelas, mapel, materi, dan detail yang diperlukan.</span></div><div class="guide-item">✅ <span><strong>Tinjau hasil.</strong> Sesuaikan output dengan kondisi kelasmu.</span></div><div class="guide-item">🤖 <span><strong>Fitur Prompt.</strong> Salin prompt lalu tempel ke AI pilihanmu seperti Claude atau Gemini.</span></div></div><button class="guide-close" onclick="closeGuide()">Mengerti, mulai sekarang</button></div></dialog>
+<dialog class="guide-dialog" id="installHelpDialog"><div class="guide-body"><h2>Cara memasang aplikasi</h2><p>Browser ini belum menampilkan pemasangan otomatis.</p><div class="guide-list"><div class="guide-item">🤖 <span><strong>Android:</strong> buka menu browser (⋮), lalu pilih <em>Install app</em> atau <em>Tambahkan ke layar utama</em>.</span></div><div class="guide-item">🍎 <span><strong>iPhone/iPad:</strong> tekan Bagikan di Safari, lalu pilih <em>Add to Home Screen</em>.</span></div></div><button class="guide-close" onclick="document.getElementById('installHelpDialog').close()">Tutup</button></div></dialog>
 
 <!-- ════ PWA INSTALL POPUP ════ -->
 <div id="installPopup" style="
@@ -1553,6 +1571,8 @@ function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('mobOverlay').classList.remove('show');
 }
+function openGuide() { document.getElementById('guideDialog').showModal(); }
+function closeGuide() { document.getElementById('guideDialog').close(); localStorage.setItem('bgy-guide-seen','1'); }
 
 /* ─── Dark mode ─── */
 const html = document.documentElement;
@@ -1578,7 +1598,7 @@ let slideTimer = null;
 
 function goToSlide(index) {
   const slides = document.querySelectorAll('.quote-slide');
-  const dots = document.querySelectorAll('#quoteDots span');
+  const dots = document.querySelectorAll('#quoteDots button');
   slides[currentSlide].classList.remove('active');
   dots[currentSlide].classList.remove('dot-a');
   currentSlide = index;
@@ -1591,6 +1611,45 @@ function startSlideTimer() {
   slideTimer = setInterval(() => goToSlide((currentSlide + 1) % totalSlides), 5000);
 }
 document.addEventListener('DOMContentLoaded', startSlideTimer);
+
+/* ─── Tool finder & recently used ─── */
+let activeCategory = 'all';
+function getToolCategory(name) {
+  if (/soal|nilai/i.test(name)) return 'asesmen';
+  if (/presensi|jadwal/i.test(name)) return 'administrasi';
+  return 'perangkat';
+}
+function setCategory(category, button) {
+  activeCategory = category;
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn === button));
+  filterTools();
+}
+function filterTools() {
+  const keyword = document.getElementById('toolSearch').value.trim().toLowerCase();
+  let matches = 0;
+  document.querySelectorAll('.tool-card').forEach(card => {
+    const name = card.querySelector('.tool-name').textContent;
+    const visible = (activeCategory === 'all' || getToolCategory(name) === activeCategory) && card.textContent.toLowerCase().includes(keyword);
+    card.hidden = !visible;
+    if (visible) matches++;
+  });
+  document.getElementById('recentTools').hidden = false;
+  document.getElementById('recentTitle').textContent = matches ? '◷ Terakhir digunakan' : 'Tidak ada fitur yang cocok — coba kata kunci lain';
+}
+function renderRecentTools() {
+  const items = JSON.parse(localStorage.getItem('bgy-recent-tools') || '[]');
+  const region = document.getElementById('recentTools'); const list = document.getElementById('recentList');
+  region.hidden = items.length === 0;
+  list.replaceChildren(...items.map(item => { const link=document.createElement('a'); link.className='recent-link'; link.href=item.href; link.textContent=`${item.icon} ${item.name}`; return link; }));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.tool-card').forEach(card => card.addEventListener('click', () => {
+    const item={name:card.querySelector('.tool-name').textContent,icon:card.querySelector('.tool-icon-wrap').textContent.trim(),href:card.href};
+    const items=[item,...JSON.parse(localStorage.getItem('bgy-recent-tools')||'[]').filter(old=>old.href!==item.href)].slice(0,4);
+    localStorage.setItem('bgy-recent-tools',JSON.stringify(items));
+  }));
+  renderRecentTools();
+});
 
 /* ─── PWA Install ─── */
 let deferredPrompt = null;
@@ -1623,7 +1682,7 @@ async function doInstall() {
     deferredPrompt = null;
     if (outcome === 'accepted') dismissBanner();
   } else {
-    dismissBanner();
+    document.getElementById('installHelpDialog').showModal();
   }
 }
 
