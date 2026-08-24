@@ -851,7 +851,7 @@ function checkProStatus(){
   if(proData){
     try{
       const d=JSON.parse(proData);
-      if(d.is_pro){
+      if(d.is_pro && (d.plan_type!=='annual' || new Date(d.active_until).getTime()>Date.now())){
         _isPro=true;
         document.getElementById('hBadge').textContent='PRO';
         document.getElementById('hBadge').className='badge-pro';
@@ -861,6 +861,12 @@ function checkProStatus(){
   }
 }
 function isPro(){return _isPro;}
+function subscriptionIsActive(data){
+  return !!data?.is_pro && (data.plan_type!=='annual' || (data.active_until && new Date(data.active_until).getTime()>Date.now()));
+}
+function subscriptionLabel(data){
+  return data.plan_type==='annual' ? `⭐ Pro aktif sampai ${new Date(data.active_until).toLocaleDateString('id-ID')}` : '⭐ Pro Lifetime aktif — Generate Unlimited';
+}
 
 function checkLimit(){
   if(_isPro)return{ok:true,used:0,remaining:999};
@@ -883,7 +889,7 @@ function updateLimitDisplay(){
   const btnLbl=document.getElementById('btnLabel');
   const btn=document.getElementById('btnGenerate');
   if(_isPro){
-    if(el){el.textContent='⭐ Pro Aktif — Generate Unlimited';el.style.color='#059669';}
+    if(el){const d=JSON.parse(localStorage.getItem('bgy_pro_ma')||'{}');el.textContent=subscriptionLabel(d);el.style.color='#059669';}
     document.getElementById('aktivasiBox').style.display='none';
     if(btnLbl)btnLbl.textContent='✨ Generate Prompt Modul Ajar';
     if(btn)btn.disabled=false;
@@ -1018,9 +1024,10 @@ async function verifikasiKode(){
   if(!kode){msgEl.style.color='#dc2626';msgEl.textContent='⚠️ Kode tidak boleh kosong.';return;}
   msgEl.style.color='#0d7a8a';msgEl.textContent='⏳ Memeriksa kode...';
   try{
-    const{data,error}=await sbClient.from('users').select('*').eq('code',kode).eq('access','modul_ajar').single();
-    if(error||!data){msgEl.style.color='#dc2626';msgEl.textContent='❌ Kode tidak valid.';return;}
-    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,kode,email}));
+    const{data,error}=await sbClient.from('users').select('*').eq('code',kode).eq('email',email).eq('access','modul_ajar').single();
+    if(error||!data){msgEl.style.color='#dc2626';msgEl.textContent='❌ Email atau kode tidak cocok.';return;}
+    if(!subscriptionIsActive(data)){msgEl.style.color='#dc2626';msgEl.textContent='❌ Akses belum aktif atau masa langganan telah habis. Hubungi admin untuk perpanjangan.';return;}
+    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,kode,email,plan_type:data.plan_type,active_until:data.active_until}));
     _setProAktif(true);
     msgEl.style.color='#15803d';msgEl.textContent='✅ Aktivasi berhasil! Selamat menjadi PRO 🎉';
     gaEvent('aktivasi_pro_ma',{kode});
@@ -1033,8 +1040,8 @@ async function cekAksesPro(){
   msgEl.style.color='#0d7a8a';msgEl.textContent='⏳ Memeriksa email...';
   try{
     const{data,error}=await sbClient.from('users').select('*').eq('email',email).eq('access','modul_ajar').single();
-    if(error||!data||!data.is_pro){msgEl.style.color='#dc2626';msgEl.textContent='❌ Email tidak ditemukan atau belum Pro.';return;}
-    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email}));
+    if(error||!subscriptionIsActive(data)){msgEl.style.color='#dc2626';msgEl.textContent='❌ Email belum aktif atau masa langganan telah habis.';return;}
+    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email,plan_type:data.plan_type,active_until:data.active_until}));
     _setProAktif(true);
     msgEl.style.color='#15803d';msgEl.textContent='✅ Login berhasil! Selamat datang PRO 🎉';
   }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='❌ Gagal menghubungi server.';}

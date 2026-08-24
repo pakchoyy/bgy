@@ -775,7 +775,9 @@ function hapusSemuaHistori(){
 // ============================================================
 // LIMIT & PRO
 // ============================================================
-function isPro(){try{const d=JSON.parse(localStorage.getItem('bgy_pro_modul')||'{}');return d.aktif===true;}catch{return false;}}
+function subscriptionIsActive(data){return !!data?.is_pro&&(data.plan_type!=='annual'||(data.active_until&&new Date(data.active_until).getTime()>Date.now()));}
+function isPro(){try{const d=JSON.parse(localStorage.getItem('bgy_pro_modul')||'{}');return d.aktif===true&&(d.plan_type!=='annual'||(d.active_until&&new Date(d.active_until).getTime()>Date.now()));}catch{return false;}}
+function savePro(data){localStorage.setItem('bgy_pro_modul',JSON.stringify({aktif:true,kode:data.code,tgl:getTodayStr(),plan_type:data.plan_type,active_until:data.active_until}));}
 function getTodayStr(){return new Date().toISOString().slice(0,10);}
 function getDailyUsage(){try{const r=localStorage.getItem('bgy_modul_daily');return r?JSON.parse(r):{date:'',count:0};}catch{return{date:'',count:0};}}
 function incrementDaily(){
@@ -858,12 +860,12 @@ async function loginEmail(){
       msg.textContent='❌ Email tidak ditemukan. Pastikan email sama dengan saat pembelian.';
       msg.style.color='#dc2626';return;
     }
-    if(!data.is_pro){
-      msg.textContent='❌ Email ini belum aktif Pro. Hubungi admin jika sudah bayar.';
+    if(!subscriptionIsActive(data)){
+      msg.textContent='❌ Email belum aktif atau masa langganan telah habis. Hubungi admin untuk perpanjangan.';
       msg.style.color='#dc2626';return;
     }
     // is_pro = true — aktifkan localStorage
-    localStorage.setItem('bgy_pro_modul',JSON.stringify({aktif:true,kode:data.code,tgl:getTodayStr()}));
+    savePro(data);
     msg.textContent='✅ Login berhasil! Generate unlimited sudah aktif. 🎉';
     msg.style.color='#059669';
     updateLimitDisplay();
@@ -894,27 +896,17 @@ async function aktivasiPro(){
       msg.textContent='❌ Kode tidak ditemukan atau bukan untuk Kokurikuler.';
       msg.style.color='#dc2626';return;
     }
-    if(data.is_pro){
+    if(subscriptionIsActive(data)){
       // Sudah Pro di Supabase — langsung aktifkan di localStorage
-      localStorage.setItem('bgy_pro_modul',JSON.stringify({aktif:true,kode,tgl:getTodayStr()}));
+      savePro(data);
       msg.textContent='✅ Selamat menggunakan Bantu Guru Yuk — Modul Kokurikuler Pro! 🎉 Generate unlimited sudah aktif.';
       msg.style.color='#059669';
       updateLimitDisplay();
       gaEvent('aktivasi_pro_kokurikuler',{kode});
       return;
     }
-    // Update is_pro = true di Supabase
-    const {error:updErr}=await sbClient
-      .from('users')
-      .update({is_pro:true})
-      .eq('code',kode)
-      .eq('access','kokurikuler');
-    if(updErr)throw updErr;
-    localStorage.setItem('bgy_pro_modul',JSON.stringify({aktif:true,kode,tgl:getTodayStr()}));
-    msg.textContent='✅ Selamat menggunakan Bantu Guru Yuk — Modul Kokurikuler Pro! 🎉 Generate unlimited sudah aktif.';
-    msg.style.color='#059669';
-    updateLimitDisplay();
-    gaEvent('aktivasi_pro_kokurikuler',{kode});
+    msg.textContent='❌ Kode ditemukan, tetapi belum diaktifkan admin atau masa langganan telah habis.';
+    msg.style.color='#dc2626';
   }catch(e){
     msg.textContent='❌ Gagal terhubung ke server. Cek koneksi internet.';
     msg.style.color='#dc2626';
