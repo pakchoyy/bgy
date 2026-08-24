@@ -47,12 +47,6 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
 
-/* BGY SUITE NAV — shared navigation pilot */
-.suite-nav{position:sticky;top:60px;z-index:290;background:var(--card-bg);border-bottom:1px solid var(--border);box-shadow:0 2px 8px rgba(13,43,62,.05);}
-.suite-nav-inner{max-width:1280px;margin:0 auto;padding:8px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;}
-.suite-nav-inner::-webkit-scrollbar{display:none}.suite-link{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;padding:7px 10px;border:1px solid var(--border);border-radius:8px;color:var(--text-light);font-size:.72rem;font-weight:700;text-decoration:none;transition:all .18s;background:var(--input-bg)}
-.suite-link:hover{border-color:var(--blue);color:var(--blue);background:rgba(14,165,160,.06)}.suite-link.active{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(14,165,160,.25)}
-
 /* LOADING OVERLAY */
 #prosesOverlay{display:none;position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#0d2137 0%,#0a3d4a 50%,#0d2137 100%);flex-direction:column;align-items:center;justify-content:center;gap:0;}
 #prosesOverlay .go-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:goOrb 4s ease-in-out infinite;}
@@ -525,21 +519,6 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     </div>
   </div>
 </header>
-
-<!-- BGY Suite Navigation: percobaan pengalaman satu platform -->
-<nav class="suite-nav" aria-label="Fitur Bantu Guru Yuk">
-  <div class="suite-nav-inner">
-    <a class="suite-link" href="/">🏠 Dashboard</a>
-    <a class="suite-link" href="/soal">📝 Buat Soal</a>
-    <a class="suite-link" href="/lkpd">📘 LKPD</a>
-    <a class="suite-link" href="/kokurikuler">🎭 Kokurikuler</a>
-    <a class="suite-link" href="/katrol-nilai">📊 Katrol Nilai</a>
-    <a class="suite-link active" href="/draft-tp" aria-current="page">📄 Draft TP</a>
-    <a class="suite-link" href="/modul-ajar">🗓️ Modul Ajar</a>
-    <a class="suite-link" href="https://presiswa.bantuguruyuk.web.id">📋 Presensi</a>
-    <a class="suite-link" href="https://bjadwal.bantuguruyuk.web.id">📅 Jadwal</a>
-  </div>
-</nav>
 
 <!-- PAGE TENTANG -->
 <div id="pageTentang" class="page">
