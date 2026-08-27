@@ -334,7 +334,15 @@ footer a{color:inherit;text-decoration:underline;}
     <!-- ============ KOLOM KIRI: FORM ============ -->
     <div class="col-left">
       <div class="card">
-        <div class="card-title">📋 Identitas Modul Ajar</div>
+        <div class="card-title" id="formTitle">📋 Identitas Modul Ajar</div>
+
+        <div class="form-group">
+          <label>Kurikulum / Jenis Perangkat Ajar</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="MERDEKA" checked onchange="toggleKurikulum()"/><span>📘 Kurikulum Merdeka</span></label>
+            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="K13" onchange="toggleKurikulum()"/><span>📗 Kurikulum 2013 (RPP)</span></label>
+          </div>
+        </div>
 
         <div class="form-group">
           <label>Nama Sekolah</label>
@@ -438,7 +446,7 @@ footer a{color:inherit;text-decoration:underline;}
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="p5Wrap">
           <label>Dimensi Profil Lulusan</label>
           <div class="dim-checks">
             <label class="dim-chip"><input type="checkbox" class="cb-p5" value="Keimanan dan Ketakwaan terhadap Tuhan YME" checked/>Keimanan &amp; Ketakwaan</label>
@@ -789,6 +797,7 @@ function onFaseChange(){
   updateLimitDisplay();
   updateHistoriBadge();
   onJenjangChange();  // init jenjang SD dulu, lalu fase & mapel
+  toggleKurikulum();
 
   window.addEventListener('beforeinstallprompt',e=>{
     e.preventDefault();window._dip=e;
@@ -1066,15 +1075,74 @@ function getAutoTahunAjaran(){
   return (year-1)+'/'+year;
 }
 
+function toggleKurikulum(){
+  const kurikulum=document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
+  const isK13=kurikulum==='K13';
+  document.getElementById('p5Wrap').style.display=isK13?'none':'';
+  document.getElementById('btnLabel').textContent=isK13?'✨ Generate Prompt RPP K13':'✨ Generate Prompt Modul Ajar';
+  document.getElementById('formTitle').textContent=isK13?'📋 Identitas RPP Kurikulum 2013':'📋 Identitas Modul Ajar';
+}
+
 // ============================================================
 // GENERATE PROMPT
 // ============================================================
-function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi){
+function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum){
   const tgl=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
   const safeMapel=mapel.replace(/\s+/g,'_');
   const safeFase=fase.replace(/[\s\/]+/g,'_');
   const namaFile=`Modul_Ajar_${j}_${safeMapel}_${safeFase}.docx`;
   const konsentrasiLine=konsentrasi?`- Konsentrasi Keahlian: ${konsentrasi}\n`:'';
+
+  if(kurikulum==='K13'){
+    const namaFileK13=`RPP_K13_${j}_${safeMapel}_${safeFase}.docx`;
+    return `Anda adalah ahli Kurikulum 2013, pengembang kurikulum, dan guru profesional Indonesia yang memahami penyusunan RPP K13 sesuai jenjang ${j}.
+
+Buat **RPP KURIKULUM 2013 (K13)** yang lengkap, sistematis, operasional, dan siap digunakan berdasarkan data berikut:
+
+**IDENTITAS RPP:**
+- Satuan Pendidikan: ${namaSekolah}
+- Nama Penyusun: ${namaPenyusun}
+- Jenjang: ${j}
+- Mata Pelajaran: ${mapel}
+${konsentrasiLine}- Kelas: ${fase.replace(/Fase [A-F] \/ /,'')}
+- Semester: ${semester}
+- Tahun Pelajaran: ${tahun}
+- Materi Pokok: ${topik}
+- Alokasi Waktu: ${alokasi}
+- Model Pembelajaran: ${model}
+- Karakteristik Peserta Didik: ${karakteristik}
+
+Susun seluruh RPP dalam **Bahasa Indonesia formal, jelas, dan realistis**, dengan struktur berikut:
+
+1. **IDENTITAS RPP** — sajikan seluruh identitas dalam tabel yang rapi.
+2. **KOMPETENSI INTI (KI)** — tuliskan KI-1 sikap spiritual, KI-2 sikap sosial, KI-3 pengetahuan, dan KI-4 keterampilan yang relevan dengan jenjang/kelas.
+3. **KOMPETENSI DASAR (KD) DAN INDIKATOR PENCAPAIAN KOMPETENSI (IPK)** — tentukan KD pengetahuan dan keterampilan yang sesuai materi. Sajikan pasangan KD–IPK dalam tabel; gunakan KKO yang terukur dan mencakup LOTS hingga HOTS. Jangan mengarang nomor KD jika tidak yakin: beri penanda **[verifikasi sesuai dokumen K13 sekolah]**.
+4. **TUJUAN PEMBELAJARAN** — rumuskan dengan format **ABCD** (Audience, Behavior, Condition, Degree), selaras dengan KD dan IPK, terukur, serta mencakup sikap, pengetahuan, dan keterampilan.
+5. **MATERI PEMBELAJARAN** — uraikan fakta, konsep, prinsip, dan prosedur; sertakan materi reguler, remedial, pengayaan, serta contoh kontekstual.
+6. **PENDEKATAN, MODEL, DAN METODE** — gunakan **Pendekatan Saintifik (5M: Mengamati, Menanya, Mengumpulkan Informasi/Mencoba, Menalar/Mengasosiasi, Mengomunikasikan)** yang terintegrasi secara logis dengan sintaks model ${model}. Cantumkan metode yang relevan.
+7. **INTEGRASI KETERAMPILAN ABAD KE-21** — jelaskan secara nyata integrasi **PPK**, literasi, **4C** (Critical Thinking, Creativity, Collaboration, Communication), dan **HOTS** pada kegiatan pembelajaran, bukan sekadar daftar.
+8. **MEDIA, ALAT/BAHAN, DAN SUMBER BELAJAR** — pilih yang realistis, aman, mudah tersedia, termasuk buku guru/buku siswa K13 dan sumber digital yang relevan.
+9. **LANGKAH-LANGKAH PEMBELAJARAN** — buat tabel sangat detail berisi tahap, sintaks model, aktivitas guru, aktivitas peserta didik, unsur 5M/PPK/literasi/4C/HOTS, dan alokasi waktu:
+   - **Pendahuluan:** orientasi, salam/doa, presensi, apersepsi, motivasi, penyampaian tujuan, cakupan materi, dan teknik penilaian.
+   - **Kegiatan Inti:** ikuti sintaks ${model} secara runtut dan integrasikan kelima tahap Saintifik 5M. Berikan aktivitas konkret, pertanyaan pemantik/HOTS, interaksi, kerja individu/kelompok, dan contoh respons yang diharapkan.
+   - **Penutup:** simpulan bersama, refleksi, umpan balik, evaluasi, tindak lanjut, tugas bila perlu, informasi pertemuan berikutnya, dan doa.
+10. **PENILAIAN AUTENTIK** — sertakan penilaian sikap, pengetahuan, dan keterampilan. Tampilkan teknik, bentuk instrumen, kisi-kisi, instrumen/soal, kunci jawaban, pedoman penskoran, rubrik, dan rumus nilai. Sertakan soal HOTS serta batas/ketentuan ketuntasan yang dapat disesuaikan sekolah.
+11. **PROGRAM REMEDIAL DAN PENGAYAAN** — jelaskan kriteria peserta, bentuk kegiatan, waktu, asesmen ulang, dan tindak lanjut.
+12. **LAMPIRAN SIAP PAKAI** — LKPD, bahan ajar/ringkasan materi, lembar observasi sikap, soal evaluasi beserta kunci, rubrik keterampilan, format rekap nilai, dan lembar refleksi.
+
+**ATURAN OUTPUT:**
+- Jangan menulis salam, pengantar, disclaimer AI, atau kalimat seperti “Berikut adalah”.
+- Mulai langsung dengan judul: **## RENCANA PELAKSANAAN PEMBELAJARAN (RPP) KURIKULUM 2013**.
+- Gunakan Markdown lengkap, heading yang konsisten, dan tabel untuk identitas, KD–IPK, kegiatan, serta penilaian.
+- Pastikan total rincian waktu kegiatan sama dengan alokasi waktu ${alokasi}.
+- Jaga keterkaitan yang konsisten antara KD → IPK → tujuan → kegiatan → penilaian.
+
+**HALAMAN PENGESAHAN (bagian akhir):**
+Tempat/tanggal: ${namaSekolah}, ${tgl}
+Sediakan tanda tangan Kepala Sekolah dan ${j==='SD'?'Guru Kelas':'Guru Mata Pelajaran'} secara berdampingan, lengkap dengan nama/NIP kosong dan nama penyusun (${namaPenyusun}).
+
+Setelah selesai, gunakan alat pembuatan file untuk menyimpan dokumen sebagai **${namaFileK13}**, lalu informasikan bahwa file Word telah siap diunduh.`;
+  }
 
   const PROMPT_SD=`You are an expert Indonesian elementary school (SD) teacher, curriculum developer, and practitioner of Kurikulum Merdeka with deep knowledge of the latest Indonesian national education standards.
 
@@ -1367,6 +1435,7 @@ function generatePrompt(){
   errBox.style.display='none';
 
   const j=getJenjang();
+  const kurikulum=document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
   const namaSekolah=document.getElementById('namaSekolah').value.trim()||(j+' ...');
   const namaPenyusun=document.getElementById('namaPenyusun').value.trim()||'Guru';
   const semester=document.getElementById('semester').value;
@@ -1384,14 +1453,14 @@ function generatePrompt(){
 
   if(!mapelRaw||mapelRaw==='__lainnya__'&&!document.getElementById('mapelManual')?.value.trim()){errBox.textContent='⚠️ Pilih atau isi mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
   if(!topik){errBox.textContent='⚠️ Topik / materi pokok belum diisi.';errBox.style.display='block';return;}
-  if(!p5){errBox.textContent='⚠️ Pilih minimal satu Dimensi Profil Lulusan.';errBox.style.display='block';return;}
+  if(kurikulum!=='K13'&&!p5){errBox.textContent='⚠️ Pilih minimal satu Dimensi Profil Lulusan.';errBox.style.display='block';return;}
 
   const lc=checkLimit();
   if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
 
   setLoading(true);
   setTimeout(()=>{
-    const prompt=buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi);
+    const prompt=buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum);
 
     document.getElementById('hasilPrompt').textContent=prompt;
     document.getElementById('promptPlaceholder').style.display='none';
@@ -1403,7 +1472,7 @@ function generatePrompt(){
     updateLimitDisplay();
     updateHistoriBadge();
 
-    gaEvent('generate_prompt_modul_ajar',{jenjang:j,mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
+    gaEvent('generate_prompt_modul_ajar',{kurikulum,jenjang:j,mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
 
     document.getElementById('generateFeedback').textContent='✅ Prompt siap! Salin lalu paste ke Claude.';
     setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);
