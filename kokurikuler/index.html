@@ -360,6 +360,7 @@ footer a{color:inherit;text-decoration:underline;}
         <div id="panelKode">
           <div class="ak-sub"><a href="https://bantuguruyuk.web.id/aktvs-kkrklr.html" target="_blank" rel="noopener noreferrer" style="color:#d97706;font-weight:700;">Klik di sini</a> untuk mendapatkan kode aktivasi.</div>
           <div class="aktivasi-row">
+            <input type="email" id="inputEmailAktivasi" placeholder="Email pembelian..."/>
             <input type="text" id="inputKodeAktivasi" placeholder="Masukkan kode aktivasi..."/>
             <button onclick="aktivasiPro()">Aktifkan</button>
           </div>
@@ -844,82 +845,26 @@ function switchAktivasiTab(tab){
 // LOGIN EMAIL — cek Supabase, aktifkan localStorage kalau is_pro=true
 // ============================================================
 async function loginEmail(){
-  const email=document.getElementById('inputEmailLogin').value.trim().toLowerCase();
-  const msg=document.getElementById('aktivasiMsg');
-  if(!email){msg.textContent='⚠️ Masukkan email dulu.';msg.style.color='#dc2626';return;}
-  msg.textContent='⏳ Mengecek email...';msg.style.color='#64748b';
-  try{
-    const {data,error}=await sbClient
-      .from('users')
-      .select('*')
-      .eq('email',email)
-      .eq('access','kokurikuler')
-      .maybeSingle();
-    if(error)throw error;
-    if(!data){
-      msg.textContent='❌ Email tidak ditemukan. Pastikan email sama dengan saat pembelian.';
-      msg.style.color='#dc2626';return;
-    }
-    if(!subscriptionIsActive(data)){
-      msg.textContent='❌ Email belum aktif atau masa langganan telah habis. Hubungi admin untuk perpanjangan.';
-      msg.style.color='#dc2626';return;
-    }
-    // is_pro = true — aktifkan localStorage
-    savePro(data);
-    msg.textContent='✅ Login berhasil! Generate unlimited sudah aktif. 🎉';
-    msg.style.color='#059669';
-    updateLimitDisplay();
-    gaEvent('login_email_kokurikuler',{});
-  }catch(e){
-    msg.textContent='❌ Gagal terhubung ke server. Cek koneksi internet.';
-    msg.style.color='#dc2626';
-  }
+  const email=document.getElementById('inputEmailLogin').value.trim().toLowerCase();const msg=document.getElementById('aktivasiMsg');
+  if(!email){msg.textContent='Masukkan email dulu.';msg.style.color='#dc2626';return;}msg.textContent='Mengecek email...';
+  try{const{data:rows,error}=await sbClient.rpc('bgy_subscription_status',{p_email:email,p_access:'kokurikuler'});if(error)throw error;const data=Array.isArray(rows)?rows[0]:rows;
+    if(!subscriptionIsActive(data)){msg.textContent='Email belum aktif atau langganan habis.';msg.style.color='#dc2626';return;}
+    savePro(data);msg.textContent='Login PRO berhasil.';msg.style.color='#059669';updateLimitDisplay();gaEvent('login_email_kokurikuler',{});
+  }catch(e){msg.textContent='Gagal terhubung ke server.';msg.style.color='#dc2626';}
 }
 
 // ============================================================
 // AKTIVASI PRO — Supabase (proyek sama dengan Buat Soal)
 // ============================================================
 async function aktivasiPro(){
-  const kode=document.getElementById('inputKodeAktivasi').value.trim().toUpperCase();
-  const msg=document.getElementById('aktivasiMsg');
-  if(!kode){msg.textContent='⚠️ Masukkan kode dulu.';msg.style.color='#dc2626';return;}
-  msg.textContent='⏳ Memverifikasi...';msg.style.color='#64748b';
-  try{
-    const {data,error}=await sbClient
-      .from('users')
-      .select('*')
-      .eq('code',kode)
-      .eq('access','kokurikuler')
-      .maybeSingle();
-    if(error)throw error;
-    if(!data){
-      msg.textContent='❌ Kode tidak ditemukan atau bukan untuk Kokurikuler.';
-      msg.style.color='#dc2626';return;
-    }
-    if(subscriptionIsActive(data)){
-      // Sudah Pro di Supabase — langsung aktifkan di localStorage
-      savePro(data);
-      msg.textContent='✅ Selamat menggunakan Bantu Guru Yuk — Modul Kokurikuler Pro! 🎉 Generate unlimited sudah aktif.';
-      msg.style.color='#059669';
-      updateLimitDisplay();
-      gaEvent('aktivasi_pro_kokurikuler',{kode});
-      return;
-    }
-    if(!data.is_pro && !data.plan_type){
-      const activeUntil=new Date();activeUntil.setFullYear(activeUntil.getFullYear()+1);
-      const patch={is_pro:true,plan_type:'annual',purchased_at:new Date().toISOString(),active_until:activeUntil.toISOString()};
-      const {error:updErr}=await sbClient.from('users').update(patch).eq('id',data.id);
-      if(updErr)throw updErr;
-      Object.assign(data,patch);savePro(data);
-      msg.textContent='✅ Aktivasi berhasil! Pro tahunan aktif selama 1 tahun. 🎉';
-      msg.style.color='#059669';updateLimitDisplay();gaEvent('aktivasi_pro_kokurikuler',{kode});return;
-    }
-    msg.textContent='❌ Masa langganan telah habis. Silakan lakukan perpanjangan.';
-    msg.style.color='#dc2626';
-  }catch(e){
-    msg.textContent='❌ Gagal terhubung ke server. Cek koneksi internet.';
-    msg.style.color='#dc2626';
-  }
+  const email=document.getElementById('inputEmailAktivasi').value.trim().toLowerCase();const kode=document.getElementById('inputKodeAktivasi').value.trim().toUpperCase();const msg=document.getElementById('aktivasiMsg');
+  if(!email||!kode){msg.textContent='Email dan kode wajib diisi.';msg.style.color='#dc2626';return;}msg.textContent='Memverifikasi...';
+  try{const{data:rows,error}=await sbClient.rpc('bgy_activate_pro',{p_email:email,p_code:kode,p_access:'kokurikuler'});if(error)throw error;const data=Array.isArray(rows)?rows[0]:rows;
+    if(!data||data.result==='invalid'){msg.textContent='Email atau kode tidak cocok.';msg.style.color='#dc2626';return;}
+    if(data.result==='expired'||data.result==='inactive'){msg.textContent='Masa langganan telah habis.';msg.style.color='#dc2626';return;}
+    if(!subscriptionIsActive(data)){msg.textContent='Akun belum aktif PRO.';msg.style.color='#dc2626';return;}
+    savePro(data);msg.textContent='Aktivasi PRO berhasil.';msg.style.color='#059669';updateLimitDisplay();gaEvent('aktivasi_pro_kokurikuler',{kode});
+  }catch(e){msg.textContent='Gagal terhubung ke server.';msg.style.color='#dc2626';}
 }
 
 // ✅ Auto-aktivasi dari URL param ?email=...&kode=... (dari aktvs-kkrklr.html)

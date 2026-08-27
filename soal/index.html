@@ -3092,8 +3092,7 @@ function isPro(){
     const d=JSON.parse(localStorage.getItem('bgy_pro')||'{}');
     if(d.aktif===true && (d.plan_type!=='annual'||(d.active_until&&new Date(d.active_until).getTime()>Date.now()))) return true;
   }catch{}
-  // fallback: kalau pro_email ada (sudah pernah cek Supabase sebelumnya)
-  return !!localStorage.getItem('pro_email');
+  return false;
 }
 function subscriptionIsActive(data){return !!data?.is_pro&&(data.plan_type!=='annual'||(data.active_until&&new Date(data.active_until).getTime()>Date.now()));}
 function savePro(data){localStorage.setItem('bgy_pro',JSON.stringify({aktif:true,tgl:getTodayStr(),plan_type:data.plan_type,active_until:data.active_until}));}
@@ -3199,77 +3198,36 @@ function unlockPro(fromActivation,data){
 
 // ── MODE 1: Verifikasi kode aktivasi (dari aktvs-bs.html) ──
 async function verifikasiKode(){
-  const msg   = document.getElementById("aktivasiMsg");
-  const email = (document.getElementById("inputEmailKode")?.value||'').trim();
-  const kode  = (document.getElementById("inputKodeAktivasi")?.value||'').trim().toUpperCase();
-
-  if(!email){ msg.innerText="⚠️ Masukkan email dulu"; msg.style.color="red"; return; }
-  if(!kode)  { msg.innerText="⚠️ Masukkan kode aktivasi"; msg.style.color="red"; return; }
-
-  msg.innerText="⏳ Memverifikasi..."; msg.style.color="#555";
-  const sb = getSupabase();
-  if(!sb){ msg.innerText="❌ Gagal terhubung, refresh."; msg.style.color="red"; return; }
-
-  try {
-    console.log("🔍 Verifikasi:", email, "|", kode);
-    const { data, error } = await sb
-      .from("users").select("*")
-      .ilike("email", email.toLowerCase())
-      .eq("code", kode.trim().toUpperCase())
-      .eq("access", "soal")
-      .maybeSingle();
-
-    console.log("📦 Result:", JSON.stringify(data), error);
-    if(error) throw error;
-    if(!data){ msg.innerText="❌ Email/kode tidak cocok. Cek kembali."; msg.style.color="red"; return; }
-
-    if(!subscriptionIsActive(data)){
-      if(!data.is_pro&&!data.plan_type){
-        const activeUntil=new Date();activeUntil.setFullYear(activeUntil.getFullYear()+1);
-        const patch={is_pro:true,plan_type:'annual',purchased_at:new Date().toISOString(),active_until:activeUntil.toISOString()};
-        const {error:updErr}=await sb.from('users').update(patch).eq('id',data.id);
-        if(updErr)throw updErr;Object.assign(data,patch);
-      }else{msg.innerText='❌ Masa langganan telah habis. Silakan lakukan perpanjangan.';msg.style.color='red';return;}
-    }
-
-    msg.innerText="✅ Aktivasi berhasil! Selamat menikmati Pro 🎉"; msg.style.color="green";
-    localStorage.setItem("pro_email", email);
-    unlockPro(true,data);
-
-  } catch(e){
-    msg.innerText="❌ Gagal: "+(e.message||'coba lagi'); msg.style.color="red";
-    console.error(e);
-  }
+  const msg=document.getElementById('aktivasiMsg');
+  const email=(document.getElementById('inputEmailKode')?.value||'').trim().toLowerCase();
+  const kode=(document.getElementById('inputKodeAktivasi')?.value||'').trim().toUpperCase();
+  if(!email||!kode){msg.innerText='Email dan kode wajib diisi.';msg.style.color='red';return;}
+  const sb=getSupabase();if(!sb)return;
+  msg.innerText='Memverifikasi...';msg.style.color='#64748b';
+  try{
+    const{data:rows,error}=await sb.rpc('bgy_activate_pro',{p_email:email,p_code:kode,p_access:'soal'});
+    if(error)throw error;const data=Array.isArray(rows)?rows[0]:rows;
+    if(!data||data.result==='invalid'){msg.innerText='Email atau kode tidak cocok.';msg.style.color='red';return;}
+    if(data.result==='expired'||data.result==='inactive'){msg.innerText='Masa langganan telah habis. Silakan perpanjang.';msg.style.color='red';return;}
+    if(!subscriptionIsActive(data)){msg.innerText='Akun belum aktif PRO.';msg.style.color='red';return;}
+    msg.innerText='Aktivasi berhasil. Selamat menikmati PRO!';msg.style.color='green';
+    localStorage.setItem('pro_email',email);unlockPro(true,data);
+  }catch(e){console.error(e);msg.innerText='Gagal menghubungi server.';msg.style.color='red';}
 }
 
 // ── MODE 2: Cek email saja (ganti device / user lama) ──
 async function cekAksesPro(){
-  const msg   = document.getElementById("aktivasiMsg");
-  const email = (document.getElementById("inputEmailPro")?.value||'').trim();
-
-  if(!email){ msg.innerText="⚠️ Masukkan email dulu"; msg.style.color="red"; return; }
-  msg.innerText="⏳ Mengecek..."; msg.style.color="#555";
-
-  const sb = getSupabase();
-  if(!sb){ msg.innerText="❌ Gagal terhubung, refresh."; msg.style.color="red"; return; }
-
-  try {
-    const { data, error } = await sb
-      .from("users").select("*")
-      .eq("email", email).eq("access","soal")
-      .maybeSingle();
-
-    if(error) throw error;
-    if(subscriptionIsActive(data)){
-      msg.innerText="✅ PRO aktif — selamat datang kembali! 🎉"; msg.style.color="green";
-      localStorage.setItem("pro_email", email);
-      unlockPro(true,data);
-    } else {
-      msg.innerText="❌ Belum terdaftar Pro. Beli dulu atau masukkan kode."; msg.style.color="red";
-    }
-  } catch(e){
-    msg.innerText="❌ Gagal cek server. Coba lagi."; msg.style.color="red";
-  }
+  const msg=document.getElementById('aktivasiMsg');
+  const email=(document.getElementById('inputEmailPro')?.value||'').trim().toLowerCase();
+  if(!email){msg.innerText='Masukkan email pembelian.';msg.style.color='red';return;}
+  const sb=getSupabase();if(!sb)return;
+  msg.innerText='Mengecek email...';msg.style.color='#64748b';
+  try{
+    const{data:rows,error}=await sb.rpc('bgy_subscription_status',{p_email:email,p_access:'soal'});
+    if(error)throw error;const data=Array.isArray(rows)?rows[0]:rows;
+    if(subscriptionIsActive(data)){msg.innerText='PRO aktif. Selamat datang kembali!';msg.style.color='green';localStorage.setItem('pro_email',email);unlockPro(true,data);}
+    else{msg.innerText='Belum terdaftar PRO atau langganan habis.';msg.style.color='red';localStorage.removeItem('pro_email');}
+  }catch(e){msg.innerText='Gagal mengecek. Coba lagi.';msg.style.color='red';}
 }
 
 // ── AUTO LOGIN + deteksi ?kode= dari URL ──
@@ -3306,9 +3264,8 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   const sb = getSupabase();
   if(!sb) return;
   try {
-    const { data } = await sb
-      .from("users").select("*")
-      .eq("email", email).eq("access","soal").maybeSingle();
+    const {data:rows}=await sb.rpc('bgy_subscription_status',{p_email:email,p_access:'soal'});
+    const data=Array.isArray(rows)?rows[0]:rows;
     if(subscriptionIsActive(data)) unlockPro(false,data);
     else localStorage.removeItem("pro_email");
   } catch(e){}

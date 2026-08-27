@@ -165,41 +165,17 @@
     hasil.innerText = "Memproses...";
 
     try {
-      // Cek email + access modul_ajar
-      const { data, error: fetchError } = await sbClient
-        .from("users")
-        .select("*")
-        .eq("email", email)
-        .eq("access", "modul_ajar")
-        .maybeSingle();
-
-      if (fetchError) throw fetchError;
-
-      if (data) {
-        if (data.is_pro) {
-          hasil.innerHTML = `
-            <div style="margin:16px 0 0;padding:12px 14px;background:#f0fdfa;border:1.5px solid #99f6e4;border-radius:12px;text-align:left;">
-              <div style="font-size:12px;font-weight:700;color:#0d7a8a;margin-bottom:4px;">✅ Email ini sudah aktif PRO!</div>
-              <div style="font-size:11px;color:#0f766e;">Buka halaman Modul Ajar dan masukkan email ini untuk login langsung.</div>
-            </div>`;
-          return;
-        }
-        tampilKode(data.code, email);
+      const { data, error } = await sbClient.rpc('bgy_request_activation_code', {
+        p_email: email.toLowerCase(), p_access: 'modul_ajar'
+      }).single();
+      if (error) throw error;
+      if (!data || data.result === 'invalid') throw new Error('Email tidak valid.');
+      if (data.result === 'already_pro') {
+        hasil.innerHTML = '<div style="margin:16px 0 0;padding:12px 14px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;text-align:left;"><div style="font-size:12px;font-weight:700;color:#0d7a8a;margin-bottom:4px;">Email ini sudah aktif PRO.</div><div style="font-size:11px;color:#0d7a8a;">Buka halaman Modul Ajar dan masukkan email ini untuk login.</div></div>';
         return;
       }
-
-      // Belum ada → insert baru (sekarang unique email+access, bukan email saja)
-      const kode = generateKode();
-      const { error: insertError } = await sbClient.from("users").insert({
-        email: email,
-        code: kode,
-        access: "modul_ajar",
-        is_pro: false
-      });
-
-      if (insertError) throw insertError;
-
-      tampilKode(kode, email);
+      if (!data.activation_code) throw new Error('Kode tidak tersedia. Hubungi admin.');
+      tampilKode(data.activation_code, email);
 
     } catch (err) {
       hasil.className = "kode error";
