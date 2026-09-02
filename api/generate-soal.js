@@ -11,7 +11,10 @@ export default async function handler(req, res) {
   const keys = [
     process.env.GEMINI_SOAL_1,
     process.env.GEMINI_SOAL_2,
-    process.env.GEMINI_SOAL_3
+    process.env.GEMINI_SOAL_3,
+    process.env.GEMINI_SOAL_4,
+    process.env.GEMINI_SOAL_5,
+    process.env.GEMINI_SOAL_6
   ];
 
   try {
