@@ -16,6 +16,7 @@ export default async function handler(req, res) {
     process.env.GEMINI_SOAL_5,
     process.env.GEMINI_SOAL_6
   ];
+  const model = process.env.GEMINI_SOAL_MODEL || 'gemini-3.6-flash';
 
   try {
     let body = req.body;
@@ -33,7 +34,7 @@ export default async function handler(req, res) {
 
       try {
         const response = await fetch(
-          'https://generativelanguage.googleapis.com/v1beta/interactions',
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
           {
             method: 'POST',
             headers: {
@@ -41,8 +42,15 @@ export default async function handler(req, res) {
               'x-goog-api-key': apiKey
             },
             body: JSON.stringify({
-              model: 'gemini-3.6-flash',
-              input: prompt
+              contents: [
+                {
+                  role: 'user',
+                  parts: [{ text: prompt }]
+                }
+              ],
+              generationConfig: {
+                response_mime_type: 'application/json'
+              }
             })
           }
         );
@@ -50,12 +58,14 @@ export default async function handler(req, res) {
         const data = await response.json();
 
         if (response.ok) {
-          const text = (data.steps || [])
-            .filter(step => step.type === 'model_output')
-            .flatMap(step => step.content || [])
-            .filter(content => content.type === 'text')
-            .map(content => content.text || '')
+          const text = (data.candidates || [])
+            .flatMap(candidate => candidate.content?.parts || [])
+            .map(part => part.text || '')
             .join('');
+          if (!text) {
+            lastError = { error: 'Respons Gemini kosong', detail: data };
+            continue;
+          }
           return res.status(200).json({ text });
         } else {
           lastError = data;
