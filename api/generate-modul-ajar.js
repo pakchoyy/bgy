@@ -10,10 +10,18 @@ export default async function handler(req, res) {
 
   const keys = [
     process.env.GEMINI_MA_1,
+    process.env.GEMINI_MA1,
     process.env.GEMINI_MA_2,
-    process.env.GEMINI_MA_3
-  ];
-  const models = (process.env.GEMINI_MA_MODEL || 'gemini-2.5-flash,gemini-2.0-flash')
+    process.env.GEMINI_MA2,
+    process.env.GEMINI_MA_3,
+    process.env.GEMINI_MA3,
+    process.env.GEMINI_MA_4,
+    process.env.GEMINI_MA4,
+    process.env.GEMINI_MA_5,
+    process.env.GEMINI_MA5,
+    process.env.GEMINI_MA_6
+  ].filter((key, index, arr) => key && arr.indexOf(key) === index);
+  const models = (process.env.GEMINI_MA_MODEL || 'gemini-2.5-flash,gemini-2.5-flash-lite')
     .split(',')
     .map(model => model.trim())
     .filter(Boolean);
@@ -26,8 +34,12 @@ export default async function handler(req, res) {
 
     const prompt = body?.prompt;
     if (!prompt) return res.status(400).json({ error: 'Prompt kosong' });
+    if (!keys.some(Boolean)) {
+      return res.status(500).json({ error: 'API Gemini modul ajar belum diisi di environment' });
+    }
 
     let lastError = null;
+    const attempts = [];
 
     for (let apiKey of keys) {
       if (!apiKey) continue;
@@ -35,16 +47,18 @@ export default async function handler(req, res) {
       for (let model of models) {
         try {
           const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
             {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey
+              },
               body: JSON.stringify({
                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
                 generationConfig: {
-                  temperature: 0.7,
-                  maxOutputTokens: 16384,
-                  thinkingConfig: { thinkingBudget: 0 }
+                  temperature: 0.45,
+                  maxOutputTokens: 32768
                 }
               })
             }
@@ -63,18 +77,24 @@ export default async function handler(req, res) {
             }
             return res.status(200).json({ text, model });
           } else {
-            lastError = { model, detail: data };
+            lastError = {
+              model,
+              status: response.status,
+              message: data?.error?.message || response.statusText || 'Request Gemini gagal'
+            };
+            attempts.push(lastError);
           }
 
         } catch (err) {
           lastError = { model, message: err.message };
+          attempts.push(lastError);
         }
       }
     }
 
     return res.status(500).json({
       error: 'Semua API gagal',
-      detail: lastError
+      detail: { last: lastError, attempts: attempts.slice(-6) }
     });
 
   } catch (err) {

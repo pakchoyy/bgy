@@ -18,6 +18,24 @@
   gtag('config','G-83WBBEE5BG');
   function gaEvent(n,p){if(typeof gtag==='function')gtag('event',n,p||{});}
 </script>
+<script>
+(function(){
+  const urls=[
+    'https://cdn.jsdelivr.net/npm/docx@7.8.2/build/index.js',
+    'https://unpkg.com/docx@7.8.2/build/index.js',
+    'https://cdn.jsdelivr.net/npm/docx@7.5.1/build/index.js'
+  ];
+  let idx=0;
+  function tryLoad(){
+    if(idx>=urls.length)return;
+    const s=document.createElement('script');
+    s.src=urls[idx++];
+    s.onerror=()=>tryLoad();
+    document.head.appendChild(s);
+  }
+  tryLoad();
+})();
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -164,7 +182,26 @@ body.dark .mode-chip:has(input:checked){background:#0d3a47;color:#5eead4;border-
 .btn-claude{background:linear-gradient(135deg,#d97706,#b45309);color:#fff;flex:1;justify-content:center;padding:10px;font-size:.85rem;border-radius:9px;}
 .btn-copy{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:100%;justify-content:center;padding:11px;font-size:.88rem;border-radius:9px;}
 .prompt-result{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:.8rem;color:var(--text);white-space:pre-wrap;line-height:1.75;min-height:200px;max-height:500px;overflow-y:auto;font-family:'Courier New',monospace;}
-.prompt-result.modul-output{font-family:'Segoe UI',system-ui,sans-serif;font-size:.86rem;line-height:1.8;}
+.prompt-result.modul-output{font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;white-space:normal;background:#fff;color:#111;max-width:210mm;max-height:none;overflow:visible;margin-inline:auto;padding:clamp(18px,5vw,18mm) clamp(14px,4vw,16mm);border-color:#d1d5db;box-shadow:0 6px 24px rgba(15,23,42,.08);}
+.modul-output h2{font-size:15pt;text-align:center;margin:0 0 14px;text-transform:uppercase;color:#064e3b;}
+.modul-output h1{font-size:16pt;text-align:center;margin:0 0 14px;text-transform:uppercase;color:#064e3b;}
+.modul-output h3{font-size:12pt;margin:16px 0 8px;background:#d9fbe8;border-radius:5px;padding:5px 8px;color:#064e3b;text-transform:uppercase;}
+.modul-output h4{font-size:11pt;margin:12px 0 6px;background:#0f766e;color:#fff;border-radius:5px;padding:4px 8px;display:inline-block;}
+.modul-output p{margin:6px 0;}
+.modul-output ul,.modul-output ol{margin:6px 0 8px 20px;}
+.modul-output li{margin:3px 0;}
+.modul-output .table-scroll{width:100%;overflow-x:auto;margin:8px 0 12px;-webkit-overflow-scrolling:touch;}
+.modul-output table{width:100%;border-collapse:collapse;font-size:10pt;}
+.modul-output table.wide-table{min-width:620px;}
+.modul-output th{background:#d9fbe8;color:#064e3b;text-align:center;font-weight:700;}
+.modul-output th,.modul-output td{border:1px solid #cbd5e1;padding:6px 7px;vertical-align:top;}
+.modul-output strong{font-weight:700;}
+.export-direct-bar{display:none;margin-top:10px;grid-template-columns:repeat(3,1fr);gap:7px;}
+.export-direct-bar.show{display:grid;}
+.btn-word{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;justify-content:center;padding:10px;}
+.btn-pdf{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;justify-content:center;padding:10px;}
+.btn-review{background:linear-gradient(135deg,#0f766e,#0d9488);color:#fff;justify-content:center;padding:10px;}
+@media(max-width:520px){.export-direct-bar{grid-template-columns:1fr;}}
 body.dark .prompt-result{background:#0f172a;}
 .prompt-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);gap:10px;}
 .prompt-placeholder .ph-icon{font-size:2.5rem;opacity:.4;}
@@ -351,13 +388,13 @@ footer a{color:inherit;text-decoration:underline;}
           <label>Kurikulum / Jenis Perangkat Ajar</label>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
             <label class="jenjang-chip"><input type="radio" name="kurikulum" value="MERDEKA" checked onchange="toggleKurikulum()"/><span>📘 Kurikulum Merdeka</span></label>
-            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="KBC" onchange="toggleKurikulum()"/><span>💚 KBC</span></label>
+            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="KBC" onchange="toggleKurikulum()"/><span>💚 KBC Madrasah</span></label>
             <label class="jenjang-chip"><input type="radio" name="kurikulum" value="K13" onchange="toggleKurikulum()"/><span>📗 Kurikulum 2013 (RPP)</span></label>
           </div>
         </div>
 
         <div class="form-group">
-          <label>Nama Sekolah</label>
+          <label id="namaSatuanLabel">Nama Sekolah</label>
           <input type="text" id="namaSekolah" placeholder="Contoh: SD Negeri 1 Magetan"/>
         </div>
 
@@ -376,7 +413,7 @@ footer a{color:inherit;text-decoration:underline;}
         </div>
 
         <div class="form-group">
-          <label>Jenjang Sekolah</label>
+          <label id="jenjangSatuanLabel">Jenjang Sekolah</label>
           <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
             <label class="jenjang-chip" id="jc-sd"><input type="radio" name="jenjang" value="SD" checked onchange="onJenjangChange()"/><span>🏫 SD</span></label>
             <label class="jenjang-chip" id="jc-smp"><input type="radio" name="jenjang" value="SMP" onchange="onJenjangChange()"/><span>🏫 SMP</span></label>
@@ -473,7 +510,7 @@ footer a{color:inherit;text-decoration:underline;}
         </div>
 
         <div id="kbcWrap" style="display:none;border:1.5px solid rgba(14,165,160,.28);background:rgba(14,165,160,.07);border-radius:12px;padding:12px;margin-bottom:10px;">
-          <div style="font-size:.78rem;font-weight:800;color:#0d7a8a;margin-bottom:8px;">💚 Pengaturan KBC</div>
+          <div style="font-size:.78rem;font-weight:800;color:#0d7a8a;margin-bottom:8px;">💚 Pengaturan KBC Madrasah</div>
           <div class="form-group">
             <label>Nuansa KBC</label>
             <select id="kbcNuansa">
@@ -487,17 +524,16 @@ footer a{color:inherit;text-decoration:underline;}
           <div class="form-group">
             <label>Nilai Cinta Utama</label>
             <div class="dim-checks">
-              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada Tuhan" checked/>Tuhan</label>
-              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada diri sendiri" checked/>Diri</label>
-              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada sesama" checked/>Sesama</label>
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta Allah dan Rasul-Nya" checked/>Allah &amp; Rasul</label>
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta diri dan sesama manusia" checked/>Diri &amp; Sesama</label>
               <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada ilmu"/>Ilmu</label>
-              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada bangsa"/>Bangsa</label>
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta tanah air"/>Tanah Air</label>
               <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada lingkungan"/>Lingkungan</label>
             </div>
           </div>
           <div class="form-group">
             <label>Konteks Satuan Pendidikan</label>
-            <input type="text" id="kbcKonteks" placeholder="Contoh: madrasah ramah anak, sekolah umum, kelas heterogen..."/>
+            <input type="text" id="kbcKonteks" placeholder="Contoh: madrasah ramah anak, kelas heterogen, lingkungan pesantren..."/>
           </div>
           <div class="form-group">
             <label>Kemitraan Pembelajaran</label>
@@ -596,6 +632,11 @@ footer a{color:inherit;text-decoration:underline;}
             <button class="btn btn-copy" id="btnCopyOutput" onclick="copyPrompt()">📋 Salin Prompt</button>
             <div class="notif-box" id="notifCopy">✅ Prompt berhasil disalin!</div>
           </div>
+          <div class="export-direct-bar" id="directExportBar">
+            <button class="btn btn-word" type="button" onclick="downloadModulWord()">Unduh Word</button>
+            <button class="btn btn-pdf" type="button" onclick="downloadModulPDF()">Unduh PDF</button>
+            <button class="btn btn-review" type="button" onclick="copyReviewPrompt()">Salin Prompt Review</button>
+          </div>
           <div id="aiForwardBox" style="margin-top:10px;background:rgba(14,165,160,.07);border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:10px 12px;">
             <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;">🚀 Kirim ke Claude — Prompt otomatis tersalin, langsung paste!</div>
             <div style="display:flex;gap:8px;">
@@ -615,7 +656,7 @@ footer a{color:inherit;text-decoration:underline;}
 </div>
 
 <footer>
-  <div class="footer-title">Modul Ajar SD • SMP • SMA • SMK • Kurikulum Merdeka</div>
+  <div class="footer-title">Modul Ajar SD • SMP • SMA • SMK • KBC Madrasah</div>
   <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.5.2</div>
 
 </footer>
@@ -732,6 +773,21 @@ const DATA_JENJANG={
   },
 };
 
+const KBC_MADRASAH={
+  SD:{label:'MI',nama:'Madrasah Ibtidaiyah (MI)',placeholder:'Contoh: MI Negeri 1 Magetan',mapel:['Al-Qur\'an Hadis','Akidah Akhlak','Fikih','Sejarah Kebudayaan Islam','Bahasa Arab']},
+  SMP:{label:'MTs',nama:'Madrasah Tsanawiyah (MTs)',placeholder:'Contoh: MTs Negeri 1 Magetan',mapel:['Al-Qur\'an Hadis','Akidah Akhlak','Fikih','Sejarah Kebudayaan Islam','Bahasa Arab']},
+  SMA:{label:'MA',nama:'Madrasah Aliyah (MA)',placeholder:'Contoh: MA Negeri 1 Magetan',mapel:['Al-Qur\'an Hadis','Akidah Akhlak','Fikih','Sejarah Kebudayaan Islam','Bahasa Arab']},
+  SMK:{label:'MAK',nama:'Madrasah Aliyah Kejuruan (MAK)',placeholder:'Contoh: MAK Negeri 1 Magetan',mapel:['Al-Qur\'an Hadis','Akidah Akhlak','Fikih','Sejarah Kebudayaan Islam','Bahasa Arab']}
+};
+
+function getKurikulum(){
+  return document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
+}
+
+function getJenjangDisplay(j=getJenjang()){
+  return getKurikulum()==='KBC'?(KBC_MADRASAH[j]?.label||j):j;
+}
+
 let _mapelLainnyaActive=false;
 
 function getJenjang(){
@@ -755,8 +811,9 @@ function getFaseFromValue(val){return getFaseKeyFromValue(val);}
 function onJenjangChange(){
   const j=getJenjang();
   const data=DATA_JENJANG[j];
+  const isKBC=getKurikulum()==='KBC';
   // Update placeholder nama sekolah
-  document.getElementById('namaSekolah').placeholder=data.namaSekolahPlaceholder;
+  document.getElementById('namaSekolah').placeholder=isKBC?KBC_MADRASAH[j].placeholder:data.namaSekolahPlaceholder;
   // Update fase options
   const selFase=document.getElementById('faseKelas');
   selFase.innerHTML='';
@@ -782,7 +839,10 @@ function updateMapelOptions(faseKey){
   const data=DATA_JENJANG[j];
   const sel=document.getElementById('mapel');
   const currentVal=sel.value;
-  const list=(data.mapel[faseKey]||Object.values(data.mapel)[0]);
+  const baseList=(data.mapel[faseKey]||Object.values(data.mapel)[0]);
+  const list=getKurikulum()==='KBC'
+    ?[...KBC_MADRASAH[j].mapel,...baseList.filter(m=>!['Pendidikan Agama Islam'].includes(m))].filter((m,i,a)=>a.indexOf(m)===i)
+    :baseList;
   sel.innerHTML='<option value="">-- Pilih Mata Pelajaran --</option>';
   list.forEach(m=>{
     const opt=document.createElement('option');
@@ -1131,6 +1191,7 @@ function updateOutputModeUI(){
   const hasil=document.getElementById('hasilPrompt');
   const copyBtn=document.getElementById('btnCopyOutput');
   const aiBox=document.getElementById('aiForwardBox');
+  const directExport=document.getElementById('directExportBar');
   if(btnLbl)btnLbl.textContent=promptMode?`✨ Generate Prompt ${baseLabel}`:`⚡ Generate Langsung ${baseLabel}`;
   if(outputTitle)outputTitle.textContent=promptMode?'📄 Prompt Siap Pakai':'📄 Hasil Modul Ajar';
   if(placeholder)placeholder.innerHTML=promptMode
@@ -1138,16 +1199,327 @@ function updateOutputModeUI(){
     :`Isi form di kiri lalu klik<br/><b>Generate Langsung ${baseLabel}</b><br/><span style="font-size:.74rem;opacity:.7;">Hasil modul tampil di sini</span>`;
   if(copyBtn)copyBtn.textContent=promptMode?'📋 Salin Prompt':'📋 Salin Hasil Modul';
   if(aiBox)aiBox.style.display=promptMode?'':'none';
-  if(hasil)hasil.classList.toggle('modul-output',!promptMode);
+  const isDirectOutput=hasil?.dataset.mode==='direct';
+  if(directExport)directExport.classList.toggle('show',!promptMode&&isDirectOutput);
+  if(hasil)hasil.classList.toggle('modul-output',!promptMode&&isDirectOutput);
+}
+
+function renderInlineMarkdown(text){
+  return escHtml(text)
+    .replace(/&lt;br\s*\/?&gt;/gi,'<br>')
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g,'<em>$1</em>');
+}
+
+function renderMarkdownTable(lines,start){
+  const rows=[];
+  let i=start;
+  while(i<lines.length&&/^\s*\|.*\|\s*$/.test(lines[i])){
+    rows.push(lines[i]);i++;
+  }
+  if(rows.length<2)return{html:'',next:start};
+  const cells=row=>row.trim().replace(/^\||\|$/g,'').split('|').map(c=>renderInlineMarkdown(c.trim()));
+  const head=cells(rows[0]);
+  const body=rows.slice(2).map(cells);
+  const tableClass=head.length>=3?' class="wide-table"':'';
+  const html=`<div class="table-scroll"><table${tableClass}><thead><tr>${head.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${body.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  return{html,next:i};
+}
+
+function renderModulMarkdown(md){
+  const lines=String(md||'').replace(/\r/g,'').split('\n');
+  let html='',listType=null;
+  function closeList(){if(listType){html+=`</${listType}>`;listType=null;}}
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    if(!line.trim()){closeList();continue;}
+    if(/^\s*\|.*\|\s*$/.test(line)&&i+1<lines.length&&/^\s*\|?\s*:?-{3,}/.test(lines[i+1])){
+      closeList();
+      const table=renderMarkdownTable(lines,i);
+      html+=table.html;i=table.next-1;continue;
+    }
+    const h=line.match(/^(#{1,4})\s+(.+)$/);
+    if(h){closeList();const lvl=h[1].length;html+=`<h${lvl}>${renderInlineMarkdown(h[2])}</h${lvl}>`;continue;}
+    const ul=line.match(/^\s*[-*]\s+(.+)$/);
+    if(ul){if(listType!=='ul'){closeList();html+='<ul>';listType='ul';}html+=`<li>${renderInlineMarkdown(ul[1])}</li>`;continue;}
+    const ol=line.match(/^\s*\d+\.\s+(.+)$/);
+    if(ol){if(listType!=='ol'){closeList();html+='<ol>';listType='ol';}html+=`<li>${renderInlineMarkdown(ol[1])}</li>`;continue;}
+    closeList();
+    html+=`<p>${renderInlineMarkdown(line)}</p>`;
+  }
+  closeList();
+  return html;
+}
+
+function setOutputContent(text,mode){
+  const hasil=document.getElementById('hasilPrompt');
+  if(mode==='direct'){
+    hasil.innerHTML=renderModulMarkdown(text);
+    hasil.dataset.raw=text;
+    hasil.dataset.mode='direct';
+    hasil.classList.add('modul-output');
+  }else{
+    hasil.textContent=text;
+    hasil.dataset.raw=text;
+    hasil.dataset.mode='prompt';
+    hasil.classList.remove('modul-output');
+  }
+  document.getElementById('directExportBar')?.classList.toggle('show',mode==='direct');
+}
+
+function getModulFileBase(){
+  const kurikulum=document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
+  const j=getJenjang();
+  const mapel=(document.getElementById('mapel')?.value||'Modul_Ajar').replace(/__lainnya__/,'Lainnya').replace(/[^\w-]+/g,'_');
+  const fase=(document.getElementById('faseKelas')?.value||j).replace(/[^\w-]+/g,'_');
+  return `${kurikulum==='K13'?'RPP_K13':kurikulum==='KBC'?'Modul_Ajar_KBC':'Modul_Ajar'}_${j}_${mapel}_${fase}`;
+}
+
+function getPrintableModulHtml(){
+  const hasil=document.getElementById('hasilPrompt');
+  if(!hasil||!hasil.dataset.raw){alert('Generate langsung modul dulu.');return '';}
+  return `<div class="modul-output">${renderModulMarkdown(hasil.dataset.raw)}</div>`;
+}
+
+async function ensureDocxReady(btn){
+  if(typeof window.docx!=='undefined')return window.docx;
+  const orig=btn?btn.textContent:'';
+  if(btn){btn.textContent='Memuat Word...';btn.disabled=true;}
+  let waited=0;
+  while(typeof window.docx==='undefined'&&waited<10000){
+    await new Promise(r=>setTimeout(r,300));waited+=300;
+  }
+  if(btn){btn.textContent=orig;btn.disabled=false;}
+  if(typeof window.docx==='undefined')throw new Error('Library Word gagal dimuat. Coba refresh halaman.');
+  return window.docx;
+}
+
+function markdownTextRuns(D,text,opts={}){
+  const raw=String(text||'').replace(/\*\*/g,'**');
+  const runs=[];
+  const re=/(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  let last=0,m;
+  while((m=re.exec(raw))){
+    if(m.index>last)runs.push(new D.TextRun({text:raw.slice(last,m.index),font:'Times New Roman',size:opts.size||22,bold:!!opts.bold}));
+    const token=m[0];
+    const isBold=token.startsWith('**');
+    runs.push(new D.TextRun({text:token.replace(/^\*+|\*+$/g,''),font:'Times New Roman',size:opts.size||22,bold:isBold||!!opts.bold,italics:!isBold||!!opts.italics}));
+    last=re.lastIndex;
+  }
+  if(last<raw.length||!runs.length)runs.push(new D.TextRun({text:raw.slice(last)||'',font:'Times New Roman',size:opts.size||22,bold:!!opts.bold,italics:!!opts.italics}));
+  return runs;
+}
+
+function markdownTableToDocx(D,rows){
+  const clean=row=>row.trim().replace(/^\||\|$/g,'').split('|').map(c=>c.trim());
+  const header=clean(rows[0]);
+  const body=rows.slice(2).map(clean);
+  const border={style:'single',size:4,color:'94A3B8'};
+  const cell=(text,head=false)=>new D.TableCell({
+    shading:head?{fill:'D9FBE8'}:undefined,
+    margins:{top:80,bottom:80,left:100,right:100},
+    borders:{top:border,bottom:border,left:border,right:border},
+    children:[new D.Paragraph({alignment:head?'center':'left',children:markdownTextRuns(D,text,{size:20,bold:head})})]
+  });
+  return new D.Table({
+    width:{size:100,type:'pct'},
+    rows:[
+      new D.TableRow({children:header.map(h=>cell(h,true))}),
+      ...body.map(r=>new D.TableRow({children:r.map(c=>cell(c,false))}))
+    ]
+  });
+}
+
+function modulMarkdownToDocxChildren(D,md){
+  const lines=String(md||'').replace(/\r/g,'').split('\n');
+  const children=[];
+  const H=D.HeadingLevel||{};
+  const border={style:'single',size:4,color:'D1D5DB'};
+  const para=(text,opts={})=>new D.Paragraph({
+    alignment:opts.align||'left',
+    heading:opts.heading,
+    bullet:opts.bullet?{level:0}:undefined,
+    numbering:opts.numbering,
+    spacing:{before:opts.before||0,after:opts.after??100,line:opts.line||276},
+    indent:opts.indent?{left:opts.indent}:undefined,
+    border:opts.rule?{bottom:{style:'single',size:8,color:'064E3B'}}:undefined,
+    children:markdownTextRuns(D,text,{size:opts.size||22,bold:opts.bold,italics:opts.italics})
+  });
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    if(!line.trim()){children.push(para('',{after:40,size:4}));continue;}
+    if(/^\s*\|.*\|\s*$/.test(line)&&i+1<lines.length&&/^\s*\|?\s*:?-{3,}/.test(lines[i+1])){
+      const rows=[];
+      while(i<lines.length&&/^\s*\|.*\|\s*$/.test(lines[i])){rows.push(lines[i]);i++;}
+      children.push(markdownTableToDocx(D,rows));
+      children.push(para('',{after:80,size:4}));
+      i--;continue;
+    }
+    const h=line.match(/^(#{1,4})\s+(.+)$/);
+    if(h){
+      const lvl=h[1].length;
+      if(lvl<=2)children.push(para(h[2],{align:'center',bold:true,size:lvl===1?32:30,heading:lvl===1?H.HEADING_1:H.HEADING_2,rule:true,after:160}));
+      else children.push(para(h[2],{bold:true,size:lvl===3?24:22,heading:lvl===3?H.HEADING_3:H.HEADING_4,before:120,after:80}));
+      continue;
+    }
+    const ul=line.match(/^\s*[-*]\s+(.+)$/);
+    if(ul){children.push(para(ul[1],{bullet:true,indent:360,after:60}));continue;}
+    const ol=line.match(/^\s*(\d+)\.\s+(.+)$/);
+    if(ol){children.push(para(`${ol[1]}. ${ol[2]}`,{indent:240,after:60}));continue;}
+    children.push(para(line,{after:80}));
+  }
+  if(!children.length)children.push(para(''));
+  return children;
+}
+
+async function downloadModulWord(){
+  const hasil=document.getElementById('hasilPrompt');
+  const raw=hasil?.dataset.raw||'';
+  if(!raw){alert('Generate langsung modul dulu.');return;}
+  const btn=document.querySelector('.btn-word');
+  const orig=btn?btn.textContent:'';
+  try{
+    const D=await ensureDocxReady(btn);
+    if(!D.Document||!D.Packer||!D.Paragraph||!D.TextRun)throw new Error('Library Word tidak lengkap.');
+    if(btn){btn.textContent='Membuat Word...';btn.disabled=true;}
+    const children=modulMarkdownToDocxChildren(D,raw);
+    const doc=new D.Document({
+      styles:{default:{document:{run:{font:'Times New Roman',size:22},paragraph:{spacing:{line:276}}}}},
+      sections:[{
+        properties:{page:{size:{width:11906,height:16838},margin:{top:1134,right:1134,bottom:1134,left:1418}}},
+        children
+      }]
+    });
+    let blob;
+    if(typeof D.Packer.toBlob==='function')blob=await D.Packer.toBlob(doc);
+    else if(typeof D.Packer.toBase64String==='function'){
+      const b64=await D.Packer.toBase64String(doc);
+      blob=await (await fetch('data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,'+b64)).blob();
+    }else throw new Error('Packer Word tidak tersedia.');
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=getModulFileBase()+'.docx';
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+  }catch(e){
+    alert('Gagal membuat file Word: '+(e.message||e));
+  }finally{
+    if(btn){btn.textContent=orig;btn.disabled=false;}
+  }
+}
+
+function loadScriptOnce(src){
+  return new Promise((resolve,reject)=>{
+    if([...document.scripts].some(s=>s.src===src))return resolve();
+    const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s);
+  });
+}
+
+async function downloadModulPDF(){
+  const body=getPrintableModulHtml();if(!body)return;
+  const btn=document.querySelector('.btn-pdf');
+  const orig=btn?btn.textContent:'';
+  let el=null;
+  try{
+    if(btn){btn.textContent='Membuat PDF...';btn.disabled=true;}
+    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+    el=document.createElement('div');
+    el.style.cssText='position:fixed;left:-9999px;top:0;background:#fff;color:#111;width:210mm;padding:14mm;font-family:"Times New Roman",serif;font-size:11pt;line-height:1.55;';
+    el.innerHTML=body;
+    el.querySelectorAll('h1,h2').forEach(h=>{h.style.textAlign='center';h.style.textTransform='uppercase';h.style.color='#064e3b';});
+    el.querySelectorAll('h3').forEach(h=>{h.style.background='#d9fbe8';h.style.color='#064e3b';h.style.padding='5px 8px';});
+    el.querySelectorAll('table').forEach(t=>{t.style.width='100%';t.style.borderCollapse='collapse';});
+    el.querySelectorAll('th,td').forEach(c=>{c.style.border='1px solid #cbd5e1';c.style.padding='6px 7px';c.style.verticalAlign='top';});
+    document.body.appendChild(el);
+    await html2pdf().set({margin:[10,10,10,10],filename:getModulFileBase()+'.pdf',pagebreak:{mode:['css','legacy'],avoid:['tr','table']},image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+  }catch(e){
+    alert('Gagal membuat PDF. Coba lagi atau download Word dulu.');
+  }finally{
+    if(el&&el.parentNode)el.parentNode.removeChild(el);
+    if(btn){btn.textContent=orig;btn.disabled=false;}
+  }
+}
+
+function buildReviewPrompt(){
+  const hasil=document.getElementById('hasilPrompt');
+  const raw=hasil?.dataset.raw||'';
+  if(!raw)return '';
+  const kurikulum=document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
+  const j=getJenjang();
+  const mapel=(document.getElementById('mapel')?.value||'').replace('__lainnya__',document.getElementById('mapelManual')?.value||'');
+  const fase=document.getElementById('faseKelas')?.value||'';
+  const topik=document.getElementById('topikMateri')?.value||'';
+  return `Anda adalah reviewer modul ajar Indonesia, ahli kurikulum, asesmen, pembelajaran berdiferensiasi, Deep Learning, dan Kurikulum Berbasis Cinta (KBC).
+
+Tolong audit modul ajar berikut secara jujur, teliti, dan operasional.
+
+Konteks:
+- Kurikulum: ${kurikulum}
+- Jenjang: ${j}
+- Mata Pelajaran: ${mapel}
+- Fase/Kelas: ${fase}
+- Topik: ${topik}
+
+Yang harus dinilai:
+1. Apakah struktur dokumen sudah menyerupai modul ajar yang layak dipakai guru?
+2. Apakah identitas, CP/KD, tujuan pembelajaran, KKTP/IPK, kegiatan, asesmen, remedial, pengayaan, refleksi, dan lampiran sudah lengkap?
+3. Apakah CP/KD -> tujuan -> KKTP/IPK -> kegiatan -> asesmen sudah saling selaras?
+4. Untuk KBC madrasah, apakah lima Panca Cinta sudah tepat dan tampak nyata dalam kegiatan, budaya kelas, asesmen, refleksi, dan tindak lanjut, bukan sekadar tempelan?
+5. Apakah Pembelajaran Mendalam sudah menerapkan prinsip berkesadaran, bermakna, dan menggembirakan serta pengalaman belajar Memahami, Mengaplikasi, dan Merefleksi?
+6. Apakah pembelajaran berdiferensiasi konten, proses, dan produk sudah konkret?
+7. Apakah kegiatan realistis untuk sekolah/madrasah biasa?
+8. Apakah bahasa sudah formal, hangat, dan siap ditempel ke Word/PDF?
+9. Bagian mana yang berisiko kurang tepat, terlalu umum, tidak nyambung, atau perlu verifikasi dengan dokumen resmi sekolah?
+10. Apakah jumlah menit Pendahuluan, Inti, dan Penutup tepat sama dengan alokasi waktu?
+
+Format jawaban:
+- Beri nilai 1-100.
+- Buat checklist "Sudah Baik" dan "Perlu Diperbaiki".
+- Tunjukkan bagian spesifik yang kurang.
+- Beri rekomendasi perbaikan praktis.
+- Akhiri dengan contoh revisi singkat untuk 3 bagian yang paling perlu diperkuat.
+- Jangan mengarang regulasi atau CP resmi jika tidak yakin; tulis "perlu verifikasi dokumen resmi".
+- Bedakan komponen wajib menurut regulasi dari praktik baik yang sifatnya pilihan. Jangan menyebut check-in perasaan atau posisi KKTP sebagai kewajiban mutlak tanpa dasar resmi.
+
+MODUL YANG DIREVIEW:
+
+${raw}`;
+}
+
+function copyReviewPrompt(){
+  const txt=buildReviewPrompt();
+  if(!txt){alert('Generate langsung modul dulu.');return;}
+  const done=()=>{const f=document.getElementById('generateFeedback');if(f){f.textContent='Prompt review sudah disalin. Paste ke Gemini untuk cek kualitas modul.';setTimeout(()=>f.textContent='',5000);}};
+  if(navigator.clipboard&&window.isSecureContext){
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopyReview(txt,done));
+  }else fallbackCopyReview(txt,done);
+}
+
+function fallbackCopyReview(txt,done){
+  const ta=document.createElement('textarea');
+  ta.value=txt;ta.style.position='fixed';ta.style.left='-9999px';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');done&&done();}catch(e){alert('Gagal menyalin prompt review.');}
+  document.body.removeChild(ta);
 }
 
 function toggleKurikulum(){
-  const kurikulum=document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
+  const kurikulum=getKurikulum();
   const isK13=kurikulum==='K13';
   const isKBC=kurikulum==='KBC';
+  const labels={SD:isKBC?'MI':'SD',SMP:isKBC?'MTs':'SMP',SMA:isKBC?'MA':'SMA',SMK:isKBC?'MAK':'SMK'};
+  Object.entries(labels).forEach(([key,label])=>{
+    const span=document.querySelector(`#jc-${key.toLowerCase()} span`);
+    if(span)span.textContent='🏫 '+label;
+  });
+  const namaLabel=document.getElementById('namaSatuanLabel');
+  const jenjangLabel=document.getElementById('jenjangSatuanLabel');
+  if(namaLabel)namaLabel.textContent=isKBC?'Nama Madrasah':'Nama Sekolah';
+  if(jenjangLabel)jenjangLabel.textContent=isKBC?'Jenjang Madrasah':'Jenjang Sekolah';
   document.getElementById('p5Wrap').style.display=isK13?'none':'';
   document.getElementById('kbcWrap').style.display=isKBC?'block':'none';
-  document.getElementById('formTitle').textContent=isK13?'📋 Identitas RPP Kurikulum 2013':isKBC?'📋 Identitas Modul Ajar KBC':'📋 Identitas Modul Ajar';
+  document.getElementById('formTitle').textContent=isK13?'📋 Identitas RPP Kurikulum 2013':isKBC?'📋 Identitas Modul Ajar KBC Madrasah':'📋 Identitas Modul Ajar';
+  onJenjangChange();
   updateOutputModeUI();
 }
 
@@ -1156,31 +1528,32 @@ function toggleKurikulum(){
 // ============================================================
 function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc={}){
   const tgl=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  const alokasiMatch=String(alokasi).match(/(\d+)\s*[xX×]\s*(\d+)/);
+  const totalMenit=alokasiMatch?Number(alokasiMatch[1])*Number(alokasiMatch[2]):null;
   const safeMapel=mapel.replace(/\s+/g,'_');
   const safeFase=fase.replace(/[\s\/]+/g,'_');
   const namaFile=`Modul_Ajar_${j}_${safeMapel}_${safeFase}.docx`;
   const konsentrasiLine=konsentrasi?`- Konsentrasi Keahlian: ${konsentrasi}\n`:'';
 
   if(kurikulum==='KBC'){
-    const namaFileKBC=`Modul_Ajar_KBC_${j}_${safeMapel}_${safeFase}.docx`;
+    const madrasah=KBC_MADRASAH[j]||KBC_MADRASAH.SD;
+    const faseMadrasah=fase.replace(/\bSD\b/g,'MI').replace(/\bSMP\b/g,'MTs').replace(/\bSMA\b/g,'MA').replace(/\bSMK\b/g,'MAK');
+    const namaFileKBC=`Modul_Ajar_KBC_${madrasah.label}_${safeMapel}_${safeFase}.docx`;
     const guruLabel=j==='SD'?'Guru Kelas':j==='SMK'?'Guru / Instruktur':'Guru Mata Pelajaran';
-    const konteksSatuan=kbc.nuansa==='Religius madrasah / Islami'||/madrasah|mi |mts|ma |islam/i.test(namaSekolah+' '+mapel)
-      ?'Gunakan istilah madrasah secara natural dan integrasikan nilai keislaman dengan santun.'
-      :'Gunakan istilah sekolah secara umum; nilai cinta kepada Tuhan, diri, sesama, bangsa, dan lingkungan ditulis universal, inklusif, dan tidak berlebihan.';
-    const nilaiKBC=kbc.nilai||'Cinta kepada Tuhan, cinta kepada diri sendiri, dan cinta kepada sesama';
+    const nilaiKBC=kbc.nilai||'Cinta Allah dan Rasul-Nya, cinta ilmu, cinta lingkungan, cinta diri dan sesama manusia, serta cinta tanah air';
     const konteksKBC=kbc.konteks||'satuan pendidikan yang aman, ramah anak, inklusif, dan menghargai keberagaman peserta didik';
     const kemitraanKBC=kbc.kemitraan||'teman sebaya, guru lain, orang tua/wali, masyarakat sekitar, dan komunitas belajar';
     const digitalKBC=kbc.digital||'video pembelajaran, kuis digital, ruang kelas virtual, dan portofolio digital sederhana';
-    return `Anda adalah guru profesional Indonesia, pengembang kurikulum, dan praktisi **Kurikulum Berbasis Cinta (KBC)** yang mampu menyusun modul ajar kontekstual, berdiferensiasi, bernuansa welas asih, dan siap pakai untuk semua jenjang.
+    return `Anda adalah guru profesional madrasah Indonesia dan pengembang pembelajaran yang memahami Kurikulum Berbasis Cinta (KBC), Pembelajaran Mendalam, asesmen, dan pembelajaran berdiferensiasi.
 
-Buat **MODUL AJAR KURIKULUM BERBASIS CINTA (KBC)** yang lengkap, sistematis, operasional, indah dibaca, dan realistis berdasarkan data berikut:
+Buat **MODUL AJAR KURIKULUM BERBASIS CINTA (KBC) DI MADRASAH** yang lengkap, sistematis, operasional, rapi, dan realistis. Gunakan arah kebijakan KBC madrasah dalam KMA Nomor 1503 Tahun 2025 sebagai konteks, tanpa mengarang kutipan regulasi.
 
 **IDENTITAS MODUL:**
 - Nama Sekolah/Madrasah: ${namaSekolah}
 - Penyusun: ${namaPenyusun}
-- Jenjang: ${j}
+- Jenjang: ${madrasah.nama}
 - Mata Pelajaran: ${mapel}
-${konsentrasiLine}- Fase / Kelas: ${fase}
+${konsentrasiLine}- Fase / Kelas: ${faseMadrasah}
 - Semester: ${semester}
 - Tahun Ajaran: ${tahun}
 - Alokasi Waktu: ${alokasi}
@@ -1195,17 +1568,19 @@ ${konsentrasiLine}- Fase / Kelas: ${fase}
 - Pemanfaatan Digital: ${digitalKBC}
 
 **ARAH KBC:**
-- Jadikan cinta sebagai napas pembelajaran: cinta kepada Tuhan, cinta kepada diri, cinta kepada sesama, cinta kepada ilmu, cinta kepada bangsa, dan cinta kepada lingkungan.
+- Gunakan lima nilai Panca Cinta secara tepat: cinta Allah dan Rasul-Nya, cinta ilmu, cinta lingkungan, cinta diri dan sesama manusia, serta cinta tanah air.
 - Prioritaskan nilai cinta utama berikut: ${nilaiKBC}.
-- ${konteksSatuan}
+- Gunakan istilah madrasah secara konsisten dan integrasikan nilai keislaman secara natural, santun, proporsional, dan sesuai topik.
 - Nilai KBC harus tampak dalam tujuan, aktivitas guru-siswa, budaya kelas, asesmen, refleksi, dan tindak lanjut; jangan hanya menjadi daftar.
 - Gunakan pendekatan **Deep Learning**: Mindful Learning, Meaningful Learning, dan Joyful Learning.
+- Susun pengalaman belajar dalam urutan **Memahami, Mengaplikasi, dan Merefleksi**.
 - Terapkan pembelajaran berdiferensiasi: konten, proses, produk, kesiapan belajar, minat, dan profil belajar.
 - Sertakan pembelajaran lintas disiplin, kemitraan pembelajaran, lingkungan belajar fisik/virtual, budaya belajar positif, dan pemanfaatan digital.
+- Check-in perasaan boleh digunakan jika relevan, tetapi jangan dipaksakan. Selalu sediakan suasana aman untuk bertanya, mencoba, dan melakukan kesalahan.
 
 Susun dokumen dengan urutan berikut:
 
-## MODUL AJAR KURIKULUM BERBASIS CINTA (KBC)
+## MODUL AJAR KURIKULUM BERBASIS CINTA (KBC) DI MADRASAH
 
 ### A. IDENTITAS MODUL
 Sajikan identitas dalam tabel rapi.
@@ -1228,7 +1603,7 @@ Uraikan dimensi yang dipilih berikut perilaku nyata yang tampak di kelas. Gunaka
 ### F. DESAIN PEMBELAJARAN
 
 #### A. CAPAIAN PEMBELAJARAN (CP)
-Tuliskan CP yang relevan dengan mapel dan fase. Jika CP resmi tidak dapat dipastikan, tuliskan CP generik yang selaras dan beri catatan **[verifikasi dengan dokumen CP resmi sekolah/madrasah]**. Jika mapel memiliki elemen, sajikan tabel:
+Tuliskan CP yang relevan dengan mapel dan fase. Jangan mengaku sebagai kutipan CP resmi jika tidak memiliki kepastian. Dalam keadaan tersebut, tulis rumusan kerja yang selaras dan beri catatan **[verifikasi dengan dokumen CP resmi madrasah]**. Jika mapel memiliki elemen, sajikan tabel:
 | Elemen | Capaian Pembelajaran |
 | --- | --- |
 
@@ -1238,8 +1613,8 @@ Hubungkan materi dengan minimal 3 disiplin/mapel lain yang relevan. Jelaskan kon
 #### C. TUJUAN PEMBELAJARAN
 Buat tujuan pembelajaran per pertemuan atau per tahap. Gunakan KKO terukur, selaras dengan CP, topik, dan nilai KBC.
 
-#### D. INDIKATOR KETERCAPAIAN TUJUAN PEMBELAJARAN
-Buat indikator bernomor yang dapat diamati dan dinilai.
+#### D. KKTP (KRITERIA KETERCAPAIAN TUJUAN PEMBELAJARAN)
+Buat tabel KKTP untuk setiap tujuan pembelajaran. Kolom wajib: nomor TP, indikator/bukti belajar yang dapat diamati, belum tercapai, mulai tercapai, tercapai, sangat tercapai, dan tindak lanjut. Kriteria harus spesifik serta terukur, bukan sekadar “baik/cukup/kurang”.
 
 #### E. IKLIM/BUDAYA SEKOLAH ATAU MADRASAH
 Tuliskan budaya belajar yang ingin dibangun, misalnya aman, saling menghargai, berani mencoba, sopan, peduli, reflektif, dan saling mendukung.
@@ -1273,24 +1648,19 @@ Gunakan konteks kemitraan berikut sebagai dasar: ${kemitraanKBC}. Jelaskan peran
 Gunakan arahan digital berikut sebagai dasar: ${digitalKBC}. Tuliskan penggunaan video, kuis digital, dokumen kolaboratif, portofolio digital, simulasi, rekaman karya, atau sumber belajar daring yang realistis.
 
 ### H. LANGKAH-LANGKAH PEMBELAJARAN BERDIFERENSIASI
-Buat kegiatan per pertemuan. Jika alokasi waktu satu pertemuan, buat 1 pertemuan; jika topik luas, boleh 2-4 pertemuan. Pastikan total waktu sesuai ${alokasi}.
+Buat kegiatan untuk tepat satu pertemuan sesuai alokasi ${alokasi}${totalMenit?` atau total ${totalMenit} menit`:''}. Jangan menambah jumlah pertemuan tanpa data dari pengguna. Tampilkan menit pada setiap tahap dan tuliskan kontrol hitungan di akhir, misalnya “15 + 75 + 15 = 105 menit”. Total wajib sama dengan alokasi.
 
 Untuk setiap pertemuan, gunakan format:
 - **Pertemuan [n] ([alokasi waktu])**
 - Topik cinta/konteks nilai yang relevan
-- Kegiatan Pendahuluan
-- Kegiatan Inti
-  - Mindful Learning
-  - Joyful Repetition / aktivitas menyenangkan
-  - Meaningful Connection
-  - Pembelajaran Berdiferensiasi
-    - Proses
-    - Produk
-- Kegiatan Penutup
-  - Refleksi
-  - Rangkuman
-  - Tindak lanjut
-  - Penutup
+- Kegiatan Pendahuluan: orientasi, apersepsi, tujuan, asesmen awal singkat, dan check-in kondisi peserta didik jika relevan.
+- Kegiatan Inti dengan tiga pengalaman belajar:
+  1. Memahami: tandai prinsip berkesadaran/bermakna/menggembirakan yang benar-benar diterapkan.
+  2. Mengaplikasi: tuliskan aktivitas peserta didik, peran guru, hasil kerja, dan asesmen proses.
+  3. Merefleksi: tuliskan refleksi pemahaman, strategi belajar, dan nilai Panca Cinta.
+- Diferensiasi wajib muncul di langkah nyata kegiatan inti: sebutkan siapa yang mendapat dukungan, pilihan konten/proses/produk, dan tindakan guru. Jangan hanya menulis teori atau mengelompokkan berdasarkan “gaya belajar”.
+- Kegiatan Penutup: rangkuman, umpan balik, tindak lanjut, dan penutup.
+- Setiap langkah memuat aktivitas guru, aktivitas peserta didik, bukti belajar/asesmen, serta alokasi menit.
 
 ### I. ASESMEN PEMBELAJARAN
 Sajikan dalam tiga kotak/tabel:
@@ -1305,6 +1675,8 @@ Lengkapi dengan:
 - kunci jawaban atau kriteria keberhasilan,
 - rubrik/pedoman penskoran,
 - refleksi sikap/nilai cinta.
+
+Pastikan asesmen awal, proses, dan akhir masing-masing mengukur TP/KKTP yang jelas. Hindari soal atau tugas yang tidak terkait dengan tujuan pembelajaran.
 
 ### J. REMEDIAL DAN PENGAYAAN
 Tulis kegiatan remedial dan pengayaan yang manusiawi, tidak menghukum, dan tetap menumbuhkan kepercayaan diri.
@@ -1325,11 +1697,14 @@ Sertakan:
 **ATURAN OUTPUT:**
 - Tulis seluruh isi dalam Bahasa Indonesia formal, hangat, natural, dan siap dipakai guru.
 - Jangan menulis salam, pembuka, disclaimer AI, atau kalimat “Berikut adalah”.
-- Mulai langsung dengan judul: **## MODUL AJAR KURIKULUM BERBASIS CINTA (KBC)**.
+- Mulai langsung dengan judul: **## MODUL AJAR KURIKULUM BERBASIS CINTA (KBC) DI MADRASAH**.
 - Gunakan Markdown penuh, heading konsisten, tabel rapi untuk CP, kegiatan, asesmen, dan rubrik.
+- Jangan gunakan tag HTML seperti <br>. Jangan bungkus jawaban dalam code fence.
+- Gunakan tabel maksimal 5 kolom untuk bagian yang akan dibaca di ponsel; pecah tabel jika isinya terlalu padat.
 - Jangan membuat aktivitas yang tidak realistis untuk kondisi sekolah/madrasah biasa.
 - Jika menggunakan istilah agama, gunakan secara proporsional sesuai mapel, jenjang, dan konteks satuan pendidikan.
-- Pastikan CP → TP → indikator → kegiatan → asesmen saling nyambung.
+- Pastikan CP → TP → KKTP → kegiatan → asesmen saling nyambung.
+- Sebelum halaman pengesahan, tambahkan **TABEL KONTROL MUTU** yang memeriksa: CP ke TP, TP ke KKTP, KKTP ke kegiatan/asesmen, integrasi Panca Cinta, alur Memahami-Mengaplikasi-Merefleksi, diferensiasi konkret, dan kecocokan total waktu.
 
 **HALAMAN PENGESAHAN (bagian akhir):**
 ${namaSekolah}, ${tgl}
@@ -1417,8 +1792,8 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 - Topik / Materi Pokok: ${topik}
 
 **PEDOMAN UTAMA:**
-1. Sesuai Kurikulum Merdeka berdasarkan **Permendikdasmen No. 12 Tahun 2024** dan **BSKAP 046/H/KR/2025**.
-2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
+1. Sesuai Kurikulum Merdeka berdasarkan **Permendikbudristek Nomor 12 Tahun 2024** sebagaimana diubah dengan **Permendikdasmen Nomor 13 Tahun 2025**, serta CP terbaru yang berlaku. Khusus Pendidikan Agama dan Budi Pekerti, tandai agar diverifikasi terhadap perubahan CP tahun 2026.
+2. Terapkan **Pembelajaran Mendalam** dengan prinsip berkesadaran, bermakna, dan menggembirakan serta pengalaman belajar Memahami, Mengaplikasi, dan Merefleksi, terintegrasi model ${model}.
 3. Sertakan HOTS, Diferensiasi, Pembelajaran Bermakna, dan Student-Centered Learning.
 4. Karakteristik peserta didik: ${karakteristik}
 5. Dimensi Profil Lulusan: ${p5}
@@ -1426,20 +1801,21 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**, alami seperti dokumen resmi asli:
 
 1. **INFORMASI UMUM** — karakteristik siswa SD kontekstual, sarana-prasarana realistis, model/pendekatan/metode pembelajaran.
-2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka untuk mata pelajaran dan fase ini.
+2. **CAPAIAN PEMBELAJARAN (CP)** — rumuskan CP yang relevan. Jika teks resmi tidak dapat dipastikan, beri penanda **[verifikasi dengan dokumen CP resmi]** dan jangan membuat kutipan palsu.
 3. **TUJUAN PEMBELAJARAN (TP)** — menggunakan KKO Taksonomi Bloom level HOTS, terukur, realistis untuk SD.
-4. **PEMAHAMAN BERMAKNA** — manfaat nyata topik dalam kehidupan sehari-hari siswa SD.
-5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan kontekstual memancing rasa ingin tahu dan HOTS.
-6. **PERSIAPAN PEMBELAJARAN** — media, alat/bahan, sumber belajar, langkah persiapan guru.
-7. **KEGIATAN PEMBELAJARAN** — sangat detail, runtut, dengan estimasi waktu:
+4. **KKTP** — tabel kriteria per TP berisi bukti belajar terukur, empat tingkat ketercapaian, dan tindak lanjut.
+5. **PEMAHAMAN BERMAKNA** — manfaat nyata topik dalam kehidupan sehari-hari siswa SD.
+6. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan kontekstual memancing rasa ingin tahu dan HOTS.
+7. **PERSIAPAN PEMBELAJARAN** — media, alat/bahan, sumber belajar, langkah persiapan guru.
+8. **KEGIATAN PEMBELAJARAN** — sangat detail, runtut, dengan pengalaman belajar **Memahami, Mengaplikasi, dan Merefleksi**, serta estimasi waktu:
    - A. **PENDAHULUAN**: Salam, doa, presensi, apersepsi, ice breaking khas SD, motivasi, pertanyaan pemantik, penyampaian tujuan.
    - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — eksplorasi masalah nyata, observasi, diskusi kelompok, kolaborasi, analisis kasus, kreativitas, presentasi, refleksi proses, diferensiasi konten/proses. Sertakan contoh dialog guru-siswa.
    - C. **PENUTUP**: Refleksi siswa, penguatan konsep, kesimpulan bersama, kuis singkat, tindak lanjut, doa.
-8. **ASESMEN LENGKAP** — diagnostik (kognitif/non-kognitif), formatif, sumatif; lembar observasi, rubrik deskriptif, kisi-kisi, soal HOTS level SD.
-9. **DIFERENSIASI PEMBELAJARAN** — teknis diferensiasi konten, proses, produk sesuai kesiapan belajar.
-10. **REMEDIAL DAN PENGAYAAN** — kegiatan taktis untuk siswa belum tuntas dan siswa cepat.
-11. **REFLEKSI GURU** — pertanyaan reflektif tentang respons siswa, kendala, efektivitas strategi.
-12. **LAMPIRAN SIAP PAKAI** — LKPD lengkap khas SD, ringkasan materi, tabel/rubrik asesmen siap isi, instrumen observasi.
+9. **ASESMEN LENGKAP** — diagnostik (kognitif/non-kognitif), formatif, sumatif; lembar observasi, rubrik deskriptif, kisi-kisi, soal HOTS level SD. Tautkan asesmen ke TP dan KKTP.
+10. **DIFERENSIASI PEMBELAJARAN** — tindakan konkret di langkah kegiatan untuk konten, proses, dan produk sesuai kesiapan, minat, serta kebutuhan belajar; bukan hanya teori atau label gaya belajar.
+11. **REMEDIAL DAN PENGAYAAN** — kegiatan taktis untuk siswa belum tuntas dan siswa cepat.
+12. **REFLEKSI GURU** — pertanyaan reflektif tentang respons siswa, kendala, efektivitas strategi.
+13. **LAMPIRAN SIAP PAKAI** — LKPD lengkap khas SD, ringkasan materi, tabel/rubrik asesmen siap isi, instrumen observasi.
 
 ════════════════════════════════════════
 OUTPUT RULES:
@@ -1448,6 +1824,8 @@ OUTPUT RULES:
 - JANGAN tulis "Tentu!", "Baik!", "Berikut adalah...", dsb.
 - Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
 - Gunakan Markdown penuh (##/### heading, tabel markdown untuk kegiatan & rubrik, bold untuk istilah penting).
+- Total waktu Pendahuluan + Inti + Penutup wajib sama dengan ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}; tampilkan persamaan waktunya.
+- Jangan gunakan tag HTML atau code fence.
 
 ════════════════════════════════════════
 HALAMAN PENGESAHAN (di akhir dokumen):
@@ -1492,8 +1870,8 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 - Topik / Materi Pokok: ${topik}
 
 **PEDOMAN UTAMA:**
-1. Sesuai Kurikulum Merdeka berdasarkan **Permendikdasmen No. 12 Tahun 2024** dan **BSKAP 046/H/KR/2025**.
-2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
+1. Sesuai Kurikulum Merdeka berdasarkan **Permendikbudristek Nomor 12 Tahun 2024** sebagaimana diubah dengan **Permendikdasmen Nomor 13 Tahun 2025**, serta CP terbaru yang berlaku. Khusus Pendidikan Agama dan Budi Pekerti, tandai agar diverifikasi terhadap perubahan CP tahun 2026.
+2. Terapkan **Pembelajaran Mendalam** dengan prinsip berkesadaran, bermakna, dan menggembirakan serta pengalaman belajar Memahami, Mengaplikasi, dan Merefleksi, terintegrasi model ${model}.
 3. Sertakan HOTS, Diferensiasi, Literasi-Numerasi, dan Student-Centered Learning.
 4. Karakteristik peserta didik: ${karakteristik}
 5. Dimensi Profil Lulusan: ${p5}
@@ -1501,20 +1879,21 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
 
 1. **INFORMASI UMUM** — karakteristik siswa SMP kontekstual, kondisi sarana-prasarana, model/pendekatan/metode.
-2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka Fase D untuk mata pelajaran ini.
+2. **CAPAIAN PEMBELAJARAN (CP)** — rumuskan CP Fase D yang relevan. Jika teks resmi tidak dapat dipastikan, beri penanda **[verifikasi dengan dokumen CP resmi]**.
 3. **TUJUAN PEMBELAJARAN (TP)** — KKO Taksonomi Bloom level HOTS, terukur, realistis untuk SMP.
-4. **PEMAHAMAN BERMAKNA** — kaitan materi dengan kehidupan nyata dan isu kontekstual siswa SMP.
-5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan mendalam yang memancing berpikir kritis remaja.
-6. **PERSIAPAN PEMBELAJARAN** — media digital/non-digital, alat/bahan, sumber belajar, persiapan guru.
-7. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan estimasi waktu per menit:
+4. **KKTP** — tabel kriteria per TP berisi bukti belajar terukur, empat tingkat ketercapaian, dan tindak lanjut.
+5. **PEMAHAMAN BERMAKNA** — kaitan materi dengan kehidupan nyata dan isu kontekstual siswa SMP.
+6. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan mendalam yang memancing berpikir kritis remaja.
+7. **PERSIAPAN PEMBELAJARAN** — media digital/non-digital, alat/bahan, sumber belajar, persiapan guru.
+8. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan pengalaman belajar **Memahami, Mengaplikasi, dan Merefleksi**, serta estimasi waktu per menit:
    - A. **PENDAHULUAN**: Salam, doa, presensi, apersepsi kontekstual, motivasi belajar, pertanyaan pemantik, penyampaian tujuan & manfaat.
    - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — eksplorasi fenomena nyata, literasi sumber, diskusi kritis kelompok, kolaborasi, analisis mendalam, presentasi, umpan balik antarteman, refleksi tengah pembelajaran. Diferensiasi konten/proses. Sertakan contoh dialog guru-siswa.
    - C. **PENUTUP**: Refleksi kritis siswa, penguatan konsep oleh guru, kesimpulan bersama, evaluasi formatif, tindak lanjut (PR/proyek mini), motivasi, doa.
-8. **ASESMEN LENGKAP** — diagnostik, formatif (observasi, peer assessment), sumatif; rubrik analitik, kisi-kisi, soal HOTS level SMP (C4–C6).
-9. **DIFERENSIASI PEMBELAJARAN** — konten, proses, produk sesuai kesiapan, minat, dan profil belajar siswa SMP.
-10. **REMEDIAL DAN PENGAYAAN** — program remedial terstruktur dan pengayaan berbasis proyek/eksplorasi mandiri.
-11. **REFLEKSI GURU** — refleksi mendalam tentang efektivitas pembelajaran, respons siswa, perbaikan.
-12. **LAMPIRAN SIAP PAKAI** — LKPD investigatif, ringkasan materi, rubrik lengkap siap isi, instrumen penilaian diri/antarteman.
+9. **ASESMEN LENGKAP** — diagnostik, formatif (observasi, peer assessment), sumatif; rubrik analitik, kisi-kisi, soal HOTS level SMP (C4–C6). Tautkan asesmen ke TP dan KKTP.
+10. **DIFERENSIASI PEMBELAJARAN** — tindakan konkret di langkah kegiatan untuk konten, proses, dan produk sesuai kesiapan, minat, serta kebutuhan belajar; bukan hanya teori atau label gaya belajar.
+11. **REMEDIAL DAN PENGAYAAN** — program remedial terstruktur dan pengayaan berbasis proyek/eksplorasi mandiri.
+12. **REFLEKSI GURU** — refleksi mendalam tentang efektivitas pembelajaran, respons siswa, perbaikan.
+13. **LAMPIRAN SIAP PAKAI** — LKPD investigatif, ringkasan materi, rubrik lengkap siap isi, instrumen penilaian diri/antarteman.
 
 ════════════════════════════════════════
 OUTPUT RULES:
@@ -1522,6 +1901,8 @@ OUTPUT RULES:
 - JANGAN tulis pembuka, salam, atau disclaimer AI apapun.
 - Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
 - Gunakan Markdown penuh (heading, tabel, bold).
+- Total waktu Pendahuluan + Inti + Penutup wajib sama dengan ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}; tampilkan persamaan waktunya.
+- Jangan gunakan tag HTML atau code fence.
 
 ════════════════════════════════════════
 HALAMAN PENGESAHAN:
@@ -1561,8 +1942,8 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 - Topik / Materi Pokok: ${topik}
 
 **PEDOMAN UTAMA:**
-1. Sesuai Kurikulum Merdeka berdasarkan **Permendikdasmen No. 12 Tahun 2024** dan **BSKAP 046/H/KR/2025**.
-2. Terapkan pendekatan **Deep Learning** (Mindful, Meaningful, Joyful Learning) terintegrasi model ${model}.
+1. Sesuai Kurikulum Merdeka berdasarkan **Permendikbudristek Nomor 12 Tahun 2024** sebagaimana diubah dengan **Permendikdasmen Nomor 13 Tahun 2025**, serta CP terbaru yang berlaku. Khusus Pendidikan Agama dan Budi Pekerti, tandai agar diverifikasi terhadap perubahan CP tahun 2026.
+2. Terapkan **Pembelajaran Mendalam** dengan prinsip berkesadaran, bermakna, dan menggembirakan serta pengalaman belajar Memahami, Mengaplikasi, dan Merefleksi, terintegrasi model ${model}.
 3. Sertakan HOTS tingkat tinggi, berpikir ilmiah, literasi digital, dan Student-Centered Learning.
 4. Karakteristik peserta didik: ${karakteristik}
 5. Dimensi Profil Lulusan: ${p5}
@@ -1570,20 +1951,21 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
 
 1. **INFORMASI UMUM** — karakteristik siswa SMA kontekstual, kondisi fasilitas, model/pendekatan/metode.
-2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka ${fase.includes('Fase E')?'Fase E':'Fase F'} untuk mata pelajaran ini.
+2. **CAPAIAN PEMBELAJARAN (CP)** — rumuskan CP ${fase.includes('Fase E')?'Fase E':'Fase F'} yang relevan. Jika teks resmi tidak dapat dipastikan, beri penanda **[verifikasi dengan dokumen CP resmi]**.
 3. **TUJUAN PEMBELAJARAN (TP)** — KKO Bloom level C4–C6 (analisis, evaluasi, kreasi), terukur dan ambisius untuk SMA.
-4. **PEMAHAMAN BERMAKNA** — relevansi materi terhadap karier, perguruan tinggi, dan kehidupan global siswa SMA.
-5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan filosofis/saintifik yang memancing analisis kritis mendalam.
-6. **PERSIAPAN PEMBELAJARAN** — media digital interaktif, referensi ilmiah, platform pembelajaran, persiapan guru.
-7. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan estimasi waktu:
+4. **KKTP** — tabel kriteria per TP berisi bukti belajar terukur, empat tingkat ketercapaian, dan tindak lanjut.
+5. **PEMAHAMAN BERMAKNA** — relevansi materi terhadap karier, perguruan tinggi, dan kehidupan global siswa SMA.
+6. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan filosofis/saintifik yang memancing analisis kritis mendalam.
+7. **PERSIAPAN PEMBELAJARAN** — media digital interaktif, referensi ilmiah, platform pembelajaran, persiapan guru.
+8. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan pengalaman belajar **Memahami, Mengaplikasi, dan Merefleksi**, serta estimasi waktu:
    - A. **PENDAHULUAN**: Apersepsi intelektual, kontekstualisasi isu aktual/global, motivasi academic goals, pertanyaan pemantik, penyampaian tujuan.
    - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — studi kasus kompleks, analisis data/teks ilmiah, debat argumentatif, kolaborasi lintas perspektif, produksi karya/solusi inovatif, presentasi akademik, peer review, refleksi epistemik. Diferensiasi sesuai jalur/minat siswa SMA.
    - C. **PENUTUP**: Sintesis konseptual, evaluasi kritis mandiri, portofolio mini, tindak lanjut riset/proyek, motivasi.
-8. **ASESMEN LENGKAP** — diagnostik, formatif portofolio, sumatif berbasis proyek; rubrik analitik holistik, soal HOTS C5–C6, penilaian esai argumentatif.
-9. **DIFERENSIASI PEMBELAJARAN** — konten akademik, jalur eksplorasi, produk sesuai minat/rencana studi lanjut.
-10. **REMEDIAL DAN PENGAYAAN** — remedial konseptual terstruktur, pengayaan berbasis riset mandiri dan olimpiade.
-11. **REFLEKSI GURU** — evaluasi mendalam efektivitas, pencapaian KKO, dan rencana peningkatan.
-12. **LAMPIRAN SIAP PAKAI** — LKPD analitik, bahan bacaan ilmiah singkat, rubrik esai/proyek, instrumen penilaian diri.
+9. **ASESMEN LENGKAP** — diagnostik, formatif portofolio, sumatif berbasis proyek; rubrik analitik holistik, soal HOTS C5–C6, penilaian esai argumentatif. Tautkan asesmen ke TP dan KKTP.
+10. **DIFERENSIASI PEMBELAJARAN** — tindakan konkret di langkah kegiatan untuk konten, proses, dan produk sesuai kesiapan, minat, serta kebutuhan belajar; bukan hanya teori atau label gaya belajar.
+11. **REMEDIAL DAN PENGAYAAN** — remedial konseptual terstruktur, pengayaan berbasis riset mandiri dan olimpiade.
+12. **REFLEKSI GURU** — evaluasi mendalam efektivitas, pencapaian KKO, dan rencana peningkatan.
+13. **LAMPIRAN SIAP PAKAI** — LKPD analitik, bahan bacaan ilmiah singkat, rubrik esai/proyek, instrumen penilaian diri.
 
 ════════════════════════════════════════
 OUTPUT RULES:
@@ -1591,6 +1973,8 @@ OUTPUT RULES:
 - JANGAN tulis pembuka, salam, atau disclaimer apapun.
 - Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
 - Gunakan Markdown penuh.
+- Total waktu Pendahuluan + Inti + Penutup wajib sama dengan ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}; tampilkan persamaan waktunya.
+- Jangan gunakan tag HTML atau code fence.
 
 ════════════════════════════════════════
 HALAMAN PENGESAHAN:
@@ -1630,8 +2014,8 @@ ${konsentrasiLine}- Fase / Kelas: ${fase}
 - Topik / Materi Pokok: ${topik}
 
 **PEDOMAN UTAMA:**
-1. Sesuai Kurikulum Merdeka SMK berdasarkan **Permendikdasmen No. 12 Tahun 2024**, **BSKAP 046/H/KR/2025**, dan **Spektrum Keahlian SMK**.
-2. Terapkan pendekatan **Teaching Factory (TeFa) / Project Based Learning** terintegrasi model ${model} dan Deep Learning.
+1. Sesuai Kurikulum Merdeka SMK berdasarkan **Permendikbudristek Nomor 12 Tahun 2024** sebagaimana diubah dengan **Permendikdasmen Nomor 13 Tahun 2025**, CP terbaru yang berlaku, dan Spektrum Keahlian SMK.
+2. Terapkan pendekatan **Teaching Factory (TeFa) / Project Based Learning** terintegrasi model ${model} serta Pembelajaran Mendalam dengan prinsip berkesadaran, bermakna, dan menggembirakan serta pengalaman belajar Memahami, Mengaplikasi, dan Merefleksi.
 3. Orientasi DUDI (Dunia Usaha dan Dunia Industri), kompetensi vokasional, dan link-and-match.
 4. Karakteristik peserta didik: ${karakteristik}
 5. Dimensi Profil Lulusan: ${p5}
@@ -1639,20 +2023,21 @@ ${konsentrasiLine}- Fase / Kelas: ${fase}
 Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
 
 1. **INFORMASI UMUM** — karakteristik siswa SMK kontekstual, kondisi bengkel/lab/fasilitas vokasional, relevansi DUDI.
-2. **CAPAIAN PEMBELAJARAN (CP)** — teks CP resmi Kurikulum Merdeka SMK ${fase.includes('Fase E')?'Fase E':'Fase F'} untuk mata pelajaran${konsentrasi?' konsentrasi '+konsentrasi:' ini'}.
+2. **CAPAIAN PEMBELAJARAN (CP)** — rumuskan CP SMK ${fase.includes('Fase E')?'Fase E':'Fase F'} yang relevan untuk mata pelajaran${konsentrasi?' konsentrasi '+konsentrasi:' ini'}. Jika teks resmi tidak dapat dipastikan, beri penanda **[verifikasi dengan dokumen CP resmi]**.
 3. **TUJUAN PEMBELAJARAN (TP)** — kompetensi vokasional terukur (kognitif + psikomotor + afektif) sesuai standar industri.
-4. **PEMAHAMAN BERMAKNA** — kaitan langsung materi dengan pekerjaan nyata di industri dan peluang wirausaha.
-5. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan berbasis skenario industri/kewirausahaan yang memancing berpikir profesional.
-6. **PERSIAPAN PEMBELAJARAN** — peralatan bengkel/lab/alat praktik, K3, SOP, media digital, sumber industri.
-7. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan estimasi waktu (termasuk waktu praktik):
+4. **KKTP** — tabel kriteria per TP berisi bukti kerja terukur, empat tingkat ketercapaian, standar mutu/K3 yang relevan, dan tindak lanjut.
+5. **PEMAHAMAN BERMAKNA** — kaitan langsung materi dengan pekerjaan nyata di industri dan peluang wirausaha.
+6. **PERTANYAAN PEMANTIK** — minimal 3 pertanyaan berbasis skenario industri/kewirausahaan yang memancing berpikir profesional.
+7. **PERSIAPAN PEMBELAJARAN** — peralatan bengkel/lab/alat praktik, K3, SOP, media digital, sumber industri.
+8. **KEGIATAN PEMBELAJARAN** — sangat detail, dengan pengalaman belajar **Memahami, Mengaplikasi, dan Merefleksi**, serta estimasi waktu termasuk praktik:
    - A. **PENDAHULUAN**: Apel/briefing ala industri, pengecekan K3, apersepsi konteks industri, motivasi karier, penyampaian tujuan dan kompetensi yang akan dicapai.
    - B. **INTI**: Tahapan model ${model} terintegrasi Teaching Factory — demonstrasi teknik oleh guru/instruktur, praktik terbimbing, praktik mandiri, quality control, problem solving nyata, kolaborasi tim kerja, dokumentasi hasil, presentasi produk/karya. Integrasi K3 di setiap tahap.
    - C. **PENUTUP**: Evaluasi produk/hasil praktik, refleksi profesi, pembersihan area kerja (5R), tindak lanjut PKL/proyek, motivasi.
-8. **ASESMEN LENGKAP** — asesmen kompetensi vokasional (teori + praktik); rubrik kinerja/produk standar industri, checklist K3, uji kompetensi tertulis dan praktik, portofolio vokasional.
-9. **DIFERENSIASI PEMBELAJARAN** — diferensiasi sesuai kecepatan penguasaan skill, modalitas belajar, dan jalur karier (bekerja/kuliah/wirausaha).
-10. **REMEDIAL DAN PENGAYAAN** — remedial praktik terbimbing, pengayaan berupa proyek industri nyata atau sertifikasi kompetensi.
-11. **REFLEKSI GURU** — evaluasi pencapaian kompetensi vokasional, kesesuaian dengan standar DUDI, perbaikan SOP.
-12. **LAMPIRAN SIAP PAKAI** — Jobsheet/LKPD praktik lengkap (langkah kerja, K3, gambar kerja), rubrik penilaian produk/kinerja, instrumen observasi sikap kerja, format laporan praktik siswa.
+9. **ASESMEN LENGKAP** — asesmen kompetensi vokasional (teori + praktik); rubrik kinerja/produk standar industri, checklist K3, uji kompetensi tertulis dan praktik, portofolio vokasional. Tautkan asesmen ke TP dan KKTP.
+10. **DIFERENSIASI PEMBELAJARAN** — tindakan konkret di langkah kegiatan sesuai kesiapan penguasaan keterampilan, kebutuhan dukungan, dan jalur karier; bukan hanya teori atau label gaya belajar.
+11. **REMEDIAL DAN PENGAYAAN** — remedial praktik terbimbing, pengayaan berupa proyek industri nyata atau sertifikasi kompetensi.
+12. **REFLEKSI GURU** — evaluasi pencapaian kompetensi vokasional, kesesuaian dengan standar DUDI, perbaikan SOP.
+13. **LAMPIRAN SIAP PAKAI** — Jobsheet/LKPD praktik lengkap (langkah kerja, K3, gambar kerja), rubrik penilaian produk/kinerja, instrumen observasi sikap kerja, format laporan praktik siswa.
 
 ════════════════════════════════════════
 OUTPUT RULES:
@@ -1660,6 +2045,8 @@ OUTPUT RULES:
 - JANGAN tulis pembuka, salam, atau disclaimer apapun.
 - Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
 - Gunakan Markdown penuh.
+- Total waktu Pendahuluan + Inti + Penutup wajib sama dengan ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}; tampilkan persamaan waktunya.
+- Jangan gunakan tag HTML atau code fence.
 
 ════════════════════════════════════════
 HALAMAN PENGESAHAN:
@@ -1707,7 +2094,15 @@ CATATAN UNTUK MODE GENERATE LANGSUNG DI APLIKASI:
     });
     let json;
     try{json=await resp.json();}catch{throw new Error(`Server error (HTTP ${resp.status}). Coba lagi beberapa saat.`);}
-    if(!resp.ok||json.error)throw new Error(json.error||`Server error (HTTP ${resp.status})`);
+    if(!resp.ok||json.error){
+      const d=json.detail;
+      const attemptList=Array.isArray(d?.attempts)?d.attempts:[];
+      const last=d?.last||d;
+      const info=last&&typeof last==='object'
+        ?` (${[last.model,last.status,last.message].filter(Boolean).join(' - ')})${attemptList.length?` · ${attemptList.length} percobaan model gagal`:''}`
+        :'';
+      throw new Error((json.error||`Server error HTTP ${resp.status}`)+info);
+    }
     if(!json.text)throw new Error('Respons AI kosong. Coba generate ulang.');
     return json.text;
   }catch(e){
@@ -1766,13 +2161,12 @@ async function generatePrompt(){
       await new Promise(r=>setTimeout(r,700));
     }
 
-    document.getElementById('hasilPrompt').textContent=output;
-    document.getElementById('hasilPrompt').classList.toggle('modul-output',outputMode==='direct');
+    setOutputContent(output,outputMode);
     document.getElementById('promptPlaceholder').style.display='none';
     document.getElementById('promptContent').style.display='block';
 
     if(!isPro()) incrementDaily();
-    simpanHistori(output,mapel,fase,topik);
+    simpanHistori(output,mapel,fase,topik,outputMode);
     setLoading(false);
     updateLimitDisplay();
     updateHistoriBadge();
@@ -1796,7 +2190,8 @@ async function generatePrompt(){
 // COPY PROMPT
 // ============================================================
 function copyPrompt(){
-  const txt=document.getElementById('hasilPrompt').textContent;
+  const hasil=document.getElementById('hasilPrompt');
+  const txt=hasil.dataset.raw||hasil.textContent;
   if(!txt){alert(getOutputMode()==='direct'?'Generate modul dulu!':'Generate prompt dulu!');return;}
   if(!isPro()){showUpgradePopup();return;}
   gaEvent('salin_prompt_modul_ajar',{tipe_user:'pro'});
@@ -1817,7 +2212,8 @@ function fallbackCopy(txt){
 // OPEN AI
 // ============================================================
 function openAI(tipe){
-  const txt=document.getElementById('hasilPrompt').textContent;
+  const hasil=document.getElementById('hasilPrompt');
+  const txt=hasil.dataset.raw||hasil.textContent;
   if(!txt){alert('Generate prompt dulu!');return;}
   if(!isPro()){showUpgradePopup();return;}
   const urls={gemini:'https://gemini.google.com/',claude:'https://claude.ai/new'};
@@ -1831,9 +2227,9 @@ function openAI(tipe){
 // ============================================================
 // HISTORI
 // ============================================================
-function simpanHistori(prompt,mapel,fase,topik){
+function simpanHistori(prompt,mapel,fase,topik,mode){
   const list=loadHistori();
-  list.unshift({prompt,mapel,fase,topik,ts:Date.now()});
+  list.unshift({prompt,mapel,fase,topik,mode:mode||'prompt',ts:Date.now()});
   if(list.length>20)list.pop();
   localStorage.setItem(STORAGE_KEY_HISTORI,JSON.stringify(list));
 }
@@ -1854,7 +2250,7 @@ function renderHistoriList(){
   if(list.length===0){container.innerHTML='<div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya! 😊</div>';return;}
   container.innerHTML=list.map((h,i)=>`
     <div class="histori-item" onclick="loadFromHistori(${i})">
-      <div class="hi-meta">${new Date(h.ts).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})} &bull; ${h.mapel||''} &bull; ${h.fase||''}</div>
+      <div class="hi-meta">${new Date(h.ts).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})} &bull; ${h.mode==='direct'?'Modul':'Prompt'} &bull; ${h.mapel||''} &bull; ${h.fase||''}</div>
       <div class="hi-preview">${(h.topik||h.prompt||'').substring(0,120)}...</div>
     </div>`).join('');
 }
@@ -1863,7 +2259,11 @@ function loadFromHistori(idx){
   const h=list[idx];
   if(!h)return;
   selectTab('home');
-  document.getElementById('hasilPrompt').textContent=h.prompt||'';
+  const mode=h.mode||'prompt';
+  const modeInput=document.querySelector(`input[name="outputMode"][value="${mode}"]`);
+  if(modeInput)modeInput.checked=true;
+  updateOutputModeUI();
+  setOutputContent(h.prompt||'',mode);
   document.getElementById('promptPlaceholder').style.display='none';
   document.getElementById('promptContent').style.display='block';
   setTimeout(()=>document.getElementById('hasilCard').scrollIntoView({behavior:'smooth'}),200);
