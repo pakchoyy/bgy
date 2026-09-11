@@ -82,8 +82,10 @@ main{display:grid;grid-template-columns:375px 1fr;gap:22px;padding:22px;max-widt
 /* ══ FORM ══ */
 .form-group{margin-bottom:11px;}
 label{display:block;font-size:.71rem;font-weight:600;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
-input[type=text],input[type=date],input[type=number],input[type=password],select,textarea{width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:10px;font-size:.84rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;}
+input[type=text],input[type=date],input[type=number],input[type=password],select,textarea{width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:10px;font-size:.84rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s,box-shadow .2s;outline:none;}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-light) 50%),linear-gradient(135deg,var(--text-light) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 12px) 50%;background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:34px;cursor:pointer;}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid #0ea5a0;outline-offset:2px;box-shadow:0 0 0 4px rgba(14,165,160,.16);}
 textarea{resize:vertical;min-height:58px;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
@@ -134,6 +136,18 @@ body.dark .kesulitan-grid label:has(input:checked){background:#0d3a47;color:#5ee
 .kesulitan-grid label:has(input:checked) small{color:#0d7a8a;}
 body.dark .kesulitan-grid label:has(input:checked) small{color:#5eead4;}
 .kesulitan-grid input[type=checkbox]{width:12px;height:12px;padding:0;accent-color:#0ea5a0;}
+.smart-hint{margin-top:7px;padding:9px 11px;border:1px solid rgba(14,165,160,.28);background:rgba(14,165,160,.08);border-radius:10px;font-size:.72rem;line-height:1.6;color:var(--text);}
+.smart-hint strong{color:#0d7a8a;}
+body.dark .smart-hint{background:rgba(14,165,160,.12);}
+body.dark .smart-hint strong{color:#5eead4;}
+.preset-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.preset-chip{border:1px solid var(--border);background:var(--input-bg);color:var(--text);border-radius:8px;padding:5px 9px;font-size:.7rem;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,transform .15s;}
+.preset-chip:hover{border-color:var(--blue);}
+.preset-chip:active{transform:scale(.96);}
+.menu-action{display:block;width:100%;padding:9px 14px;font-size:.8rem;cursor:pointer;border:none;background:var(--card-bg);color:var(--text);text-align:left;font-family:inherit;}
+.menu-action+.menu-action{border-top:1px solid var(--border);}
+.menu-action:hover{background:var(--gray-100);}
+body.dark .menu-action:hover{background:rgba(255,255,255,.06);}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:10px;border:none;font-weight:600;font-size:.79rem;cursor:pointer;transition:all .2s;}
@@ -274,7 +288,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   /* Reset margin halaman agar header/footer browser hilang */
   @page{margin-top:15mm;margin-bottom:15mm;margin-left:22mm;margin-right:20mm;}
   html,body{margin:0!important;padding:0!important;}
-  header,footer,.col-form,.export-bar,.page-nav,#installPopup,#menuOverlay{display:none!important;}
+  header,footer,.col-form,.export-bar,.page-nav,#installPopup,#menuOverlay,.no-print{display:none!important;}
   main{display:block;padding:0;}
   #previewBox{box-shadow:none;padding:0;max-width:100%;border-radius:0;width:794px!important;transform:none!important;}
   body{background:#fff!important;}
@@ -592,6 +606,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           <option value="3">3</option><option value="4">4</option>
           <option value="5">5</option><option value="6">6</option>
         </select>
+        <div class="smart-hint" id="kelasHint"></div>
       </div>
 
       <div class="form-group">
@@ -627,6 +642,18 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       </div>
 
       <div class="form-group">
+        <label>Mode Soal</label>
+        <select id="modeSoal" onchange="updateSmartHints();autoSaveForm();">
+          <option value="standar" selected>Standar seimbang</option>
+          <option value="kontekstual">Kontekstual</option>
+          <option value="hots">HOTS</option>
+          <option value="literasi">Literasi / numerasi</option>
+          <option value="akm">AKM-style</option>
+        </select>
+        <div class="smart-hint" id="modeHint"></div>
+      </div>
+
+      <div class="form-group">
         <label>Tingkat Kesulitan (Taksonomi Bloom)</label>
         <div class="kesulitan-grid">
           <label><input type="checkbox" class="cb-kesulitan" value="C1-Mengingat" checked/> C1 <small>Mengingat</small></label>
@@ -640,6 +667,12 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
       <div class="form-group">
         <label>Jumlah Soal per Tipe</label>
+        <select id="paketSoal" onchange="applyPaketSoal(this.value)">
+          <option value="standar" selected>Paket standar otomatis</option>
+          <option value="ringkas">Paket ringkas</option>
+          <option value="lengkap">Paket lengkap</option>
+          <option value="custom">Custom manual</option>
+        </select>
         <div class="row-3">
           <div>
             <label>PG <span id="opsiNote" style="font-size:.67rem;color:#0ea5a0;">(A-C)</span></label>
@@ -648,6 +681,12 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           <div><label>Isian</label><input type="number" id="jmlIsian" min="0" max="20" value="5"/></div>
           <div><label>Uraian</label><input type="number" id="jmlUraian" min="0" max="10" value="3"/></div>
         </div>
+        <div class="preset-actions">
+          <button class="preset-chip" type="button" onclick="applyPaketSoal('ringkas')">Ringkas</button>
+          <button class="preset-chip" type="button" onclick="applyPaketSoal('standar')">Standar</button>
+          <button class="preset-chip" type="button" onclick="applyPaketSoal('lengkap')">Lengkap</button>
+        </div>
+        <div class="smart-hint" id="jumlahHint"></div>
       </div>
 
       <div id="errorBox" class="error-box"></div>
@@ -740,13 +779,20 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         <div style="position:relative;display:inline-block;">
           <button class="btn btn-secondary" id="btnPDF" onclick="togglePDFMenu()" style="position:relative;">⬇️ Download PDF ▾</button>
           <div id="pdfMenu" style="display:none;position:absolute;top:110%;left:0;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:999;min-width:180px;overflow:hidden;">
-            <div onclick="exportPDF('all');closePDFMenu()" style="padding:9px 14px;font-size:.8rem;cursor:pointer;">📋 Semua (Soal+Kunci+Kisi)</div>
-            <div onclick="exportPDF('soal');closePDFMenu()" style="padding:9px 14px;font-size:.8rem;cursor:pointer;border-top:1px solid var(--border);">📝 Soal Saja</div>
-            <div onclick="exportPDF('kunci');closePDFMenu()" style="padding:9px 14px;font-size:.8rem;cursor:pointer;border-top:1px solid var(--border);">🔑 Soal + Kunci</div>
-            <div onclick="exportPDF('kisi');closePDFMenu()" style="padding:9px 14px;font-size:.8rem;cursor:pointer;border-top:1px solid var(--border);">📊 Kisi-kisi Saja</div>
+            <button class="menu-action" type="button" onclick="exportPDF('all');closePDFMenu()">📋 Semua (Soal+Kunci+Kisi)</button>
+            <button class="menu-action" type="button" onclick="exportPDF('soal');closePDFMenu()">📝 Soal Saja</button>
+            <button class="menu-action" type="button" onclick="exportPDF('kunci');closePDFMenu()">🔑 Soal + Kunci</button>
+            <button class="menu-action" type="button" onclick="exportPDF('kunci-tanpa-rubrik');closePDFMenu()">🔑 Kunci tanpa rubrik</button>
+            <button class="menu-action" type="button" onclick="exportPDF('kisi');closePDFMenu()">📊 Kisi-kisi Saja</button>
           </div>
         </div>
-        <button class="btn btn-secondary" onclick="exportWord()">📝 Download Word</button>
+        <div style="position:relative;display:inline-block;">
+          <button class="btn btn-secondary" id="btnWord" onclick="toggleWordMenu()" style="position:relative;">📝 Download Word ▾</button>
+          <div id="wordMenu" style="display:none;position:absolute;top:110%;left:0;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:999;min-width:180px;overflow:hidden;">
+            <button class="menu-action" type="button" onclick="exportWord({rubrik:true});closeWordMenu()">Lengkap dengan rubrik</button>
+            <button class="menu-action" type="button" onclick="exportWord({rubrik:false});closeWordMenu()">Tanpa rubrik</button>
+          </div>
+        </div>
         <span title="Disarankan Download PDF untuk hasil terbaik!" style="display:inline-flex;align-items:center;justify-content:center;background:#fef9c3;border:1.5px solid #fde047;border-radius:8px;padding:4px 10px;font-size:.72rem;color:#854d0e;font-weight:700;cursor:default;gap:4px;white-space:nowrap;">💡 PDF lebih rapi</span>
       </div>
       <div style="margin-top:8px;font-size:.72rem;color:var(--text-light);">
@@ -1222,7 +1268,7 @@ const DB_MATERI={
 ════════════════════════════════════════════ */
 let soalData=null;
 let logos={logo1:null,logo2:null};
-let halamanSoal=[],currentPage=0;
+let halamanSoal=[],halamanMeta=[],currentPage=0;
 let deferredInstallPrompt=null;
 let lastMateriTerpilih='';
 const DAILY_LIMIT=1;
@@ -1233,6 +1279,12 @@ const DAILY_LIMIT=1;
 ════════════════════════════════════════════ */
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function stripHtml(s){return String(s||'').replace(/<[^>]+>/g,'');}
+function stripRubrikHtml(html){
+  const tmp=document.createElement('div');
+  tmp.innerHTML=html;
+  tmp.querySelectorAll('.rubrik-block').forEach(el=>el.remove());
+  return tmp.innerHTML;
+}
 function safeSet(key,val){try{localStorage.setItem(key,val);}catch(e){console.warn('localStorage penuh:',e);showError('⚠️ Penyimpanan lokal penuh. Hapus beberapa histori lama agar soal bisa disimpan.');}}
 function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null;}}
 
@@ -1258,6 +1310,7 @@ function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null
     autoSetBloom();
     toggleBahasaDaerah();
     restoreAutoSave();
+    updateSmartHints();
     updateLimitDisplay();
     updateHistoriBadge(getHistoriList().length);
     window.addEventListener('beforeinstallprompt',e=>{
@@ -1448,7 +1501,7 @@ function hapusLogo(inputId,key,thumbId,hintId,btnId){
 /* ════════════════════════════════════════════
    FORM DINAMIS
 ════════════════════════════════════════════ */
-function onKelasChange(){updateOpsiNote();renderMapelOptions();renderMateriChecklist();autoSetBloom();toggleBahasaDaerah();}
+function onKelasChange(){updateOpsiNote();renderMapelOptions();renderMateriChecklist();autoSetBloom();applyPaketSoal(document.getElementById('paketSoal')?.value||'standar',true);toggleBahasaDaerah();updateSmartHints();}
 function onMapelChange(){
   const mapel=document.getElementById('mataPelajaran').value;
   const customInput=document.getElementById('mataPelajaranCustom');
@@ -1462,6 +1515,7 @@ function onMapelChange(){
   }
   renderMateriChecklist();
   toggleBahasaDaerah();
+  updateSmartHints();
 }
 function onJenisUjianChange(){
   const jenis=document.getElementById('jenisUjian').value;
@@ -1474,8 +1528,9 @@ function onJenisUjianChange(){
       customInput.style.display='none';
     }
   }
+  updateSmartHints();
 }
-function onSemesterChange(){renderMateriChecklist();}
+function onSemesterChange(){renderMateriChecklist();updateSmartHints();}
 function toggleBahasaDaerah(){
   const mapel=document.getElementById('mataPelajaran').value;
   const grp=document.getElementById('bahasaDaerahGroup');
@@ -1559,6 +1614,8 @@ function onJenjangChange(){
   onMapelChange();
   autoSetBloom();
   updateOpsiNote();
+  applyPaketSoal(document.getElementById('paketSoal')?.value||'standar',true);
+  updateSmartHints();
 }
 
 // Set level Bloom otomatis sesuai kelas (tapi user tetap bisa ubah manual)
@@ -1616,6 +1673,55 @@ function setMateriMode(mode){
   document.getElementById('materiKetikHint').style.display=isPilih?'none':'block';
 }
 function getKesulitanTerpilih(){return[...document.querySelectorAll('.cb-kesulitan:checked')].map(c=>c.value).join(', ');}
+function getPaketSoalConfig(kelas,paket){
+  const k=parseInt(kelas)||1;
+  const base=k<=3?{pg:10,isian:5,uraian:3}:k<=6?{pg:20,isian:10,uraian:5}:k<=9?{pg:25,isian:10,uraian:5}:{pg:30,isian:10,uraian:5};
+  if(paket==='ringkas')return{pg:Math.max(5,Math.round(base.pg*.5)),isian:Math.max(3,Math.round(base.isian*.6)),uraian:Math.max(2,Math.round(base.uraian*.6))};
+  if(paket==='lengkap')return{pg:Math.min(40,Math.round(base.pg*1.25)),isian:Math.min(20,Math.round(base.isian*1.2)),uraian:Math.min(10,Math.round(base.uraian*1.2))};
+  return base;
+}
+function applyPaketSoal(paket,fromAuto){
+  const sel=document.getElementById('paketSoal');
+  if(sel&&sel.value!==paket)sel.value=paket;
+  if(paket==='custom'){updateSmartHints();autoSaveForm();return;}
+  const cfg=getPaketSoalConfig(document.getElementById('kelas')?.value,paket);
+  document.getElementById('jmlPG').value=cfg.pg;
+  document.getElementById('jmlIsian').value=cfg.isian;
+  document.getElementById('jmlUraian').value=cfg.uraian;
+  updateSmartHints();
+  if(!fromAuto)autoSaveForm();
+}
+function markPaketCustom(){
+  const sel=document.getElementById('paketSoal');
+  if(sel)sel.value='custom';
+  updateSmartHints();
+  autoSaveForm();
+}
+function getModeSoalInstruksi(){
+  const mode=document.getElementById('modeSoal')?.value||'standar';
+  const map={
+    standar:'Buat komposisi soal seimbang antara pemahaman konsep, penerapan, dan penalaran sesuai level yang dipilih.',
+    kontekstual:'Utamakan soal berbasis konteks kehidupan sehari-hari siswa, situasi sekolah, lingkungan, data sederhana, atau peristiwa nyata.',
+    hots:'Utamakan soal penalaran HOTS. Pertanyaan harus menuntut analisis, evaluasi, pemilihan strategi, atau alasan, bukan hafalan langsung.',
+    literasi:'Gunakan stimulus literasi atau numerasi seperti paragraf pendek, tabel sederhana, data angka, grafik yang dideskripsikan, atau bacaan kontekstual.',
+    akm:'Gunakan gaya AKM: stimulus jelas, konteks nyata, pertanyaan menilai literasi/numerasi, dan opsi homogen.'
+  };
+  return map[mode]||map.standar;
+}
+function updateSmartHints(){
+  const kelas=parseInt(document.getElementById('kelas')?.value)||1;
+  const jenjang=getJenjang();
+  const opsi=getOpsiPGConfig(kelas);
+  const paket=document.getElementById('paketSoal')?.value||'standar';
+  const rec=getPaketSoalConfig(kelas,paket==='custom'?'standar':paket);
+  const levels=getKesulitanLevels().join(', ')||'-';
+  const kelasHint=document.getElementById('kelasHint');
+  if(kelasHint)kelasHint.innerHTML=`<strong>Kelas ${kelas} ${jenjang}</strong>: PG memakai ${opsi.label}. Level otomatis yang disarankan: ${levels}.`;
+  const jumlahHint=document.getElementById('jumlahHint');
+  if(jumlahHint)jumlahHint.innerHTML=`Rekomendasi paket ${paket==='custom'?'standar':paket}: <strong>${rec.pg} PG</strong>, <strong>${rec.isian} isian</strong>, <strong>${rec.uraian} uraian</strong>. Pilih Custom manual jika kebutuhan sekolah berbeda.`;
+  const modeHint=document.getElementById('modeHint');
+  if(modeHint)modeHint.textContent=getModeSoalInstruksi();
+}
 function getOpsiPGConfig(kelas){
   const k=parseInt(kelas)||1;
   if(k<=3)return{
@@ -1658,7 +1764,10 @@ function normalizeLevel(level,allowedLevels){
   const lv=String(level||'').trim().toUpperCase().match(/C[1-6]/)?.[0]||'';
   if(!lv)throw new Error('Level Bloom dari AI belum valid.');
   if(allowedLevels.length&& !allowedLevels.includes(lv)){
-    throw new Error(`Level Bloom ${lv} tidak sesuai pilihan (${allowedLevels.join(', ')}).`);
+    const lvNum=parseInt(lv.slice(1),10);
+    return allowedLevels
+      .slice()
+      .sort((a,b)=>Math.abs(parseInt(a.slice(1),10)-lvNum)-Math.abs(parseInt(b.slice(1),10)-lvNum))[0];
   }
   return lv;
 }
@@ -1682,20 +1791,25 @@ function normalizeAndValidateSoalAI(data,cfg){
       throw new Error(`Opsi PG nomor ${i+1} kurang. Kelas ini wajib ${allowedAnswers.length} opsi (${allowedAnswers.join(', ')}).`);
     }
     const opsi=allowedAnswers.map((label,idx)=>normalizeOpsiText(rawOpsi[idx],label));
+    const opsiTexts=opsi.map(o=>o.replace(/^\s*[A-E]\.\s*/,'').trim().toLowerCase());
+    if(opsiTexts.some(t=>!t||t==='...'))throw new Error(`Opsi PG nomor ${i+1} masih kosong.`);
+    if(new Set(opsiTexts).size!==opsiTexts.length)throw new Error(`Opsi PG nomor ${i+1} ada yang duplikat.`);
     const jawaban=String(item?.jawaban||'').trim().toUpperCase().charAt(0);
     if(!allowedAnswers.includes(jawaban)){
       throw new Error(`Jawaban PG nomor ${i+1} harus salah satu ${allowedAnswers.join(', ')}.`);
     }
+    const jawabanTeks=opsi[allowedAnswers.indexOf(jawaban)]||'';
     return{
       soal,
       opsi,
       jawaban,
+      jawabanTeks,
       indikator:stripHtml(item?.indikator||'').trim()||`Siswa dapat menjawab soal nomor ${i+1}.`,
       level:normalizeLevel(item?.level,cfg.allowedLevels)
     };
   });
 
-  function normalizeNonPG(arr,expected,type,labelOffset){
+function normalizeNonPG(arr,expected,type,labelOffset){
     return arr.slice(0,expected).map((item,i)=>{
       const nomor=labelOffset+i+1;
       const soal=stripHtml(item?.soal||'').trim();
@@ -1705,6 +1819,7 @@ function normalizeAndValidateSoalAI(data,cfg){
       return{
         soal,
         jawaban,
+        rubrik:Array.isArray(item?.rubrik)?item.rubrik.map(r=>stripHtml(r||'').trim()).filter(Boolean).slice(0,4):[],
         indikator:stripHtml(item?.indikator||'').trim()||`Siswa dapat menjawab soal nomor ${nomor}.`,
         level:normalizeLevel(item?.level,cfg.allowedLevels)
       };
@@ -1726,6 +1841,39 @@ function getJudulUjian(){
   // Jenis yg diketik sendiri → tidak tambah semester (tidak tahu konteksnya)
   if(document.getElementById('jenisUjian').value==='__lain__')return jenis;
   return jenis+' '+semStr;
+}
+
+async function requestGenerateSoal(prompt){
+  let resp;
+  try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),90000);
+    resp=await fetch('/api/generate-soal',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt}),
+      signal:ctrl.signal
+    });
+    clearTimeout(tid);
+  }catch(networkErr){
+    if(networkErr.name==='AbortError')throw new Error('Waktu habis (90 detik). Coba kurangi jumlah soal atau coba lagi.');
+    throw new Error('Gagal terhubung ke server. Periksa koneksi internet kamu.');
+  }
+  let json;
+  try{json=await resp.json();}catch{throw new Error(`Server error (HTTP ${resp.status}). Coba lagi beberapa saat.`);}
+  if(!resp.ok||json.error)throw new Error(json.error||`Server error (HTTP ${resp.status})`);
+  const rawText=json.text||'';
+  if(!rawText)throw new Error('Respons AI kosong. Coba generate ulang.');
+  return rawText;
+}
+
+function parseSoalJson(rawText){
+  try{
+    const cleaned=rawText.replace(/```json/gi,'').replace(/```/g,'').trim();
+    return JSON.parse(cleaned);
+  }catch{
+    throw new Error('Format respons AI tidak valid. Coba generate ulang.');
+  }
 }
 
 /* ════════════════════════════════════════════
@@ -1793,6 +1941,7 @@ async function handleGenerate(){
 
   const satuanPendidikan=getSatuanPendidikan();
   const faseLabel=getFaseLabel(kelas,jenjang);
+  const modeInstruksi=getModeSoalInstruksi();
 
   const prompt=`Kamu adalah guru ${satuanPendidikan} berpengalaman yang membuat soal Kurikulum Merdeka.
 Buatkan soal untuk siswa kelas ${kelas} ${satuanPendidikan} (${faseLabel}).
@@ -1805,6 +1954,7 @@ Jumlah soal:
 - Uraian: ${jmlUraian} soal
 
 Gaya penulisan soal: ${gaya}
+Mode soal: ${modeInstruksi}
 
 Aturan:
 - Gunakan Bahasa Indonesia yang baik dan benar
@@ -1817,41 +1967,42 @@ Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
 {
   "pilihanGanda":[{"soal":"...","opsi":${opsiJsonTemplate},"jawaban":"A","indikator":"Siswa dapat ...","level":"C2"}],
   "isian":[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C1"}],
-  "uraian":[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C4"}]
+  "uraian":[{"soal":"...","jawaban":"...","rubrik":["Skor 4: ...","Skor 3: ...","Skor 2: ...","Skor 1: ..."],"indikator":"Siswa dapat ...","level":"C4"}]
 }
+Untuk uraian, field "rubrik" wajib berisi 4 kriteria skor singkat dari skor 4 sampai skor 1.
 Field "indikator" diisi kalimat singkat "Siswa dapat [kata kerja] ..." sesuai level kognitif Bloom. Field "level" diisi salah satu: C1, C2, C3, C4, C5, C6.`;
 
   try{
-    let resp;
-    try{
-      const ctrl=new AbortController();
-      const tid=setTimeout(()=>ctrl.abort(),90000);
-      resp=await fetch('/api/generate-soal',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({prompt}),
-        signal:ctrl.signal
-      });
-      clearTimeout(tid);
-    }catch(networkErr){
-      if(networkErr.name==='AbortError')throw new Error('Waktu habis (90 detik). Coba kurangi jumlah soal atau coba lagi.');
-      throw new Error('Gagal terhubung ke server. Periksa koneksi internet kamu.');
-    }
-    let json;
-    try{json=await resp.json();}catch{throw new Error(`Server error (HTTP ${resp.status}). Coba lagi beberapa saat.`);}
-    if(!resp.ok||json.error)throw new Error(json.error||`Server error (HTTP ${resp.status})`);
-    const rawText=json.text||'';
-    if(!rawText)throw new Error('Respons AI kosong. Coba generate ulang.');
-    let data;
-    try{const cleaned=rawText.replace(/```json/gi,'').replace(/```/g,'').trim();data=JSON.parse(cleaned);}
-    catch{throw new Error('Format respons AI tidak valid. Coba generate ulang.');}
-    data=normalizeAndValidateSoalAI(data,{
+    const validationCfg={
       jmlPG,
       jmlIsian,
       jmlUraian,
       opsiLabels:opsiConfig.labels,
       allowedLevels:getKesulitanLevels()
-    });
+    };
+    let rawText=await requestGenerateSoal(prompt);
+    let data;
+    try{
+      data=normalizeAndValidateSoalAI(parseSoalJson(rawText),validationCfg);
+    }catch(validateErr){
+      showGenerateFeedback('AI memperbaiki format soal otomatis...',0);
+      const retryPrompt=`Perbaiki hasil JSON berikut agar memenuhi aturan. Kembalikan HANYA JSON valid tanpa markdown.
+
+Kesalahan yang harus diperbaiki:
+${validateErr.message}
+
+Aturan wajib:
+- PG harus tepat ${jmlPG} soal dan setiap PG memakai ${opsiPG}
+- Jawaban PG hanya boleh ${opsiConfig.labels.join(', ')}
+- Isian tepat ${jmlIsian} soal
+- Uraian tepat ${jmlUraian} soal dan setiap uraian punya rubrik skor 4, 3, 2, 1
+- Level Bloom hanya boleh salah satu dari: ${getKesulitanLevels().join(', ')}
+
+JSON bermasalah:
+${rawText}`;
+      rawText=await requestGenerateSoal(retryPrompt);
+      data=normalizeAndValidateSoalAI(parseSoalJson(rawText),validationCfg);
+    }
 
     soalData=data;
     if(!isPro())incrementDaily();
@@ -1948,6 +2099,7 @@ function buildHalaman(data){
   const uraian=data.uraian||[];
   const headerHtml=buildDocHeader();
   halamanSoal=[];
+  halamanMeta=[];
 
   const PAGE_H=860;
   const HEADER_H=140;
@@ -1975,6 +2127,7 @@ function buildHalaman(data){
     });
     if(tb)html+='</table>';
     halamanSoal.push(html);
+    halamanMeta.push('soal');
     currentBlocks=[];currentH=0;isFirstPage=false;
   }
 
@@ -1998,15 +2151,17 @@ function buildHalaman(data){
     uraian.forEach((item,i)=>addBlock({type:'uraian',item,no:pg.length+isian.length+i+1},URAIAN_H));
   }
   if(currentBlocks.length>0)closePage();
-  if(!halamanSoal.length)halamanSoal.push(headerHtml+'<p style="padding:20px;color:#999;">Tidak ada soal.</p>');
+  if(!halamanSoal.length){halamanSoal.push(headerHtml+'<p style="padding:20px;color:#999;">Tidak ada soal.</p>');halamanMeta.push('soal');}
 
   // Halaman kunci di akhir
   halamanSoal.push(buildKunciPage(data,pg,isian,uraian));
+  halamanMeta.push('kunci');
   // Halaman kisi-kisi setelah kunci
   halamanSoal.push(buildKisiKisiPage(data,pg,isian,uraian));
+  halamanMeta.push('kisi');
   // Halaman prompt gambar (hanya jika ada soal butuh gambar)
   const halamanPrompt=buildPromptGambarPage(data,pg,isian,uraian);
-  if(halamanPrompt) halamanSoal.push(halamanPrompt);
+  if(halamanPrompt){halamanSoal.push(halamanPrompt);halamanMeta.push('prompt');}
   updatePageNav();
 }
 
@@ -2046,7 +2201,12 @@ function buildKunciPage(data,pg,isian,uraian){
   }
   if(uraian.length>0){
     html+=`<div class="kunci-section-title">III. Uraian &nbsp;<span style="font-size:9pt;font-weight:normal;">(${uraian.length} soal × ${bobotUraian} = ${totalUraian} poin)</span></div><table class="kunci-uraian-table">`;
-    uraian.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${pg.length+isian.length+i+1}.</td><td>${escHtml(stripHtml(item.jawaban||'—'))}</td></tr>`;});
+    uraian.forEach((item,i)=>{
+      const rubrik=Array.isArray(item.rubrik)&&item.rubrik.length
+        ?`<div class="rubrik-block" style="margin-top:4px;font-size:9pt;color:#555;line-height:1.5;"><strong>Rubrik:</strong><br>${item.rubrik.map(r=>`- ${escHtml(stripHtml(r))}`).join('<br>')}</div>`
+        :'';
+      html+=`<tr><td class="kunci-no-col">${pg.length+isian.length+i+1}.</td><td>${escHtml(stripHtml(item.jawaban||'—'))}${rubrik}</td></tr>`;
+    });
     html+=`</table>`;
   }
   html+=`<div style="margin-top:14px;padding:8px 12px;background:#f0f9f4;border:1px solid #6ee7b7;border-radius:6px;font-size:10pt;font-family:'Times New Roman',serif;">
@@ -2278,9 +2438,10 @@ async function exportPDF(mode){
   gaEvent('download_pdf',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free',mode:mode||'all'});
 
   let pagesToRender=halamanSoal;
-  if(mode==='soal') pagesToRender=halamanSoal.slice(0,Math.max(1,halamanSoal.length-2));
-  else if(mode==='kunci') pagesToRender=halamanSoal.slice(0,Math.max(1,halamanSoal.length-1));
-  else if(mode==='kisi') pagesToRender=halamanSoal.slice(-1);
+  if(mode==='soal') pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='soal');
+  else if(mode==='kunci') pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='soal'||halamanMeta[i]==='kunci');
+  else if(mode==='kunci-tanpa-rubrik') pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='soal'||halamanMeta[i]==='kunci').map(stripRubrikHtml);
+  else if(mode==='kisi') pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='kisi');
 
   const btn=document.getElementById('btnPDF');
   const origTxt=btn?btn.textContent:'';
@@ -2334,6 +2495,7 @@ async function exportPDF(mode){
     .kisi-no{text-align:center;width:24px;white-space:nowrap;}
     .kisi-materi{width:110px;}.kisi-indikator{width:auto;}
     .kisi-level{text-align:center;width:40px;}.kisi-bentuk{text-align:center;width:55px;}.kisi-nomor{text-align:center;width:38px;}
+    .no-print{display:none!important;}
     button{display:none!important;}
   `;
 
@@ -2410,12 +2572,12 @@ async function exportPDF(mode){
 /* ════════════════════════════════════════════
    EXPORT WORD — pakai docx.js (real .docx)
 ════════════════════════════════════════════ */
-async function exportWord(){
+async function exportWord(options={rubrik:true}){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
 
   // Tunggu docx library siap (maks 10 detik)
   if(typeof window.docx==='undefined'){
-    const btn=document.querySelector('[onclick="exportWord()"]');
+    const btn=document.getElementById('btnWord');
     const origTxtW=btn?btn.textContent:'';
     if(btn){btn.textContent='⏳ Memuat library...';btn.disabled=true;}
     let waited=0;
@@ -2765,6 +2927,10 @@ async function exportWord(){
     kP.push(P([T('III. Uraian',{bold:true,underline:true,size:22})],{before:160,after:60}));
     uraian.forEach((item,i)=>{
       kP.push(P([T((pg.length+isian.length+i+1)+'. ',{bold:true,size:20}),T(stripHtml(item.jawaban||'—'),{size:20})],{after:40}));
+      if(options.rubrik!==false&&Array.isArray(item.rubrik)&&item.rubrik.length){
+        kP.push(P([T('Rubrik:',{bold:true,size:18})],{indent:360,after:20}));
+        item.rubrik.forEach(r=>kP.push(P([T('- '+stripHtml(r),{size:18})],{indent:540,after:20})));
+      }
     });
   }
   kP.push(P([T('Nilai = (Skor Diperoleh ÷ '+totalSkor+') × 100',{italic:true,size:20})],{before:160}));
@@ -2817,7 +2983,7 @@ async function exportWord(){
     }]
   });
 
-  const btn=document.querySelector('[onclick="exportWord()"]');
+  const btn=document.getElementById('btnWord');
   const origTxt=btn?btn.textContent:'';
   if(btn){btn.textContent='⏳ Menyiapkan...';btn.disabled=true;}
 
@@ -2855,10 +3021,18 @@ function togglePDFMenu(){
   m.style.display=m.style.display==='none'?'block':'none';
 }
 function closePDFMenu(){document.getElementById('pdfMenu').style.display='none';}
+function toggleWordMenu(){
+  const m=document.getElementById('wordMenu');
+  m.style.display=m.style.display==='none'?'block':'none';
+}
+function closeWordMenu(){document.getElementById('wordMenu').style.display='none';}
 document.addEventListener('click',e=>{
   const menu=document.getElementById('pdfMenu');
   const btn=document.getElementById('btnPDF');
   if(menu&&btn&&!btn.contains(e.target)&&!menu.contains(e.target)){menu.style.display='none';}
+  const wordMenu=document.getElementById('wordMenu');
+  const wordBtn=document.getElementById('btnWord');
+  if(wordMenu&&wordBtn&&!wordBtn.contains(e.target)&&!wordMenu.contains(e.target)){wordMenu.style.display='none';}
 });
 
 function shuffleSoal(){
@@ -2871,11 +3045,66 @@ function shuffleSoal(){
   showGenerateFeedback('🔀 Urutan soal sudah diacak!',2500);
 }
 
+async function regenerateSoalItem(type,idx){
+  if(!soalData)return;
+  const arr=type==='pg'?soalData.pilihanGanda:type==='isian'?soalData.isian:soalData.uraian;
+  const item=arr&&arr[idx];
+  if(!item)return;
+  const kelas=parseInt(document.getElementById('kelas').value)||1;
+  const jenjang=getJenjang();
+  const mapel=getMapelValue();
+  const opsiConfig=getOpsiPGConfig(kelas);
+  const tipeLabel=type==='pg'?'pilihan ganda':type==='isian'?'isian singkat':'uraian';
+  const counts={pg:type==='pg'?1:0,isian:type==='isian'?1:0,uraian:type==='uraian'?1:0};
+  const prompt=`Buat ulang 1 soal ${tipeLabel} untuk mengganti soal berikut. Jangan menyalin soal lama.
+
+Kelas: ${kelas} ${getSatuanPendidikan()} (${getFaseLabel(kelas,jenjang)})
+Mata pelajaran: ${mapel}
+Materi: ${lastMateriTerpilih||getMateriTerpilih()}
+Tingkat kesulitan yang boleh dipakai: ${getKesulitanLevels().join(', ')}
+Mode soal: ${getModeSoalInstruksi()}
+Aturan PG: ${opsiConfig.instruksi}
+
+Soal lama:
+${stripHtml(item.soal||'')}
+
+Kembalikan HANYA JSON valid:
+{
+  "pilihanGanda":${type==='pg'?'[{"soal":"...","opsi":'+opsiConfig.template+',"jawaban":"A","indikator":"Siswa dapat ...","level":"C2"}]':'[]'},
+  "isian":${type==='isian'?'[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C1"}]':'[]'},
+  "uraian":${type==='uraian'?'[{"soal":"...","jawaban":"...","rubrik":["Skor 4: ...","Skor 3: ...","Skor 2: ...","Skor 1: ..."],"indikator":"Siswa dapat ...","level":"C4"}]':'[]'}
+}`;
+  const savedPage=currentPage;
+  hideError();setLoading(true);showGenerateFeedback(`Membuat ulang soal ${tipeLabel} nomor ${idx+1}...`,0);
+  try{
+    const cfg={jmlPG:counts.pg,jmlIsian:counts.isian,jmlUraian:counts.uraian,opsiLabels:opsiConfig.labels,allowedLevels:getKesulitanLevels()};
+    let rawText=await requestGenerateSoal(prompt);
+    let fresh;
+    try{
+      fresh=normalizeAndValidateSoalAI(parseSoalJson(rawText),cfg);
+    }catch(validateErr){
+      rawText=await requestGenerateSoal(`Perbaiki JSON berikut. Kesalahan: ${validateErr.message}. Kembalikan hanya JSON valid sesuai schema satu soal ${tipeLabel}.\n${rawText}`);
+      fresh=normalizeAndValidateSoalAI(parseSoalJson(rawText),cfg);
+    }
+    if(type==='pg')soalData.pilihanGanda[idx]=fresh.pilihanGanda[0];
+    if(type==='isian')soalData.isian[idx]=fresh.isian[0];
+    if(type==='uraian')soalData.uraian[idx]=fresh.uraian[0];
+    buildHalaman(soalData);
+    showPage(Math.min(savedPage,halamanSoal.length-1));
+    setTimeout(()=>enableInlineEdit(),200);
+    simpanHistori(soalData);
+    showGenerateFeedback('Soal berhasil dibuat ulang.',2500);
+  }catch(e){
+    showError(e.message||'Gagal membuat ulang soal. Coba lagi.');
+  }finally{
+    setLoading(false);
+  }
+}
 
 function copyContent(){
   if(!soalData){alert('Generate soal terlebih dahulu.');return;}
-  // Hanya copy halaman soal (bukan kunci & kisi-kisi = 2 halaman terakhir)
-  const soalPages=halamanSoal.slice(0,Math.max(1,halamanSoal.length-2));
+  // Hanya copy halaman soal, bukan kunci, kisi-kisi, atau prompt gambar.
+  const soalPages=halamanSoal.filter((_,i)=>halamanMeta[i]==='soal');
   const tmp=document.createElement('div');
   tmp.innerHTML=soalPages.join('\n---\n');
   const teks=tmp.innerText||tmp.textContent||'';
@@ -2944,7 +3173,10 @@ function buildSoalRow(b){
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="pg" data-idx="${pgIdx}">${escHtml(b.item.soal)}</span>
-        <button onclick="openEditModal('pg',${pgIdx})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+        <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
+          <button onclick="regenerateSoalItem('pg',${pgIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
+          <button onclick="openEditModal('pg',${pgIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+        </span>
       </div>
       ${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
   }
@@ -2953,7 +3185,10 @@ function buildSoalRow(b){
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="isian" data-idx="${isIdx}">${escHtml(b.item.soal)}</span>
-        <button onclick="openEditModal('isian',${isIdx})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+        <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
+          <button onclick="regenerateSoalItem('isian',${isIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
+          <button onclick="openEditModal('isian',${isIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+        </span>
       </div>
       <br><span class="isian-garis">&nbsp;</span></td></tr><tr><td colspan="2" style="height:3px;"></td></tr>`;
   }
@@ -2964,7 +3199,10 @@ function buildSoalRow(b){
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="uraian" data-idx="${urIdx}">${escHtml(b.item.soal)}</span>
-        <button onclick="openEditModal('uraian',${urIdx})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+        <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
+          <button onclick="regenerateSoalItem('uraian',${urIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
+          <button onclick="openEditModal('uraian',${urIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+        </span>
       </div>
       <div class="uraian-kotak"></div></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;
   }
@@ -3059,10 +3297,13 @@ function resetForm(){
   document.getElementById('jmlPG').value=10;
   document.getElementById('jmlIsian').value=5;
   document.getElementById('jmlUraian').value=3;
+  document.getElementById('paketSoal').value='standar';
+  document.getElementById('modeSoal').value='standar';
   document.getElementById('topikTambahan').value='';
   document.querySelectorAll('.cb-kesulitan').forEach((c,i)=>c.checked=i<3);
   localStorage.removeItem('bgy_form_autosave');
   document.getElementById('errorBox').style.display='none';
+  updateSmartHints();
 }
 
 /* ════════════════════════════════════════════
@@ -3079,6 +3320,8 @@ function autoSaveForm(){
     kelas:document.getElementById('kelas').value,
     mapel:document.getElementById('mataPelajaran').value,
     mapelCustom:(document.getElementById('mataPelajaranCustom')?.value||''),
+    modeSoal:document.getElementById('modeSoal')?.value||'standar',
+    paketSoal:document.getElementById('paketSoal')?.value||'standar',
     jmlPG:document.getElementById('jmlPG').value,
     jmlIsian:document.getElementById('jmlIsian').value,
     jmlUraian:document.getElementById('jmlUraian').value,
@@ -3110,18 +3353,25 @@ function restoreAutoSave(){
         if(ci){ci.value=d.mapelCustom;ci.style.display='block';}
       }
     }
+    if(d.modeSoal&&document.getElementById('modeSoal'))document.getElementById('modeSoal').value=d.modeSoal;
+    if(d.paketSoal&&document.getElementById('paketSoal'))document.getElementById('paketSoal').value=d.paketSoal;
     if(d.jmlPG)document.getElementById('jmlPG').value=d.jmlPG;
     if(d.jmlIsian)document.getElementById('jmlIsian').value=d.jmlIsian;
     if(d.jmlUraian)document.getElementById('jmlUraian').value=d.jmlUraian;
     if(d.topikTambahan)document.getElementById('topikTambahan').value=d.topikTambahan;
     if(d.kesulitan){const cbs=document.querySelectorAll('.cb-kesulitan');d.kesulitan.forEach((v,i)=>{if(cbs[i])cbs[i].checked=v;});}
     renderMateriChecklist();
+    updateSmartHints();
   }catch(e){console.warn('restoreAutoSave:',e);}
 }
-['namaSekolah','tahunPelajaran','semester','tanggal','jenisUjian','jenisUjianCustom','kelas','mataPelajaran','mataPelajaranCustom','jmlPG','jmlIsian','jmlUraian','topikTambahan'].forEach(id=>{
+['namaSekolah','tahunPelajaran','semester','tanggal','jenisUjian','jenisUjianCustom','kelas','mataPelajaran','mataPelajaranCustom','modeSoal','paketSoal','topikTambahan'].forEach(id=>{
   const el=document.getElementById(id);if(el)el.addEventListener('change',autoSaveForm);
 });
+['jmlPG','jmlIsian','jmlUraian'].forEach(id=>{
+  const el=document.getElementById(id);if(el)el.addEventListener('change',markPaketCustom);
+});
 document.querySelectorAll('.cb-kesulitan').forEach(c=>c.addEventListener('change',autoSaveForm));
+document.querySelectorAll('.cb-kesulitan').forEach(c=>c.addEventListener('change',updateSmartHints));
 
 /* ════════════════════════════════════════════
    SMART FEEDBACK

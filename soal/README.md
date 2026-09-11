@@ -17,13 +17,29 @@ Aplikasi web untuk membuat soal latihan sekaligus ekspor dokumen siap pakai.
   - Kelas 1-3: A, B, C
   - Kelas 4-9: A, B, C, D
   - Kelas 10-12: A, B, C, D, E
+- Preset jumlah soal otomatis:
+  - Ringkas
+  - Standar
+  - Lengkap
+  - Custom manual
+- Hint otomatis untuk jumlah opsi, rekomendasi jumlah soal, dan mode soal
+- Mode soal:
+  - Standar seimbang
+  - Kontekstual
+  - HOTS
+  - Literasi / numerasi
+  - AKM-style
 - Validasi hasil AI sebelum ditampilkan:
   - jumlah soal sesuai input
   - jumlah opsi PG sesuai kelas
   - jawaban PG sesuai opsi yang tersedia
-  - level Bloom sesuai pilihan
+  - level Bloom disesuaikan ke pilihan terdekat jika AI meleset
+- Auto-retry satu kali jika respons AI belum sesuai format/aturan
 - Kunci jawaban otomatis
 - Kisi-kisi otomatis
+- Rubrik skor otomatis untuk soal uraian
+- Export kunci jawaban dengan atau tanpa rubrik
+- Regenerate soal per nomor tanpa mengganti seluruh paket
 - Preview lembar ujian gaya dokumen sekolah
 - Ekspor ke DOCX (editable)
 - Ekspor ke PDF (siap cetak)
