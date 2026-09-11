@@ -149,6 +149,11 @@ textarea{resize:vertical;}
 .dim-chip input{display:none;}
 .dim-chip:has(input:checked){background:#cff0ef;border-color:#0ea5a0;color:#0d6e6a;}
 body.dark .dim-chip:has(input:checked){background:#0d3a47;color:#5eead4;border-color:#0ea5a0;}
+.mode-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.mode-chip{display:flex;align-items:center;justify-content:center;border:2px solid var(--border);border-radius:10px;padding:8px 6px;cursor:pointer;font-size:.78rem;font-weight:800;color:var(--text-light);background:var(--input-bg);transition:border-color .2s,background .2s,color .2s;}
+.mode-chip input{display:none;}
+.mode-chip:has(input:checked){background:#cff0ef;border-color:#0ea5a0;color:#0d6e6a;}
+body.dark .mode-chip:has(input:checked){background:#0d3a47;color:#5eead4;border-color:#0ea5a0;}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:8px;border:none;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;}
@@ -159,6 +164,7 @@ body.dark .dim-chip:has(input:checked){background:#0d3a47;color:#5eead4;border-c
 .btn-claude{background:linear-gradient(135deg,#d97706,#b45309);color:#fff;flex:1;justify-content:center;padding:10px;font-size:.85rem;border-radius:9px;}
 .btn-copy{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:100%;justify-content:center;padding:11px;font-size:.88rem;border-radius:9px;}
 .prompt-result{background:var(--input-bg);border:1.5px solid var(--border);border-radius:10px;padding:14px;font-size:.8rem;color:var(--text);white-space:pre-wrap;line-height:1.75;min-height:200px;max-height:500px;overflow-y:auto;font-family:'Courier New',monospace;}
+.prompt-result.modul-output{font-family:'Segoe UI',system-ui,sans-serif;font-size:.86rem;line-height:1.8;}
 body.dark .prompt-result{background:#0f172a;}
 .prompt-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-light);gap:10px;}
 .prompt-placeholder .ph-icon{font-size:2.5rem;opacity:.4;}
@@ -336,10 +342,16 @@ footer a{color:inherit;text-decoration:underline;}
       <div class="card">
         <div class="card-title" id="formTitle">📋 Identitas Modul Ajar</div>
 
+        <div class="mode-toggle" aria-label="Mode hasil modul ajar">
+          <label class="mode-chip"><input type="radio" name="outputMode" value="prompt" checked onchange="updateOutputModeUI()"/><span>📝 Prompt Saja</span></label>
+          <label class="mode-chip"><input type="radio" name="outputMode" value="direct" onchange="updateOutputModeUI()"/><span>⚡ Generate Langsung</span></label>
+        </div>
+
         <div class="form-group">
           <label>Kurikulum / Jenis Perangkat Ajar</label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
             <label class="jenjang-chip"><input type="radio" name="kurikulum" value="MERDEKA" checked onchange="toggleKurikulum()"/><span>📘 Kurikulum Merdeka</span></label>
+            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="KBC" onchange="toggleKurikulum()"/><span>💚 KBC</span></label>
             <label class="jenjang-chip"><input type="radio" name="kurikulum" value="K13" onchange="toggleKurikulum()"/><span>📗 Kurikulum 2013 (RPP)</span></label>
           </div>
         </div>
@@ -460,14 +472,49 @@ footer a{color:inherit;text-decoration:underline;}
           </div>
         </div>
 
+        <div id="kbcWrap" style="display:none;border:1.5px solid rgba(14,165,160,.28);background:rgba(14,165,160,.07);border-radius:12px;padding:12px;margin-bottom:10px;">
+          <div style="font-size:.78rem;font-weight:800;color:#0d7a8a;margin-bottom:8px;">💚 Pengaturan KBC</div>
+          <div class="form-group">
+            <label>Nuansa KBC</label>
+            <select id="kbcNuansa">
+              <option value="Universal dan inklusif">Universal dan inklusif</option>
+              <option value="Religius madrasah / Islami">Religius madrasah / Islami</option>
+              <option value="Sosial-emosional">Sosial-emosional</option>
+              <option value="Peduli lingkungan">Peduli lingkungan</option>
+              <option value="Digital-kolaboratif">Digital-kolaboratif</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nilai Cinta Utama</label>
+            <div class="dim-checks">
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada Tuhan" checked/>Tuhan</label>
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada diri sendiri" checked/>Diri</label>
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada sesama" checked/>Sesama</label>
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada ilmu"/>Ilmu</label>
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada bangsa"/>Bangsa</label>
+              <label class="dim-chip"><input type="checkbox" class="cb-kbc-nilai" value="Cinta kepada lingkungan"/>Lingkungan</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Konteks Satuan Pendidikan</label>
+            <input type="text" id="kbcKonteks" placeholder="Contoh: madrasah ramah anak, sekolah umum, kelas heterogen..."/>
+          </div>
+          <div class="form-group">
+            <label>Kemitraan Pembelajaran</label>
+            <input type="text" id="kbcKemitraan" placeholder="Contoh: orang tua, guru BK, tokoh masyarakat, DUDI untuk SMK..."/>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Pemanfaatan Digital</label>
+            <input type="text" id="kbcDigital" placeholder="Contoh: video pendek, kuis digital, Google Classroom, portofolio digital..."/>
+          </div>
+        </div>
+
         <div class="form-group">
           <label>Karakteristik Siswa <span style="font-size:.65rem;color:var(--text-light);font-weight:400;">(opsional)</span></label>
           <textarea id="karakteristikSiswa" rows="2" placeholder="Contoh: Reguler, mayoritas visual, ada siswa berkebutuhan khusus..."></textarea>
         </div>
 
       </div>
-
-      <div id="errorBox" class="error-box"></div>
 
       <div id="errorBox" class="error-box" style="display:none;margin-bottom:8px;"></div>
 
@@ -536,20 +583,20 @@ footer a{color:inherit;text-decoration:underline;}
     <!-- ============ KOLOM KANAN: PROMPT OUTPUT ============ -->
     <div class="col-right">
       <div class="card" id="hasilCard">
-        <div class="card-title">📄 Prompt Siap Pakai</div>
+        <div class="card-title" id="outputTitle">📄 Prompt Siap Pakai</div>
 
         <div class="prompt-placeholder" id="promptPlaceholder">
           <div class="ph-icon">📝</div>
-          <p>Isi form di kiri lalu klik<br/><b>Generate Prompt Modul Ajar</b><br/><span style="font-size:.74rem;opacity:.7;">Prompt siap paste ke Claude</span></p>
+          <p id="outputPlaceholderText">Isi form di kiri lalu klik<br/><b>Generate Prompt Modul Ajar</b><br/><span style="font-size:.74rem;opacity:.7;">Prompt siap paste ke Claude</span></p>
         </div>
 
         <div id="promptContent" style="display:none;">
           <div class="prompt-result" id="hasilPrompt"></div>
           <div style="margin-top:10px;display:flex;flex-direction:column;gap:7px;">
-            <button class="btn btn-copy" onclick="copyPrompt()">📋 Salin Prompt</button>
+            <button class="btn btn-copy" id="btnCopyOutput" onclick="copyPrompt()">📋 Salin Prompt</button>
             <div class="notif-box" id="notifCopy">✅ Prompt berhasil disalin!</div>
           </div>
-          <div style="margin-top:10px;background:rgba(14,165,160,.07);border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:10px 12px;">
+          <div id="aiForwardBox" style="margin-top:10px;background:rgba(14,165,160,.07);border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:10px 12px;">
             <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;">🚀 Kirim ke Claude — Prompt otomatis tersalin, langsung paste!</div>
             <div style="display:flex;gap:8px;">
               <button class="btn btn-claude" style="width:100%;" onclick="openAI('claude')">🧡 Buka Claude</button>
@@ -900,7 +947,7 @@ function updateLimitDisplay(){
   if(_isPro){
     if(el){const d=JSON.parse(localStorage.getItem('bgy_pro_ma')||'{}');el.textContent=subscriptionLabel(d);el.style.color='#059669';}
     document.getElementById('aktivasiBox').style.display='none';
-    if(btnLbl)btnLbl.textContent='✨ Generate Prompt Modul Ajar';
+    updateOutputModeUI();
     if(btn)btn.disabled=false;
     if(lr)lr.style.display='none';
     const b=document.getElementById('hBadge');if(b){b.textContent='PRO';b.className='badge-pro';}
@@ -915,7 +962,8 @@ function updateLimitDisplay(){
     el.style.color=remaining<=0?'#dc2626':remaining===1?'#d97706':'#64748b';
   }
   if(btnLbl&&btnLbl.textContent.indexOf('Menyusun')===-1){
-    btnLbl.textContent=lc.ok?`✨ Generate Prompt Modul Ajar (${remaining}x)`:'⛔ Limit Habis';
+    if(lc.ok)updateOutputModeUI();
+    else btnLbl.textContent='⛔ Limit Habis';
   }
   if(btn)btn.disabled=!lc.ok;
 }
@@ -961,12 +1009,9 @@ function setLoading(s){
     else{_stopGoMessages();document.body.style.overflow='';}
   }
   if(!s){
-    const{ok,remaining}=checkLimit();
-    if(btnLbl){
-      btnLbl.textContent=_isPro?'✨ Generate Prompt Modul Ajar':(ok?`✨ Generate Prompt Modul Ajar (${remaining}x)`:'⛔ Limit Habis');
-    }
+    updateOutputModeUI();
   } else {
-    if(btnLbl)btnLbl.textContent='Menyusun prompt...';
+    if(btnLbl)btnLbl.textContent=getOutputMode()==='direct'?'Menyusun modul...':'Menyusun prompt...';
   }
 }
 
@@ -1069,23 +1114,242 @@ function getAutoTahunAjaran(){
   return (year-1)+'/'+year;
 }
 
+function getOutputMode(){
+  return document.querySelector('input[name="outputMode"]:checked')?.value||'prompt';
+}
+
+function updateOutputModeUI(){
+  const mode=getOutputMode();
+  const kurikulum=document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
+  const isK13=kurikulum==='K13';
+  const isKBC=kurikulum==='KBC';
+  const promptMode=mode==='prompt';
+  const baseLabel=isK13?'RPP K13':isKBC?'Modul Ajar KBC':'Modul Ajar';
+  const btnLbl=document.getElementById('btnLabel');
+  const outputTitle=document.getElementById('outputTitle');
+  const placeholder=document.getElementById('outputPlaceholderText');
+  const hasil=document.getElementById('hasilPrompt');
+  const copyBtn=document.getElementById('btnCopyOutput');
+  const aiBox=document.getElementById('aiForwardBox');
+  if(btnLbl)btnLbl.textContent=promptMode?`✨ Generate Prompt ${baseLabel}`:`⚡ Generate Langsung ${baseLabel}`;
+  if(outputTitle)outputTitle.textContent=promptMode?'📄 Prompt Siap Pakai':'📄 Hasil Modul Ajar';
+  if(placeholder)placeholder.innerHTML=promptMode
+    ?`Isi form di kiri lalu klik<br/><b>Generate Prompt ${baseLabel}</b><br/><span style="font-size:.74rem;opacity:.7;">Prompt siap paste ke Claude</span>`
+    :`Isi form di kiri lalu klik<br/><b>Generate Langsung ${baseLabel}</b><br/><span style="font-size:.74rem;opacity:.7;">Hasil modul tampil di sini</span>`;
+  if(copyBtn)copyBtn.textContent=promptMode?'📋 Salin Prompt':'📋 Salin Hasil Modul';
+  if(aiBox)aiBox.style.display=promptMode?'':'none';
+  if(hasil)hasil.classList.toggle('modul-output',!promptMode);
+}
+
 function toggleKurikulum(){
   const kurikulum=document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
   const isK13=kurikulum==='K13';
+  const isKBC=kurikulum==='KBC';
   document.getElementById('p5Wrap').style.display=isK13?'none':'';
-  document.getElementById('btnLabel').textContent=isK13?'✨ Generate Prompt RPP K13':'✨ Generate Prompt Modul Ajar';
-  document.getElementById('formTitle').textContent=isK13?'📋 Identitas RPP Kurikulum 2013':'📋 Identitas Modul Ajar';
+  document.getElementById('kbcWrap').style.display=isKBC?'block':'none';
+  document.getElementById('formTitle').textContent=isK13?'📋 Identitas RPP Kurikulum 2013':isKBC?'📋 Identitas Modul Ajar KBC':'📋 Identitas Modul Ajar';
+  updateOutputModeUI();
 }
 
 // ============================================================
 // GENERATE PROMPT
 // ============================================================
-function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum){
+function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc={}){
   const tgl=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
   const safeMapel=mapel.replace(/\s+/g,'_');
   const safeFase=fase.replace(/[\s\/]+/g,'_');
   const namaFile=`Modul_Ajar_${j}_${safeMapel}_${safeFase}.docx`;
   const konsentrasiLine=konsentrasi?`- Konsentrasi Keahlian: ${konsentrasi}\n`:'';
+
+  if(kurikulum==='KBC'){
+    const namaFileKBC=`Modul_Ajar_KBC_${j}_${safeMapel}_${safeFase}.docx`;
+    const guruLabel=j==='SD'?'Guru Kelas':j==='SMK'?'Guru / Instruktur':'Guru Mata Pelajaran';
+    const konteksSatuan=kbc.nuansa==='Religius madrasah / Islami'||/madrasah|mi |mts|ma |islam/i.test(namaSekolah+' '+mapel)
+      ?'Gunakan istilah madrasah secara natural dan integrasikan nilai keislaman dengan santun.'
+      :'Gunakan istilah sekolah secara umum; nilai cinta kepada Tuhan, diri, sesama, bangsa, dan lingkungan ditulis universal, inklusif, dan tidak berlebihan.';
+    const nilaiKBC=kbc.nilai||'Cinta kepada Tuhan, cinta kepada diri sendiri, dan cinta kepada sesama';
+    const konteksKBC=kbc.konteks||'satuan pendidikan yang aman, ramah anak, inklusif, dan menghargai keberagaman peserta didik';
+    const kemitraanKBC=kbc.kemitraan||'teman sebaya, guru lain, orang tua/wali, masyarakat sekitar, dan komunitas belajar';
+    const digitalKBC=kbc.digital||'video pembelajaran, kuis digital, ruang kelas virtual, dan portofolio digital sederhana';
+    return `Anda adalah guru profesional Indonesia, pengembang kurikulum, dan praktisi **Kurikulum Berbasis Cinta (KBC)** yang mampu menyusun modul ajar kontekstual, berdiferensiasi, bernuansa welas asih, dan siap pakai untuk semua jenjang.
+
+Buat **MODUL AJAR KURIKULUM BERBASIS CINTA (KBC)** yang lengkap, sistematis, operasional, indah dibaca, dan realistis berdasarkan data berikut:
+
+**IDENTITAS MODUL:**
+- Nama Sekolah/Madrasah: ${namaSekolah}
+- Penyusun: ${namaPenyusun}
+- Jenjang: ${j}
+- Mata Pelajaran: ${mapel}
+${konsentrasiLine}- Fase / Kelas: ${fase}
+- Semester: ${semester}
+- Tahun Ajaran: ${tahun}
+- Alokasi Waktu: ${alokasi}
+- Topik / Materi Pokok: ${topik}
+- Model / Pendekatan Pembelajaran: ${model}
+- Karakteristik Peserta Didik: ${karakteristik}
+- Dimensi Profil Lulusan yang dikembangkan: ${p5}
+- Nuansa KBC: ${kbc.nuansa||'Universal dan inklusif'}
+- Nilai Cinta Utama: ${nilaiKBC}
+- Konteks Satuan Pendidikan: ${konteksKBC}
+- Kemitraan Pembelajaran: ${kemitraanKBC}
+- Pemanfaatan Digital: ${digitalKBC}
+
+**ARAH KBC:**
+- Jadikan cinta sebagai napas pembelajaran: cinta kepada Tuhan, cinta kepada diri, cinta kepada sesama, cinta kepada ilmu, cinta kepada bangsa, dan cinta kepada lingkungan.
+- Prioritaskan nilai cinta utama berikut: ${nilaiKBC}.
+- ${konteksSatuan}
+- Nilai KBC harus tampak dalam tujuan, aktivitas guru-siswa, budaya kelas, asesmen, refleksi, dan tindak lanjut; jangan hanya menjadi daftar.
+- Gunakan pendekatan **Deep Learning**: Mindful Learning, Meaningful Learning, dan Joyful Learning.
+- Terapkan pembelajaran berdiferensiasi: konten, proses, produk, kesiapan belajar, minat, dan profil belajar.
+- Sertakan pembelajaran lintas disiplin, kemitraan pembelajaran, lingkungan belajar fisik/virtual, budaya belajar positif, dan pemanfaatan digital.
+
+Susun dokumen dengan urutan berikut:
+
+## MODUL AJAR KURIKULUM BERBASIS CINTA (KBC)
+
+### A. IDENTITAS MODUL
+Sajikan identitas dalam tabel rapi.
+
+### B. RASIONAL DAN LANDASAN KBC
+Jelaskan alasan topik ini penting dan bagaimana nilai cinta menjadi dasar pembelajaran. Hubungkan dengan kehidupan nyata peserta didik.
+
+### C. PROFIL DAN KARAKTERISTIK PESERTA DIDIK
+Uraikan kondisi peserta didik, kesiapan belajar, kebutuhan diferensiasi, serta potensi kelas secara realistis.
+
+### D. KOMPETENSI AWAL, TINGKAT KESULITAN, DAN STRUKTUR MATERI
+- Kompetensi awal yang perlu dimiliki peserta didik.
+- Tingkat kesulitan: dari dasar menuju menalar/mencipta sesuai jenjang.
+- Struktur materi bertahap, misalnya pengenalan konsep -> pemahaman -> praktik -> analisis -> produk/refleksi.
+- Integrasi nilai dan karakter yang relevan.
+
+### E. DIMENSI PROFIL LULUSAN
+Uraikan dimensi yang dipilih berikut perilaku nyata yang tampak di kelas. Gunakan butir yang operasional, bukan abstrak.
+
+### F. DESAIN PEMBELAJARAN
+
+#### A. CAPAIAN PEMBELAJARAN (CP)
+Tuliskan CP yang relevan dengan mapel dan fase. Jika CP resmi tidak dapat dipastikan, tuliskan CP generik yang selaras dan beri catatan **[verifikasi dengan dokumen CP resmi sekolah/madrasah]**. Jika mapel memiliki elemen, sajikan tabel:
+| Elemen | Capaian Pembelajaran |
+| --- | --- |
+
+#### B. LINTAS DISIPLIN ILMU
+Hubungkan materi dengan minimal 3 disiplin/mapel lain yang relevan. Jelaskan kontribusinya secara konkret.
+
+#### C. TUJUAN PEMBELAJARAN
+Buat tujuan pembelajaran per pertemuan atau per tahap. Gunakan KKO terukur, selaras dengan CP, topik, dan nilai KBC.
+
+#### D. INDIKATOR KETERCAPAIAN TUJUAN PEMBELAJARAN
+Buat indikator bernomor yang dapat diamati dan dinilai.
+
+#### E. IKLIM/BUDAYA SEKOLAH ATAU MADRASAH
+Tuliskan budaya belajar yang ingin dibangun, misalnya aman, saling menghargai, berani mencoba, sopan, peduli, reflektif, dan saling mendukung.
+
+#### F. TOPIK PEMBELAJARAN KONTEKSTUAL
+Jelaskan konteks nyata topik ini dalam kehidupan peserta didik, keluarga, sekolah/madrasah, masyarakat, dunia digital, lingkungan, atau dunia kerja untuk SMK.
+
+### G. KERANGKA PEMBELAJARAN
+
+#### PRAKTIK PEDAGOGIK
+- Model Pembelajaran: ${model}
+- Pendekatan: Deep Learning (Mindful, Meaningful, Joyful Learning)
+- Mindful Learning: aktivitas fokus, sadar tujuan, menyimak/mengamati dengan penuh perhatian.
+- Meaningful Learning: aktivitas mengaitkan materi dengan pengalaman hidup, nilai cinta, dan manfaat nyata.
+- Joyful Learning: aktivitas menyenangkan, kolaboratif, kreatif, dan tetap bermakna.
+- Metode Pembelajaran: pilih metode yang sesuai seperti diskusi, demonstrasi, tanya jawab, eksperimen, role playing, studi kasus, proyek, atau praktik.
+- Strategi Pembelajaran Berdiferensiasi:
+  - Diferensiasi Konten
+  - Diferensiasi Proses
+  - Diferensiasi Produk
+
+#### KEMITRAAN PEMBELAJARAN
+Gunakan konteks kemitraan berikut sebagai dasar: ${kemitraanKBC}. Jelaskan peran teman sebaya, guru lain, orang tua/wali, masyarakat, narasumber, dunia usaha/industri untuk SMK, atau komunitas lokal.
+
+#### LINGKUNGAN BELAJAR
+- Ruang Fisik: susunan kelas/lab/bengkel dan media tempel.
+- Ruang Virtual: WhatsApp, Google Classroom, LMS, atau platform lain.
+- Budaya Belajar: suasana aman, menghargai, berani bertanya, dan tidak takut salah.
+
+#### PEMANFAATAN DIGITAL
+Gunakan arahan digital berikut sebagai dasar: ${digitalKBC}. Tuliskan penggunaan video, kuis digital, dokumen kolaboratif, portofolio digital, simulasi, rekaman karya, atau sumber belajar daring yang realistis.
+
+### H. LANGKAH-LANGKAH PEMBELAJARAN BERDIFERENSIASI
+Buat kegiatan per pertemuan. Jika alokasi waktu satu pertemuan, buat 1 pertemuan; jika topik luas, boleh 2-4 pertemuan. Pastikan total waktu sesuai ${alokasi}.
+
+Untuk setiap pertemuan, gunakan format:
+- **Pertemuan [n] ([alokasi waktu])**
+- Topik cinta/konteks nilai yang relevan
+- Kegiatan Pendahuluan
+- Kegiatan Inti
+  - Mindful Learning
+  - Joyful Repetition / aktivitas menyenangkan
+  - Meaningful Connection
+  - Pembelajaran Berdiferensiasi
+    - Proses
+    - Produk
+- Kegiatan Penutup
+  - Refleksi
+  - Rangkuman
+  - Tindak lanjut
+  - Penutup
+
+### I. ASESMEN PEMBELAJARAN
+Sajikan dalam tiga kotak/tabel:
+1. Asesmen Diagnostik
+2. Asesmen Formatif
+3. Asesmen Sumatif
+
+Lengkapi dengan:
+- teknik asesmen,
+- bentuk instrumen,
+- contoh soal/tugas,
+- kunci jawaban atau kriteria keberhasilan,
+- rubrik/pedoman penskoran,
+- refleksi sikap/nilai cinta.
+
+### J. REMEDIAL DAN PENGAYAAN
+Tulis kegiatan remedial dan pengayaan yang manusiawi, tidak menghukum, dan tetap menumbuhkan kepercayaan diri.
+
+### K. REFLEKSI GURU DAN PESERTA DIDIK
+Buat pertanyaan refleksi untuk guru dan peserta didik. Hubungkan dengan pemahaman materi dan pengalaman nilai cinta.
+
+### L. LAMPIRAN SIAP PAKAI
+Sertakan:
+- LKPD atau lembar aktivitas,
+- ringkasan materi,
+- instrumen observasi sikap,
+- soal evaluasi,
+- kunci jawaban,
+- rubrik keterampilan/produk,
+- format refleksi.
+
+**ATURAN OUTPUT:**
+- Tulis seluruh isi dalam Bahasa Indonesia formal, hangat, natural, dan siap dipakai guru.
+- Jangan menulis salam, pembuka, disclaimer AI, atau kalimat “Berikut adalah”.
+- Mulai langsung dengan judul: **## MODUL AJAR KURIKULUM BERBASIS CINTA (KBC)**.
+- Gunakan Markdown penuh, heading konsisten, tabel rapi untuk CP, kegiatan, asesmen, dan rubrik.
+- Jangan membuat aktivitas yang tidak realistis untuk kondisi sekolah/madrasah biasa.
+- Jika menggunakan istilah agama, gunakan secara proporsional sesuai mapel, jenjang, dan konteks satuan pendidikan.
+- Pastikan CP → TP → indikator → kegiatan → asesmen saling nyambung.
+
+**HALAMAN PENGESAHAN (bagian akhir):**
+${namaSekolah}, ${tgl}
+
+Mengetahui,
+Kepala Sekolah/Madrasah
+
+
+(________________________)
+NIP. ____________________
+
+
+${guruLabel},
+
+
+(${namaPenyusun})
+NIP. ____________________
+
+Setelah selesai, gunakan alat pembuatan file untuk menyimpan dokumen sebagai **${namaFileKBC}**, lalu informasikan bahwa file Word telah siap diunduh.`;
+  }
 
   if(kurikulum==='K13'){
     const namaFileK13=`RPP_K13_${j}_${safeMapel}_${safeFase}.docx`;
@@ -1424,7 +1688,37 @@ SETELAH SELESAI: simpan otomatis sebagai ${namaFile}, lalu informasikan singkat 
   return MAP[j]||PROMPT_SD;
 }
 
-function generatePrompt(){
+async function requestGenerateModul(prompt){
+  const directPrompt=`${prompt}
+
+CATATAN UNTUK MODE GENERATE LANGSUNG DI APLIKASI:
+- Jangan menyebut penggunaan file creation tool.
+- Jangan mengatakan file Word sudah dibuat.
+- Kembalikan isi dokumen lengkap dalam Markdown saja.
+- Mulai langsung dari judul dokumen.`;
+  const ctrl=new AbortController();
+  const tid=setTimeout(()=>ctrl.abort(),120000);
+  try{
+    const resp=await fetch('/api/generate-modul-ajar',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:directPrompt}),
+      signal:ctrl.signal
+    });
+    let json;
+    try{json=await resp.json();}catch{throw new Error(`Server error (HTTP ${resp.status}). Coba lagi beberapa saat.`);}
+    if(!resp.ok||json.error)throw new Error(json.error||`Server error (HTTP ${resp.status})`);
+    if(!json.text)throw new Error('Respons AI kosong. Coba generate ulang.');
+    return json.text;
+  }catch(e){
+    if(e.name==='AbortError')throw new Error('Waktu habis. Coba ringkas topik atau gunakan mode Prompt Saja dulu.');
+    throw e;
+  }finally{
+    clearTimeout(tid);
+  }
+}
+
+async function generatePrompt(){
   const errBox=document.getElementById('errorBox');
   errBox.style.display='none';
 
@@ -1444,37 +1738,58 @@ function generatePrompt(){
   const tahun=getAutoTahunAjaran();
   const konsentrasiRaw=document.getElementById('konsentrasiKeahlian')?.value||'';
   const konsentrasi=konsentrasiRaw==='__lainnya_konsentrasi__'?(document.getElementById('konsentrasiManual')?.value.trim()||''):konsentrasiRaw;
+  const outputMode=getOutputMode();
+  const kbc={
+    nuansa:document.getElementById('kbcNuansa')?.value||'Universal dan inklusif',
+    nilai:[...document.querySelectorAll('.cb-kbc-nilai:checked')].map(c=>c.value).join(', '),
+    konteks:document.getElementById('kbcKonteks')?.value.trim()||'',
+    kemitraan:document.getElementById('kbcKemitraan')?.value.trim()||'',
+    digital:document.getElementById('kbcDigital')?.value.trim()||''
+  };
 
   if(!mapelRaw||mapelRaw==='__lainnya__'&&!document.getElementById('mapelManual')?.value.trim()){errBox.textContent='⚠️ Pilih atau isi mata pelajaran terlebih dahulu.';errBox.style.display='block';return;}
   if(!topik){errBox.textContent='⚠️ Topik / materi pokok belum diisi.';errBox.style.display='block';return;}
   if(kurikulum!=='K13'&&!p5){errBox.textContent='⚠️ Pilih minimal satu Dimensi Profil Lulusan.';errBox.style.display='block';return;}
+  if(kurikulum==='KBC'&&!kbc.nilai){errBox.textContent='⚠️ Pilih minimal satu Nilai Cinta Utama untuk KBC.';errBox.style.display='block';return;}
 
   const lc=checkLimit();
   if(!lc.ok){document.getElementById('upgradePopup').style.display='flex';return;}
 
   setLoading(true);
-  setTimeout(()=>{
-    const prompt=buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum);
+  try{
+    const prompt=buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc);
+    let output=prompt;
+    if(outputMode==='direct'){
+      document.getElementById('generateFeedback').textContent='AI sedang menyusun modul ajar lengkap...';
+      output=await requestGenerateModul(prompt);
+    }else{
+      await new Promise(r=>setTimeout(r,700));
+    }
 
-    document.getElementById('hasilPrompt').textContent=prompt;
+    document.getElementById('hasilPrompt').textContent=output;
+    document.getElementById('hasilPrompt').classList.toggle('modul-output',outputMode==='direct');
     document.getElementById('promptPlaceholder').style.display='none';
     document.getElementById('promptContent').style.display='block';
 
     if(!isPro()) incrementDaily();
-    simpanHistori(prompt,mapel,fase,topik);
+    simpanHistori(output,mapel,fase,topik);
     setLoading(false);
     updateLimitDisplay();
     updateHistoriBadge();
 
     gaEvent('generate_prompt_modul_ajar',{kurikulum,jenjang:j,mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
 
-    document.getElementById('generateFeedback').textContent='✅ Prompt siap! Salin lalu paste ke Claude.';
+    document.getElementById('generateFeedback').textContent=outputMode==='direct'?'✅ Modul ajar selesai dibuat.':'✅ Prompt siap! Salin lalu paste ke Claude.';
     setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);
 
     if(window.innerWidth<900){
       document.getElementById('hasilCard').scrollIntoView({behavior:'smooth',block:'start'});
     }
-  },2500);
+  }catch(e){
+    errBox.textContent='⚠️ '+(e.message||'Gagal generate. Coba lagi.');
+    errBox.style.display='block';
+    setLoading(false);
+  }
 }
 
 // ============================================================
@@ -1482,10 +1797,10 @@ function generatePrompt(){
 // ============================================================
 function copyPrompt(){
   const txt=document.getElementById('hasilPrompt').textContent;
-  if(!txt){alert('Generate prompt dulu!');return;}
+  if(!txt){alert(getOutputMode()==='direct'?'Generate modul dulu!':'Generate prompt dulu!');return;}
   if(!isPro()){showUpgradePopup();return;}
   gaEvent('salin_prompt_modul_ajar',{tipe_user:'pro'});
-  const showNotif=()=>{const n=document.getElementById('notifCopy');n.style.display='block';setTimeout(()=>n.style.display='none',3000);};
+  const showNotif=()=>{const n=document.getElementById('notifCopy');n.textContent=getOutputMode()==='direct'?'✅ Hasil modul berhasil disalin!':'✅ Prompt berhasil disalin!';n.style.display='block';setTimeout(()=>n.style.display='none',3000);};
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(txt).then(showNotif).catch(()=>{fallbackCopy(txt);showNotif();});
   }else{fallbackCopy(txt);showNotif();}

@@ -13,6 +13,10 @@ export default async function handler(req, res) {
     process.env.GEMINI_MA_2,
     process.env.GEMINI_MA_3
   ];
+  const models = (process.env.GEMINI_MA_MODEL || 'gemini-2.5-flash,gemini-2.0-flash')
+    .split(',')
+    .map(model => model.trim())
+    .filter(Boolean);
 
   try {
     let body = req.body;
@@ -28,34 +32,43 @@ export default async function handler(req, res) {
     for (let apiKey of keys) {
       if (!apiKey) continue;
 
-      try {
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 8192,
-                thinkingConfig: { thinkingBudget: 0 }
-              }
-            })
+      for (let model of models) {
+        try {
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                generationConfig: {
+                  temperature: 0.7,
+                  maxOutputTokens: 16384,
+                  thinkingConfig: { thinkingBudget: 0 }
+                }
+              })
+            }
+          );
+
+          const data = await response.json();
+
+          if (response.ok) {
+            const text = (data.candidates || [])
+              .flatMap(candidate => candidate.content?.parts || [])
+              .map(part => part.text || '')
+              .join('');
+            if (!text) {
+              lastError = { error: 'Respons Gemini kosong', model, detail: data };
+              continue;
+            }
+            return res.status(200).json({ text, model });
+          } else {
+            lastError = { model, detail: data };
           }
-        );
 
-        const data = await response.json();
-
-        if (response.ok) {
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-          return res.status(200).json({ text });
-        } else {
-          lastError = data;
+        } catch (err) {
+          lastError = { model, message: err.message };
         }
-
-      } catch (err) {
-        lastError = err;
       }
     }
 
