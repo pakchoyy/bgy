@@ -1,7 +1,7 @@
-// BGY Modul Ajar — Service Worker v1.0
+// BGY Modul Ajar - Service Worker v3.0
 // Cache: aset statis saja. API/generate tetap butuh internet.
 
-const CACHE = 'bgy-modul-ajar-v1';
+const CACHE = 'bgy-modul-ajar-v3';
 
 // Aset yang di-cache saat install (disesuaikan dengan jalur modul-ajar)
 const PRECACHE = [
@@ -36,12 +36,14 @@ self.addEventListener('fetch', e => {
   // Hanya tangani request HTTP/HTTPS (hindari chrome-extension dll)
   if (!e.request.url.startsWith('http')) return;
 
-  e.respondWith(
-    caches.match(e.request).then(cachedResponse => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(e.request);
-    })
-  );
+  const wantsFreshPage=e.request.mode==='navigate'||e.request.destination==='document';
+  if(wantsFreshPage){
+    e.respondWith(fetch(e.request).then(response=>{
+      const copy=response.clone();
+      if(response.ok)caches.open(CACHE).then(cache=>cache.put(e.request,copy));
+      return response;
+    }).catch(()=>caches.match(e.request)));
+    return;
+  }
+  e.respondWith(caches.match(e.request).then(cachedResponse=>cachedResponse||fetch(e.request)));
 });

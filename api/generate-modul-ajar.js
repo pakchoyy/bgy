@@ -40,11 +40,15 @@ export default async function handler(req, res) {
 
     let lastError = null;
     const attempts = [];
+    const requestedModel = typeof body?.model === 'string' ? body.model.trim() : '';
+    const selectedModels = requestedModel && models.includes(requestedModel)
+      ? [requestedModel, ...models.filter(model => model !== requestedModel)]
+      : models;
 
     for (let apiKey of keys) {
       if (!apiKey) continue;
 
-      for (let model of models) {
+      for (let model of selectedModels) {
         try {
           const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
@@ -58,7 +62,7 @@ export default async function handler(req, res) {
                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
                 generationConfig: {
                   temperature: 0.45,
-                  maxOutputTokens: 32768
+                  maxOutputTokens: body?.stage ? 12288 : 32768
                 }
               })
             }
