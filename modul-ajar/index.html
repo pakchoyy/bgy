@@ -343,7 +343,7 @@ footer a{color:inherit;text-decoration:underline;}
 <main>
   <div class="card">
     <div class="card-title">ℹ️ Tentang Aplikasi</div>
-    <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Modul Ajar v26.6.3</p>
+    <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Modul Ajar v26.7.0</p>
     <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Pembuat Modul Ajar dan RPP</b> untuk SD, SMP, SMA, SMK, serta madrasah. Pilih Deep Learning, KBC Madrasah, atau K13/RPP; sistem akan menyesuaikan struktur dokumennya secara otomatis.</p>
     <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur</h4>
     <ul style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
@@ -366,7 +366,7 @@ footer a{color:inherit;text-decoration:underline;}
       <div class="card-title" style="margin-bottom:0;border:none;padding:0;">🕒 Histori Prompt</div>
       <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 11px;font-size:.74rem;font-weight:700;cursor:pointer;">🗑️ Hapus Semua</button>
     </div>
-    <div id="historiList"><div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya! 😊</div></div>
+    <div id="historiList"><div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Buat modul atau prompt terlebih dahulu.</div></div>
   </div>
 </main>
 </div>
@@ -389,7 +389,7 @@ footer a{color:inherit;text-decoration:underline;}
 <div id="tab-home">
 <main>
 
-  <div class="hint-bar" id="mainHint">Isi data pokok, lalu pilih Generate. CP, struktur modul, dan pemeriksaan kelengkapan diproses otomatis.</div>
+  <div class="hint-bar" id="mainHint">Isi data pokok, lalu pilih Buat. Struktur modul dan pemeriksaan kelengkapan diproses otomatis.</div>
 
   <div class="two-col">
     <!-- ============ KOLOM KIRI: FORM ============ -->
@@ -486,14 +486,25 @@ footer a{color:inherit;text-decoration:underline;}
               <option value="Fase C / Kelas 6 SD">Fase C / Kelas 6</option>
             </select>
           </div>
-          <div class="form-group" id="mataPelajaranTambahanWrap" style="display:none;">
-            <label>Mapel Tambahan <span style="font-size:.65rem;color:var(--text-light);font-weight:400;">(opsional)</span></label>
-            <input type="text" id="mataPelajaranTambahan" placeholder="Misal: Muatan Lokal, Bahasa Daerah..."/>
-          </div>
           <div class="form-group">
-            <label for="alokasiWaktu">Alokasi Waktu</label>
+            <label for="alokasiWaktu">Waktu per Pertemuan</label>
             <input type="text" id="alokasiWaktu" placeholder="Misal: 2 x 35 menit" oninput="this.dataset.edited='1'"/>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label for="jumlahPertemuan">Jumlah Pertemuan</label>
+          <select id="jumlahPertemuan">
+            <option value="1" selected>1 pertemuan</option>
+            <option value="2">2 pertemuan</option>
+            <option value="3">3 pertemuan</option>
+            <option value="4">4 pertemuan</option>
+            <option value="5">5 pertemuan</option>
+            <option value="6">6 pertemuan</option>
+            <option value="7">7 pertemuan</option>
+            <option value="8">8 pertemuan</option>
+          </select>
+          <div class="source-note">Setiap pertemuan memakai waktu di atas.</div>
         </div>
 
         <div class="form-group">
@@ -647,7 +658,7 @@ footer a{color:inherit;text-decoration:underline;}
 
 <footer>
   <div class="footer-title">Modul Ajar SD • SMP • SMA • SMK • KBC Madrasah</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.6.3</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.7.0</div>
 
 </footer>
 
@@ -1355,6 +1366,9 @@ function buildFixedModulHeader(meta){
   const classLabel=meta.kurikulum==='K13'?'Kelas':'Fase/Kelas';
   const classValue=meta.kurikulum==='K13'?meta.faseDisplay.replace(/^Fase [A-F] \/ /,''):meta.faseDisplay;
   const topicLabel=meta.kurikulum==='K13'?'Materi Pokok':'Topik/Materi';
+  const curriculumReference=meta.kurikulum==='KBC'
+    ?'KMA Nomor 1503 Tahun 2025 dan dokumen kurikulum madrasah'
+    :meta.kurikulum==='K13'?'Dokumen KI/KD K13 satuan pendidikan':'Portal Panduan Mata Pelajaran Kemendikdasmen (kurikulum.kemendikdasmen.go.id/panduan-mapel)';
   return `# ${title}
 
 ## ${mdValue(meta.mapel)}
@@ -1372,8 +1386,11 @@ function buildFixedModulHeader(meta){
 | Semester | ${mdValue(meta.semester)} |
 | Tahun Ajaran | ${mdValue(meta.tahun)} |
 | Mata Pelajaran | ${mdValue(meta.mapel)} |
-| Alokasi Waktu | ${mdValue(meta.alokasi)} |
+| Waktu per Pertemuan | ${mdValue(meta.alokasi)} |
+| Jumlah Pertemuan | ${mdValue(meta.jumlahPertemuan)} |
 | Model/Pendekatan | ${mdValue(meta.model)} |
+| Acuan Kurikulum | ${curriculumReference} |
+| Status CP/KD | Disusun otomatis; verifikasi dengan dokumen kurikulum satuan pendidikan sebelum digunakan |
 
 <!-- PAGE_BREAK -->`;
 }
@@ -1405,7 +1422,11 @@ function removeDuplicateIdentity(text){
   return String(text||'').split(/\r?\n/).filter(line=>!identityLabel.test(line)).join('\n').replace(/\n{3,}/g,'\n\n').trim();
 }
 
-function buildStagePrompt(basePrompt,stage,index,total,extra=''){
+function buildStagePrompt(basePrompt,stage,index,total,extra='',previousContent=''){
+  const continuity=String(previousContent||'').trim();
+  const continuityExcerpt=continuity.length>36000
+    ?`${continuity.slice(0,18000)}\n\n[bagian tengah diringkas]\n\n${continuity.slice(-18000)}`
+    :continuity;
   return `${basePrompt}
 
 INSTRUKSI MODE GENERATE BERTAHAP - TAHAP ${index+1} DARI ${total}:
@@ -1415,7 +1436,14 @@ INSTRUKSI MODE GENERATE BERTAHAP - TAHAP ${index+1} DARI ${total}:
 - Isi harus lengkap dan langsung dapat digunakan, bukan petunjuk untuk guru.
 - Jangan memakai tag HTML, code fence, atau komentar tentang proses AI.
 - Jaga kesinambungan TP, KKTP/IPK, kegiatan, dan asesmen sesuai data pada prompt utama.
-${extra}`;
+- Beri kode konsisten TP-1, TP-2, dan seterusnya; gunakan kode yang sama pada KKTP/IPK, kegiatan, kisi-kisi, instrumen, dan rubrik.
+${extra}
+${continuity?`
+KONTEKS HASIL TAHAP LAIN YANG WAJIB DIJADIKAN ACUAN:
+---
+${continuityExcerpt}
+---
+Gunakan nomor/kode CP/KD, TP, KKTP/IPK, kegiatan, dan asesmen yang sama. Jangan membuat rangkaian tujuan baru yang bertentangan.`:''}`;
 }
 
 async function requestStageWithRetry(prompt,options,maxAttempts=3){
@@ -1484,7 +1512,8 @@ async function generateDirectInStages(basePrompt,meta,options={}){
     if(_generationCancelled)throw new Error('Pembuatan dibatalkan.');
     const stage=stages[i];
     setStageProgress(i+1,stages.length,stage.name);
-    const stagePrompt=buildStagePrompt(basePrompt,stage,i,stages.length);
+    const previousContent=parts.slice(0,i).filter(Boolean).join('\n\n');
+    const stagePrompt=buildStagePrompt(basePrompt,stage,i,stages.length,'',previousContent);
     try{
       const text=await requestStageWithRetry(stagePrompt,{stage:i+1});
       parts[i]=removeDuplicateIdentity(stripStageOutput(text));
@@ -1506,7 +1535,8 @@ async function generateDirectInStages(basePrompt,meta,options={}){
     const i=stageNumber-1;
     const stage=stages[i];
     setStageProgress(i+1,stages.length,`Menyempurnakan ${stage.name.toLowerCase()}`);
-    const repairPrompt=buildStagePrompt(basePrompt,stage,i,stages.length,'- Hasil sebelumnya belum lolos pemeriksaan kelengkapan. Pastikan seluruh komponen tahap ini tersedia, konkret, konsisten, dan alokasi waktunya tepat.');
+    const otherStages=parts.filter((part,index)=>index!==i&&part).join('\n\n');
+    const repairPrompt=buildStagePrompt(basePrompt,stage,i,stages.length,'- Hasil sebelumnya belum lolos pemeriksaan kelengkapan. Pastikan seluruh komponen tahap ini tersedia, konkret, konsisten, dan alokasi waktunya tepat.',otherStages);
     const text=await requestStageWithRetry(repairPrompt,{stage:i+1},2);
     parts[i]=removeDuplicateIdentity(stripStageOutput(text));
     raw=composeDirectDocument(meta,parts);
@@ -1543,19 +1573,32 @@ function auditModule(raw){
   const text=String(raw||'');
   const lower=text.toLowerCase();
   const isK13=/KURIKULUM 2013/i.test(text);
-  const savedAllocation=text.match(/\|\s*Alokasi Waktu\s*\|\s*([^|]+)\|/i)?.[1]||'';
+  const savedAllocation=text.match(/\|\s*(?:Alokasi Waktu|Waktu per Pertemuan)\s*\|\s*([^|]+)\|/i)?.[1]||'';
+  const savedMeetings=Number(text.match(/\|\s*Jumlah Pertemuan\s*\|\s*(\d+)/i)?.[1]||document.getElementById('jumlahPertemuan')?.value||1);
   const expectedMatch=(savedAllocation||document.getElementById('alokasiWaktu')?.value||'').match(/(\d+)\s*[xX×]\s*(\d+)/);
   const expected=expectedMatch?Number(expectedMatch[1])*Number(expectedMatch[2]):null;
-  const equation=[...text.matchAll(/(\d+)\s*\+\s*(\d+)\s*\+\s*(\d+)\s*=\s*(\d+)\s*menit/gi)].pop();
+  const equations=[...text.matchAll(/(\d+)\s*\+\s*(\d+)\s*\+\s*(\d+)\s*=\s*(\d+)\s*menit/gi)];
   const activityTimes=['pendahuluan','inti','penutup'].map(name=>{
     const match=text.match(new RegExp(`${name}[^\\n]{0,60}?(\\d+)\\s*menit`,'i'));
     return match?Number(match[1]):null;
   });
   const headingTotal=activityTimes.every(Number.isFinite)?activityTimes.reduce((sum,value)=>sum+value,0):null;
-  const equationOk=!!equation&&Number(equation[4])===expected&&Number(equation[1])+Number(equation[2])+Number(equation[3])===expected;
-  const timeOk=!expected||equationOk||headingTotal===expected;
+  const validEquations=equations.filter(eq=>Number(eq[4])===expected&&Number(eq[1])+Number(eq[2])+Number(eq[3])===expected).length;
+  const timeOk=!expected||(validEquations>=savedMeetings)||(savedMeetings===1&&headingTotal===expected);
+  const assessmentIndexes=[lower.indexOf('asesmen'),lower.indexOf('penilaian')].filter(index=>index>=0);
+  const assessmentStart=assessmentIndexes.length?Math.min(...assessmentIndexes):-1;
+  const assessmentText=assessmentStart>=0?text.slice(assessmentStart):'';
+  const tpIds=[...new Set([...text.matchAll(/\bTP\s*[-.:]?\s*(\d+)/gi)].map(match=>match[1]))];
+  const assessmentTpIds=new Set([...assessmentText.matchAll(/\bTP\s*[-.:]?\s*(\d+)/gi)].map(match=>match[1]));
+  const linkedTp=tpIds.length>0&&tpIds.every(id=>assessmentTpIds.has(id));
+  const hasCpSource=/sumber\s*\/?\s*acuan.{0,40}(?:cp|capaian|kd)|(?:cp|capaian|kd).{0,40}sumber\s*\/?\s*acuan|perlu verifikasi dengan dokumen kurikulum/i.test(text);
+  const hasUsableInstrument=/(?:soal|instrumen)\s*(?:nomor|evaluasi|asesmen)?[\s\S]{0,500}\b1[.)]/i.test(text)&&/kunci jawaban|pedoman penskoran/i.test(text);
   const checks=[
+    {stage:1,label:'Isi modul cukup lengkap',ok:text.length>=4500},
+    {stage:1,label:'CP/KD memiliki sumber atau status verifikasi',ok:hasCpSource},
     {stage:1,label:'CP, TP, dan KKTP/IPK tersedia',ok:/capaian pembelajaran|\bCP\b|kompetensi dasar/i.test(text)&&/tujuan pembelajaran|\bTP\b/i.test(text)&&/kktp|indikator pencapaian kompetensi/i.test(text)},
+    {stage:3,label:'Semua TP terhubung ke asesmen',ok:linkedTp},
+    {stage:3,label:'Instrumen, kunci, dan penskoran siap pakai',ok:hasUsableInstrument},
     {stage:3,label:'Kegiatan terhubung dengan asesmen',ok:/kegiatan pembelajaran|langkah(?:-langkah)? pembelajaran/i.test(text)&&/asesmen|penilaian/i.test(text)},
     {stage:2,label:'Waktu kegiatan tepat',ok:!!timeOk},
     {stage:4,label:'Lampiran dan instrumen tersedia',ok:/lampiran/i.test(text)&&/lkpd|lembar kerja/i.test(text)&&/rubrik/i.test(text)}
@@ -1567,7 +1610,8 @@ function auditModule(raw){
     );
   }
   if(/KURIKULUM BERBASIS CINTA|\bKBC\b/i.test(text)){
-    checks.push({stage:2,label:'Nilai KBC terintegrasi',ok:/cinta/i.test(lower)&&/check-in|perasaan|empati|welas asih/i.test(lower)});
+    const allPancaCinta=/allah.{0,30}rasul/i.test(lower)&&/cinta ilmu/i.test(lower)&&/cinta lingkungan/i.test(lower)&&/(?:cinta diri|sesama manusia)/i.test(lower)&&/cinta tanah air/i.test(lower);
+    checks.push({stage:2,label:'Lima Panca Cinta terintegrasi',ok:allPancaCinta&&/check-in|perasaan|empati|welas asih/i.test(lower)});
   }
   return checks;
 }
@@ -1743,6 +1787,7 @@ async function downloadModulPDF(){
   try{
     if(btn){btn.textContent='Membuat PDF...';btn.disabled=true;}
     await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+    await new Promise(resolve=>setTimeout(resolve,0));
     el=document.createElement('div');
     el.style.cssText='position:fixed;left:-9999px;top:0;background:#fff;color:#111;width:210mm;padding:14mm;font-family:"Times New Roman",serif;font-size:11pt;line-height:1.55;';
     el.innerHTML=body;
@@ -1751,7 +1796,7 @@ async function downloadModulPDF(){
     el.querySelectorAll('table').forEach(t=>{t.style.width='100%';t.style.borderCollapse='collapse';});
     el.querySelectorAll('th,td').forEach(c=>{c.style.border='1px solid #cbd5e1';c.style.padding='6px 7px';c.style.verticalAlign='top';});
     document.body.appendChild(el);
-    const worker=html2pdf().set({margin:[12,10,14,10],filename:getModulFileBase()+'.pdf',pagebreak:{mode:['css','legacy'],avoid:['tr','table']},image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).toPdf();
+    const worker=html2pdf().set({margin:[12,10,14,10],filename:getModulFileBase()+'.pdf',pagebreak:{mode:['css','legacy'],avoid:['tr']},image:{type:'jpeg',quality:.92},html2canvas:{scale:1.25,useCORS:true,backgroundColor:'#ffffff',logging:false},jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}}).from(el).toPdf();
     await worker.get('pdf').then(pdf=>{
       const total=pdf.internal.getNumberOfPages();
       for(let page=1;page<=total;page++){
@@ -1891,15 +1936,18 @@ function clearFormErrors(){
   document.querySelectorAll('[aria-invalid="true"]').forEach(field=>field.removeAttribute('aria-invalid'));
 }
 
-function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc={},cpInfo={}){
+function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,jumlahPertemuan,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc={},cpInfo={}){
   const tgl=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
   const alokasiMatch=String(alokasi).match(/(\d+)\s*[xX×]\s*(\d+)/);
   const totalMenit=alokasiMatch?Number(alokasiMatch[1])*Number(alokasiMatch[2]):null;
+  const jumlahPertemuanAman=Math.max(1,Math.min(8,Number(jumlahPertemuan)||1));
+  const totalProgramMenit=totalMenit?totalMenit*jumlahPertemuanAman:null;
   const safeMapel=mapel.replace(/\s+/g,'_');
   const safeFase=fase.replace(/[\s\/]+/g,'_');
   const namaFile=`Modul_Ajar_${j}_${safeMapel}_${safeFase}.docx`;
   const konsentrasiLine=konsentrasi?`- Konsentrasi Keahlian: ${konsentrasi}\n`:'';
-  const cpDirective='Susun Capaian Pembelajaran secara otomatis sesuai kurikulum yang dipilih, mata pelajaran, jenjang, serta fase/kelas. Rumuskan secara relevan dan jangan mengarang nomor atau kutipan regulasi.';
+  const cpDirective='Gunakan CP/KD yang sesuai kurikulum, mata pelajaran, jenjang, dan fase/kelas. Cantumkan bagian "Sumber/Acuan CP atau KD". Jangan mengarang nomor, kutipan, atau tautan regulasi. Bila bunyi resmi tidak dapat dipastikan, tulis "Perlu verifikasi dengan dokumen kurikulum satuan pendidikan" dan gunakan rumusan kerja yang relevan. Acuan nasional: https://kurikulum.kemendikdasmen.go.id/panduan-mapel';
+  const meetingDirective=`Susun tepat ${jumlahPertemuanAman} pertemuan. Setiap pertemuan berdurasi ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}${totalProgramMenit?`, sehingga total program ${totalProgramMenit} menit`:''}.`;
 
   if(kurikulum==='KBC'){
     const madrasah=KBC_MADRASAH[j]||KBC_MADRASAH.SD;
@@ -1922,7 +1970,9 @@ Buat **MODUL AJAR KURIKULUM BERBASIS CINTA (KBC) DI MADRASAH** yang lengkap, sis
 ${konsentrasiLine}- Fase / Kelas: ${faseMadrasah}
 - Semester: ${semester}
 - Tahun Ajaran: ${tahun}
-- Alokasi Waktu: ${alokasi}
+- Waktu per Pertemuan: ${alokasi}
+- Jumlah Pertemuan: ${jumlahPertemuanAman}
+- Total Waktu Program: ${totalProgramMenit?totalProgramMenit+' menit':'sesuaikan dengan waktu per pertemuan'}
 - Topik / Materi Pokok: ${topik}
 - Model / Pendekatan Pembelajaran: ${model}
 - Karakteristik Peserta Didik: ${karakteristik}
@@ -2017,7 +2067,7 @@ Gunakan konteks kemitraan berikut sebagai dasar: ${kemitraanKBC}. Jelaskan peran
 Gunakan arahan digital berikut sebagai dasar: ${digitalKBC}. Tuliskan penggunaan video, kuis digital, dokumen kolaboratif, portofolio digital, simulasi, rekaman karya, atau sumber belajar daring yang realistis.
 
 ### H. LANGKAH-LANGKAH PEMBELAJARAN BERDIFERENSIASI
-Buat kegiatan untuk tepat satu pertemuan sesuai alokasi ${alokasi}${totalMenit?` atau total ${totalMenit} menit`:''}. Jangan menambah jumlah pertemuan tanpa data dari pengguna. Tampilkan menit pada setiap tahap dan tuliskan kontrol hitungan di akhir, misalnya “15 + 75 + 15 = 105 menit”. Total wajib sama dengan alokasi.
+${meetingDirective} Jangan menambah atau mengurangi jumlah pertemuan. Pada setiap pertemuan, tampilkan menit setiap tahap dan kontrol hitungan, misalnya “15 + 75 + 15 = 105 menit”.
 
 Untuk setiap pertemuan, gunakan format:
 - **Pertemuan [n] ([alokasi waktu])**
@@ -2110,9 +2160,13 @@ ${konsentrasiLine}- Kelas: ${fase.replace(/Fase [A-F] \/ /,'')}
 - Semester: ${semester}
 - Tahun Pelajaran: ${tahun}
 - Materi Pokok: ${topik}
-- Alokasi Waktu: ${alokasi}
+- Waktu per Pertemuan: ${alokasi}
+- Jumlah Pertemuan: ${jumlahPertemuanAman}
 - Model Pembelajaran: ${model}
 - Karakteristik Peserta Didik: ${karakteristik}
+
+**SUMBER/ACUAN KD:**
+${cpDirective}
 
 Susun seluruh RPP dalam **Bahasa Indonesia formal, jelas, dan realistis**, dengan struktur berikut:
 
@@ -2136,7 +2190,7 @@ Susun seluruh RPP dalam **Bahasa Indonesia formal, jelas, dan realistis**, denga
 - Jangan menulis salam, pengantar, disclaimer AI, atau kalimat seperti “Berikut adalah”.
 - Mulai langsung dengan judul: **## RENCANA PELAKSANAAN PEMBELAJARAN (RPP) KURIKULUM 2013**.
 - Gunakan Markdown lengkap, heading yang konsisten, dan tabel untuk identitas, KD–IPK, kegiatan, serta penilaian.
-- Pastikan total rincian waktu kegiatan sama dengan alokasi waktu ${alokasi}.
+- ${meetingDirective} Total Pendahuluan + Inti + Penutup pada SETIAP pertemuan wajib tepat dan ditampilkan sebagai persamaan waktu.
 - Jaga keterkaitan yang konsisten antara KD → IPK → tujuan → kegiatan → penilaian.
 
 **HALAMAN PENGESAHAN (bagian akhir):**
@@ -2157,7 +2211,8 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 - Fase / Kelas: ${fase}
 - Semester: ${semester}
 - Tahun Ajaran: ${tahun}
-- Alokasi Waktu: ${alokasi}
+- Waktu per Pertemuan: ${alokasi}
+- Jumlah Pertemuan: ${jumlahPertemuanAman}
 - Topik / Materi Pokok: ${topik}
 
 **SUMBER CAPAIAN PEMBELAJARAN:**
@@ -2196,7 +2251,7 @@ OUTPUT RULES:
 - JANGAN tulis "Tentu!", "Baik!", "Berikut adalah...", dsb.
 - Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
 - Gunakan Markdown penuh (##/### heading, tabel markdown untuk kegiatan & rubrik, bold untuk istilah penting).
-- Total waktu Pendahuluan + Inti + Penutup wajib sama dengan ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}; tampilkan persamaan waktunya.
+- ${meetingDirective} Total Pendahuluan + Inti + Penutup pada SETIAP pertemuan wajib tepat; tampilkan persamaan waktunya.
 - Jangan gunakan tag HTML atau code fence.
 
 ════════════════════════════════════════
@@ -2238,7 +2293,8 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 - Fase / Kelas: ${fase}
 - Semester: ${semester}
 - Tahun Ajaran: ${tahun}
-- Alokasi Waktu: ${alokasi}
+- Waktu per Pertemuan: ${alokasi}
+- Jumlah Pertemuan: ${jumlahPertemuanAman}
 - Topik / Materi Pokok: ${topik}
 
 **SUMBER CAPAIAN PEMBELAJARAN:**
@@ -2276,7 +2332,7 @@ OUTPUT RULES:
 - JANGAN tulis pembuka, salam, atau disclaimer AI apapun.
 - Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
 - Gunakan Markdown penuh (heading, tabel, bold).
-- Total waktu Pendahuluan + Inti + Penutup wajib sama dengan ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}; tampilkan persamaan waktunya.
+- ${meetingDirective} Total Pendahuluan + Inti + Penutup pada SETIAP pertemuan wajib tepat; tampilkan persamaan waktunya.
 - Jangan gunakan tag HTML atau code fence.
 
 ════════════════════════════════════════
@@ -2313,7 +2369,8 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 - Fase / Kelas: ${fase}
 - Semester: ${semester}
 - Tahun Ajaran: ${tahun}
-- Alokasi Waktu: ${alokasi}
+- Waktu per Pertemuan: ${alokasi}
+- Jumlah Pertemuan: ${jumlahPertemuanAman}
 - Topik / Materi Pokok: ${topik}
 
 **SUMBER CAPAIAN PEMBELAJARAN:**
@@ -2351,7 +2408,7 @@ OUTPUT RULES:
 - JANGAN tulis pembuka, salam, atau disclaimer apapun.
 - Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
 - Gunakan Markdown penuh.
-- Total waktu Pendahuluan + Inti + Penutup wajib sama dengan ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}; tampilkan persamaan waktunya.
+- ${meetingDirective} Total Pendahuluan + Inti + Penutup pada SETIAP pertemuan wajib tepat; tampilkan persamaan waktunya.
 - Jangan gunakan tag HTML atau code fence.
 
 ════════════════════════════════════════
@@ -2388,7 +2445,8 @@ Generate a complete, detailed, systematic, professional, and ready-to-use **MODU
 ${konsentrasiLine}- Fase / Kelas: ${fase}
 - Semester: ${semester}
 - Tahun Ajaran: ${tahun}
-- Alokasi Waktu: ${alokasi}
+- Waktu per Pertemuan: ${alokasi}
+- Jumlah Pertemuan: ${jumlahPertemuanAman}
 - Topik / Materi Pokok: ${topik}
 
 **SUMBER CAPAIAN PEMBELAJARAN:**
@@ -2426,7 +2484,7 @@ OUTPUT RULES:
 - JANGAN tulis pembuka, salam, atau disclaimer apapun.
 - Mulai langsung dengan: ## MODUL AJAR KURIKULUM MERDEKA
 - Gunakan Markdown penuh.
-- Total waktu Pendahuluan + Inti + Penutup wajib sama dengan ${alokasi}${totalMenit?` (${totalMenit} menit)`:''}; tampilkan persamaan waktunya.
+- ${meetingDirective} Total Pendahuluan + Inti + Penutup pada SETIAP pertemuan wajib tepat; tampilkan persamaan waktunya.
 - Jangan gunakan tag HTML atau code fence.
 
 ════════════════════════════════════════
@@ -2516,6 +2574,7 @@ async function generatePrompt(options={}){
   const mapel=mapelRaw==='__lainnya__'?(document.getElementById('mapelManual')?.value.trim()||'Lainnya'):mapelRaw;
   const fase=document.getElementById('faseKelas').value;
   const alokasi=document.getElementById('alokasiWaktu').value.trim()||DATA_JENJANG[j].defaultAlokasi;
+  const jumlahPertemuan=Math.max(1,Math.min(8,Number(document.getElementById('jumlahPertemuan').value)||1));
   const topik=document.getElementById('topikMateri').value.trim();
   const model=document.getElementById('modelPembelajaran').value;
   let p5=[...document.querySelectorAll('.cb-p5:checked')].map(c=>c.value).join(', ');
@@ -2528,7 +2587,7 @@ async function generatePrompt(options={}){
   const outputMode=getOutputMode();
   const cpInfo={source:'automatic',text:''};
   const faseDisplay=kurikulum==='KBC'?fase.replace(/\bSD\b/g,'MI').replace(/\bSMP\b/g,'MTs').replace(/\bSMA\b/g,'MA').replace(/\bSMK\b/g,'MAK'):fase;
-  const meta={kurikulum,namaSekolah,namaPenyusun,semester,mapel,fase,faseDisplay,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,jenjang:j,jenjangDisplay:getJenjangDisplay(j)};
+  const meta={kurikulum,namaSekolah,namaPenyusun,semester,mapel,fase,faseDisplay,alokasi,jumlahPertemuan,topik,model,p5,karakteristik,tahun,konsentrasi,jenjang:j,jenjangDisplay:getJenjangDisplay(j)};
   const kbc={
     nuansa:'Universal, religius, ramah anak, dan inklusif',
     nilai:'Cinta Allah dan Rasul-Nya, cinta ilmu, cinta lingkungan, cinta diri dan sesama manusia, serta cinta tanah air',
@@ -2548,7 +2607,7 @@ async function generatePrompt(options={}){
   _generationCancelled=false;
   _lastGenerationRequest={meta,outputMode};
   try{
-    const prompt=buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc,cpInfo);
+    const prompt=buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,jumlahPertemuan,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc,cpInfo);
     let output=prompt;
     if(outputMode==='direct'){
       document.getElementById('generateFeedback').textContent='Modul sedang disusun dan diperiksa otomatis.';
@@ -2569,7 +2628,7 @@ async function generatePrompt(options={}){
 
     gaEvent('generate_prompt_modul_ajar',{kurikulum,jenjang:j,mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
 
-    document.getElementById('generateFeedback').textContent=outputMode==='direct'?'Modul ajar selesai dan lolos pemeriksaan otomatis.':'Prompt siap. Salin lalu tempel ke AI pilihan Anda.';
+    document.getElementById('generateFeedback').textContent=outputMode==='direct'?'Modul selesai dan lolos pemeriksaan struktur. Verifikasi CP/KD dengan dokumen sekolah sebelum digunakan.':'Prompt siap. Salin lalu tempel ke AI pilihan Anda.';
     setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);
 
     if(window.innerWidth<900){
@@ -2654,7 +2713,7 @@ function updateHistoriBadge(){
 function renderHistoriList(){
   const list=loadHistori();
   const container=document.getElementById('historiList');
-  if(list.length===0){container.innerHTML='<div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya! 😊</div>';return;}
+  if(list.length===0){container.innerHTML='<div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Buat modul atau prompt terlebih dahulu.</div>';return;}
   container.innerHTML=list.map((h,i)=>`
     <div class="histori-item" onclick="loadFromHistori(${i})">
       <div class="hi-meta">${new Date(h.ts).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})} &bull; ${h.mode==='direct'?'Modul':'Prompt'} &bull; ${h.mapel||''} &bull; ${h.fase||''}</div>
@@ -2666,6 +2725,7 @@ function loadFromHistori(idx){
   const h=list[idx];
   if(!h)return;
   selectTab('home');
+  restoreMetaToForm(h.meta);
   const mode=h.mode||'prompt';
   const modeInput=document.querySelector(`input[name="outputMode"][value="${mode}"]`);
   if(modeInput)modeInput.checked=true;
@@ -2674,6 +2734,28 @@ function loadFromHistori(idx){
   document.getElementById('promptPlaceholder').style.display='none';
   document.getElementById('promptContent').style.display='block';
   setTimeout(()=>document.getElementById('hasilCard').scrollIntoView({behavior:'smooth'}),200);
+}
+
+function restoreMetaToForm(meta){
+  if(!meta)return;
+  const curriculumInput=document.querySelector(`input[name="kurikulum"][value="${meta.kurikulum||'MERDEKA'}"]`);
+  if(curriculumInput){curriculumInput.checked=true;toggleKurikulum();}
+  const jenjangInput=document.querySelector(`input[name="jenjang"][value="${meta.jenjang||'SD'}"]`);
+  if(jenjangInput){jenjangInput.checked=true;onJenjangChange();}
+  const setValue=(id,value)=>{const el=document.getElementById(id);if(el&&value!=null)el.value=value;};
+  setValue('namaSekolah',meta.namaSekolah);
+  setValue('namaPenyusun',meta.namaPenyusun);
+  setValue('semester',meta.semester);
+  setValue('faseKelas',meta.fase);
+  onFaseChange();
+  const mapel=document.getElementById('mapel');
+  if(mapel&&[...mapel.options].some(option=>option.value===meta.mapel))mapel.value=meta.mapel;
+  else if(mapel&&meta.mapel){mapel.value='__lainnya__';toggleMapelManual(mapel.value);setValue('mapelManual',meta.mapel);}
+  setValue('alokasiWaktu',meta.alokasi);
+  setValue('jumlahPertemuan',meta.jumlahPertemuan||1);
+  setValue('topikMateri',meta.topik);
+  setValue('modelPembelajaran',meta.model);
+  setValue('karakteristikSiswa',meta.karakteristik);
 }
 function hapusSemuaHistori(){
   if(confirm('Hapus semua histori prompt?')){
