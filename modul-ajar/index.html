@@ -67,8 +67,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 #generateOverlay .go-ring-wrap{position:relative;width:110px;height:110px;margin-bottom:28px;}
 #generateOverlay .go-ring{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;}
 #generateOverlay .go-ring1{border-top-color:#0ea5a0;border-right-color:#0ea5a0;animation:goSpin1 1.2s linear infinite;}
-#generateOverlay .go-ring2{inset:12px;border-top-color:#f59e0b;border-left-color:#f59e0b;animation:goSpin2 1.8s linear infinite reverse;}
-#generateOverlay .go-ring3{inset:24px;border-top-color:#fff;animation:goSpin1 2.4s linear infinite;}
+#generateOverlay .go-ring2,#generateOverlay .go-ring3{display:none;}
 #generateOverlay .go-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2rem;}
 @keyframes goSpin1{to{transform:rotate(360deg);}}
 @keyframes goSpin2{to{transform:rotate(360deg);}}
@@ -78,13 +77,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 #generateOverlay .go-msg{font-size:.82rem;color:#5eead4;font-weight:700;letter-spacing:.3px;animation:goMsgFade .5s ease;}
 @keyframes goMsgFade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 #generateOverlay .go-dots{display:flex;gap:8px;margin-top:24px;align-items:center;justify-content:center;}
-#generateOverlay .go-dot{width:8px;height:8px;border-radius:50%;background:#0ea5a0;animation:goDot 1.4s ease-in-out infinite;}
-#generateOverlay .go-dot:nth-child(2){background:#f59e0b;animation-delay:.2s;}
-#generateOverlay .go-dot:nth-child(3){background:#3b82f6;animation-delay:.4s;}
-@keyframes goDot{0%,80%,100%{transform:scale(.7);opacity:.5;}40%{transform:scale(1.2);opacity:1;}}
+#generateOverlay .go-dot{width:8px;height:8px;border-radius:50%;background:#0ea5a0;}
+#generateOverlay .go-dot:nth-child(2){background:#f59e0b;}
+#generateOverlay .go-dot:nth-child(3){background:#3b82f6;}
 #generateOverlay .go-bar-wrap{width:260px;height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:20px;}
-#generateOverlay .go-bar{height:100%;background:linear-gradient(90deg,#0ea5a0,#f59e0b,#3b82f6);border-radius:99px;animation:goBar 2.5s ease-in-out infinite;}
-@keyframes goBar{0%{width:0%;margin-left:0;}50%{width:70%;margin-left:0;}100%{width:0%;margin-left:100%;}}
+#generateOverlay .go-bar{height:100%;width:45%;background:#0ea5a0;border-radius:99px;animation:goBar 2s ease-in-out infinite;transform-origin:left center;}
+@keyframes goBar{0%,100%{transform:translateX(0) scaleX(.35);}50%{transform:translateX(125%) scaleX(1);}}
+.go-cancel{margin-top:24px;padding:10px 20px;border:1px solid rgba(255,255,255,.45);border-radius:8px;background:transparent;color:#fff;font-weight:700;cursor:pointer;}
+.preview-limit-note{margin:14px 0 2px;padding:10px 12px;border:1px solid var(--border);border-radius:6px;color:var(--text-light);font:600 .75rem/1.5 Arial,sans-serif;text-align:center;}
 
 /* PRO WELCOME OVERLAY */
 #proWelcomeOverlay .pw-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
@@ -276,6 +276,7 @@ footer a{color:inherit;text-decoration:underline;}
     <div class="go-dot"></div>
   </div>
   <div class="go-bar-wrap"><div class="go-bar"></div></div>
+  <button class="go-cancel" type="button" onclick="cancelGeneration()">Batalkan</button>
 </div>
 
 <!-- PRO WELCOME OVERLAY -->
@@ -342,7 +343,7 @@ footer a{color:inherit;text-decoration:underline;}
 <main>
   <div class="card">
     <div class="card-title">ℹ️ Tentang Aplikasi</div>
-    <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Modul Ajar v26.6.2</p>
+    <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Modul Ajar v26.6.3</p>
     <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Pembuat Modul Ajar dan RPP</b> untuk SD, SMP, SMA, SMK, serta madrasah. Pilih Deep Learning, KBC Madrasah, atau K13/RPP; sistem akan menyesuaikan struktur dokumennya secara otomatis.</p>
     <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur</h4>
     <ul style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
@@ -646,7 +647,7 @@ footer a{color:inherit;text-decoration:underline;}
 
 <footer>
   <div class="footer-title">Modul Ajar SD • SMP • SMA • SMK • KBC Madrasah</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.6.2</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.6.3</div>
 
 </footer>
 
@@ -683,6 +684,9 @@ const STORAGE_KEY_HISTORI = 'bgy_ma_histori';
 const STORAGE_KEY_LIMIT   = 'bgy_ma_limit';
 const STORAGE_KEY_DRAFT   = 'bgy_ma_generation_draft_v2';
 let _lastGenerationRequest=null;
+let _activeGenerationController=null;
+let _generationCancelled=false;
+let _currentOutputText='';
 let _isPro = false;
 
 const sbClient = window.supabase.createClient(
@@ -1079,12 +1083,20 @@ function _startGoMessages(){
   _goMsgIdx=0;
   const el=document.getElementById('goMsg');
   function rotate(){
-    if(el){el.style.animation='none';el.offsetHeight;el.style.animation='';el.textContent=_goMessages[_goMsgIdx%_goMessages.length];_goMsgIdx++;}
+    if(el){el.textContent=_goMessages[_goMsgIdx%_goMessages.length];_goMsgIdx++;}
     _goMsgTimer=setTimeout(rotate,2800);
   }
   rotate();
 }
 function _stopGoMessages(){clearTimeout(_goMsgTimer);}
+
+function cancelGeneration(){
+  _generationCancelled=true;
+  if(_activeGenerationController)_activeGenerationController.abort();
+  const errBox=document.getElementById('errorBox');
+  if(errBox){errBox.textContent='Pembuatan dibatalkan. Draf tahap yang sudah selesai tetap tersimpan.';errBox.style.display='block';}
+  setLoading(false);
+}
 
 function setLoading(s){
   const btn=document.getElementById('btnGenerate');
@@ -1239,7 +1251,7 @@ function updateOutputModeUI(){
     :`Isi form di kiri lalu pilih<br/><b>Buat Langsung ${baseLabel}</b><br/><span style="font-size:.74rem;opacity:.7;">Hasil final tampil di sini</span>`;
   if(copyBtn)copyBtn.textContent=promptMode?'📋 Salin Prompt':'📋 Salin Hasil Modul';
   if(aiBox)aiBox.style.display=promptMode?'':'none';
-  const hasMatchingOutput=!!hasil?.dataset.raw&&hasil.dataset.mode===mode;
+  const hasMatchingOutput=!!_currentOutputText&&hasil?.dataset.mode===mode;
   const isDirectOutput=hasMatchingOutput&&mode==='direct';
   if(directExport)directExport.classList.toggle('show',!promptMode&&isDirectOutput);
   if(copyOutputWrap)copyOutputWrap.style.display=promptMode&&hasMatchingOutput?'flex':'none';
@@ -1313,13 +1325,21 @@ function renderModulMarkdown(md){
 function setOutputContent(text,mode){
   const hasil=document.getElementById('hasilPrompt');
   if(mode==='direct'){
-    hasil.innerHTML=renderModulMarkdown(text);
-    hasil.dataset.raw=text;
+    const maxPreviewChars=80000;
+    let preview=String(text||'');
+    let limited=false;
+    if(preview.length>maxPreviewChars){
+      const boundary=preview.lastIndexOf('\n',maxPreviewChars);
+      preview=preview.slice(0,boundary>0?boundary:maxPreviewChars);
+      limited=true;
+    }
+    hasil.innerHTML=renderModulMarkdown(preview)+(limited?'<div class="preview-limit-note">Preview diringkas agar halaman tetap lancar. Isi lengkap tetap tersedia pada Word dan PDF.</div>':'');
+    _currentOutputText=text;
     hasil.dataset.mode='direct';
     hasil.classList.add('modul-output');
   }else{
     hasil.textContent=text;
-    hasil.dataset.raw=text;
+    _currentOutputText=text;
     hasil.dataset.mode='prompt';
     hasil.classList.remove('modul-output');
   }
@@ -1404,6 +1424,7 @@ async function requestStageWithRetry(prompt,options,maxAttempts=3){
     try{return await requestGenerateModul(prompt,options);}
     catch(error){
       lastError=error;
+      if(_generationCancelled||/dibatalkan/i.test(error.message||''))throw error;
       if(attempt<maxAttempts){
         const overlayText=document.getElementById('goMsg');
         if(overlayText)overlayText.textContent=`Koneksi terputus. Mencoba lagi (${attempt+1}/${maxAttempts})...`;
@@ -1430,8 +1451,13 @@ function setStageProgress(current,total,label){
 }
 
 function saveGenerationDraft(draft){
-  localStorage.setItem(STORAGE_KEY_DRAFT,JSON.stringify({...draft,updatedAt:Date.now()}));
-  updateDraftRecoveryButton();
+  try{
+    const serialized=JSON.stringify({...draft,updatedAt:Date.now()});
+    if(serialized.length<3000000)localStorage.setItem(STORAGE_KEY_DRAFT,serialized);
+    updateDraftRecoveryButton();
+  }catch(error){
+    console.warn('Draf terlalu besar untuk disimpan di perangkat ini.');
+  }
 }
 
 function updateDraftRecoveryButton(){
@@ -1455,6 +1481,7 @@ async function generateDirectInStages(basePrompt,meta,options={}){
     }catch(error){}
   }
   for(let i=startStage;i<stages.length;i++){
+    if(_generationCancelled)throw new Error('Pembuatan dibatalkan.');
     const stage=stages[i];
     setStageProgress(i+1,stages.length,stage.name);
     const stagePrompt=buildStagePrompt(basePrompt,stage,i,stages.length);
@@ -1475,6 +1502,7 @@ async function generateDirectInStages(basePrompt,meta,options={}){
   let raw=composeDirectDocument(meta,parts);
   const failedStages=[...new Set(auditModule(raw).filter(check=>!check.ok).map(check=>check.stage))];
   for(const stageNumber of failedStages){
+    if(_generationCancelled)throw new Error('Pembuatan dibatalkan.');
     const i=stageNumber-1;
     const stage=stages[i];
     setStageProgress(i+1,stages.length,`Menyempurnakan ${stage.name.toLowerCase()}`);
@@ -1545,7 +1573,7 @@ function auditModule(raw){
 }
 
 function confirmModuleExport(){
-  const raw=document.getElementById('hasilPrompt')?.dataset.raw||'';
+  const raw=_currentOutputText;
   const checks=auditModule(raw);
   const missing=checks.filter(c=>!c.ok);
   if(!missing.length)return true;
@@ -1563,8 +1591,8 @@ function getModulFileBase(){
 
 function getPrintableModulHtml(){
   const hasil=document.getElementById('hasilPrompt');
-  if(!hasil||!hasil.dataset.raw){alert('Generate langsung modul dulu.');return '';}
-  return `<div class="modul-output">${renderModulMarkdown(hasil.dataset.raw)}</div>`;
+  if(!hasil||!_currentOutputText){alert('Buat modul terlebih dahulu.');return '';}
+  return `<div class="modul-output">${renderModulMarkdown(_currentOutputText)}</div>`;
 }
 
 async function ensureDocxReady(btn){
@@ -1664,8 +1692,8 @@ function modulMarkdownToDocxChildren(D,md){
 
 async function downloadModulWord(){
   const hasil=document.getElementById('hasilPrompt');
-  const raw=hasil?.dataset.raw||'';
-  if(!raw){alert('Generate langsung modul dulu.');return;}
+  const raw=_currentOutputText;
+  if(!raw){alert('Buat modul terlebih dahulu.');return;}
   if(!confirmModuleExport())return;
   const btn=document.querySelector('.btn-word');
   const orig=btn?btn.textContent:'';
@@ -1742,7 +1770,7 @@ async function downloadModulPDF(){
 
 function buildReviewPrompt(){
   const hasil=document.getElementById('hasilPrompt');
-  const raw=hasil?.dataset.raw||'';
+  const raw=_currentOutputText;
   if(!raw)return '';
   const kurikulum=document.querySelector('input[name="kurikulum"]:checked')?.value||'MERDEKA';
   const j=getJenjang();
@@ -1788,7 +1816,7 @@ ${raw}`;
 
 function copyReviewPrompt(){
   const txt=buildReviewPrompt();
-  if(!txt){alert('Generate langsung modul dulu.');return;}
+  if(!txt){alert('Buat modul terlebih dahulu.');return;}
   const done=()=>{const f=document.getElementById('generateFeedback');if(f){f.textContent='Prompt review sudah disalin. Paste ke Gemini untuk cek kualitas modul.';setTimeout(()=>f.textContent='',5000);}};
   if(navigator.clipboard&&window.isSecureContext){
     navigator.clipboard.writeText(txt).then(done).catch(()=>fallbackCopyReview(txt,done));
@@ -1836,9 +1864,9 @@ function toggleKurikulum(){
   document.getElementById('p5Wrap').style.display=isMerdeka?'':'none';
   updateModelOptions(kurikulum);
   const hasil=document.getElementById('hasilPrompt');
-  if(hasil?.dataset.raw){
+  if(_currentOutputText){
     hasil.innerHTML='';
-    delete hasil.dataset.raw;
+    _currentOutputText='';
     delete hasil.dataset.mode;
   }
   document.getElementById('formTitle').textContent=isK13?'📋 Identitas RPP Kurikulum 2013':isKBC?'📋 Identitas Modul Ajar KBC Madrasah':'📋 Identitas Modul Ajar';
@@ -2440,6 +2468,7 @@ CATATAN UNTUK MODE GENERATE LANGSUNG DI APLIKASI:
 - ${outputScope}
 - Mulai langsung dari isi yang diminta tanpa salam atau penjelasan proses.`;
   const ctrl=new AbortController();
+  _activeGenerationController=ctrl;
   const tid=setTimeout(()=>ctrl.abort(),120000);
   try{
     const resp=await fetch('/api/generate-modul-ajar',{
@@ -2465,11 +2494,12 @@ CATATAN UNTUK MODE GENERATE LANGSUNG DI APLIKASI:
     if(!json.text)throw new Error('Respons AI kosong. Coba buat ulang.');
     return json.text;
   }catch(e){
-    if(e.name==='AbortError')throw new Error('Waktu habis. Coba ringkas topik atau gunakan mode Prompt Saja dulu.');
+    if(e.name==='AbortError')throw new Error(_generationCancelled?'Pembuatan dibatalkan.':'Waktu habis. Coba ringkas topik atau gunakan mode Prompt Saja dulu.');
     if(e instanceof TypeError||/failed to fetch|networkerror|load failed/i.test(e.message||''))throw new Error('Koneksi ke layanan AI terputus');
     throw e;
   }finally{
     clearTimeout(tid);
+    if(_activeGenerationController===ctrl)_activeGenerationController=null;
   }
 }
 
@@ -2515,6 +2545,7 @@ async function generatePrompt(options={}){
   if(!options.retry&&!lc.ok){showUpgradePopup();return;}
 
   setLoading(true);
+  _generationCancelled=false;
   _lastGenerationRequest={meta,outputMode};
   try{
     const prompt=buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc,cpInfo);
@@ -2545,6 +2576,7 @@ async function generatePrompt(options={}){
       document.getElementById('hasilCard').scrollIntoView({block:'start'});
     }
   }catch(e){
+    if(_generationCancelled){setLoading(false);updateDraftRecoveryButton();return;}
     let hasPartial=false;
     try{hasPartial=JSON.parse(localStorage.getItem(STORAGE_KEY_DRAFT)||'null')?.complete===false;}catch(error){}
     errBox.textContent=(e.message||'Koneksi ke AI terputus.')+' Sistem sudah mencoba ulang otomatis. '+(hasPartial?'Pilih Lanjutkan proses terakhir.':'Pilih Buat lagi.');
@@ -2560,7 +2592,7 @@ async function generatePrompt(options={}){
 // ============================================================
 function copyPrompt(){
   const hasil=document.getElementById('hasilPrompt');
-  const txt=hasil.dataset.raw||hasil.textContent;
+  const txt=_currentOutputText||hasil.textContent;
   if(!txt){alert(getOutputMode()==='direct'?'Buat modul terlebih dahulu.':'Buat prompt terlebih dahulu.');return;}
   if(!isPro()){showUpgradePopup();return;}
   gaEvent('salin_prompt_modul_ajar',{tipe_user:'pro'});
@@ -2582,7 +2614,7 @@ function fallbackCopy(txt){
 // ============================================================
 function openAI(tipe){
   const hasil=document.getElementById('hasilPrompt');
-  const txt=hasil.dataset.raw||hasil.textContent;
+  const txt=_currentOutputText||hasil.textContent;
   if(!txt){alert('Buat prompt terlebih dahulu.');return;}
   if(!isPro()){showUpgradePopup();return;}
   const urls={gemini:'https://gemini.google.com/',claude:'https://claude.ai/new'};
@@ -2600,7 +2632,13 @@ function simpanHistori(prompt,mapel,fase,topik,mode,meta){
   const list=loadHistori();
   list.unshift({prompt,mapel,fase,topik,mode:mode||'prompt',meta:meta||null,ts:Date.now()});
   if(list.length>20)list.pop();
-  localStorage.setItem(STORAGE_KEY_HISTORI,JSON.stringify(list));
+  try{
+    let serialized=JSON.stringify(list);
+    while(serialized.length>2500000&&list.length>1){list.pop();serialized=JSON.stringify(list);}
+    localStorage.setItem(STORAGE_KEY_HISTORI,serialized);
+  }catch(error){
+    try{localStorage.setItem(STORAGE_KEY_HISTORI,JSON.stringify(list.slice(0,3)));}catch(ignore){}
+  }
 }
 function loadHistori(){
   try{return JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORI)||'[]');}catch(e){return[];}
