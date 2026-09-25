@@ -349,6 +349,74 @@ document.getElementById('btn-theme-toggle').addEventListener('click', toggleThem
 document.getElementById('btn-theme-toggle-2').addEventListener('click', toggleTheme);
 
 /* =========================================================
+   HAMBURGER MENU
+   ========================================================= */
+function closeHamburgerMenu() {
+  document.getElementById('hamburger-menu').hidden = true;
+}
+document.getElementById('btn-hamburger').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const menu = document.getElementById('hamburger-menu');
+  menu.hidden = !menu.hidden;
+});
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('hamburger-menu');
+  if (!menu.hidden && !menu.contains(e.target) && e.target.id !== 'btn-hamburger') {
+    closeHamburgerMenu();
+  }
+});
+document.getElementById('menu-tentang').addEventListener('click', () => {
+  closeHamburgerMenu();
+  switchView('settings');
+});
+document.getElementById('menu-lock').addEventListener('click', () => {
+  closeHamburgerMenu();
+  lockApp();
+});
+document.getElementById('menu-install').addEventListener('click', () => {
+  closeHamburgerMenu();
+  triggerInstallPrompt();
+});
+document.getElementById('menu-bgy').addEventListener('click', () => {
+  closeHamburgerMenu();
+  window.open('https://www.bantuguruyuk.web.id', '_blank');
+});
+
+/* =========================================================
+   PWA INSTALL PROMPT
+   ========================================================= */
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  if (!localStorage.getItem('sandi_install_dismissed')) {
+    document.getElementById('install-banner').hidden = false;
+  }
+});
+
+async function triggerInstallPrompt() {
+  if (!deferredInstallPrompt) {
+    showToast('Aplikasi sudah terinstall atau browser tidak mendukung install otomatis.');
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  document.getElementById('install-banner').hidden = true;
+}
+
+document.getElementById('btn-install').addEventListener('click', triggerInstallPrompt);
+document.getElementById('btn-install-close').addEventListener('click', () => {
+  document.getElementById('install-banner').hidden = true;
+  localStorage.setItem('sandi_install_dismissed', '1');
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').hidden = true;
+  deferredInstallPrompt = null;
+});
+
+/* =========================================================
    VIEWS / NAVIGATION
    ========================================================= */
 function switchView(viewName) {

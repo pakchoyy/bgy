@@ -1,16 +1,16 @@
 /* ===== SANDI — BantuGuruYuk ===== */
 
 :root {
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
+  --color-primary: #0ea5a0;
+  --color-primary-dark: #0d7a8a;
   --color-danger: #dc2626;
   --color-bg: #f5f7fb;
   --color-surface: #ffffff;
   --color-text: #1f2937;
   --color-text-muted: #6b7280;
   --color-border: #e5e7eb;
-  --color-chip-bg: #eef2ff;
-  --color-chip-active-bg: #2563eb;
+  --color-chip-bg: #e6f7f6;
+  --color-chip-active-bg: #0ea5a0;
   --color-chip-active-text: #ffffff;
   --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --radius: 14px;
@@ -127,9 +127,57 @@ button, input, select, textarea { font-family: inherit; }
   padding: 16px 20px 8px;
   max-width: 720px;
   margin: 0 auto;
+  position: relative;
 }
+.header-brand { display: flex; align-items: center; gap: 10px; }
+.header-logo { width: 34px; height: 34px; border-radius: 9px; flex: none; }
 .header-parent { display: block; font-size: 12px; color: var(--color-text-muted); font-weight: 600; }
 .header-title { margin: 0; font-size: 22px; color: var(--color-primary); }
+.header-actions { display: flex; align-items: center; gap: 2px; position: relative; }
+
+.hamburger-menu {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  min-width: 200px;
+  overflow: hidden;
+  z-index: 30;
+  border: 1px solid var(--color-border);
+}
+.hamburger-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--color-text);
+  cursor: pointer;
+}
+.hamburger-menu button:not(:last-child) { border-bottom: 1px solid var(--color-border); }
+.hamburger-menu button:active { background: var(--color-chip-bg); }
+
+/* ===== Install banner ===== */
+.install-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 13px;
+  max-width: 720px;
+  margin: 0 auto;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+.install-banner span { flex: 1; }
+.install-banner button { border: none; border-radius: 8px; padding: 7px 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.install-banner .btn-install { background: #fff; color: var(--color-primary-dark); }
+.install-banner .btn-install-close { background: rgba(255,255,255,0.2); color: #fff; padding: 7px 10px; }
 
 .view {
   max-width: 720px;

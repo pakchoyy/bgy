@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SANDI — BantuGuruYuk</title>
 <meta name="description" content="Simpan akun digital guru dengan simpel.">
-<meta name="theme-color" content="#2563eb">
-<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#0ea5a0">
+<link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="stylesheet" href="./style.css">
@@ -56,12 +56,30 @@
 <div id="app-shell" hidden>
 
   <header class="app-header">
-    <div class="header-text">
-      <span class="header-parent">BantuGuruYuk</span>
-      <h1 class="header-title">SANDI</h1>
+    <div class="header-brand">
+      <img src="../guru-cibisd2.png" alt="BantuGuruYuk" class="header-logo">
+      <div class="header-text">
+        <span class="header-parent">BantuGuruYuk</span>
+        <h1 class="header-title">SANDI</h1>
+      </div>
     </div>
-    <button id="btn-theme-toggle" class="icon-btn" aria-label="Ganti tema terang/gelap">🌙</button>
+    <div class="header-actions">
+      <button id="btn-theme-toggle" class="icon-btn" aria-label="Ganti tema terang/gelap">🌙</button>
+      <button id="btn-hamburger" class="icon-btn" aria-label="Menu">☰</button>
+      <nav id="hamburger-menu" class="hamburger-menu" hidden>
+        <button id="menu-tentang">ℹ️ Tentang SANDI</button>
+        <button id="menu-lock">🔒 Kunci Sekarang</button>
+        <button id="menu-install">📲 Install SANDI</button>
+        <button id="menu-bgy">🌐 Ke BantuGuruYuk</button>
+      </nav>
+    </div>
   </header>
+
+  <div id="install-banner" class="install-banner" hidden>
+    <span>📲 Install SANDI di HP kamu!</span>
+    <button id="btn-install" class="btn-install">Install</button>
+    <button id="btn-install-close" class="btn-install-close" aria-label="Tutup">✕</button>
+  </div>
 
   <!-- VIEW: Dashboard -->
   <main id="view-dashboard" class="view">
