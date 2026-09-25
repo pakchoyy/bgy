@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SANDI — BantuGuruYuk</title>
+<meta name="description" content="Simpan akun digital guru dengan simpel.">
+<meta name="theme-color" content="#2563eb">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<!-- ===== SCREEN: PIN SETUP (first run) ===== -->
+<section id="screen-pin-setup" class="screen" hidden>
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-parent">BantuGuruYuk</span>
+      <h1 class="brand-title">SANDI</h1>
+      <p class="tagline">Simpan akun digital guru dengan simpel.</p>
+    </div>
+
+    <div id="pin-setup-step-1">
+      <h2 class="auth-heading">Buat PIN</h2>
+      <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin-new" class="pin-input" placeholder="• • • •" aria-label="Buat PIN 4-6 digit" autocomplete="off">
+      <button id="btn-pin-next" class="btn btn-primary btn-block">Lanjut</button>
+    </div>
+
+    <div id="pin-setup-step-2" hidden>
+      <h2 class="auth-heading">Konfirmasi PIN</h2>
+      <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin-confirm" class="pin-input" placeholder="• • • •" aria-label="Konfirmasi PIN" autocomplete="off">
+      <p class="field-error" id="pin-setup-error" hidden></p>
+      <button id="btn-pin-start" class="btn btn-primary btn-block">Mulai</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SCREEN: PIN LOCK (returning) ===== -->
+<section id="screen-pin-lock" class="screen" hidden>
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-parent">BantuGuruYuk</span>
+      <h1 class="brand-title">SANDI</h1>
+    </div>
+    <h2 class="auth-heading">Masukkan PIN</h2>
+    <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin-unlock" class="pin-input" placeholder="• • • •" aria-label="Masukkan PIN" autocomplete="off">
+    <p class="field-error" id="pin-unlock-error" hidden>PIN salah, coba lagi.</p>
+    <button id="btn-unlock" class="btn btn-primary btn-block">Buka SANDI</button>
+    <button id="btn-forgot-pin" class="btn btn-link btn-block">Lupa PIN?</button>
+  </div>
+</section>
+
+<!-- ===== APP SHELL ===== -->
+<div id="app-shell" hidden>
+
+  <header class="app-header">
+    <div class="header-text">
+      <span class="header-parent">BantuGuruYuk</span>
+      <h1 class="header-title">SANDI</h1>
+    </div>
+    <button id="btn-theme-toggle" class="icon-btn" aria-label="Ganti tema terang/gelap">🌙</button>
+  </header>
+
+  <!-- VIEW: Dashboard -->
+  <main id="view-dashboard" class="view">
+    <p class="greeting">Halo, Guru 👋</p>
+
+    <div class="search-bar">
+      <input type="search" id="search-input" placeholder="🔎 Cari akun..." aria-label="Cari akun">
+    </div>
+
+    <div class="category-chips" id="category-chips">
+      <button class="chip chip-active" data-category="Semua">Semua</button>
+    </div>
+
+    <h2 class="section-label">Akun tersimpan</h2>
+    <div id="account-list" class="account-list"></div>
+
+    <div id="empty-state" class="empty-state" hidden>
+      <div class="empty-icon">🔐</div>
+      <p class="empty-title">Belum ada akun</p>
+      <p class="empty-desc">Tambahkan akun digital yang sering kamu gunakan.</p>
+      <button class="btn btn-primary" id="btn-empty-add">+ Tambah Akun</button>
+    </div>
+
+    <div id="no-result-state" class="empty-state" hidden>
+      <p class="empty-title">Akun tidak ditemukan.</p>
+      <p class="empty-desc">Coba kata kunci lain.</p>
+    </div>
+  </main>
+
+  <!-- VIEW: Favorit -->
+  <main id="view-favorite" class="view" hidden>
+    <h2 class="section-label">★ Favorit</h2>
+    <div id="favorite-list" class="account-list"></div>
+    <div id="favorite-empty" class="empty-state" hidden>
+      <div class="empty-icon">★</div>
+      <p class="empty-title">Belum ada favorit</p>
+      <p class="empty-desc">Tandai akun sebagai favorit dari halaman detail.</p>
+    </div>
+  </main>
+
+  <!-- VIEW: Settings -->
+  <main id="view-settings" class="view" hidden>
+    <h2 class="section-label">Pengaturan</h2>
+
+    <div class="settings-group">
+      <h3 class="settings-group-title">Tampilan</h3>
+      <button id="btn-theme-toggle-2" class="settings-row">
+        <span>Tema</span>
+        <span id="theme-label">☀️ Terang</span>
+      </button>
+    </div>
+
+    <div class="settings-group">
+      <h3 class="settings-group-title">Keamanan</h3>
+      <button id="btn-change-pin" class="settings-row"><span>🔢 Ubah PIN</span></button>
+      <button id="btn-lock-now" class="settings-row"><span>🔒 Kunci Sekarang</span></button>
+      <label class="settings-row" for="autolock-select">
+        <span>Kunci otomatis</span>
+        <select id="autolock-select">
+          <option value="0">Tidak pernah</option>
+          <option value="1">1 menit</option>
+          <option value="5" selected>5 menit</option>
+          <option value="15">15 menit</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="settings-group">
+      <h3 class="settings-group-title">Data</h3>
+      <button id="btn-export" class="settings-row"><span>Export Data</span></button>
+      <button id="btn-import" class="settings-row"><span>Import Data</span></button>
+      <input type="file" id="import-file-input" accept="application/json" hidden>
+      <button id="btn-delete-all" class="settings-row settings-row-danger"><span>Hapus Semua Data</span></button>
+    </div>
+
+    <div class="settings-group">
+      <h3 class="settings-group-title">Tentang</h3>
+      <p class="about-text">SANDI<br>Bagian dari BantuGuruYuk</p>
+      <p class="about-version">Versi 1.0.0</p>
+      <p class="disclaimer">Data SANDI disimpan di perangkat/browser ini dan tidak dikirim ke server. Karena SANDI tidak menggunakan enkripsi, hindari menyimpan informasi yang sangat sensitif.</p>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn nav-active" data-view="dashboard" aria-label="Beranda">
+      <span class="nav-icon">⌂</span><span class="nav-text">Beranda</span>
+    </button>
+    <button class="nav-btn" data-view="favorite" aria-label="Favorit">
+      <span class="nav-icon">★</span><span class="nav-text">Favorit</span>
+    </button>
+    <button class="nav-btn" data-view="settings" aria-label="Pengaturan">
+      <span class="nav-icon">⚙</span><span class="nav-text">Pengaturan</span>
+    </button>
+  </nav>
+
+  <!-- Floating Action Button -->
+  <button id="fab-add" class="fab" aria-label="Tambah Akun">+</button>
+</div>
+
+<!-- ===== MODAL: Add/Edit Account ===== -->
+<div id="modal-form" class="modal-overlay" hidden>
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h2 id="form-modal-title">Tambah Akun</h2>
+      <button class="icon-btn" id="btn-close-form" aria-label="Tutup">✕</button>
+    </div>
+    <form id="account-form" class="modal-body">
+      <input type="hidden" id="field-id">
+
+      <label class="field-label" for="field-service">Nama layanan</label>
+      <input type="text" id="field-service" class="field-input" placeholder="Google" required>
+
+      <label class="field-label" for="field-username">Username / Email</label>
+      <input type="text" id="field-username" class="field-input" placeholder="guru@gmail.com">
+
+      <label class="field-label" for="field-password">Password</label>
+      <div class="password-field">
+        <input type="password" id="field-password" class="field-input" placeholder="••••••••">
+        <button type="button" class="icon-btn" id="btn-toggle-password" aria-label="Tampilkan password">👁</button>
+      </div>
+
+      <label class="field-label" for="field-url">URL</label>
+      <input type="url" id="field-url" class="field-input" placeholder="https://google.com">
+
+      <label class="field-label" for="field-category">Kategori</label>
+      <select id="field-category" class="field-input">
+        <option>Sekolah</option>
+        <option>Email</option>
+        <option>Administrasi</option>
+        <option>AI</option>
+        <option>Desain</option>
+        <option>Media</option>
+        <option>Lainnya</option>
+      </select>
+
+      <label class="field-label" for="field-notes">Catatan</label>
+      <textarea id="field-notes" class="field-input" rows="2" placeholder="Akun utama"></textarea>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="field-favorite">
+        <span>☆ Favorit</span>
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== MODAL: Detail Account ===== -->
+<div id="modal-detail" class="modal-overlay" hidden>
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h2 id="detail-service-name">Google</h2>
+      <button class="icon-btn" id="btn-close-detail" aria-label="Tutup">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-row">
+        <span class="detail-label">Username</span>
+        <div class="detail-value-row">
+          <span id="detail-username" class="detail-value">-</span>
+          <button class="icon-btn" id="btn-copy-username" aria-label="Salin username">📋</button>
+        </div>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Password</span>
+        <div class="detail-value-row">
+          <span id="detail-password" class="detail-value detail-password">••••••••••</span>
+          <button class="icon-btn" id="btn-toggle-detail-password" aria-label="Tampilkan password">👁</button>
+          <button class="icon-btn" id="btn-copy-password" aria-label="Salin password">📋</button>
+        </div>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">URL</span>
+        <div class="detail-value-row">
+          <a id="detail-url" class="detail-value detail-link" href="#" target="_blank" rel="noopener">-</a>
+        </div>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Catatan</span>
+        <span id="detail-notes" class="detail-value">-</span>
+      </div>
+      <div class="detail-actions">
+        <button id="btn-detail-favorite" class="btn btn-secondary">☆ Favorit</button>
+        <button id="btn-edit-account" class="btn btn-secondary">Edit</button>
+        <button id="btn-delete-account" class="btn btn-danger">Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Confirm (generic) ===== -->
+<div id="modal-confirm" class="modal-overlay" hidden>
+  <div class="modal-sheet modal-sheet-small">
+    <div class="modal-body">
+      <h2 id="confirm-title">Hapus akun?</h2>
+      <p id="confirm-message">Data akun ini akan dihapus dari perangkat ini.</p>
+      <div class="confirm-actions">
+        <button id="btn-confirm-cancel" class="btn btn-secondary">Batal</button>
+        <button id="btn-confirm-ok" class="btn btn-danger">Hapus</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Change PIN ===== -->
+<div id="modal-change-pin" class="modal-overlay" hidden>
+  <div class="modal-sheet modal-sheet-small">
+    <div class="modal-header">
+      <h2>Ubah PIN</h2>
+      <button class="icon-btn" id="btn-close-change-pin" aria-label="Tutup">✕</button>
+    </div>
+    <div class="modal-body">
+      <label class="field-label" for="change-pin-old">PIN lama</label>
+      <input type="password" inputmode="numeric" maxlength="6" id="change-pin-old" class="field-input">
+      <label class="field-label" for="change-pin-new">PIN baru</label>
+      <input type="password" inputmode="numeric" maxlength="6" id="change-pin-new" class="field-input">
+      <label class="field-label" for="change-pin-confirm">Konfirmasi PIN baru</label>
+      <input type="password" inputmode="numeric" maxlength="6" id="change-pin-confirm" class="field-input">
+      <p class="field-error" id="change-pin-error" hidden></p>
+      <button id="btn-save-change-pin" class="btn btn-primary btn-block">Simpan PIN Baru</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Forgot PIN ===== -->
+<div id="modal-forgot-pin" class="modal-overlay" hidden>
+  <div class="modal-sheet modal-sheet-small">
+    <div class="modal-header">
+      <h2>Lupa PIN?</h2>
+      <button class="icon-btn" id="btn-close-forgot" aria-label="Tutup">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Karena data SANDI hanya tersimpan di perangkat ini, tidak ada cara memulihkan PIN dari server. Kamu bisa menghapus data lokal untuk mengatur ulang aplikasi (semua akun tersimpan akan hilang).</p>
+      <div class="confirm-actions">
+        <button id="btn-forgot-cancel" class="btn btn-secondary">Batal</button>
+        <button id="btn-forgot-reset" class="btn btn-danger">Hapus Data &amp; Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Import confirm ===== -->
+<div id="modal-import-confirm" class="modal-overlay" hidden>
+  <div class="modal-sheet modal-sheet-small">
+    <div class="modal-body">
+      <h2>Import data?</h2>
+      <p>Data yang diimpor akan ditambahkan ke data yang ada.</p>
+      <div class="confirm-actions">
+        <button id="btn-import-cancel" class="btn btn-secondary">Batal</button>
+        <button id="btn-import-ok" class="btn btn-primary">Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Sample data offer (first launch) ===== -->
+<div id="modal-sample-data" class="modal-overlay" hidden>
+  <div class="modal-sheet modal-sheet-small">
+    <div class="modal-body">
+      <h2>Mulai dengan contoh data?</h2>
+      <p>Kami bisa mengisi SANDI dengan beberapa contoh akun dummy agar kamu terbiasa, atau mulai dari database kosong.</p>
+      <div class="confirm-actions">
+        <button id="btn-skip-sample" class="btn btn-secondary">Mulai kosong</button>
+        <button id="btn-use-sample" class="btn btn-primary">Gunakan contoh data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="./app.js"></script>
+</body>
+</html>
