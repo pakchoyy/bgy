@@ -2,12 +2,12 @@
 
 /* SANDI service worker — caches core assets for offline use. */
 
-const CACHE_NAME = 'sandi-cache-v2';
+const CACHE_NAME = 'sandi-cache-v3';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './style.css',
-  './app.js',
+  './style.css?v=3',
+  './app.js?v=3',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',

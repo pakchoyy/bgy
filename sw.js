@@ -35,6 +35,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   // Hanya tangani request HTTP/HTTPS (hindari chrome-extension dll)
   if (!e.request.url.startsWith('http')) return;
+  if (new URL(e.request.url).pathname.startsWith('/sandi/')) return;
 
   const wantsFreshPage=e.request.mode==='navigate'||e.request.destination==='document';
   if(wantsFreshPage){
