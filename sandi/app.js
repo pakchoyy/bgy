@@ -169,6 +169,14 @@ async function copyToClipboard(text) {
   }
 }
 
+/* Null-safe listener binding: if an element is missing (e.g. an old
+   cached HTML mismatched with a newer app.js), skip it instead of
+   throwing and blanking the whole app. */
+function on(id, event, handler) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener(event, handler);
+}
+
 /* ---------- App state ---------- */
 const state = {
   accounts: [],
@@ -214,7 +222,7 @@ function initAuthFlow() {
 
 /* PIN setup */
 let pendingNewPin = '';
-document.getElementById('btn-pin-next').addEventListener('click', () => {
+on('btn-pin-next', 'click', () => {
   const val = document.getElementById('pin-new').value.trim();
   if (val.length < 4 || val.length > 6 || !/^\d+$/.test(val)) {
     showToast('PIN harus 4-6 digit angka');
@@ -226,7 +234,7 @@ document.getElementById('btn-pin-next').addEventListener('click', () => {
   document.getElementById('pin-confirm').focus();
 });
 
-document.getElementById('btn-pin-start').addEventListener('click', async () => {
+on('btn-pin-start', 'click', async () => {
   const confirmVal = document.getElementById('pin-confirm').value.trim();
   const errEl = document.getElementById('pin-setup-error');
   if (confirmVal !== pendingNewPin) {
@@ -247,8 +255,8 @@ document.getElementById('btn-pin-start').addEventListener('click', async () => {
 });
 
 /* PIN unlock */
-document.getElementById('btn-unlock').addEventListener('click', unlockWithPin);
-document.getElementById('pin-unlock').addEventListener('keydown', (e) => {
+on('btn-unlock', 'click', unlockWithPin);
+on('pin-unlock', 'keydown', (e) => {
   if (e.key === 'Enter') unlockWithPin();
 });
 async function unlockWithPin() {
@@ -265,16 +273,16 @@ async function unlockWithPin() {
 }
 
 /* Forgot PIN */
-document.getElementById('btn-forgot-pin').addEventListener('click', () => {
+on('btn-forgot-pin', 'click', () => {
   document.getElementById('modal-forgot-pin').hidden = false;
 });
-document.getElementById('btn-forgot-cancel').addEventListener('click', () => {
+on('btn-forgot-cancel', 'click', () => {
   document.getElementById('modal-forgot-pin').hidden = true;
 });
-document.getElementById('btn-close-forgot').addEventListener('click', () => {
+on('btn-close-forgot', 'click', () => {
   document.getElementById('modal-forgot-pin').hidden = true;
 });
-document.getElementById('btn-forgot-reset').addEventListener('click', async () => {
+on('btn-forgot-reset', 'click', async () => {
   await clearAllAccounts();
   localStorage.removeItem(LS_PIN);
   localStorage.removeItem(LS_ONBOARDED);
@@ -287,7 +295,7 @@ function lockApp() {
   document.getElementById('pin-unlock').value = '';
   showScreen('screen-pin-lock');
 }
-document.getElementById('btn-lock-now').addEventListener('click', lockApp);
+on('btn-lock-now', 'click', lockApp);
 
 function resetAutoLockTimer() {
   clearTimeout(state.autoLockTimer);
@@ -302,17 +310,17 @@ function resetAutoLockTimer() {
 });
 
 /* Change PIN */
-document.getElementById('btn-change-pin').addEventListener('click', () => {
+on('btn-change-pin', 'click', () => {
   document.getElementById('change-pin-old').value = '';
   document.getElementById('change-pin-new').value = '';
   document.getElementById('change-pin-confirm').value = '';
   document.getElementById('change-pin-error').hidden = true;
   document.getElementById('modal-change-pin').hidden = false;
 });
-document.getElementById('btn-close-change-pin').addEventListener('click', () => {
+on('btn-close-change-pin', 'click', () => {
   document.getElementById('modal-change-pin').hidden = true;
 });
-document.getElementById('btn-save-change-pin').addEventListener('click', () => {
+on('btn-save-change-pin', 'click', () => {
   const oldPin = document.getElementById('change-pin-old').value.trim();
   const newPin = document.getElementById('change-pin-new').value.trim();
   const confirmPin = document.getElementById('change-pin-confirm').value.trim();
@@ -345,8 +353,8 @@ function toggleTheme() {
   localStorage.setItem(LS_THEME, next);
   applyTheme(next);
 }
-document.getElementById('btn-theme-toggle').addEventListener('click', toggleTheme);
-document.getElementById('btn-theme-toggle-2').addEventListener('click', toggleTheme);
+on('btn-theme-toggle', 'click', toggleTheme);
+on('btn-theme-toggle-2', 'click', toggleTheme);
 
 /* =========================================================
    HAMBURGER MENU
@@ -354,7 +362,7 @@ document.getElementById('btn-theme-toggle-2').addEventListener('click', toggleTh
 function closeHamburgerMenu() {
   document.getElementById('hamburger-menu').hidden = true;
 }
-document.getElementById('btn-hamburger').addEventListener('click', (e) => {
+on('btn-hamburger', 'click', (e) => {
   e.stopPropagation();
   const menu = document.getElementById('hamburger-menu');
   menu.hidden = !menu.hidden;
@@ -365,19 +373,19 @@ document.addEventListener('click', (e) => {
     closeHamburgerMenu();
   }
 });
-document.getElementById('menu-tentang').addEventListener('click', () => {
+on('menu-tentang', 'click', () => {
   closeHamburgerMenu();
   switchView('settings');
 });
-document.getElementById('menu-lock').addEventListener('click', () => {
+on('menu-lock', 'click', () => {
   closeHamburgerMenu();
   lockApp();
 });
-document.getElementById('menu-install').addEventListener('click', () => {
+on('menu-install', 'click', () => {
   closeHamburgerMenu();
   triggerInstallPrompt();
 });
-document.getElementById('menu-bgy').addEventListener('click', () => {
+on('menu-bgy', 'click', () => {
   closeHamburgerMenu();
   window.open('https://www.bantuguruyuk.web.id', '_blank');
 });
@@ -406,8 +414,8 @@ async function triggerInstallPrompt() {
   document.getElementById('install-banner').hidden = true;
 }
 
-document.getElementById('btn-install').addEventListener('click', triggerInstallPrompt);
-document.getElementById('btn-install-close').addEventListener('click', () => {
+on('btn-install', 'click', triggerInstallPrompt);
+on('btn-install-close', 'click', () => {
   document.getElementById('install-banner').hidden = true;
   localStorage.setItem('sandi_install_dismissed', '1');
 });
@@ -535,7 +543,7 @@ function renderCategoryChips() {
   });
 }
 
-document.getElementById('search-input').addEventListener('input', (e) => {
+on('search-input', 'input', (e) => {
   state.searchQuery = e.target.value;
   renderDashboard();
 });
@@ -552,9 +560,9 @@ function openAddForm() {
   document.getElementById('modal-form').hidden = false;
   document.getElementById('field-service').focus();
 }
-document.getElementById('fab-add').addEventListener('click', openAddForm);
-document.getElementById('btn-empty-add').addEventListener('click', openAddForm);
-document.getElementById('btn-close-form').addEventListener('click', () => {
+on('fab-add', 'click', openAddForm);
+on('btn-empty-add', 'click', openAddForm);
+on('btn-close-form', 'click', () => {
   document.getElementById('modal-form').hidden = true;
 });
 
@@ -574,12 +582,12 @@ function openEditForm(acc) {
   document.getElementById('modal-form').hidden = false;
 }
 
-document.getElementById('btn-toggle-password').addEventListener('click', () => {
+on('btn-toggle-password', 'click', () => {
   const input = document.getElementById('field-password');
   input.type = input.type === 'password' ? 'text' : 'password';
 });
 
-document.getElementById('account-form').addEventListener('submit', async (e) => {
+on('account-form', 'submit', async (e) => {
   e.preventDefault();
   const serviceName = document.getElementById('field-service').value.trim();
   if (!serviceName) { showToast('Nama layanan wajib diisi'); return; }
@@ -636,31 +644,31 @@ function openDetail(id) {
 
   document.getElementById('modal-detail').hidden = false;
 }
-document.getElementById('btn-close-detail').addEventListener('click', () => {
+on('btn-close-detail', 'click', () => {
   document.getElementById('modal-detail').hidden = true;
 });
 
-document.getElementById('btn-toggle-detail-password').addEventListener('click', () => {
+on('btn-toggle-detail-password', 'click', () => {
   const el = document.getElementById('detail-password');
   const revealed = el.dataset.revealed === 'true';
   el.textContent = revealed ? '••••••••••' : (el.dataset.value || '(kosong)');
   el.dataset.revealed = revealed ? 'false' : 'true';
 });
 
-document.getElementById('btn-copy-username').addEventListener('click', async () => {
+on('btn-copy-username', 'click', async () => {
   const acc = state.accounts.find((a) => a.id === state.activeDetailId);
   if (!acc || !acc.username) { showToast('Tidak ada username untuk disalin'); return; }
   const ok = await copyToClipboard(acc.username);
   showToast(ok ? 'Tersalin ✓' : 'Tidak bisa menyalin otomatis. Silakan salin secara manual.');
 });
-document.getElementById('btn-copy-password').addEventListener('click', async () => {
+on('btn-copy-password', 'click', async () => {
   const acc = state.accounts.find((a) => a.id === state.activeDetailId);
   if (!acc || !acc.password) { showToast('Tidak ada password untuk disalin'); return; }
   const ok = await copyToClipboard(acc.password);
   showToast(ok ? 'Password disalin ✓' : 'Tidak bisa menyalin otomatis. Silakan salin secara manual.');
 });
 
-document.getElementById('btn-detail-favorite').addEventListener('click', async () => {
+on('btn-detail-favorite', 'click', async () => {
   const acc = state.accounts.find((a) => a.id === state.activeDetailId);
   if (!acc) return;
   acc.favorite = !acc.favorite;
@@ -670,12 +678,12 @@ document.getElementById('btn-detail-favorite').addEventListener('click', async (
   document.getElementById('btn-detail-favorite').textContent = acc.favorite ? '★ Favorit' : '☆ Favorit';
 });
 
-document.getElementById('btn-edit-account').addEventListener('click', () => {
+on('btn-edit-account', 'click', () => {
   const acc = state.accounts.find((a) => a.id === state.activeDetailId);
   if (acc) openEditForm(acc);
 });
 
-document.getElementById('btn-delete-account').addEventListener('click', () => {
+on('btn-delete-account', 'click', () => {
   askConfirm('Hapus akun?', 'Data akun ini akan dihapus dari perangkat ini.', async () => {
     await deleteAccountById(state.activeDetailId);
     await refreshAccounts();
@@ -693,11 +701,11 @@ function askConfirm(title, message, onConfirm) {
   state.pendingDeleteAction = onConfirm;
   document.getElementById('modal-confirm').hidden = false;
 }
-document.getElementById('btn-confirm-cancel').addEventListener('click', () => {
+on('btn-confirm-cancel', 'click', () => {
   document.getElementById('modal-confirm').hidden = true;
   state.pendingDeleteAction = null;
 });
-document.getElementById('btn-confirm-ok').addEventListener('click', async () => {
+on('btn-confirm-ok', 'click', async () => {
   const action = state.pendingDeleteAction;
   document.getElementById('modal-confirm').hidden = true;
   state.pendingDeleteAction = null;
@@ -707,7 +715,7 @@ document.getElementById('btn-confirm-ok').addEventListener('click', async () => 
 /* =========================================================
    SETTINGS: export / import / delete all / autolock
    ========================================================= */
-document.getElementById('btn-export').addEventListener('click', async () => {
+on('btn-export', 'click', async () => {
   const data = { app: 'SANDI', version: 1, exportedAt: nowIso(), accounts: state.accounts };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -721,12 +729,12 @@ document.getElementById('btn-export').addEventListener('click', async () => {
   showToast('Data berhasil di-export ✓');
 });
 
-document.getElementById('btn-import').addEventListener('click', () => {
+on('btn-import', 'click', () => {
   document.getElementById('import-file-input').click();
 });
 
 let pendingImportData = null;
-document.getElementById('import-file-input').addEventListener('change', (e) => {
+on('import-file-input', 'change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -744,11 +752,11 @@ document.getElementById('import-file-input').addEventListener('change', (e) => {
   reader.onerror = () => showToast('File backup tidak valid.');
   reader.readAsText(file);
 });
-document.getElementById('btn-import-cancel').addEventListener('click', () => {
+on('btn-import-cancel', 'click', () => {
   document.getElementById('modal-import-confirm').hidden = true;
   pendingImportData = null;
 });
-document.getElementById('btn-import-ok').addEventListener('click', async () => {
+on('btn-import-ok', 'click', async () => {
   if (pendingImportData) {
     for (const acc of pendingImportData) {
       if (!acc.id) acc.id = makeId();
@@ -761,7 +769,7 @@ document.getElementById('btn-import-ok').addEventListener('click', async () => {
   pendingImportData = null;
 });
 
-document.getElementById('btn-delete-all').addEventListener('click', () => {
+on('btn-delete-all', 'click', () => {
   askConfirm('Hapus semua data?', 'Semua akun tersimpan akan dihapus permanen dari perangkat ini.', async () => {
     await clearAllAccounts();
     await refreshAccounts();
@@ -769,7 +777,7 @@ document.getElementById('btn-delete-all').addEventListener('click', () => {
   });
 });
 
-document.getElementById('autolock-select').addEventListener('change', (e) => {
+on('autolock-select', 'change', (e) => {
   localStorage.setItem(LS_AUTOLOCK, e.target.value);
   resetAutoLockTimer();
 });
@@ -777,10 +785,10 @@ document.getElementById('autolock-select').addEventListener('change', (e) => {
 /* =========================================================
    SAMPLE DATA (first launch)
    ========================================================= */
-document.getElementById('btn-skip-sample').addEventListener('click', () => {
+on('btn-skip-sample', 'click', () => {
   document.getElementById('modal-sample-data').hidden = true;
 });
-document.getElementById('btn-use-sample').addEventListener('click', async () => {
+on('btn-use-sample', 'click', async () => {
   const samples = [
     { id: makeId(), serviceName: 'Google', username: 'demo@example.com', password: 'demo1234', url: 'https://google.com', category: 'Email', icon: 'G', notes: 'Contoh akun', favorite: true, createdAt: nowIso(), updatedAt: nowIso() },
     { id: makeId(), serviceName: 'Canva', username: 'demo@example.com', password: 'demo1234', url: 'https://canva.com', category: 'Desain', icon: 'C', notes: 'Contoh akun', favorite: false, createdAt: nowIso(), updatedAt: nowIso() },
