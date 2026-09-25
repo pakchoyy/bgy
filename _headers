@@ -24,3 +24,24 @@
 
 /lkpd/*.jpg
   Cache-Control: public, max-age=604800
+
+# ══ SANDI ══
+# HTML — tidak pernah di-cache CDN, selalu ambil dari server
+/sandi/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/sandi/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Service Worker — wajib tidak di-cache, browser check setiap 24 jam
+/sandi/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /sandi/
+
+# Manifest — cache pendek
+/sandi/manifest.json
+  Cache-Control: max-age=3600
+
+# Gambar aset — cache panjang (jarang berubah)
+/sandi/icons/*.png
+  Cache-Control: public, max-age=604800
