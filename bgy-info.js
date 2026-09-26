@@ -105,7 +105,8 @@
     '.bgym-title{display:block;font-size:13.5px;font-weight:700;line-height:1.3;}',
     '.bgym-desc{display:block;font-size:12px;opacity:.7;line-height:1.3;}',
     '.bgym-divider{height:1px;background:rgba(127,127,127,.2);margin:4px 0;}',
-    '.bgym-all{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13.5px;font-weight:700;color:#0d9488!important;text-decoration:none!important;white-space:nowrap;}',
+    '.bgym-all{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13px;font-weight:700;color:#0d9488!important;text-decoration:none!important;white-space:nowrap;}',
+    '.bgym-all span{min-width:0;overflow:hidden;text-overflow:ellipsis;}',
     '.bgym-all svg{flex:none;width:18px;height:18px;}'
   ].join('');
 

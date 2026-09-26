@@ -95,7 +95,7 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;transition:background .2s;display:flex;align-items:center;justify-content:center;}
 .hdr-btn:hover{background:rgba(255,255,255,.22);}
 .hdr-menu-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;}
-.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:190px;overflow:hidden;display:none;z-index:400;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:190px;width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
 .dropdown-menu.open{display:block;}
 .dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;}
 .dropdown-item:hover{background:var(--gray-100);}
@@ -444,12 +444,11 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
         <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()">🏠 Home</button>
         <button class="dropdown-item" id="mi-petunjuk" onclick="selectTab('petunjuk');closeMenu()">📖 Petunjuk</button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
-        <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
+        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang &amp; Kontak</button>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item" onclick="installApp();closeMenu()">📲 Install BGY</button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" onclick="window.open('https://bantuguruyuk.web.id','_blank')">🌐 bantuguruyuk.web.id</button>
+        <div data-bgy-menu></div>
       </div>
     </div>
   </div>
@@ -516,13 +515,7 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
     </ul>
     <div style="margin-top:14px;font-size:.8rem;color:var(--text-light);">🏫 <a href="https://bantuguruyuk.web.id" target="_blank" style="color:var(--blue);">bantuguruyuk.web.id</a></div>
   </div>
-</main>
-</div>
-
-<!-- ══ TAB KONTAK ══ -->
-<div id="tab-kontak" style="display:none;">
-<main>
-  <div class="card">
+  <div class="card" style="margin-top:16px;">
     <div class="card-title">📬 Kontak</div>
     <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau kolaborasi:</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -532,6 +525,7 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
   </div>
 </main>
 </div>
+
 
 <!-- ══ TAB HOME ══ -->
 <div id="tab-home">
@@ -746,8 +740,11 @@ function closeMenu(){
   document.getElementById('dropdownMenu').classList.remove('open');
   document.getElementById('menuOverlay').classList.remove('open');
 }
+document.addEventListener('click', function(e){
+  if (e.target.closest && e.target.closest('#dropdownMenu [data-bgy-menu] a')) closeMenu();
+});
 function selectTab(tab){
-  ['home','petunjuk','tentang','kontak'].forEach(t => {
+  ['home','petunjuk','tentang'].forEach(t => {
     const d = document.getElementById('tab-'+t); if(d) d.style.display = t===tab ? 'block' : 'none';
     const mi = document.getElementById('mi-'+t); if(mi) mi.classList.toggle('active', t===tab);
   });
