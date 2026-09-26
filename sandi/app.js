@@ -59,7 +59,7 @@ function fallbackWrite(list) {
   localStorage.setItem(LS_FALLBACK_KEY, JSON.stringify(list));
 }
 
-function getAllAccounts() {
+function getAllRaw() {
   return new Promise((resolve) => {
     if (useFallback || !dbInstance) { resolve(fallbackRead()); return; }
     try {
@@ -74,7 +74,7 @@ function getAllAccounts() {
   });
 }
 
-function putAccount(account) {
+function putRaw(account) {
   return new Promise((resolve) => {
     if (useFallback || !dbInstance) {
       const list = fallbackRead();
@@ -127,6 +127,70 @@ function clearAllAccounts() {
   });
 }
 
+/* ---------- Encryption (AES-GCM, key derived from PIN) ---------- */
+const LS_SALT = 'sandi_salt';
+let cryptoKey = null;
+const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = (str) => Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
+
+async function deriveKey(pin, freshSalt) {
+  if (!(window.crypto && crypto.subtle)) return null;
+  let salt = localStorage.getItem(LS_SALT);
+  if (!salt || freshSalt) {
+    salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+    localStorage.setItem(LS_SALT, salt);
+  }
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: unb64(salt), iterations: 150000, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
+}
+async function encryptRecord(acc) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const data = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, new TextEncoder().encode(JSON.stringify(acc)));
+  return { id: acc.id, enc: { iv: b64(iv), data: b64(data) } };
+}
+async function decryptRecord(rec) {
+  if (!rec.enc) return rec;
+  if (!cryptoKey) return null;
+  try {
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(rec.enc.iv) }, cryptoKey, unb64(rec.enc.data));
+    return JSON.parse(new TextDecoder().decode(plain));
+  } catch (e) {
+    return null;
+  }
+}
+async function getAllAccounts() {
+  const raw = await getAllRaw();
+  const list = await Promise.all(raw.map(decryptRecord));
+  return list.filter(Boolean);
+}
+async function putAccount(acc) {
+  return putRaw(cryptoKey ? await encryptRecord(acc) : acc);
+}
+/* Unlock: derive key and encrypt any records still stored in plain form. */
+async function activateKey(pin) {
+  cryptoKey = await deriveKey(pin, false);
+  if (!cryptoKey) return;
+  for (const rec of await getAllRaw()) {
+    if (!rec.enc) await putAccount(rec);
+  }
+}
+/* New PIN: re-encrypt everything under a fresh key. */
+async function rekey(pin) {
+  const plain = await getAllAccounts();
+  cryptoKey = await deriveKey(pin, true);
+  for (const acc of plain) await putAccount(acc);
+}
+/* PIN turned off: store everything decrypted. */
+async function disableEncryption() {
+  const plain = await getAllAccounts();
+  cryptoKey = null;
+  localStorage.removeItem(LS_SALT);
+  for (const acc of plain) await putAccount(acc);
+}
+
 /* ---------- Helpers ---------- */
 function makeId() {
   return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
@@ -136,6 +200,7 @@ function nowIso() { return new Date().toISOString(); }
 function showToast(message) {
   const toast = document.getElementById('toast');
   toast.textContent = message;
+  toast.classList.toggle('toast-top', !!document.querySelector('.modal-overlay:not([hidden])'));
   toast.hidden = false;
   clearTimeout(showToast._t);
   showToast._t = setTimeout(() => { toast.hidden = true; }, 2200);
@@ -283,6 +348,7 @@ on('btn-pin-start', 'click', async () => {
   }
   errEl.hidden = true;
   await savePin(pendingNewPin);
+  await rekey(pendingNewPin);
   await enterApp();
 });
 
@@ -297,17 +363,42 @@ on('btn-unlock', 'click', unlockWithPin);
 on('pin-unlock', 'keydown', (e) => {
   if (e.key === 'Enter') unlockWithPin();
 });
+const LS_FAILS = 'sandi_pin_fails';
+const LS_LOCK_UNTIL = 'sandi_pin_lock_until';
+function lockoutRemaining() {
+  return Math.max(0, parseInt(localStorage.getItem(LS_LOCK_UNTIL) || '0', 10) - Date.now());
+}
 async function unlockWithPin() {
-  const val = document.getElementById('pin-unlock').value.trim();
+  const input = document.getElementById('pin-unlock');
+  const val = input.value.trim();
   const errEl = document.getElementById('pin-unlock-error');
+  const wait = lockoutRemaining();
+  if (wait > 0) {
+    errEl.textContent = `Terlalu banyak percobaan. Coba lagi dalam ${Math.ceil(wait / 1000)} detik.`;
+    errEl.hidden = false;
+    return;
+  }
   if (await checkPin(val)) {
+    localStorage.removeItem(LS_FAILS);
+    localStorage.removeItem(LS_LOCK_UNTIL);
     errEl.hidden = true;
-    document.getElementById('pin-unlock').value = '';
+    input.value = '';
+    await activateKey(val);
     showApp();
     await boot();
-  } else {
-    errEl.hidden = false;
+    return;
   }
+  const fails = parseInt(localStorage.getItem(LS_FAILS) || '0', 10) + 1;
+  localStorage.setItem(LS_FAILS, String(fails));
+  input.value = '';
+  if (fails % 5 === 0) {
+    const secs = 30 * Math.pow(2, fails / 5 - 1);
+    localStorage.setItem(LS_LOCK_UNTIL, String(Date.now() + secs * 1000));
+    errEl.textContent = `Salah ${fails}x. Tunggu ${secs} detik sebelum mencoba lagi.`;
+  } else {
+    errEl.textContent = `PIN salah. Sisa ${5 - (fails % 5)} percobaan sebelum dijeda.`;
+  }
+  errEl.hidden = false;
 }
 
 /* Forgot PIN */
@@ -325,6 +416,9 @@ on('btn-forgot-reset', 'click', async () => {
   localStorage.removeItem(LS_PIN);
   localStorage.removeItem(LS_PIN_OFF);
   localStorage.removeItem(LS_ONBOARDED);
+  localStorage.removeItem(LS_SALT);
+  localStorage.removeItem(LS_FAILS);
+  localStorage.removeItem(LS_LOCK_UNTIL);
   document.getElementById('modal-forgot-pin').hidden = true;
   location.reload();
 });
@@ -332,6 +426,9 @@ on('btn-forgot-reset', 'click', async () => {
 /* Lock now / auto lock */
 function lockApp() {
   if (pinDisabled() || !hasPin()) return;
+  cryptoKey = null;
+  state.accounts = [];
+  document.querySelectorAll('.modal-overlay').forEach((m) => { m.hidden = true; });
   document.getElementById('pin-unlock').value = '';
   showScreen('screen-pin-lock');
 }
@@ -374,6 +471,7 @@ on('btn-save-change-pin', 'click', async () => {
   if (newPin !== confirmPin) { errEl.textContent = 'Konfirmasi PIN tidak cocok.'; errEl.hidden = false; return; }
 
   await savePin(newPin);
+  await rekey(newPin);
   document.getElementById('modal-change-pin').hidden = true;
   showToast('PIN berhasil diubah ✓');
 });
@@ -403,6 +501,7 @@ on('btn-pin-off-ok', 'click', async () => {
     document.getElementById('pin-off-error').hidden = false;
     return;
   }
+  await disableEncryption();
   localStorage.setItem(LS_PIN_OFF, '1');
   clearTimeout(state.autoLockTimer);
   applyPinUi();
@@ -775,7 +874,13 @@ on('btn-copy-password', 'click', async () => {
   const acc = state.accounts.find((a) => a.id === state.activeDetailId);
   if (!acc || !acc.password) { showToast('Tidak ada password untuk disalin'); return; }
   const ok = await copyToClipboard(acc.password);
-  showToast(ok ? 'Password disalin ✓' : 'Tidak bisa menyalin otomatis. Silakan salin secara manual.');
+  showToast(ok ? 'Password disalin ✓ (dihapus dari clipboard dalam 30 detik)' : 'Tidak bisa menyalin otomatis. Silakan salin secara manual.');
+  if (ok) {
+    clearTimeout(state.clipboardTimer);
+    state.clipboardTimer = setTimeout(() => {
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText('').catch(() => {});
+    }, 30000);
+  }
 });
 
 on('btn-detail-favorite', 'click', async () => {
@@ -838,6 +943,8 @@ on('btn-export', 'click', async () => {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  localStorage.setItem(LS_LAST_EXPORT, String(Date.now()));
+  document.getElementById('backup-reminder').hidden = true;
   showToast('Data berhasil di-export ✓');
 });
 
@@ -918,11 +1025,29 @@ async function refreshAccounts() {
   state.accounts = await getAllAccounts();
   if (state.currentView === 'dashboard') renderDashboard();
   if (state.currentView === 'favorite') renderFavoriteList();
+  updateBackupReminder();
 }
+
+const LS_LAST_EXPORT = 'sandi_last_export';
+const LS_BACKUP_SNOOZE = 'sandi_backup_snooze';
+const DAY = 24 * 60 * 60 * 1000;
+function updateBackupReminder() {
+  const el = document.getElementById('backup-reminder');
+  if (!el) return;
+  const last = parseInt(localStorage.getItem(LS_LAST_EXPORT) || '0', 10);
+  const snooze = parseInt(localStorage.getItem(LS_BACKUP_SNOOZE) || '0', 10);
+  el.hidden = !(state.accounts.length >= 3 && Date.now() - last > 30 * DAY && Date.now() > snooze);
+}
+on('btn-backup-now', 'click', () => document.getElementById('btn-export').click());
+on('btn-backup-later', 'click', () => {
+  localStorage.setItem(LS_BACKUP_SNOOZE, String(Date.now() + 7 * DAY));
+  document.getElementById('backup-reminder').hidden = true;
+});
 
 async function boot() {
   await refreshAccounts();
   renderDashboard();
+  updateBackupReminder();
 
   const autolockVal = localStorage.getItem(LS_AUTOLOCK) || '5';
   document.getElementById('autolock-select').value = autolockVal;

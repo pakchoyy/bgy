@@ -588,3 +588,20 @@ button, input, select, textarea { font-family: inherit; }
 .settings-value { color: var(--color-text-muted); font-size: 14px; }
 .install-steps { margin: 4px 0 18px; padding-left: 20px; font-size: 14px; line-height: 1.7; color: var(--color-text); }
 .install-steps li { padding-left: 4px; }
+
+.toast.toast-top { top: max(16px, env(safe-area-inset-top)); bottom: auto; }
+.backup-reminder {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  align-items: start;
+  background: var(--color-chip-bg);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 14px;
+}
+.backup-reminder > .icon { color: var(--color-primary); margin-top: 2px; }
+.backup-reminder p { margin: 0; font-size: 13.5px; line-height: 1.5; }
+.backup-actions { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 10px; }
+.backup-actions .btn { flex: 1; padding: 10px 12px; font-size: 14px; }

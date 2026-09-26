@@ -9,7 +9,7 @@
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<link rel="stylesheet" href="./style.css?v=5">
+<link rel="stylesheet" href="./style.css?v=6">
 </head>
 <body>
 
@@ -119,6 +119,15 @@
       <input type="search" id="search-input" placeholder="Cari akun..." aria-label="Cari akun">
     </div>
 
+    <div id="backup-reminder" class="backup-reminder" hidden>
+      <svg class="icon"><use href="#icon-download"></use></svg>
+      <p>Belum ada backup dalam 30 hari terakhir. Simpan cadangan supaya data aman kalau HP rusak atau hilang.</p>
+      <div class="backup-actions">
+        <button id="btn-backup-later" class="btn btn-secondary">Nanti</button>
+        <button id="btn-backup-now" class="btn btn-primary">Backup sekarang</button>
+      </div>
+    </div>
+
     <div class="category-chips" id="category-chips">
       <button class="chip chip-active" data-category="Semua">Semua</button>
     </div>
@@ -192,8 +201,8 @@
     <div class="settings-group">
       <h3 class="settings-group-title">Tentang</h3>
       <p class="about-text">SANDI<br>Bagian dari BantuGuruYuk</p>
-      <p class="about-version">Versi 1.0.0</p>
-      <p class="disclaimer">Data SANDI disimpan di perangkat/browser ini dan tidak dikirim ke server. Karena SANDI tidak menggunakan enkripsi, hindari menyimpan informasi yang sangat sensitif.</p>
+      <p class="about-version">Versi 1.1.0</p>
+      <p class="disclaimer">Data SANDI disimpan di perangkat/browser ini dan tidak dikirim ke server. Saat PIN aktif, data dienkripsi (AES-256) dengan kunci dari PIN kamu. Jika PIN lupa, data tidak bisa dipulihkan, jadi rutin lakukan Export Data. File backup hasil export tidak dienkripsi, simpan di tempat aman.</p>
     </div>
   </main>
 
@@ -438,6 +447,6 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="./app.js?v=5"></script>
+<script src="./app.js?v=6"></script>
 </body>
 </html>
