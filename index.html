@@ -985,6 +985,12 @@ a { text-decoration: none; color: inherit; }
 }
 .testi-name { font-size: .78rem; font-weight: 700; color: var(--txt-1); }
 .testi-role { font-size: .65rem; color: var(--txt-3); margin-top: 1px; }
+.testi-summary { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; font-size:.8rem; color:var(--txt-2); margin:-4px 0 12px; }
+.testi-summary b { color: var(--txt-1); }
+.testi-write { border:1.5px solid var(--border); background:var(--surface); color:var(--txt-1); border-radius:99px; padding:5px 12px; font-size:.72rem; font-weight:700; cursor:pointer; font-family:inherit; }
+.testi-write:hover { border-color: var(--teal,#0ea5a0); color: var(--teal,#0ea5a0); }
+.testi-stars .off { color: var(--border); }
+#testiSection[hidden] { display:none; }
 
 /* ─── CREATOR CARD ─── */
 .creator-card {
@@ -1428,66 +1434,19 @@ a { text-decoration: none; color: inherit; }
     </div>
   </div>
 
-  <!-- ── KATA GURU — hidden, siap Supabase ── -->
-  <!-- TODO: sambungkan ke Supabase, fetch reviews dari tabel 'testimonials', render dynamic -->
-  <div id="testiSection" style="display:none;">
+  <!-- ── KATA GURU: ulasan dari form di tiap tool (kelola di /admin) ── -->
+  <div id="testiSection" hidden>
     <div class="sec-header">
       <div class="sec-line"></div>
       <div class="sec-label">Kata Guru yang Sudah Pakai</div>
       <div class="sec-line"></div>
     </div>
-    <div class="testimonial-grid" id="testiGrid">
-      <!-- Placeholder cards — ganti dengan fetch dari Supabase -->
-      <!-- 
-        Struktur tabel Supabase yang disarankan:
-        testimonials (id, name, role, school, province, text, rating, created_at, approved)
-        Query: SELECT * FROM testimonials WHERE approved = true ORDER BY created_at DESC LIMIT 4
-      -->
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"Buat soal yang biasanya habis 2 jam, sekarang cuma 10 menit. Hasilnya sudah sesuai Kurikulum Merdeka dan tinggal edit sedikit!"</div>
-        <div class="testi-footer">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);">S</div>
-          <div>
-            <div class="testi-name">Guru SD · DIY</div>
-            <div class="testi-role">via WhatsApp</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"LKPD-nya keren, anak-anak lebih semangat. Promptnya langsung bisa dipakai di ChatGPT, tidak perlu ribet lagi."</div>
-        <div class="testi-footer">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706);">A</div>
-          <div>
-            <div class="testi-name">Guru IPA · Jawa Timur</div>
-            <div class="testi-role">via WhatsApp</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"Presensi digitalnya simpel, rekap bulanan langsung bisa diunduh. Tidak rekap manual di Excel lagi!"</div>
-        <div class="testi-footer">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#2d6a7f,#0d2b3e);">R</div>
-          <div>
-            <div class="testi-name">Wali Kelas · Jawa Barat</div>
-            <div class="testi-role">via WhatsApp</div>
-          </div>
-        </div>
-      </div>
-      <div class="testi-card">
-        <div class="testi-stars">★★★★★</div>
-        <div class="testi-text">"Modul ajar yang biasanya bikin pusing, sekarang selesai dalam hitungan menit. Makasih Pak Choyy!"</div>
-        <div class="testi-footer">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#0ea5a0,#2d6a7f);">D</div>
-          <div>
-            <div class="testi-name">Guru Matematika · Jawa Barat</div>
-            <div class="testi-role">via WhatsApp</div>
-          </div>
-        </div>
-      </div>
+    <div class="testi-summary">
+      <span class="testi-stars" id="testiAvgStars"></span>
+      <span id="testiAvgTxt"></span>
+      <button type="button" class="testi-write" onclick="window.bgyAskReview&&bgyAskReview({tool:'home',force:true,delay:0})">Tulis ulasan</button>
     </div>
+    <div class="testimonial-grid" id="testiGrid"></div>
   </div>
 
   <!-- ── KREATOR CARD ── -->
@@ -1674,6 +1633,35 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   document.querySelectorAll('[data-count]').forEach(el => { el.textContent = counts[el.dataset.count]; });
 });
+
+/* ─── Ulasan guru (tabel bgy_reviews, kelola di /admin) ─── */
+(function loadReviews(){
+  const URL_='https://xtmpiqpmwirsrcsphsto.supabase.co';
+  const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w';
+  const H={apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json'};
+  const TOOLS={'soal':'Buat Soal','modul-ajar':'Modul Ajar','lkpd':'Prompt LKPD','kokurikuler':'Kokurikuler','katrol-nilai':'Katrol Nilai','draft-tp':'Draft TP','teks-sekolah':'Teks Sekolah','sandi':'Simpan Sandi','home':'Bantu Guru Yuk'};
+  const COLORS=['#0ea5a0,#0d7a8a','#f59e0b,#d97706','#2d6a7f,#0d2b3e','#0ea5a0,#2d6a7f','#6366f1,#4338ca'];
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const stars=n=>'★'.repeat(n)+'<span class="off">'+'★'.repeat(5-n)+'</span>';
+  Promise.all([
+    fetch(URL_+'/rest/v1/bgy_reviews?select=id,tool,rating,body,name,school&approved=eq.true&body=not.is.null&order=created_at.desc&limit=6',{headers:H}).then(r=>r.ok?r.json():[]),
+    fetch(URL_+'/rest/v1/rpc/bgy_review_stats',{method:'POST',headers:H,body:'{}'}).then(r=>r.ok?r.json():[])
+  ]).then(([list,stats])=>{
+    const st=Array.isArray(stats)&&stats[0];
+    if(!Array.isArray(list)||!list.length||!st||!Number(st.total)) return;
+    const avg=Number(st.avg_rating);
+    document.getElementById('testiAvgStars').innerHTML=stars(Math.round(avg));
+    document.getElementById('testiAvgTxt').innerHTML='<b>'+avg.toFixed(1).replace('.',',')+'</b> dari '+st.total+' ulasan';
+    document.getElementById('testiGrid').innerHTML=list.map((r,i)=>{
+      const who=r.name||'Guru';
+      const role=[r.school,TOOLS[r.tool]||r.tool].filter(Boolean).join(' · ');
+      return `<div class="testi-card"><div class="testi-stars">${stars(r.rating)}</div><div class="testi-text">"${esc(r.body)}"</div>`+
+        `<div class="testi-footer"><div class="testi-avatar" style="background:linear-gradient(135deg,${COLORS[i%COLORS.length]});">${esc(who.trim().charAt(0).toUpperCase()||'G')}</div>`+
+        `<div><div class="testi-name">${esc(who)}</div><div class="testi-role">${esc(role)}</div></div></div></div>`;
+    }).join('');
+    document.getElementById('testiSection').hidden=false;
+  }).catch(()=>{});
+})();
 
 /* ─── Tool finder & recently used ─── */
 let activeCategory = 'all';

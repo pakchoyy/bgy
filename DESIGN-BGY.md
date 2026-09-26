@@ -274,5 +274,6 @@ Semua warna lewat variabel CSS supaya otomatis ikut berganti.
 - [ ] Daftarkan di **Beranda** (`/index.html`): kartu tool + label Gratis, item sidebar; angka statistik terhitung otomatis
 - [ ] Tambahkan ke `INFO_ITEMS` (dan `MENU_ITEMS` bila termasuk 4 tools utama) di `bgy-info.js`
 - [ ] Tambahkan ke `sitemap.xml`
+- [ ] Panggil `window.bgyAskReview&&bgyAskReview({delay:3000})` setelah pengguna **berhasil** mendapat hasil (unduh/salin/cetak), bukan saat halaman dibuka. Form ulasan, jeda tanya ulang, dan pengiriman sudah diurus `bgy-info.js`; tambahkan nama tool di `TOOL_NAMES` pada `/admin` dan Beranda
 - [ ] Tes di HP 360px & 390px, mode gelap, dan offline
 - [ ] Fitur AI yang belum siap: bangun lengkap, tapi sembunyikan dengan saklar di kode (contoh: `AI_AKTIF` di Teks Sekolah) supaya tinggal dinyalakan

@@ -339,6 +339,170 @@
     });
   }
 
+  /* ---- 6. Form ulasan: panggil window.bgyAskReview() setelah pengguna berhasil memakai tool ---- */
+  var SB_URL = 'https://xtmpiqpmwirsrcsphsto.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w';
+  var REVIEW_SNOOZE_DAYS = 14;   // "Nanti saja" → tool ini tidak ditanya lagi selama ini
+  var REVIEW_GAP_DAYS = 3;       // jeda minimal antar-tanya di tools mana pun
+  var reviewCss = [
+    '.bgyr-bg{position:fixed;inset:0;z-index:100001;background:rgba(15,23,42,.55);display:flex;align-items:flex-end;justify-content:center;',
+    'opacity:0;transition:opacity .2s;font-family:inherit;}',
+    '.bgyr-bg.bgyr-show{opacity:1;}',
+    '.bgyr{position:relative;background:#fff;color:#1e293b;width:100%;max-width:440px;border-radius:18px 18px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));',
+    'box-shadow:0 -8px 32px rgba(0,0,0,.2);transform:translateY(30px);transition:transform .25s;max-height:92vh;overflow-y:auto;box-sizing:border-box;}',
+    '.bgyr *{box-sizing:border-box;}',
+    '.bgyr-show .bgyr{transform:none;}',
+    '@media (min-width:600px){.bgyr-bg{align-items:center;padding:16px}.bgyr{border-radius:18px;padding-bottom:18px}}',
+    '.bgyr-x{position:absolute;top:10px;right:10px;width:32px;height:32px;border:none;background:none;color:#64748b;cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;}',
+    '.bgyr-x:hover{background:#f1f5f9;}',
+    '.bgyr-t{font-size:16px;font-weight:800;line-height:1.35;padding-right:30px;}',
+    '.bgyr-s{font-size:12.5px;color:#64748b;margin-top:4px;line-height:1.45;}',
+    '.bgyr-stars{display:flex;justify-content:center;gap:6px;margin:14px 0 4px;}',
+    '.bgyr-star{background:none;border:none;cursor:pointer;padding:2px;color:#cbd5e1;line-height:0;transition:transform .1s;}',
+    '.bgyr-star svg{width:38px;height:38px;}',
+    '.bgyr-star.on{color:#f59e0b;}',
+    '.bgyr-star.on svg{fill:currentColor;}',
+    '.bgyr-star:active{transform:scale(.9);}',
+    '.bgyr-lbl{text-align:center;font-size:12px;font-weight:700;color:#0d7a8a;min-height:17px;margin-bottom:8px;}',
+    '.bgyr textarea,.bgyr input{width:100%;padding:9px 11px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:14px;font-family:inherit;',
+    'background:#f8fafc;color:#1e293b;outline:none;margin-top:8px;}',
+    '.bgyr textarea{resize:vertical;min-height:70px;}',
+    '.bgyr textarea:focus,.bgyr input:focus{border-color:#0ea5a0;box-shadow:0 0 0 3px rgba(14,165,160,.12);}',
+    '.bgyr-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}',
+    '.bgyr-note{font-size:11.5px;color:#64748b;margin-top:8px;line-height:1.4;}',
+    '.bgyr-btns{display:flex;gap:8px;margin-top:14px;}',
+    '.bgyr-btns button{flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;border:1.5px solid #e2e8f0;background:#f8fafc;color:#64748b;}',
+    '.bgyr-btns .bgyr-send{flex:1.6;border:none;background:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);color:#fff;box-shadow:0 4px 14px rgba(14,165,160,.25);}',
+    '.bgyr-btns .bgyr-send:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;}',
+    '.bgyr-done{text-align:center;padding:18px 6px 8px;}',
+    '.bgyr-done svg{width:46px;height:46px;color:#059669;}',
+    '.bgyr-done b{display:block;font-size:16px;margin-top:8px;}',
+    '.bgyr-done span{display:block;font-size:13px;color:#64748b;margin-top:4px;}',
+    'body.dark .bgyr{background:#1e293b;color:#f1f5f9;}',
+    'body.dark .bgyr textarea,body.dark .bgyr input{background:#0f172a;border-color:#334155;color:#f1f5f9;}',
+    'body.dark .bgyr-btns button{background:#0f172a;border-color:#334155;color:#94a3b8;}',
+    'body.dark .bgyr-x:hover{background:#334155;}',
+    'body.dark .bgyr-lbl{color:#5eead4;}',
+    'body.dark .bgyr-star{color:#475569;}',
+    'body.dark .bgyr-star.on{color:#fbbf24;}'
+  ].join('');
+  var STAR = '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>';
+  var STAR_LABELS = ['', 'Kurang membantu', 'Lumayan', 'Cukup membantu', 'Membantu', 'Sangat membantu!'];
+  var reviewAsked = false;
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function toolName() {
+    var t = document.title.split('|');
+    return (t.length > 1 ? t[t.length - 1] : 'Bantu Guru Yuk').trim();
+  }
+  function snooze(tool) {
+    lsSet('bgy_review_snooze_' + tool, String(Date.now() + REVIEW_SNOOZE_DAYS * 864e5));
+  }
+  function askReview(opts) {
+    opts = opts || {};
+    var tool = String(opts.tool || page).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40) || 'home';
+    if (!opts.force) {
+      if (reviewAsked) return;
+      if (lsGet('bgy_review_done_' + tool)) return;
+      if (Number(lsGet('bgy_review_snooze_' + tool) || 0) > Date.now()) return;
+      if (Date.now() - Number(lsGet('bgy_review_last') || 0) < REVIEW_GAP_DAYS * 864e5) return;
+    }
+    reviewAsked = true;
+    setTimeout(function () { openReview(tool); }, opts.delay == null ? 1200 : opts.delay);
+  }
+  function openReview(tool) {
+    if (document.querySelector('.bgyr-bg')) return;
+    lsSet('bgy_review_last', String(Date.now()));
+    if (!document.getElementById('bgyr-css')) {
+      var st = document.createElement('style');
+      st.id = 'bgyr-css';
+      st.textContent = reviewCss;
+      document.head.appendChild(st);
+    }
+    var bg = document.createElement('div');
+    bg.className = 'bgyr-bg';
+    bg.innerHTML =
+      '<div class="bgyr" role="dialog" aria-modal="true" aria-labelledby="bgyr-t">' +
+      '<button type="button" class="bgyr-x" aria-label="Tutup"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>' +
+      '<div class="bgyr-form"><div class="bgyr-t" id="bgyr-t"></div>' +
+      '<div class="bgyr-s">Ulasanmu membantu guru lain menemukan tools ini. Hanya bintang yang wajib.</div>' +
+      '<div class="bgyr-stars" role="radiogroup" aria-label="Beri bintang"></div><div class="bgyr-lbl" aria-live="polite"></div>' +
+      '<textarea maxlength="600" placeholder="Ceritakan pengalamanmu (opsional)"></textarea>' +
+      '<div class="bgyr-row"><input maxlength="60" placeholder="Nama (opsional)" autocomplete="name"/>' +
+      '<input maxlength="80" placeholder="Sekolah/instansi (opsional)"/></div>' +
+      '<div class="bgyr-note">Ulasan bisa tampil di Beranda Bantu Guru Yuk.</div>' +
+      '<div class="bgyr-btns"><button type="button" class="bgyr-later">Nanti saja</button><button type="button" class="bgyr-send" disabled>Kirim ulasan</button></div></div></div>';
+    bg.querySelector('.bgyr-t').textContent = 'Gimana pengalamanmu pakai ' + toolName() + '?';
+    var starsBox = bg.querySelector('.bgyr-stars');
+    var lbl = bg.querySelector('.bgyr-lbl');
+    var send = bg.querySelector('.bgyr-send');
+    var rating = 0;
+    for (var n = 1; n <= 5; n++) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'bgyr-star';
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-label', n + ' bintang');
+      b.dataset.n = n;
+      b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + STAR + '</svg>';
+      starsBox.appendChild(b);
+    }
+    starsBox.addEventListener('click', function (e) {
+      var s = e.target.closest('.bgyr-star');
+      if (!s) return;
+      rating = Number(s.dataset.n);
+      Array.prototype.forEach.call(starsBox.children, function (c) {
+        var on = Number(c.dataset.n) <= rating;
+        c.classList.toggle('on', on);
+        c.setAttribute('aria-checked', Number(c.dataset.n) === rating ? 'true' : 'false');
+      });
+      lbl.textContent = STAR_LABELS[rating];
+      send.disabled = false;
+    });
+    function close(later) {
+      if (later) snooze(tool);
+      bg.classList.remove('bgyr-show');
+      document.removeEventListener('keydown', onKey);
+      setTimeout(function () { bg.remove(); }, 250);
+    }
+    function onKey(e) { if (e.key === 'Escape') close(true); }
+    document.addEventListener('keydown', onKey);
+    bg.querySelector('.bgyr-x').addEventListener('click', function () { close(true); });
+    bg.querySelector('.bgyr-later').addEventListener('click', function () { close(true); });
+    bg.addEventListener('click', function (e) { if (e.target === bg) close(true); });
+    send.addEventListener('click', function () {
+      if (!rating) return;
+      var inputs = bg.querySelectorAll('input');
+      send.disabled = true;
+      send.textContent = 'Mengirim...';
+      fetch(SB_URL + '/rest/v1/rpc/bgy_submit_review', {
+        method: 'POST',
+        headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          p_tool: tool, p_rating: rating,
+          p_body: bg.querySelector('textarea').value,
+          p_name: inputs[0].value, p_school: inputs[1].value
+        })
+      }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok || (res.d !== 'ok' && res.d !== 'duplicate')) throw new Error(res.d === 'busy' ? 'busy' : 'fail');
+          lsSet('bgy_review_done_' + tool, String(Date.now()));
+          track('review', tool, String(rating));
+          bg.querySelector('.bgyr-form').innerHTML = '<div class="bgyr-done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg><b>Terima kasih!</b><span>Ulasanmu sudah terkirim.</span></div>';
+          setTimeout(function () { close(false); }, 1800);
+        })
+        .catch(function (err) {
+          send.disabled = false;
+          send.textContent = 'Kirim ulasan';
+          toast(err.message === 'busy' ? 'Sedang ramai, coba kirim lagi beberapa menit lagi.' : 'Ulasan gagal terkirim. Cek internet lalu coba lagi.');
+        });
+    });
+    document.body.appendChild(bg);
+    requestAnimationFrame(function () { bg.classList.add('bgyr-show'); });
+    track('review', tool, 'shown');
+  }
+  window.bgyAskReview = askReview;
+
   function mount() {
     adaptHeader();
     revealOnScroll();

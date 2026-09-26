@@ -813,6 +813,7 @@ function generatePrompt(){
 // ============================================================
 function copyPrompt(){
   if(!hasil.value.trim()){ alert("Generate prompt dulu!"); return; }
+  window.bgyAskReview&&bgyAskReview({delay:3000});
   navigator.clipboard.writeText(hasil.value).then(()=>{
     notif.style.display="block";
     setTimeout(()=>notif.style.display="none",2000);

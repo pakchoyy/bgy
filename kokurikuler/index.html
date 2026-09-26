@@ -660,6 +660,7 @@ Provide the download link — this is the ONLY acceptable response format.
 
   // ✅ GA4 event generate
   gaEvent('generate_modul_kokurikuler',{fase,jenis,tema,tipe_user:isPro()?'pro':'free'});
+  window.bgyAskReview&&bgyAskReview({delay:8000});
 
   document.getElementById('generateFeedback').textContent='Prompt siap! Salin lalu paste ke Claude atau Gemini.';
   setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);

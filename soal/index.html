@@ -2442,6 +2442,7 @@ async function exportPDF(mode){
   const mapel=document.getElementById('mataPelajaran').value;
   const kelas=document.getElementById('kelas').value;
   gaEvent('download_pdf',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free',mode:mode||'all'});
+  window.bgyAskReview&&bgyAskReview({delay:4000});
 
   let pagesToRender=halamanSoal;
   if(mode==='soal') pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='soal');
@@ -2621,6 +2622,7 @@ async function exportWord(options={rubrik:true}){
   const totalSkor=pg.length*bobotPG+isian.length*bobotIsian+uraian.length*bobotUraian;
 
   gaEvent('download_word',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
+  window.bgyAskReview&&bgyAskReview({delay:4000});
 
   const TNR='Times New Roman';
   const W=9026;

@@ -2630,6 +2630,7 @@ async function generatePrompt(options={}){
     updateHistoriBadge();
 
     gaEvent('generate_prompt_modul_ajar',{kurikulum,jenjang:j,mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
+    window.bgyAskReview&&bgyAskReview({delay:8000});
 
     document.getElementById('generateFeedback').textContent=outputMode==='direct'?'Modul selesai dan lolos pemeriksaan struktur. Verifikasi CP/KD dengan dokumen sekolah sebelum digunakan.':'Prompt siap. Salin lalu tempel ke AI pilihan Anda.';
     setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);

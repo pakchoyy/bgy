@@ -1025,12 +1025,14 @@ function exportExcel(){
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Katrol Nilai');
   XLSX.writeFile(wb, 'katrol_nilai.xlsx');
   showToast('File Excel berhasil didownload!');
+  window.bgyAskReview&&bgyAskReview({delay:2500});
 }
 function copyTabel(){
   if(!window._hasil){ showToast('Belum ada data.'); return; }
   let txt = 'No\tNama\tNilai Asli\tNilai Katrol\tDelta\tKeterangan\n';
   window._hasil.forEach(h => { txt += `${h.no}\t${h.nama}\t${h.asli}\t${h.katrol}\t${h.delta>0?'+'+h.delta:h.delta}\t${h.katrol>=window._kkm?'Tuntas':'Belum Tuntas'}\n`; });
   navigator.clipboard.writeText(txt).then(()=>showToast('Berhasil dicopy! Paste ke Excel.'));
+  window.bgyAskReview&&bgyAskReview({delay:2500});
 }
 
 /* ═══════════════════════

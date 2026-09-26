@@ -1211,6 +1211,7 @@ function salinSatu(si, i, btn){
     btn.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> Disalin'; btn.classList.add('copied');
     setTimeout(() => { btn.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin'; btn.classList.remove('copied'); }, 2000);
     toast('TP ' + (i+1) + ' berhasil disalin!');
+    window.bgyAskReview&&bgyAskReview({delay:4000});
   });
 }
 
@@ -1220,6 +1221,7 @@ function salinSemua(){
   const header = `DRAFT TUJUAN PEMBELAJARAN\nKelas ${meta.kelas} | Semester ${meta.sem} | ${meta.cp}\n\n`;
   const isi = sections.map(s => `=== ${s.mapel} ===\n` + s.tpList.map((tp, i) => `${i+1}. ${tp}`).join('\n')).join('\n\n');
   navigator.clipboard.writeText(header+isi).then(() => toast('Semua TP berhasil disalin!'));
+  window.bgyAskReview&&bgyAskReview({delay:2500});
 }
 
 function resetForm(){

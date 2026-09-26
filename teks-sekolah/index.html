@@ -794,7 +794,8 @@ function peringatanKosong(){
 }
 function siapCetak(){ document.getElementById('printPaper').innerHTML=JENIS[jenis]?paperHtml():''; }
 window.addEventListener('beforeprint',siapCetak);
-function cetak(){ peringatanKosong(); siapCetak(); gaEvent('teks_cetak',{jenis}); setTimeout(()=>window.print(),isianKurang()?600:0); }
+function cetak(){ peringatanKosong(); siapCetak(); gaEvent('teks_cetak',{jenis}); setTimeout(()=>window.print(),isianKurang()?600:0); mintaUlasan(); }
+function mintaUlasan(){ if(window.bgyAskReview) window.bgyAskReview({delay:3000}); }
 function wordDoc(title,inner,css){
   return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${esc(title)}</title>`+
     `<style>@page{size:21cm 29.7cm;margin:1.8cm 2cm;}body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.5;}p{margin:0 0 8pt;text-align:justify;}${css||''}</style></head><body>${inner}</body></html>`;
@@ -819,17 +820,19 @@ function unduhWord(){
   unduhBlob(wordDoc(JENIS[jenis].perihal,tmp.innerHTML,css),namaFile());
   gaEvent('teks_word',{jenis});
   showToast('File Word diunduh.');
+  mintaUlasan();
 }
 async function salinKe(text,pesan){
   try{await navigator.clipboard.writeText(text);}
   catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}ta.remove();}
   showToast(pesan||'Tersalin.');
 }
-function salinTeks(){ salinKe(suratTxt(false),'Teks surat tersalin.'); gaEvent('teks_salin',{jenis}); }
+function salinTeks(){ salinKe(suratTxt(false),'Teks surat tersalin.'); gaEvent('teks_salin',{jenis}); mintaUlasan(); }
 function kirimWa(){
   peringatanKosong();
   gaEvent('teks_wa',{jenis});
   window.open('https://wa.me/?text='+encodeURIComponent(suratTxt(true)),'_blank','noopener');
+  mintaUlasan();
 }
 
 /* ═══ AI: Sambutan & Naskah MC (aktif bila AI_AKTIF = true) ═══ */
@@ -887,6 +890,7 @@ async function generateAi(){
     document.getElementById('aiResult').innerHTML=`<div class="ai-out">${esc(aiText)}</div>`;
     document.getElementById('aiActions').hidden=false;
     gaEvent('teks_ai_generate',{jenis});
+    if(window.bgyAskReview) window.bgyAskReview({delay:8000});
     if(window.innerWidth<=960) document.getElementById('aiPreview').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
     showToast('Gagal: '+e.message+'. Coba lagi atau pakai Salin prompt.');
