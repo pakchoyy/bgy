@@ -59,7 +59,7 @@ grant execute on function public.bgy_bio_click(bigint) to anon, authenticated;
 
 insert into public.bgy_bio_links (title, subtitle, url, icon, badge, sort)
 select * from (values
-  ('Semua Tools Bantu Guru Yuk', 'Buat soal, modul ajar, LKPD, surat sekolah & lainnya', 'https://www.bantuguruyuk.web.id/', 'sparkles', 'Gratis', 10),
+  ('Web/Aplikasi Bantu Guru Yuk', 'bantuguruyuk.web.id', 'https://www.bantuguruyuk.web.id/', 'sparkles', 'Gratis', 10),
   ('Masuk Channel Pak Choy', 'Saluran WhatsApp MEDIA BERBAGI YUK (gratis)', 'https://whatsapp.com/channel/0029VbCVekoDJ6HAqLXbkv3s', 'whatsapp', null, 20),
   ('File & Lisensi Aplikasi Pak Choy', 'lynk.id/kreacy', 'https://lynk.id/kreacy', 'bag', null, 30),
   ('Aplikasi Wali Kelas', 'wkelas.web.id (free*)', 'https://wkelas.web.id', 'school', null, 40)
