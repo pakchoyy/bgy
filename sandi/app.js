@@ -303,6 +303,10 @@ function showApp() {
 async function enterApp() {
   showApp();
   await boot();
+  if (new URLSearchParams(location.search).get('action') === 'add') {
+    history.replaceState(null, '', location.pathname);
+    openAddForm();
+  }
   if (!localStorage.getItem(LS_ONBOARDED)) {
     localStorage.setItem(LS_ONBOARDED, '1');
     if (state.accounts.length === 0) {
@@ -386,6 +390,10 @@ async function unlockWithPin() {
     await activateKey(val);
     showApp();
     await boot();
+    if (new URLSearchParams(location.search).get('action') === 'add') {
+      history.replaceState(null, '', location.pathname);
+      openAddForm();
+    }
     return;
   }
   const fails = parseInt(localStorage.getItem(LS_FAILS) || '0', 10) + 1;
@@ -536,21 +544,33 @@ on('btn-theme-toggle-2', 'click', toggleTheme);
 /* =========================================================
    HAMBURGER MENU
    ========================================================= */
-function closeHamburgerMenu() {
-  document.getElementById('hamburger-menu').hidden = true;
+function openHamburgerMenu() {
+  const menu = document.getElementById('hamburger-menu');
+  const backdrop = document.getElementById('menu-backdrop');
+  menu.hidden = false;
+  backdrop.hidden = false;
+  requestAnimationFrame(() => { menu.classList.add('open'); backdrop.classList.add('open'); });
 }
-on('btn-hamburger', 'click', (e) => {
-  e.stopPropagation();
+function closeHamburgerMenu() {
   const menu = document.getElementById('hamburger-menu');
-  menu.hidden = !menu.hidden;
-});
-document.addEventListener('click', (e) => {
-  const menu = document.getElementById('hamburger-menu');
-  if (!menu.hidden && !menu.contains(e.target) && e.target.id !== 'btn-hamburger') {
-    closeHamburgerMenu();
-  }
-});
+  const backdrop = document.getElementById('menu-backdrop');
+  if (!menu || menu.hidden) return;
+  menu.classList.remove('open');
+  backdrop.classList.remove('open');
+  setTimeout(() => { menu.hidden = true; backdrop.hidden = true; }, 220);
+}
+on('btn-hamburger', 'click', openHamburgerMenu);
+on('btn-close-drawer', 'click', closeHamburgerMenu);
+on('menu-backdrop', 'click', closeHamburgerMenu);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeHamburgerMenu(); });
 on('menu-tentang', 'click', () => {
+  closeHamburgerMenu();
+  document.getElementById('modal-about').hidden = false;
+});
+on('btn-close-about', 'click', () => {
+  document.getElementById('modal-about').hidden = true;
+});
+on('menu-settings', 'click', () => {
   closeHamburgerMenu();
   switchView('settings');
 });
@@ -562,10 +582,7 @@ on('menu-install', 'click', () => {
   closeHamburgerMenu();
   triggerInstallPrompt();
 });
-on('menu-bgy', 'click', () => {
-  closeHamburgerMenu();
-  window.open('https://www.bantuguruyuk.web.id', '_blank');
-});
+on('menu-bgy', 'click', closeHamburgerMenu);
 
 /* =========================================================
    PWA INSTALL PROMPT
@@ -601,7 +618,7 @@ on('btn-install-guide-ok', 'click', () => {
 
 async function triggerInstallPrompt() {
   if (isStandalone()) {
-    showToast('SANDI sudah terinstall di perangkat ini ✓');
+    showToast('Simpan Sandi sudah terinstall di perangkat ini ✓');
     return;
   }
   if (!deferredInstallPrompt) {
@@ -1053,12 +1070,37 @@ async function boot() {
   document.getElementById('autolock-select').value = autolockVal;
 }
 
+/* Promo ticker: rotate one product link at a time */
+function startTicker() {
+  const slides = document.querySelectorAll('#ticker-fade .ticker-slide');
+  if (slides.length < 2) return;
+  let i = 0;
+  setInterval(() => {
+    slides[i].classList.remove('active');
+    i = (i + 1) % slides.length;
+    slides[i].classList.add('active');
+  }, 4000);
+}
+
+function hideSplash(startedAt) {
+  const splash = document.getElementById('splash');
+  if (!splash) return;
+  const wait = Math.max(0, 1100 - (performance.now() - startedAt));
+  setTimeout(() => {
+    splash.classList.add('splash-out');
+    setTimeout(() => splash.remove(), 450);
+  }, wait);
+}
+
 function init() {
+  const startedAt = performance.now();
+  startTicker();
   const theme = localStorage.getItem(LS_THEME) || 'light';
   applyTheme(theme);
 
   openDB().then(() => {
     initAuthFlow();
+    hideSplash(startedAt);
   });
 
   if ('serviceWorker' in navigator) {
