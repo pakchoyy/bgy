@@ -557,10 +557,11 @@ function closeHamburgerMenu() {
   if (!menu || menu.hidden) return;
   menu.classList.remove('open');
   backdrop.classList.remove('open');
-  setTimeout(() => { menu.hidden = true; backdrop.hidden = true; }, 220);
+  setTimeout(() => { menu.hidden = true; backdrop.hidden = true; }, 160);
 }
-on('btn-hamburger', 'click', openHamburgerMenu);
-on('btn-close-drawer', 'click', closeHamburgerMenu);
+on('btn-hamburger', 'click', () => {
+  if (document.getElementById('hamburger-menu').hidden) openHamburgerMenu(); else closeHamburgerMenu();
+});
 on('menu-backdrop', 'click', closeHamburgerMenu);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeHamburgerMenu(); });
 on('menu-tentang', 'click', () => {

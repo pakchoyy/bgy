@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="Simpan Sandi">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="application-name" content="Simpan Sandi">
-<link rel="stylesheet" href="./style.css?v=11">
+<link rel="stylesheet" href="./style.css?v=12">
 </head>
 <body>
 
@@ -103,14 +103,26 @@
     <div class="header-inner">
       <div class="header-brand">
         <img src="../guru-cibisd2.png" alt="BantuGuruYuk" class="header-logo">
-        <div class="header-text">
-          <span class="header-parent">BantuGuruYuk</span>
-          <h1 class="header-title">Simpan Sandi</h1>
-        </div>
+        <h1 class="header-title">Bantu Guru Yuk | Simpan Sandi</h1>
       </div>
       <div class="header-actions">
         <button id="btn-theme-toggle" class="icon-btn" aria-label="Ganti tema terang/gelap"><svg class="icon"><use id="theme-icon-use" href="#icon-moon"></use></svg></button>
         <button id="btn-hamburger" class="icon-btn" aria-label="Menu"><svg class="icon"><use href="#icon-menu"></use></svg></button>
+        <nav id="hamburger-menu" class="dropdown-menu" hidden aria-label="Menu">
+          <button id="menu-tentang" class="dropdown-item"><svg class="icon"><use href="#icon-info"></use></svg> Tentang Simpan Sandi</button>
+          <button id="menu-lock" class="dropdown-item"><svg class="icon"><use href="#icon-lock"></use></svg> Kunci Sekarang</button>
+          <button id="menu-install" class="dropdown-item"><svg class="icon"><use href="#icon-smartphone"></use></svg> Install Aplikasi</button>
+          <button id="menu-settings" class="dropdown-item"><svg class="icon"><use href="#icon-settings"></use></svg> Pengaturan</button>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-label">Tools BantuGuruYuk lainnya</div>
+      <a class="dropdown-promo" href="https://www.bantuguruyuk.web.id/soal?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">📝</span><span><b>Buat Soal</b><small>PG, isian &amp; uraian otomatis</small></span></a>
+      <a class="dropdown-promo" href="https://www.bantuguruyuk.web.id/modul-ajar?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">🗓️</span><span><b>Modul Ajar</b><small>Kurikulum Merdeka siap pakai</small></span></a>
+      <a class="dropdown-promo" href="https://www.bantuguruyuk.web.id/lkpd?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">📘</span><span><b>Generator LKPD</b><small>Lembar kerja + gambar AI</small></span></a>
+      <a class="dropdown-promo" href="https://www.bantuguruyuk.web.id/katrol-nilai/?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">📈</span><span><b>Katrol Nilai</b><small>Olah nilai rapor cepat</small></span></a>
+      <a class="dropdown-promo" href="https://presiswa.bantuguruyuk.web.id?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">📋</span><span><b>Presensi Digital</b><small>Absensi &amp; rekap otomatis</small></span></a>
+          <div class="dropdown-divider"></div>
+          <a id="menu-bgy" class="dropdown-item dropdown-footer" href="https://www.bantuguruyuk.web.id?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><svg class="icon icon-sm"><use href="#icon-globe"></use></svg> Lihat semua tools di BantuGuruYuk</a>
+        </nav>
       </div>
     </div>
   </header>
@@ -238,33 +250,7 @@
   </div>
 
 
-  <!-- Drawer menu -->
   <div id="menu-backdrop" class="menu-backdrop" hidden></div>
-  <nav id="hamburger-menu" class="drawer" hidden aria-label="Menu">
-    <div class="drawer-head">
-      <img src="../guru-cibisd2.png" alt="" class="drawer-logo">
-      <div>
-        <div class="drawer-title">Simpan Sandi</div>
-        <div class="drawer-sub">by BantuGuruYuk</div>
-      </div>
-      <button id="btn-close-drawer" class="icon-btn" aria-label="Tutup menu"><svg class="icon"><use href="#icon-x"></use></svg></button>
-    </div>
-    <div class="drawer-section">
-      <button id="menu-tentang"><svg class="icon"><use href="#icon-info"></use></svg> Tentang Simpan Sandi</button>
-      <button id="menu-lock"><svg class="icon"><use href="#icon-lock"></use></svg> Kunci Sekarang</button>
-      <button id="menu-install"><svg class="icon"><use href="#icon-smartphone"></use></svg> Install Aplikasi</button>
-      <button id="menu-settings"><svg class="icon"><use href="#icon-settings"></use></svg> Pengaturan</button>
-    </div>
-    <div class="drawer-label">Tools BantuGuruYuk lainnya</div>
-    <div class="drawer-section drawer-promo">
-      <a href="https://www.bantuguruyuk.web.id/soal?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">📝</span><span><b>Buat Soal</b><small>PG, isian &amp; uraian otomatis</small></span></a>
-      <a href="https://www.bantuguruyuk.web.id/modul-ajar?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">🗓️</span><span><b>Modul Ajar</b><small>Kurikulum Merdeka siap pakai</small></span></a>
-      <a href="https://www.bantuguruyuk.web.id/lkpd?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">📘</span><span><b>Generator LKPD</b><small>Lembar kerja + gambar AI</small></span></a>
-      <a href="https://www.bantuguruyuk.web.id/katrol-nilai/?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">📈</span><span><b>Katrol Nilai</b><small>Olah nilai rapor cepat</small></span></a>
-      <a href="https://presiswa.bantuguruyuk.web.id?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><span class="promo-emoji">📋</span><span><b>Presensi Digital</b><small>Absensi &amp; rekap otomatis</small></span></a>
-    </div>
-    <a id="menu-bgy" class="drawer-footer" href="https://www.bantuguruyuk.web.id?utm_source=simpan-sandi&amp;utm_medium=drawer" target="_blank" rel="noopener"><svg class="icon icon-sm"><use href="#icon-globe"></use></svg> Lihat semua tools di BantuGuruYuk</a>
-  </nav>
 
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
@@ -563,6 +549,6 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="./app.js?v=10"></script>
+<script src="./app.js?v=12"></script>
 </body>
 </html>
