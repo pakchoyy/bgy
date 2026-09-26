@@ -59,12 +59,13 @@ grant execute on function public.bgy_bio_click(bigint) to anon, authenticated;
 
 insert into public.bgy_bio_links (title, subtitle, url, icon, badge, sort)
 select * from (values
-  ('Web/Aplikasi Bantu Guru Yuk', 'bantuguruyuk.web.id', 'https://www.bantuguruyuk.web.id/', 'sparkles', 'Gratis', 10),
+  ('Web/Aplikasi Bantu Guru Yuk', 'bantuguruyuk.web.id', 'https://www.bantuguruyuk.web.id/', 'sparkles', null, 10),
   ('Masuk Channel Pak Choy', 'Saluran WhatsApp MEDIA BERBAGI YUK (gratis)', 'https://whatsapp.com/channel/0029VbCVekoDJ6HAqLXbkv3s', 'whatsapp', null, 20),
   ('File & Lisensi Aplikasi Pak Choy', 'lynk.id/kreacy', 'https://lynk.id/kreacy', 'bag', null, 30),
-  ('Aplikasi Wali Kelas', 'wkelas.web.id (free*)', 'https://wkelas.web.id', 'school', null, 40)
+  ('Aplikasi Wali Kelas', 'wkelas.web.id (free*)', 'https://wkelas.web.id', 'school', null, 40),
+  ('Chat WA Pak Choy', 'Kritik, saran, lapor bug, atau usul aplikasi baru', 'https://wa.me/6289530713597?text=Halo%20Pak%20Choy%2C%20saya%20mau%20kirim%20kritik%2Fsaran%2Flapor%20bug%2Fusul%20aplikasi%20baru%3A%20', 'whatsapp', null, 50)
 ) as seed(title, subtitle, url, icon, badge, sort)
-where not exists (select 1 from public.bgy_bio_links);
+where not exists (select 1 from public.bgy_bio_links b where split_part(b.url, '?', 1) = split_part(seed.url, '?', 1));
 
 -- ═══ Ulasan ═══
 create table if not exists public.bgy_reviews (

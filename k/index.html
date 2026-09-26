@@ -49,7 +49,11 @@ main{width:100%;max-width:480px;margin:-40px auto 0;padding:0 16px 24px;flex:1;p
 .lk-sub{font-size:.74rem;color:var(--text-light);margin-top:2px;line-height:1.35;}
 .lk-badge{font-size:.62rem;font-weight:800;background:#dc2626;color:#fff;padding:2px 8px;border-radius:99px;flex:none;}
 .lk-arrow{color:var(--text-light);flex:none;width:18px;height:18px;}
-.lk.first{border:1.5px solid var(--blue);}
+.lk.alt{background:var(--grad);border-color:transparent;color:#fff;}
+body.dark .lk.alt{background:linear-gradient(135deg,#0d4a47,#1a3a4a);border-color:#334155;}
+.lk.alt:hover{border-color:#fff;}
+.lk.alt .lk-ic,.lk.alt .lk-ic.wa{background:rgba(255,255,255,.18);color:#fff;}
+.lk.alt .lk-sub,.lk.alt .lk-arrow{color:rgba(255,255,255,.85);}
 .skeleton{height:64px;border-radius:14px;background:linear-gradient(90deg,var(--card-bg),var(--border),var(--card-bg));background-size:200% 100%;animation:sk 1.2s linear infinite;}
 @keyframes sk{from{background-position:200% 0}to{background-position:-200% 0}}
 .foot{text-align:center;font-size:.7rem;color:var(--text-light);padding:18px 16px 24px;}
@@ -88,10 +92,11 @@ const SB_HEAD={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'appl
 
 /* Cadangan bila database belum siap / gagal dimuat */
 const FALLBACK=[
-  {title:'Web/Aplikasi Bantu Guru Yuk',subtitle:'bantuguruyuk.web.id',url:'https://www.bantuguruyuk.web.id/',icon:'sparkles',badge:'Gratis'},
+  {title:'Web/Aplikasi Bantu Guru Yuk',subtitle:'bantuguruyuk.web.id',url:'https://www.bantuguruyuk.web.id/',icon:'sparkles'},
   {title:'Masuk Channel Pak Choy',subtitle:'Saluran WhatsApp MEDIA BERBAGI YUK (gratis)',url:'https://whatsapp.com/channel/0029VbCVekoDJ6HAqLXbkv3s',icon:'whatsapp'},
   {title:'File & Lisensi Aplikasi Pak Choy',subtitle:'lynk.id/kreacy',url:'https://lynk.id/kreacy',icon:'bag'},
-  {title:'Aplikasi Wali Kelas',subtitle:'wkelas.web.id (free*)',url:'https://wkelas.web.id',icon:'school'}
+  {title:'Aplikasi Wali Kelas',subtitle:'wkelas.web.id (free*)',url:'https://wkelas.web.id',icon:'school'},
+  {title:'Chat WA Pak Choy',subtitle:'Kritik, saran, lapor bug, atau usul aplikasi baru',url:'https://wa.me/6289530713597?text=Halo%20Pak%20Choy%2C%20saya%20mau%20kirim%20kritik%2Fsaran%2Flapor%20bug%2Fusul%20aplikasi%20baru%3A%20',icon:'whatsapp'}
 ];
 
 /* Ikon Lucide (lucide.dev, ISC) — sama dengan pilihan di /admin */
@@ -128,7 +133,7 @@ function render(list){
   box.innerHTML=list.map((l,i)=>{
     const href=safeUrl(l.url); if(!href) return '';
     const icon=ICONS[l.icon]||ICONS.link;
-    return `<a class="lk${i===0?' first':''}" href="${esc(href)}" rel="noopener" data-id="${l.id||''}" data-title="${esc(l.title)}">
+    return `<a class="lk${i%2?' alt':''}" href="${esc(href)}" rel="noopener" data-id="${l.id||''}" data-title="${esc(l.title)}">
       <span class="lk-ic${l.icon==='whatsapp'?' wa':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icon}</svg></span>
       <span class="lk-txt"><span class="lk-title" style="display:block;">${esc(l.title)}</span>${l.subtitle?`<span class="lk-sub" style="display:block;">${esc(l.subtitle)}</span>`:''}</span>
       ${l.badge?`<span class="lk-badge">${esc(l.badge)}</span>`:''}
