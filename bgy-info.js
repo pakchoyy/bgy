@@ -17,13 +17,23 @@
     { text: 'Kumpulan Tujuan Pembelajaran terupdate', url: 'https://www.bantuguruyuk.web.id/?tool=draft-tp', path: '/draft-tp' },
     { text: 'Simpan akun digital guru, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' }
   ];
+  // Ikon Lucide (lucide.dev, lisensi ISC) — isi <svg viewBox="0 0 24 24">
+  var ICONS = {
+    soal: '<path d="M14.364 13.634a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 0 0-3.004-3.004z"/><path d="M14.487 7.858A1 1 0 0 1 14 7V2"/><path d="M20 19.645V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l2.516 2.516"/><path d="M8 18h1"/>',
+    modul: '<path d="M12 5v16"/><path d="M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/>',
+    lkpd: '<path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/>',
+    presensi: '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
+    game: '<line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>',
+    sandi: '<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>'
+  };
+
   var MENU_ITEMS = [
-    { emoji: '📝', title: 'Buat Soal', desc: 'Buat soal gak sampai 10 menit', url: 'https://www.bantuguruyuk.web.id/soal', path: '/soal' },
-    { emoji: '🗓️', title: 'Modul Ajar', desc: 'Sat-set, anti bingung', url: 'https://www.bantuguruyuk.web.id/modul-ajar', path: '/modul-ajar' },
-    { emoji: '📘', title: 'Prompt LKPD', desc: 'Praktis buat prompt LKPD', url: 'https://www.bantuguruyuk.web.id/lkpd', path: '/lkpd' },
-    { emoji: '📋', title: 'Presensi Digital', desc: 'Presensi & rekap sat-set', url: 'https://presiswa.bantuguruyuk.web.id' },
-    { emoji: '🎮', title: 'Prompt Game', desc: 'Sat-set buat prompt game IFP', url: 'https://bmedia.bantuguruyuk.web.id/buat' },
-    { emoji: '🔐', title: 'Simpan Sandi', desc: 'Simpan akun digital, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' }
+    { icon: ICONS.soal, title: 'Buat Soal', desc: 'Buat soal gak sampai 10 menit', url: 'https://www.bantuguruyuk.web.id/soal', path: '/soal' },
+    { icon: ICONS.modul, title: 'Modul Ajar', desc: 'Sat-set, anti bingung', url: 'https://www.bantuguruyuk.web.id/modul-ajar', path: '/modul-ajar' },
+    { icon: ICONS.lkpd, title: 'Prompt LKPD', desc: 'Praktis buat prompt LKPD', url: 'https://www.bantuguruyuk.web.id/lkpd', path: '/lkpd' },
+    { icon: ICONS.presensi, title: 'Presensi Digital', desc: 'Presensi & rekap sat-set', url: 'https://presiswa.bantuguruyuk.web.id' },
+    { icon: ICONS.game, title: 'Prompt Game', desc: 'Sat-set buat prompt game IFP', url: 'https://bmedia.bantuguruyuk.web.id/buat' },
+    { icon: ICONS.sandi, title: 'Simpan Sandi', desc: 'Simpan akun digital, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' }
   ];
   var ALL_TOOLS_URL = 'https://www.bantuguruyuk.web.id';
   var ROTATE_MS = 6000;
@@ -44,8 +54,7 @@
     'background:linear-gradient(90deg,#fbbf24,#f59e0b);border-top:1px solid rgba(255,255,255,.3);font-family:inherit;box-sizing:border-box;width:100%;}',
     '.bgyi-wrap *{box-sizing:border-box;}',
     '.bgyi-badge{flex:none;background:#1e293b;color:#fff;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;',
-    'padding:4px 11px;border-radius:999px;animation:bgyi-pulse 2s ease-in-out infinite;}',
-    '@keyframes bgyi-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}',
+    'padding:4px 11px;border-radius:999px;}',
     '.bgyi-box{position:relative;flex:1;min-width:0;height:100%;}',
     '.bgyi-track{position:absolute;inset:0;}',
     '.bgyi-item{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none!important;',
@@ -53,9 +62,7 @@
     '.bgyi-item.bgyi-active{opacity:1;pointer-events:auto;}',
     '.bgyi-text{font-size:12.5px;font-weight:700;line-height:1.25;text-align:center;min-width:0;display:-webkit-box;',
     '-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}',
-    '.bgyi-cta{flex:none;background:#dc2626;color:#fff;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;',
-    'animation:bgyi-glow 2s ease-in-out infinite;}',
-    '@keyframes bgyi-glow{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,.45)}50%{box-shadow:0 0 0 5px rgba(220,38,38,0)}}',
+    '.bgyi-cta{flex:none;background:#dc2626;color:#fff;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:700;}',
     '.bgyi-clone{display:none!important;}',
     '@media (min-width:768px){',
     '.bgyi-box{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 24px,#000 calc(100% - 24px),transparent);',
@@ -66,7 +73,7 @@
     '.bgyi-text{display:block;white-space:nowrap;}',
     '.bgyi-clone{display:flex!important;}}',
     '@keyframes bgyi-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}',
-    '@media (prefers-reduced-motion:reduce){.bgyi-badge,.bgyi-cta,.bgyi-track{animation:none}.bgyi-item{transition:none}}'
+    '@media (prefers-reduced-motion:reduce){.bgyi-track{animation:none}.bgyi-item{transition:none}}'
   ].join('');
 
   function withUtm(url, medium) {
@@ -101,7 +108,8 @@
     '.bgym-label{padding:8px 16px 4px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.65;}',
     '.bgym-item{display:flex;align-items:center;gap:10px;padding:8px 16px;text-decoration:none!important;color:inherit!important;}',
     '.bgym-item:hover,.bgym-item:active,.bgym-all:hover,.bgym-all:active{background:rgba(14,165,160,.1);}',
-    '.bgym-emoji{flex:none;width:32px;height:32px;border-radius:10px;background:rgba(14,165,160,.12);display:flex;align-items:center;justify-content:center;font-size:16px;}',
+    '.bgym-icon{flex:none;width:32px;height:32px;border-radius:10px;background:rgba(14,165,160,.12);color:#0d9488;display:flex;align-items:center;justify-content:center;}',
+    '.bgym-icon svg{width:18px;height:18px;}',
     '.bgym-title{display:block;font-size:13.5px;font-weight:700;line-height:1.3;}',
     '.bgym-desc{display:block;font-size:12px;opacity:.7;line-height:1.3;}',
     '.bgym-divider{height:1px;background:rgba(127,127,127,.2);margin:4px 0;}',
@@ -124,8 +132,8 @@
       a.href = withUtm(it.url, 'menu');
       a.target = '_blank';
       a.rel = 'noopener';
-      a.innerHTML = '<span class="bgym-emoji"></span><span><span class="bgym-title"></span><span class="bgym-desc"></span></span>';
-      a.querySelector('.bgym-emoji').textContent = it.emoji;
+      a.innerHTML = '<span class="bgym-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        it.icon + '</svg></span><span><span class="bgym-title"></span><span class="bgym-desc"></span></span>';
       a.querySelector('.bgym-title').textContent = it.title;
       a.querySelector('.bgym-desc').textContent = it.desc;
       a.addEventListener('click', function () { track('menu', it.title, it.url); });
