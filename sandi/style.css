@@ -169,6 +169,7 @@ button, input, select, textarea { font-family: inherit; }
   max-height: calc(100vh - 150px);
   overflow-y: auto;
   background: var(--color-surface);
+  color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: 12px;
   box-shadow: 0 12px 32px rgba(0,0,0,0.18);
@@ -193,14 +194,9 @@ button, input, select, textarea { font-family: inherit; }
   text-decoration: none;
   cursor: pointer;
 }
-.dropdown-item:hover, .dropdown-item:active, .dropdown-promo:hover, .dropdown-promo:active { background: var(--color-chip-bg); }
+.dropdown-item:hover, .dropdown-item:active { background: var(--color-chip-bg); }
 .dropdown-item .icon { color: var(--color-primary); width: 18px; height: 18px; }
 .dropdown-divider { height: 1px; background: var(--color-border); margin: 4px 0; }
-.dropdown-label { padding: 8px 16px 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--color-text-muted); }
-.dropdown-promo { display: flex; align-items: center; gap: 10px; padding: 8px 16px; text-decoration: none; color: var(--color-text); }
-.dropdown-promo b { display: block; font-size: 13.5px; }
-.dropdown-promo small { display: block; font-size: 12px; color: var(--color-text-muted); }
-.dropdown-footer { color: var(--color-primary); font-size: 13px; }
 
 /* ===== Install banner ===== */
 .install-banner {
@@ -338,83 +334,8 @@ button, input, select, textarea { font-family: inherit; }
 .empty-title { font-weight: 600; color: var(--color-text); margin: 0 0 6px; }
 .empty-desc { font-size: 14px; margin: 0 0 16px; }
 
-/* ===== Promo ticker (self-promo produk BantuGuruYuk lain) ===== */
-.ticker-wrap {
-  position: fixed;
-  left: 0; right: 0;
-  bottom: 58px;
-  height: 46px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 14px;
-  background: linear-gradient(90deg, #fbbf24, #f59e0b);
-  overflow: hidden;
-  z-index: 19;
-  border-top: 1px solid rgba(255,255,255,0.3);
-  text-decoration: none;
-}
-.ticker-badge {
-  flex: none;
-  background: #1e293b;
-  color: #fff;
-  font-size: 10.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  animation: ticker-pulse 2s ease-in-out infinite;
-}
-@keyframes ticker-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-}
-.ticker-fade {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-}
-.ticker-slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  text-decoration: none;
-  color: #1e293b;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.6s ease;
-}
-.ticker-slide.active { opacity: 1; pointer-events: auto; }
-.ticker-text {
-  font-size: 12.5px;
-  font-weight: 700;
-  line-height: 1.25;
-  text-align: center;
-  min-width: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.ticker-slide .cta {
-  animation: cta-glow 2s ease-in-out infinite;
-  background: #dc2626;
-  color: #fff;
-  padding: 2px 9px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  flex: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  .ticker-badge { animation: none; }
-  .ticker-slide { transition: none; }
-}
+/* ===== Bar Info bersama (isi dari /bgy-info.js) ===== */
+.bgy-info-dock { position: fixed; left: 0; right: 0; bottom: 59px; z-index: 19; }
 
 /* ===== Bottom nav ===== */
 .bottom-nav {
@@ -635,10 +556,6 @@ button, input, select, textarea { font-family: inherit; }
 .backup-actions { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 10px; }
 .backup-actions .btn { flex: 1; padding: 10px 12px; font-size: 14px; }
 
-@keyframes cta-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.45); }
-  50% { box-shadow: 0 0 0 5px rgba(220,38,38,0); }
-}
 
 /* ===== Splash ===== */
 .splash {
@@ -692,17 +609,6 @@ button, input, select, textarea { font-family: inherit; }
 @keyframes shackle { 0% { transform: translateY(-3px); } 50% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
 @keyframes splash-load { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
 
-.promo-emoji {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--color-chip-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex: none;
-}
 
 /* ===== About ===== */
 .about-hero { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
@@ -717,7 +623,6 @@ button, input, select, textarea { font-family: inherit; }
 
 #update-banner { background: linear-gradient(120deg, #6366f1, #4f46e5); box-shadow: 0 4px 14px rgba(79,70,229,0.3); }
 
-.dropdown-promo .promo-emoji { width: 32px; height: 32px; font-size: 16px; }
 
 @media (max-width: 430px) {
   .header-title { font-size: 14px; }
@@ -728,26 +633,3 @@ button, input, select, textarea { font-family: inherit; }
   .header-logo { width: 32px; height: 32px; }
 }
 
-/* Ticker track: phones fade (slides stacked), wide screens scroll */
-.ticker-track { position: absolute; inset: 0; }
-.ticker-clone { display: none !important; }
-@media (min-width: 768px) {
-  .ticker-fade {
-    overflow: hidden;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
-    mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
-  }
-  .ticker-track {
-    right: auto;
-    display: flex;
-    align-items: center;
-    width: max-content;
-    animation: ticker-marquee var(--marquee-duration, 40s) linear infinite;
-  }
-  .ticker-wrap:hover .ticker-track, .ticker-wrap:focus-within .ticker-track { animation-play-state: paused; }
-  .ticker-slide { position: static; opacity: 1; pointer-events: auto; transition: none; flex: none; padding-right: 40px; }
-  .ticker-text { display: block; white-space: nowrap; }
-  .ticker-clone { display: flex !important; }
-}
-@keyframes ticker-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }

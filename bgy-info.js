@@ -1,6 +1,8 @@
-/* BantuGuruYuk — bar "Info" (iklan antar-tools).
-   Ubah daftar INFO_ITEMS di bawah untuk merevisi kalimat di SEMUA halaman sekaligus.
-   Tempat tampil: elemen <div data-bgy-info></div> jika ada, kalau tidak di atas <footer>. */
+/* Bantu Guru Yuk — iklan antar-tools yang dipakai bersama semua halaman.
+   1. Bar "Info"  : ubah INFO_ITEMS. Tampil di <div data-bgy-info></div> jika ada, kalau tidak di atas <footer>.
+   2. Menu tools  : ubah MENU_ITEMS. Tampil hanya jika halaman punya <div data-bgy-menu></div> (di dalam menu hamburger).
+      Teks mengikuti warna teks menu, jadi pastikan wadah menu punya `color` gelap/terang yang sesuai tema.
+   Link ke halaman yang sedang dibuka otomatis disembunyikan. */
 (function () {
   'use strict';
 
@@ -15,17 +17,27 @@
     { text: 'Kumpulan Tujuan Pembelajaran terupdate', url: 'https://www.bantuguruyuk.web.id/?tool=draft-tp', path: '/draft-tp' },
     { text: 'Simpan akun digital guru, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' }
   ];
+  var MENU_ITEMS = [
+    { emoji: '📝', title: 'Buat Soal', desc: 'Buat soal gak sampai 10 menit', url: 'https://www.bantuguruyuk.web.id/soal', path: '/soal' },
+    { emoji: '🗓️', title: 'Modul Ajar', desc: 'Sat-set, anti bingung', url: 'https://www.bantuguruyuk.web.id/modul-ajar', path: '/modul-ajar' },
+    { emoji: '📘', title: 'Prompt LKPD', desc: 'Praktis buat prompt LKPD', url: 'https://www.bantuguruyuk.web.id/lkpd', path: '/lkpd' },
+    { emoji: '📋', title: 'Presensi Digital', desc: 'Presensi & rekap sat-set', url: 'https://presiswa.bantuguruyuk.web.id' },
+    { emoji: '🎮', title: 'Prompt Game', desc: 'Sat-set buat prompt game IFP', url: 'https://bmedia.bantuguruyuk.web.id/buat' },
+    { emoji: '🔐', title: 'Simpan Sandi', desc: 'Simpan akun digital, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' }
+  ];
+  var ALL_TOOLS_URL = 'https://www.bantuguruyuk.web.id';
   var ROTATE_MS = 6000;
   var MARQUEE_PX_PER_SEC = 50;
 
-  if (document.querySelector('.bgyi-wrap')) return;
+  if (window.__bgyInfoLoaded) return;
+  window.__bgyInfoLoaded = true;
 
   var here = location.pathname.replace(/\/+$/, '') || '/';
   var page = here === '/' ? 'home' : here.split('/')[1].replace(/\.html$/, '');
-  var items = INFO_ITEMS.filter(function (it) {
+  function notHere(it) {
     return !it.path || (here !== it.path && here.indexOf(it.path + '/') !== 0);
-  });
-  if (items.length < 2) return;
+  }
+  var items = INFO_ITEMS.filter(notHere);
 
   var css = [
     '.bgyi-wrap{position:relative;flex:none;display:flex;align-items:center;gap:10px;height:46px;padding:0 14px;overflow:hidden;',
@@ -57,8 +69,13 @@
     '@media (prefers-reduced-motion:reduce){.bgyi-badge,.bgyi-cta,.bgyi-track{animation:none}.bgyi-item{transition:none}}'
   ].join('');
 
-  function withUtm(url) {
-    return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'utm_source=bgy-' + encodeURIComponent(page) + '&utm_medium=info';
+  function withUtm(url, medium) {
+    return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'utm_source=bgy-' + encodeURIComponent(page) + '&utm_medium=' + (medium || 'info');
+  }
+  function track(kind, text, url) {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'bgy_' + kind + '_click', { link_text: text, link_url: url, from_page: page });
+    }
   }
 
   function makeItem(it, clone) {
@@ -76,15 +93,59 @@
     c.textContent = 'Klik di sini';
     a.appendChild(t);
     a.appendChild(c);
-    a.addEventListener('click', function () {
-      if (typeof window.gtag === 'function') {
-        window.gtag('event', 'bgy_info_click', { link_text: it.text, link_url: it.url, from_page: page });
-      }
-    });
+    a.addEventListener('click', function () { track('info', it.text, it.url); });
     return a;
   }
 
+  var menuCss = [
+    '.bgym-label{padding:8px 16px 4px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;opacity:.65;}',
+    '.bgym-item{display:flex;align-items:center;gap:10px;padding:8px 16px;text-decoration:none!important;color:inherit!important;}',
+    '.bgym-item:hover,.bgym-item:active,.bgym-all:hover,.bgym-all:active{background:rgba(14,165,160,.1);}',
+    '.bgym-emoji{flex:none;width:32px;height:32px;border-radius:10px;background:rgba(14,165,160,.12);display:flex;align-items:center;justify-content:center;font-size:16px;}',
+    '.bgym-title{display:block;font-size:13.5px;font-weight:700;line-height:1.3;}',
+    '.bgym-desc{display:block;font-size:12px;opacity:.7;line-height:1.3;}',
+    '.bgym-divider{height:1px;background:rgba(127,127,127,.2);margin:4px 0;}',
+    '.bgym-all{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13.5px;font-weight:700;color:#0d9488!important;text-decoration:none!important;white-space:nowrap;}',
+    '.bgym-all svg{flex:none;width:18px;height:18px;}'
+  ].join('');
+
+  function mountMenu() {
+    var slot = document.querySelector('[data-bgy-menu]');
+    if (!slot) return;
+    var style = document.createElement('style');
+    style.textContent = menuCss;
+    document.head.appendChild(style);
+    var html = '<div class="bgym-label">Tools Bantu Guru Yuk lainnya</div>';
+    slot.innerHTML = html;
+    MENU_ITEMS.filter(notHere).forEach(function (it) {
+      var a = document.createElement('a');
+      a.className = 'bgym-item';
+      a.href = withUtm(it.url, 'menu');
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML = '<span class="bgym-emoji"></span><span><span class="bgym-title"></span><span class="bgym-desc"></span></span>';
+      a.querySelector('.bgym-emoji').textContent = it.emoji;
+      a.querySelector('.bgym-title').textContent = it.title;
+      a.querySelector('.bgym-desc').textContent = it.desc;
+      a.addEventListener('click', function () { track('menu', it.title, it.url); });
+      slot.appendChild(a);
+    });
+    var divider = document.createElement('div');
+    divider.className = 'bgym-divider';
+    slot.appendChild(divider);
+    var all = document.createElement('a');
+    all.className = 'bgym-all';
+    all.href = withUtm(ALL_TOOLS_URL, 'menu');
+    all.target = '_blank';
+    all.rel = 'noopener';
+    all.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span>Semua Tools Bantu Guru Yuk</span>';
+    all.addEventListener('click', function () { track('menu', 'Semua Tools', ALL_TOOLS_URL); });
+    slot.appendChild(all);
+  }
+
   function mount() {
+    mountMenu();
+    if (items.length < 2) return;
     var style = document.createElement('style');
     style.textContent = css;
     document.head.appendChild(style);
@@ -92,7 +153,7 @@
     var wrap = document.createElement('div');
     wrap.className = 'bgyi-wrap';
     wrap.setAttribute('role', 'region');
-    wrap.setAttribute('aria-label', 'Info tools BantuGuruYuk');
+    wrap.setAttribute('aria-label', 'Info tools Bantu Guru Yuk');
     var badge = document.createElement('span');
     badge.className = 'bgyi-badge';
     badge.textContent = 'Info';

@@ -1,9 +1,9 @@
 {
   "id": "/sandi/",
-  "name": "Simpan Sandi — BantuGuruYuk",
+  "name": "Simpan Sandi | Bantu Guru Yuk",
   "short_name": "Simpan Sandi",
-  "description": "Catatan akun digital guru: aman, terenkripsi, bisa offline. Bagian dari BantuGuruYuk.",
-  "start_url": "./?v=13",
+  "description": "Catatan akun digital guru: aman, terenkripsi, bisa offline. Bagian dari Bantu Guru Yuk.",
+  "start_url": "./?v=14",
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
