@@ -9,7 +9,7 @@
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<link rel="stylesheet" href="./style.css?v=4">
+<link rel="stylesheet" href="./style.css?v=5">
 </head>
 <body>
 
@@ -52,6 +52,7 @@
       <h2 class="auth-heading">Buat PIN</h2>
       <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="pin-new" class="pin-input" placeholder="• • • •" aria-label="Buat PIN 4-6 digit" autocomplete="off">
       <button id="btn-pin-next" class="btn btn-primary btn-block">Lanjut</button>
+      <button id="btn-pin-skip" class="btn btn-link btn-block">Lewati, pakai tanpa PIN</button>
     </div>
 
     <div id="pin-setup-step-2" hidden>
@@ -163,9 +164,13 @@
 
     <div class="settings-group">
       <h3 class="settings-group-title">Keamanan</h3>
+      <button id="btn-pin-toggle" class="settings-row">
+        <span><svg class="icon icon-sm"><use href="#icon-lock"></use></svg> Kunci dengan PIN</span>
+        <span id="pin-toggle-label" class="settings-value">Aktif</span>
+      </button>
       <button id="btn-change-pin" class="settings-row"><span><svg class="icon icon-sm"><use href="#icon-key-round"></use></svg> Ubah PIN</span></button>
       <button id="btn-lock-now" class="settings-row"><span><svg class="icon icon-sm"><use href="#icon-lock"></use></svg> Kunci Sekarang</span></button>
-      <label class="settings-row" for="autolock-select">
+      <label id="row-autolock" class="settings-row" for="autolock-select">
         <span>Kunci otomatis</span>
         <select id="autolock-select">
           <option value="0">Tidak pernah</option>
@@ -390,8 +395,49 @@
   </div>
 </div>
 
+<!-- ===== MODAL: Turn off PIN ===== -->
+<div id="modal-pin-off" class="modal-overlay" hidden>
+  <div class="modal-sheet modal-sheet-small">
+    <div class="modal-body">
+      <h2>Matikan PIN?</h2>
+      <p>SANDI akan langsung terbuka tanpa PIN. Siapa pun yang memegang HP ini bisa melihat isinya.</p>
+      <label class="field-label" for="pin-off-input">Masukkan PIN sekarang</label>
+      <input type="password" inputmode="numeric" maxlength="6" id="pin-off-input" class="field-input" autocomplete="off">
+      <p class="field-error" id="pin-off-error" hidden>PIN salah.</p>
+      <div class="confirm-actions">
+        <button id="btn-pin-off-cancel" class="btn btn-secondary">Batal</button>
+        <button id="btn-pin-off-ok" class="btn btn-danger">Matikan PIN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Manual install guide ===== -->
+<div id="modal-install-guide" class="modal-overlay" hidden>
+  <div class="modal-sheet modal-sheet-small">
+    <div class="modal-header">
+      <h2>Install SANDI</h2>
+      <button class="icon-btn" id="btn-close-install-guide" aria-label="Tutup"><svg class="icon"><use href="#icon-x"></use></svg></button>
+    </div>
+    <div class="modal-body">
+      <p>Browser ini belum menampilkan tombol install otomatis. Install manual cukup 3 langkah:</p>
+      <ol id="install-guide-android" class="install-steps">
+        <li>Ketuk menu <b>⋮</b> di pojok kanan atas Chrome</li>
+        <li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b></li>
+        <li>Ketuk <b>Instal</b> — ikon SANDI muncul di layar HP</li>
+      </ol>
+      <ol id="install-guide-ios" class="install-steps" hidden>
+        <li>Buka halaman ini di <b>Safari</b></li>
+        <li>Ketuk tombol <b>Bagikan</b> (kotak dengan panah ke atas)</li>
+        <li>Pilih <b>Tambah ke Layar Utama</b>, lalu <b>Tambah</b></li>
+      </ol>
+      <button id="btn-install-guide-ok" class="btn btn-primary btn-block">Mengerti</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast" hidden></div>
 
-<script src="./app.js?v=4"></script>
+<script src="./app.js?v=5"></script>
 </body>
 </html>

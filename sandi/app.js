@@ -192,9 +192,34 @@ const state = {
 /* =========================================================
    PIN / AUTH
    ========================================================= */
+const LS_PIN_OFF = 'sandi_pin_off';
 function hasPin() { return !!localStorage.getItem(LS_PIN); }
-function savePin(pin) { localStorage.setItem(LS_PIN, pin); }
-function checkPin(pin) { return localStorage.getItem(LS_PIN) === pin; }
+function pinDisabled() { return localStorage.getItem(LS_PIN_OFF) === '1'; }
+async function hashPin(pin) {
+  if (!(window.crypto && crypto.subtle)) return pin;
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('sandi:' + pin));
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+async function savePin(pin) {
+  localStorage.setItem(LS_PIN, await hashPin(pin));
+  localStorage.removeItem(LS_PIN_OFF);
+  applyPinUi();
+}
+async function checkPin(pin) {
+  const stored = localStorage.getItem(LS_PIN);
+  if (!stored) return false;
+  if (stored === pin) { await savePin(pin); return true; } // migrate legacy plain PIN
+  return stored === await hashPin(pin);
+}
+function applyPinUi() {
+  const off = pinDisabled() || !hasPin();
+  ['menu-lock', 'btn-lock-now', 'btn-change-pin', 'row-autolock'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.hidden = off;
+  });
+  const label = document.getElementById('pin-toggle-label');
+  if (label) label.textContent = off ? 'Nonaktif' : 'Aktif';
+}
 
 function showScreen(id) {
   ['screen-pin-setup', 'screen-pin-lock'].forEach((s) => {
@@ -210,8 +235,22 @@ function showApp() {
   resetAutoLockTimer();
 }
 
+async function enterApp() {
+  showApp();
+  await boot();
+  if (!localStorage.getItem(LS_ONBOARDED)) {
+    localStorage.setItem(LS_ONBOARDED, '1');
+    if (state.accounts.length === 0) {
+      document.getElementById('modal-sample-data').hidden = false;
+    }
+  }
+}
+
 function initAuthFlow() {
-  if (hasPin()) {
+  applyPinUi();
+  if (pinDisabled()) {
+    enterApp();
+  } else if (hasPin()) {
     showScreen('screen-pin-lock');
     document.getElementById('pin-unlock').focus();
   } else {
@@ -243,15 +282,14 @@ on('btn-pin-start', 'click', async () => {
     return;
   }
   errEl.hidden = true;
-  savePin(pendingNewPin);
-  showApp();
-  await boot();
-  if (!localStorage.getItem(LS_ONBOARDED)) {
-    localStorage.setItem(LS_ONBOARDED, '1');
-    if (state.accounts.length === 0) {
-      document.getElementById('modal-sample-data').hidden = false;
-    }
-  }
+  await savePin(pendingNewPin);
+  await enterApp();
+});
+
+on('btn-pin-skip', 'click', async () => {
+  localStorage.setItem(LS_PIN_OFF, '1');
+  applyPinUi();
+  await enterApp();
 });
 
 /* PIN unlock */
@@ -262,7 +300,7 @@ on('pin-unlock', 'keydown', (e) => {
 async function unlockWithPin() {
   const val = document.getElementById('pin-unlock').value.trim();
   const errEl = document.getElementById('pin-unlock-error');
-  if (checkPin(val)) {
+  if (await checkPin(val)) {
     errEl.hidden = true;
     document.getElementById('pin-unlock').value = '';
     showApp();
@@ -285,6 +323,7 @@ on('btn-close-forgot', 'click', () => {
 on('btn-forgot-reset', 'click', async () => {
   await clearAllAccounts();
   localStorage.removeItem(LS_PIN);
+  localStorage.removeItem(LS_PIN_OFF);
   localStorage.removeItem(LS_ONBOARDED);
   document.getElementById('modal-forgot-pin').hidden = true;
   location.reload();
@@ -292,6 +331,7 @@ on('btn-forgot-reset', 'click', async () => {
 
 /* Lock now / auto lock */
 function lockApp() {
+  if (pinDisabled() || !hasPin()) return;
   document.getElementById('pin-unlock').value = '';
   showScreen('screen-pin-lock');
 }
@@ -299,6 +339,7 @@ on('btn-lock-now', 'click', lockApp);
 
 function resetAutoLockTimer() {
   clearTimeout(state.autoLockTimer);
+  if (pinDisabled()) return;
   const minutes = parseInt(localStorage.getItem(LS_AUTOLOCK) || '5', 10);
   if (!minutes) return;
   state.autoLockTimer = setTimeout(lockApp, minutes * 60 * 1000);
@@ -320,21 +361,53 @@ on('btn-change-pin', 'click', () => {
 on('btn-close-change-pin', 'click', () => {
   document.getElementById('modal-change-pin').hidden = true;
 });
-on('btn-save-change-pin', 'click', () => {
+on('btn-save-change-pin', 'click', async () => {
   const oldPin = document.getElementById('change-pin-old').value.trim();
   const newPin = document.getElementById('change-pin-new').value.trim();
   const confirmPin = document.getElementById('change-pin-confirm').value.trim();
   const errEl = document.getElementById('change-pin-error');
 
-  if (!checkPin(oldPin)) { errEl.textContent = 'PIN lama salah.'; errEl.hidden = false; return; }
+  if (!(await checkPin(oldPin))) { errEl.textContent = 'PIN lama salah.'; errEl.hidden = false; return; }
   if (newPin.length < 4 || newPin.length > 6 || !/^\d+$/.test(newPin)) {
     errEl.textContent = 'PIN baru harus 4-6 digit angka.'; errEl.hidden = false; return;
   }
   if (newPin !== confirmPin) { errEl.textContent = 'Konfirmasi PIN tidak cocok.'; errEl.hidden = false; return; }
 
-  savePin(newPin);
+  await savePin(newPin);
   document.getElementById('modal-change-pin').hidden = true;
   showToast('PIN berhasil diubah ✓');
+});
+
+/* Toggle PIN on/off */
+on('btn-pin-toggle', 'click', () => {
+  if (pinDisabled() || !hasPin()) {
+    document.getElementById('pin-new').value = '';
+    document.getElementById('pin-confirm').value = '';
+    document.getElementById('pin-setup-step-1').hidden = false;
+    document.getElementById('pin-setup-step-2').hidden = true;
+    document.getElementById('btn-pin-skip').hidden = true;
+    showScreen('screen-pin-setup');
+    document.getElementById('pin-new').focus();
+  } else {
+    document.getElementById('pin-off-input').value = '';
+    document.getElementById('pin-off-error').hidden = true;
+    document.getElementById('modal-pin-off').hidden = false;
+  }
+});
+on('btn-pin-off-cancel', 'click', () => {
+  document.getElementById('modal-pin-off').hidden = true;
+});
+on('btn-pin-off-ok', 'click', async () => {
+  const val = document.getElementById('pin-off-input').value.trim();
+  if (!(await checkPin(val))) {
+    document.getElementById('pin-off-error').hidden = false;
+    return;
+  }
+  localStorage.setItem(LS_PIN_OFF, '1');
+  clearTimeout(state.autoLockTimer);
+  applyPinUi();
+  document.getElementById('modal-pin-off').hidden = true;
+  showToast('PIN dinonaktifkan');
 });
 
 /* =========================================================
@@ -408,9 +481,32 @@ window.addEventListener('beforeinstallprompt', (e) => {
   }
 });
 
+function isStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function isIos() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+function showInstallGuide() {
+  document.getElementById('install-guide-ios').hidden = !isIos();
+  document.getElementById('install-guide-android').hidden = isIos();
+  document.getElementById('modal-install-guide').hidden = false;
+}
+on('btn-close-install-guide', 'click', () => {
+  document.getElementById('modal-install-guide').hidden = true;
+});
+on('btn-install-guide-ok', 'click', () => {
+  document.getElementById('modal-install-guide').hidden = true;
+});
+
 async function triggerInstallPrompt() {
+  if (isStandalone()) {
+    showToast('SANDI sudah terinstall di perangkat ini ✓');
+    return;
+  }
   if (!deferredInstallPrompt) {
-    showToast('Aplikasi sudah terinstall atau browser tidak mendukung install otomatis.');
+    showInstallGuide();
     return;
   }
   deferredInstallPrompt.prompt();
@@ -424,6 +520,13 @@ on('btn-install-close', 'click', () => {
   document.getElementById('install-banner').hidden = true;
   localStorage.setItem('sandi_install_dismissed', '1');
 });
+setTimeout(() => {
+  if (!deferredInstallPrompt && !isStandalone() && !localStorage.getItem('sandi_install_dismissed')) {
+    const banner = document.getElementById('install-banner');
+    if (banner) banner.hidden = false;
+  }
+}, 2500);
+
 window.addEventListener('appinstalled', () => {
   document.getElementById('install-banner').hidden = true;
   deferredInstallPrompt = null;
