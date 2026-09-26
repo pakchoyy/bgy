@@ -2,12 +2,12 @@
 
 /* SANDI service worker — caches core assets for offline use. */
 
-const CACHE_NAME = 'sandi-cache-v14';
+const CACHE_NAME = 'sandi-cache-v15';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './style.css?v=14',
-  './app.js?v=14',
+  './style.css?v=15',
+  './app.js?v=15',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -15,6 +15,10 @@ const CORE_ASSETS = [
   './icons/maskable-512.png',
   '../guru-cibisd2.png',
   '../bgy-info.js',
+  '../fonts/bgy-font.css?v=1',
+  '../fonts/plus-jakarta-sans-latin.woff2',
+  '../fonts/plus-jakarta-sans-latin-ext.woff2',
+  '../fonts/plus-jakarta-sans-latin-italic.woff2',
 ];
 
 self.addEventListener('install', (event) => {
