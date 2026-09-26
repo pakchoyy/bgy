@@ -28,7 +28,7 @@ body.dark{
   --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;
 }
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;overflow-x:hidden;}
-html.embed-mode header,html.embed-mode #installBanner,html.embed-mode .feedback-bar,html.embed-mode .ticker-wrap,html.embed-mode footer{display:none!important;}
+html.embed-mode header,html.embed-mode #installBanner,html.embed-mode .feedback-bar,html.embed-mode .ticker-wrap,html.embed-mode footer,html.embed-mode .bgyi-wrap{display:none!important;}
 html.embed-mode #pageHome{padding-top:6px;}
 html.embed-mode body{min-height:auto;}
 
@@ -43,8 +43,9 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
 .hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;transition:background .2s;display:flex;align-items:center;justify-content:center;}
 .hdr-btn:hover{background:rgba(255,255,255,.22);}
-.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:190px;overflow:hidden;display:none;z-index:400;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:190px;width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
 .dropdown-menu.open{display:block;}
+.dropdown-item.active{color:var(--blue);}
 .dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;}
 .dropdown-item:hover{background:var(--input-bg);}
 .dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
@@ -102,6 +103,10 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 /* CARD */
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--border);overflow:hidden;}
 @media(max-width:640px){.card{padding:15px;border-radius:10px;}}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block;}
+.card-title .ic,.page-card-title .ic,.dropdown-item .ic{color:var(--blue);width:18px;height:18px;}
+.hdr-btn .ic{width:18px;height:18px;}
+.hasil-placeholder .ph-icon .ic{width:44px;height:44px;}
 .card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:10px;}
 
 /* FORM */
@@ -460,8 +465,11 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 }
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+<script src="/bgy-info.js"></script>
 </head>
 <body>
+<!-- Ikon Lucide (lucide.dev, ISC) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs><symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></symbol><symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol><symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></symbol><symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></symbol><symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" /></symbol><symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></symbol><symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></symbol><symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /><path d="m14 7 3 3" /><path d="M5 6v4" /><path d="M19 14v4" /><path d="M10 2v2" /><path d="M7 8H3" /><path d="M21 16h-4" /><path d="M11 3H9" /></symbol><symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></symbol><symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></symbol><symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></symbol><symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M12 11h4" /><path d="M12 16h4" /><path d="M8 11h.01" /><path d="M8 16h.01" /></symbol><symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v16" /><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" /></symbol><symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></symbol><symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></symbol><symbol id="i-school" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 21v-3a2 2 0 0 0-4 0v3" /><path d="M18 4.933V21" /><path d="m4 6 7.106-3.79a2 2 0 0 1 1.788 0L20 6" /><path d="m6 11-3.52 2.147a1 1 0 0 0-.48.854V19a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a1 1 0 0 0-.48-.853L18 11" /><path d="M6 4.933V21" /><circle cx="12" cy="9" r="2" /></symbol></defs></svg>
 
 <div id="menuOverlay" onclick="closeMenu()"></div>
 <div id="toast"></div>
@@ -472,7 +480,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     <img src="./guru-cibisd2.png" class="install-banner-icon" onerror="this.style.display='none'">
     <div class="install-banner-text">
       <strong>Install Draft TP BGY</strong>
-      <span>Akses cepat tanpa buka browser 🚀</span>
+      <span>Akses cepat tanpa buka browser</span>
     </div>
     <div class="install-banner-btns">
       <button class="btn-install-yes" onclick="doInstall()">Install</button>
@@ -506,20 +514,17 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
   <div class="header-inner">
     <div class="header-brand">
       <img src="./guru-cibisd2.png" alt="Guru Cibi" class="header-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-      <div class="logo-box-fallback" style="display:none;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🏫</div>
-      <h1 class="header-title-inline">Bantu Guru Yuk <span class="hdr-sep">|</span> Draft Tujuan Pembelajaran</h1>
+      <div class="logo-box-fallback" style="display:none;width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);align-items:center;justify-content:center;flex-shrink:0;color:#fff;"><svg class="ic" aria-hidden="true"><use href="#i-school"/></svg></div>
+      <h1 class="header-title-inline">BGY <span class="hdr-sep">|</span> Draft TP</h1>
     </div>
     <div class="header-right">
-      <button class="hdr-btn" id="darkBtn" onclick="toggleDark()" title="Dark Mode">🌙</button>
-      <button class="hdr-btn" id="menuBtn" onclick="toggleMenu()" title="Menu">☰</button>
+      <button class="hdr-btn" id="darkBtn" onclick="toggleDark()" title="Mode gelap/terang" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
+      <button class="hdr-btn" id="menuBtn" onclick="toggleMenu()" title="Menu" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button>
       <div class="dropdown-menu" id="dropdownMenu">
-        <button class="dropdown-item" onclick="showPage('home');closeMenu()">🏠 Home</button>
+        <button class="dropdown-item" id="mi-home" onclick="showPage('home');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-house"/></svg> Home</button>
+        <button class="dropdown-item" id="mi-tentang" onclick="showPage('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" onclick="showPage('tentang');closeMenu()">ℹ️ Tentang</button>
-        <button class="dropdown-item" onclick="showPage('kontak');closeMenu()">💬 Kontak</button>
-        <div class="dropdown-divider"></div>
-        <button class="dropdown-item" id="installBgyItem" onclick="installBGY();closeMenu()">📲 Install BGY</button>
-        <button class="dropdown-item" onclick="window.open('https://bantuguruyuk.web.id','_blank');closeMenu()">🌐 bantuguruyuk.web.id</button>
+        <div data-bgy-menu></div>
       </div>
     </div>
   </div>
@@ -529,10 +534,10 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 <div id="pageTentang" class="page">
   <div class="page-inner">
   <div class="page-card">
-    <div class="page-card-title">ℹ️ Tentang Aplikasi</div>
+    <div class="page-card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Aplikasi</div>
     <div class="page-ver">Bantu Guru Yuk — Draft TP · v26.6.0</div>
     <p><strong>Aplikasi Draft TP</strong> hadir untuk membantu guru menyusun Tujuan Pembelajaran sesuai Kurikulum Merdeka secara cepat dan akurat.</p>
-    <div class="feat-title">✨ Fitur Unggulan</div>
+    <div class="feat-title">Fitur</div>
     <ul>
       <li>Mendukung CP Baru (BSKAP 046/2025) &amp; CP Agama (BKPDM 020/2026)</li>
       <li>Bank TP untuk semua jenjang (SD, SMP, SMA)</li>
@@ -540,30 +545,26 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
       <li>Dark mode &amp; responsif di HP dan laptop</li>
     </ul>
     <p>Dibuat oleh <strong>Pak Choyy</strong> · BGY Tools</p>
-    <p>🏠 <a href="https://bantuguruyuk.web.id" target="_blank">bantuguruyuk.web.id</a></p>
+    <p><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg> <a href="https://bantuguruyuk.web.id" target="_blank">bantuguruyuk.web.id</a></p>
   </div>
-  </div>
-</div>
-
-<!-- PAGE KONTAK -->
-<div id="pageKontak" class="page">
-  <div class="page-inner">
-  <div class="page-card">
-    <div class="page-card-title">💬 Kontak</div>
+  <div class="page-card" style="margin-top:14px;">
+    <div class="page-card-title"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Kontak</div>
     <p>Untuk bantuan, kritik, saran, atau kolaborasi:</p>
     <div class="kontak-btns">
-      <a class="btn-wa" href="https://wa.me/6289530713597" target="_blank">💬 WhatsApp Pak Choyy</a>
-      <a class="btn-tiktok" href="https://www.tiktok.com/@pak.choyy" target="_blank">🎵 TikTok @pak.choyy</a>
+      <a class="btn-wa" href="https://wa.me/6289530713597" target="_blank"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp Pak Choyy</a>
+      <a class="btn-tiktok" href="https://www.tiktok.com/@pak.choyy" target="_blank"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> TikTok @pak.choyy</a>
     </div>
   </div>
   </div>
 </div>
 
+<div id="pageKontak"></div>
+
 <div id="pageHome">
   <div class="page-home-inner">
   <!-- HINT -->
   <div class="hint-box hint-wrap">
-    💡 <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>✨ Generate Draft TP</strong> → Salin ke erapor 🎉
+    <svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>Generate Draft TP</strong> → Salin ke e-Rapor
   </div>
   <div class="two-col">
 
@@ -572,7 +573,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 
       <!-- CARD: Identitas -->
       <div class="card">
-        <div class="card-title">📋 Identitas Tujuan Pembelajaran</div>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Identitas Tujuan Pembelajaran</div>
 
         <div class="form-group">
           <label>Jenis CP</label>
@@ -613,7 +614,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 
       <!-- CARD: Pilih Mapel -->
       <div class="card">
-        <div class="card-title">📚 Mata Pelajaran</div>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg> Mata Pelajaran</div>
         <div class="form-group" style="margin-bottom:0">
           <label>Pilih Mata Pelajaran</label>
           <select id="mapelSelect" onchange="onMapelChange()">
@@ -628,11 +629,11 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 
       <!-- TOMBOL GENERATE -->
       <button class="btn-generate" onclick="generateTP()">
-        ✨ Generate Draft TP
+        <svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Draft TP
       </button>
 
       <!-- RESET -->
-      <button class="btn-reset" onclick="resetForm()">🔄 Reset Form</button>
+      <button class="btn-reset" onclick="resetForm()"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Reset Form</button>
 
     </div><!-- /col-left -->
 
@@ -640,8 +641,8 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     <div class="col-right" id="colRight">
       <div class="card" id="hasilCard">
         <div class="hasil-placeholder" id="hasilPlaceholder">
-          <div class="ph-icon">📝</div>
-          <p>Pilih kelas, semester, dan mapel<br>lalu klik <strong>✨ Generate Draft TP</strong></p>
+          <div class="ph-icon"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></div>
+          <p>Pilih kelas, semester, dan mapel<br>lalu klik <strong>Generate Draft TP</strong></p>
         </div>
         <div id="hasilKonten" style="display:none">
           <div class="hasil-header">
@@ -649,7 +650,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
             <div class="info-pills" id="infoPills"></div>
           </div>
           <div class="action-row">
-            <button class="btn btn-teal" onclick="salinSemua()">📋 Salin Semua</button>
+            <button class="btn btn-teal" onclick="salinSemua()"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin Semua</button>
           </div>
           <div id="daftarTp"></div>
         </div>
@@ -662,9 +663,9 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 
 <!-- FEEDBACK BAR -->
 <div class="feedback-bar">
-  <span class="feedback-bar-text">💡 <strong>Ada saran atau perbaikan Draft TP?</strong></span>
+  <span class="feedback-bar-text"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> <strong>Ada saran atau perbaikan Draft TP?</strong></span>
   <a href="https://wa.me/6289530713597" target="_blank" class="btn-feedback-wa">
-    💬 Kirim Kritik & Saran
+    Kirim Kritik & Saran
   </a>
 </div>
 
@@ -1026,15 +1027,16 @@ const BANK = {
 let hasilData = { sections: [], meta: {} };
 
 (function(){
-  if(localStorage.getItem('draftTpDark') === '1'){
+  const t = localStorage.getItem('theme');
+  if(t === 'dark' || (t === null && localStorage.getItem('draftTpDark') === '1')){
     document.body.classList.add('dark');
-    document.getElementById('darkBtn').textContent = '☀️';
+    document.getElementById('darkIcon').setAttribute('href','#i-sun');
   }
 })();
 function toggleDark(){
   const d = document.body.classList.toggle('dark');
-  document.getElementById('darkBtn').textContent = d ? '☀️' : '🌙';
-  localStorage.setItem('draftTpDark', d ? '1' : '0');
+  document.getElementById('darkIcon').setAttribute('href', d ? '#i-sun' : '#i-moon');
+  localStorage.setItem('theme', d ? 'dark' : 'light');
 }
 
 function toggleMenu(){
@@ -1134,12 +1136,12 @@ function generateTP(){
   else if (cp === 'agama2026') jenisCpLabel = 'CP Agama (BKPDM 020/2026)';
 
   const selVal = document.getElementById('mapelSelect').value;
-  if(!selVal || selVal === "__empty__"){ toast('⚠️ Pilih mata pelajaran terlebih dahulu!'); return; }
+  if(!selVal || selVal === "__empty__"){ toast('Pilih mata pelajaran terlebih dahulu!'); return; }
 
   const selectedMapel = [];
   if(selVal === '__manual__'){
     const nm = document.getElementById('manualMapelInput').value.trim();
-    if(!nm){ toast('⚠️ Isi nama mata pelajaran terlebih dahulu!'); return; }
+    if(!nm){ toast('Isi nama mata pelajaran terlebih dahulu!'); return; }
     selectedMapel.push('__manual__:' + nm);
   } else {
     selectedMapel.push(selVal);
@@ -1168,7 +1170,7 @@ function generateTP(){
     if(window.innerWidth <= 960){
       setTimeout(() => document.getElementById('colRight').scrollIntoView({behavior:'smooth', block:'start'}), 300);
     }
-    toast('✅ Draft TP berhasil dibuat!');
+    toast('Draft TP berhasil dibuat!');
   }, 1500);
 }
 
@@ -1190,12 +1192,12 @@ function tampilkanHasil(){
   const container = document.getElementById('daftarTp');
   container.innerHTML = sections.map((sec, si) => `
     <div class="tp-section">
-      <div class="tp-section-title">📚 ${sec.mapel}</div>
+      <div class="tp-section-title"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg> ${sec.mapel}</div>
       ${sec.tpList.map((tp, i) => `
         <div class="tp-item" id="tp_${si}_${i}">
           <div class="tp-num">${i+1}</div>
           <div class="tp-text">${tp}</div>
-          <button class="tp-copy" onclick="salinSatu(${si}, ${i}, this)" title="Salin TP ini">📋 Salin</button>
+          <button class="tp-copy" onclick="salinSatu(${si}, ${i}, this)" title="Salin TP ini"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin</button>
         </div>
       `).join('')}
     </div>
@@ -1206,8 +1208,8 @@ function salinSatu(si, i, btn){
   const tp = hasilData.sections[si]?.tpList[i];
   if(!tp) return;
   navigator.clipboard.writeText(tp).then(() => {
-    btn.textContent = '✅ Disalin'; btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = '📋 Salin'; btn.classList.remove('copied'); }, 2000);
+    btn.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> Disalin'; btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = '<svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin'; btn.classList.remove('copied'); }, 2000);
     toast('TP ' + (i+1) + ' berhasil disalin!');
   });
 }
@@ -1217,7 +1219,7 @@ function salinSemua(){
   if(!sections.length){ toast('Belum ada TP'); return; }
   const header = `DRAFT TUJUAN PEMBELAJARAN\nKelas ${meta.kelas} | Semester ${meta.sem} | ${meta.cp}\n\n`;
   const isi = sections.map(s => `=== ${s.mapel} ===\n` + s.tpList.map((tp, i) => `${i+1}. ${tp}`).join('\n')).join('\n\n');
-  navigator.clipboard.writeText(header+isi).then(() => toast('✅ Semua TP berhasil disalin!'));
+  navigator.clipboard.writeText(header+isi).then(() => toast('Semua TP berhasil disalin!'));
 }
 
 function resetForm(){
@@ -1227,16 +1229,31 @@ function resetForm(){
   updateMapelList();
   document.getElementById('hasilPlaceholder').style.display = 'flex';
   document.getElementById('hasilKonten').style.display = 'none';
-  toast('Form berhasil direset 🔄');
+  toast('Form berhasil direset');
 }
 
 function showPage(page){
+  if(page === 'kontak') page = 'tentang';
   document.getElementById('pageHome').style.display    = page === 'home' ? '' : 'none';
   document.getElementById('pageTentang').style.display = page === 'tentang' ? 'block' : 'none';
-  document.getElementById('pageKontak').style.display  = page === 'kontak' ? 'block' : 'none';
+  document.querySelectorAll('#dropdownMenu .dropdown-item[id^="mi-"]').forEach(x => x.classList.toggle('active', x.id === 'mi-' + page));
   window.scrollTo({top:0, behavior:'smooth'});
 }
+
+/* ════════════════════════════
+   MENU BERSAMA & INSTALL (PWA)
+════════════════════════════ */
+document.addEventListener('click', function(e){
+  if(e.target.closest && e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button')) closeMenu();
+});
+function hideInstallBanner(){ document.getElementById('installBanner').classList.remove('show'); }
+function doInstall(){ hideInstallBanner(); if(window.bgyInstall) window.bgyInstall(); }
+function dismissBanner(){ hideInstallBanner(); localStorage.setItem('draftTpInstallClosed', Date.now().toString()); }
+window.addEventListener('beforeinstallprompt', function(){
+  if(document.documentElement.classList.contains('embed-mode')) return;
+  const last = parseInt(localStorage.getItem('draftTpInstallClosed') || '0', 10);
+  if(Date.now() - last > 86400000) setTimeout(() => document.getElementById('installBanner').classList.add('show'), 2000);
+});
 </script>
-<script src="/bgy-info.js" defer></script>
 </body>
 </html>
