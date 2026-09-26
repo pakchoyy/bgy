@@ -61,7 +61,8 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .header-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
 .header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
 .header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;object-fit:contain;}
-.header-brand h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.25;}
+.header-brand h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@media(max-width:380px){header{padding:0 12px;}.header-brand h1{font-size:.9rem;}.badge-free,.badge-pro{margin-left:4px;padding:2px 6px;}}
 .header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
 .hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
 .hdr-btn:hover{background:rgba(255,255,255,.22);}
@@ -222,7 +223,7 @@ footer .visitor a{color:#fff;text-decoration:none;}
   <div class="header-inner">
     <div class="header-brand">
       <img src="/lkpd/guru-cibisd2.png" alt="Logo">
-      <h1>Bantu Guru Yuk | Prompt LKPD <span id="headerBadge" class="badge-free">FREE</span></h1>
+      <h1>BGY | Prompt LKPD <span id="headerBadge" class="badge-free">FREE</span></h1>
     </div>
     <div class="header-right">
       <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
