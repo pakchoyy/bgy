@@ -20,6 +20,7 @@
     { text: 'Katrol nilai otomatis', url: 'https://www.bantuguruyuk.web.id/katrol-nilai/', path: '/katrol-nilai' },
     { text: 'Modul Ajar Kokurikuler sat-set', url: 'https://www.bantuguruyuk.web.id/kokurikuler', path: '/kokurikuler' },
     { text: 'Kumpulan Tujuan Pembelajaran terupdate', url: 'https://www.bantuguruyuk.web.id/draft-tp/', path: '/draft-tp' },
+    { text: 'Undangan rapor jadi dalam 1 menit', url: 'https://www.bantuguruyuk.web.id/teks-sekolah/', path: '/teks-sekolah' },
     { text: 'Simpan akun digital guru, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' }
   ];
   // Ikon Lucide (lucide.dev, lisensi ISC) — isi <svg viewBox="0 0 24 24">

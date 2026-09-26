@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bantu Guru Yuk | Teks Sekolah</title>
+<link rel="icon" href="../guru-cibisd2.png" sizes="192x192" type="image/png"/>
+<link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
+<meta name="theme-color" content="#0ea5a0"/>
+<link rel="manifest" href="./manifest.json"/>
+<meta name="description" content="Buat undangan pembagian rapor, undangan rapat wali murid, pemberitahuan libur semester, pemberitahuan kegiatan, dan surat panggilan orang tua. Tinggal isi, cetak/PDF, Word, atau kirim WA."/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-83WBBEE5BG');
+  function gaEvent(n,p){if(typeof gtag==='function')gtag('event',n,p||{});}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
+  --blue:#0ea5a0;--teal-dark:#0d7a8a;--gray-100:#f1f5f9;
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;--text-light:#64748b;
+  --border:#e2e8f0;--input-bg:#f8fafc;--radius:12px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;--text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;overflow-x:hidden;}
+[hidden]{display:none!important;}
+
+/* ══ SPLASH ══ */
+#loadingScreen{position:fixed;inset:0;background:var(--grad);display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;z-index:99999;transition:opacity .4s;}
+#loadingScreen img{width:64px;margin-bottom:14px;border-radius:16px;}
+#loadingScreen .ls-title{font-size:1.3rem;font-weight:800;letter-spacing:1px;}
+#loadingScreen .ls-sub{font-size:.8rem;margin-top:6px;opacity:.85;}
+.ls-spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-top:18px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ══ INSTALL POPUP ══ */
+#installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+#installPopup.show{top:0;}
+#installPopup button{border:none;border-radius:8px;padding:5px 14px;font-weight:700;cursor:pointer;font-size:.8rem;}
+.btn-install{background:#fff;color:#0d7a8a;}
+.btn-install-close{background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;}
+
+/* ══ HEADER ══ */
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;max-width:1280px;margin:0 auto;}
+.header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
+.header-brand-text{min-width:0;overflow:hidden;}
+.header-brand-text h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.dropdown-item:hover{background:var(--gray-100);}
+body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
+.dropdown-item.active{color:var(--blue);}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+#menuOverlay{display:none;position:fixed;inset:0;z-index:250;}
+#menuOverlay.open{display:block;}
+
+/* ══ IKON ══ */
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block;}
+.card-title .ic,.dropdown-item .ic{color:var(--blue);width:18px;height:18px;}
+.hdr-btn .ic{width:18px;height:18px;}
+.jc .ic{width:20px;height:20px;color:var(--blue);}
+.ph-icon .ic{width:44px;height:44px;}
+
+/* ══ MAIN & KARTU ══ */
+main{max-width:1280px;margin:0 auto;padding:20px;width:100%;flex:1;}
+@media(max-width:640px){main{padding:10px 12px;}}
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+@media(max-width:640px){.card{padding:14px 12px;border-radius:10px;}}
+.card-title{font-size:.84rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.two-col{display:grid;grid-template-columns:400px 1fr;gap:16px;align-items:start;}
+@media(max-width:960px){.two-col{grid-template-columns:1fr;}}
+.col-right{min-width:0;}
+@media(min-width:961px){.col-right{position:sticky;top:80px;}}
+
+.hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.76rem;color:var(--text);line-height:1.8;}
+.hint-bar span{font-weight:700;color:var(--teal-dark);}
+body.dark .hint-bar span{color:#5eead4;}
+
+/* ══ PILIH JENIS ══ */
+.jenis-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.jc{border:1.5px solid var(--border);border-radius:10px;padding:9px 10px;cursor:pointer;transition:all .2s;background:var(--input-bg);text-align:left;font-family:inherit;color:var(--text);display:flex;flex-direction:column;gap:3px;}
+.jc:hover{border-color:var(--blue);background:rgba(14,165,160,.05);}
+.jc.active{border-color:var(--blue);background:rgba(14,165,160,.1);box-shadow:0 0 0 3px rgba(14,165,160,.1);}
+.jc .jn{font-size:.76rem;font-weight:700;display:flex;align-items:center;gap:6px;}
+.jc .jd{font-size:.64rem;color:var(--text-light);line-height:1.35;}
+.jc .ai-tag{font-size:.56rem;font-weight:800;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:1px 6px;border-radius:99px;margin-left:auto;}
+
+/* ══ FORM ══ */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 8px;}
+.fgrid .full{grid-column:1/-1;}
+@media(max-width:380px){.fgrid{grid-template-columns:1fr;}}
+.form-group{margin-bottom:10px;min-width:0;}
+.sub-head{grid-column:1/-1;font-size:.72rem;font-weight:800;color:var(--teal-dark);margin:6px 0 8px;display:flex;align-items:center;gap:6px;}
+body.dark .sub-head{color:#5eead4;}
+.sub-head::after{content:'';flex:1;border-top:1px dashed var(--border);}
+label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
+input[type=text],input[type=date],input[type=time],select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.84rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;min-height:38px;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+body.dark input[type=date],body.dark input[type=time]{color-scheme:dark;}
+textarea{resize:vertical;line-height:1.5;}
+.hint{font-size:.66rem;color:var(--text-light);margin-top:3px;line-height:1.4;}
+.check-row{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;text-transform:none;letter-spacing:0;color:var(--text);cursor:pointer;}
+.check-row input{width:18px;height:18px;accent-color:var(--blue);}
+
+details.idt{border:1px solid var(--border);border-radius:var(--radius);background:var(--card-bg);box-shadow:var(--shadow);margin-bottom:12px;}
+details.idt>summary{list-style:none;cursor:pointer;padding:14px 18px;font-size:.84rem;font-weight:700;display:flex;align-items:center;gap:6px;}
+details.idt>summary::-webkit-details-marker{display:none;}
+details.idt>summary .ic{color:var(--blue);width:18px;height:18px;}
+details.idt>summary .chev{margin-left:auto;transition:transform .2s;color:var(--text-light);}
+details.idt[open]>summary .chev{transform:rotate(180deg);}
+details.idt .idt-body{padding:0 18px 12px;border-top:1px solid var(--border);padding-top:12px;}
+@media(max-width:640px){details.idt>summary{padding:13px 12px;}details.idt .idt-body{padding:12px 12px 10px;}}
+.idt-sum{font-size:.68rem;font-weight:600;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%;}
+.logo-row{display:flex;align-items:center;gap:10px;}
+.logo-prev{width:48px;height:48px;border:1.5px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--input-bg);overflow:hidden;flex:none;color:var(--text-light);}
+.logo-prev img{max-width:100%;max-height:100%;}
+
+/* ══ TOMBOL ══ */
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--grad);color:#fff;width:100%;border:none;cursor:pointer;padding:12px;font-size:.95rem;font-weight:700;border-radius:10px;box-shadow:0 4px 14px rgba(14,165,160,.25);font-family:inherit;transition:transform .2s,opacity .2s;}
+.btn-primary:hover{transform:translateY(-1px);opacity:.93;}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+.btn-row{display:flex;gap:7px;flex-wrap:wrap;}
+.btn-sm{flex:1;min-width:92px;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 8px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:8px;font-size:.76rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit;}
+.btn-sm:hover{border-color:var(--blue);color:var(--blue);}
+.btn-sm .ic{width:16px;height:16px;}
+.btn-wa{background:#25D366;border-color:#25D366;color:#fff;}
+.btn-wa:hover{background:#1ebe5a;color:#fff;border-color:#1ebe5a;}
+.btn-ghost{background:var(--input-bg);color:var(--text-light);}
+
+/* ══ PRATINJAU SURAT ══ */
+.prev-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.prev-label{font-size:.72rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:.5px;}
+.paper-wrap{background:#cbd5e1;border-radius:10px;padding:14px;overflow-x:auto;}
+body.dark .paper-wrap{background:#0b1220;}
+@media(max-width:640px){.paper-wrap{padding:8px;}}
+.paper{background:#fff;color:#000;font-family:'Times New Roman',Times,serif;font-size:15px;line-height:1.5;padding:40px 46px;max-width:794px;margin:0 auto;box-shadow:0 4px 18px rgba(0,0,0,.18);border-radius:2px;}
+@media(max-width:640px){.paper{font-size:12.5px;padding:20px 16px;}}
+.paper p{margin:0 0 .7em;text-align:justify;}
+.paper .kop{display:flex;align-items:center;gap:14px;border-bottom:3px solid #000;padding-bottom:8px;margin-bottom:18px;position:relative;}
+.paper .kop::after{content:'';position:absolute;left:0;right:0;bottom:-6px;border-bottom:1px solid #000;}
+.paper .kop-logo{width:76px;flex:none;text-align:center;}
+.paper .kop-logo img{max-width:76px;max-height:76px;}
+.paper .kop-text{flex:1;text-align:center;line-height:1.25;}
+.paper .kop-text .k1{font-size:1em;font-weight:700;text-transform:uppercase;}
+.paper .kop-text .k2{font-size:1em;font-weight:700;text-transform:uppercase;}
+.paper .kop-text .k3{font-size:1.3em;font-weight:800;text-transform:uppercase;}
+.paper .kop-text .k4{font-size:.82em;}
+.paper .kop.no-logo .kop-logo{display:none;}
+.paper .kop.has-logo .kop-text{padding-right:76px;}
+@media(max-width:640px){.paper .kop-logo{width:52px;}.paper .kop-logo img{max-width:52px;max-height:52px;}.paper .kop.has-logo .kop-text{padding-right:40px;}}
+.paper .tgl{text-align:right;margin-bottom:.6em;}
+.paper table{border-collapse:collapse;}
+.paper td{vertical-align:top;padding:0 4px 1px 0;}
+.paper .meta td:first-child{width:78px;}
+.paper .detail{margin:0 0 .8em 28px;}
+.paper .detail td:first-child{width:110px;}
+@media(max-width:640px){.paper .detail{margin-left:10px;}.paper .detail td:first-child{width:86px;}}
+.paper .kpd{margin:.8em 0;}
+.paper ol,.paper ul{margin:0 0 .8em 28px;padding-left:18px;}
+.paper li{margin-bottom:.15em;text-align:justify;}
+.paper .ph{color:#b45309;background:#fef3c7;border-radius:2px;}
+.paper .ttd{display:flex;justify-content:space-between;gap:12px;margin-top:1.2em;}
+.paper .ttd-col{width:46%;text-align:left;}
+.paper .ttd-col.right{margin-left:auto;}
+.paper .ttd-name{margin-top:4.2em;font-weight:700;text-decoration:underline;}
+.paper .lead{font-weight:700;}
+
+/* ══ HASIL AI ══ */
+.ai-out{white-space:pre-wrap;font-size:.88rem;line-height:1.75;color:var(--text);background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:16px;min-height:220px;}
+.quota-box{display:flex;align-items:center;justify-content:space-between;background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:9px;padding:8px 12px;margin-bottom:10px;font-size:.76rem;}
+.quota-box b{color:var(--teal-dark);font-size:.9rem;}
+body.dark .quota-box b{color:#5eead4;}
+.quota-box.habis{background:#fee2e2;border-color:#fca5a5;}
+.quota-box.habis b{color:#dc2626;}
+.prompt-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px;color:var(--text-light);gap:10px;text-align:center;font-size:.82rem;}
+.prompt-placeholder .ph-icon{opacity:.35;}
+.spin-sm{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
+
+/* ══ HALAMAN TENTANG ══ */
+.about p{font-size:.85rem;line-height:1.8;margin-bottom:10px;}
+.about ul{font-size:.83rem;line-height:2;padding-left:18px;}
+.contact-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.contact-btns button{color:#fff;border:none;padding:10px 18px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;gap:6px;font-family:inherit;}
+
+/* ══ FOOTER & TOAST ══ */
+footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 12px;margin-top:auto;}
+footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
+footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.85);}
+footer a{color:inherit;}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2937;color:#fff;padding:10px 22px;border-radius:99px;font-size:.81rem;font-weight:600;z-index:9999;opacity:0;transition:all .35s;pointer-events:none;max-width:90vw;text-align:center;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ══ CETAK: hanya kertas surat ══ */
+#printArea{display:none;}
+@media print{
+  @page{size:A4;margin:1.8cm 2cm;}
+  html,body{background:#fff!important;padding:0!important;margin:0!important;display:block!important;}
+  body>*:not(#printArea){display:none!important;}
+  #printArea{display:block!important;}
+  #printArea .paper{max-width:none;padding:0;margin:0;box-shadow:none;border-radius:0;font-size:12pt;}
+  #printArea .ph{background:none;color:#000;}
+  #printArea .kop-logo{width:80px;}
+  #printArea .kop-logo img{max-width:80px;max-height:80px;}
+  #printArea .kop.has-logo .kop-text{padding-right:80px;}
+  #printArea .detail{margin-left:28px;}
+  #printArea .detail td:first-child{width:120px;}
+  #printArea .ttd,#printArea table{page-break-inside:avoid;}
+}
+</style>
+<link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+<script src="/bgy-info.js"></script>
+</head>
+<body>
+<!-- Ikon Lucide (lucide.dev, ISC) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs>
+<symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></symbol>
+<symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+<symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+<symbol id="i-school" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M18 5v16"/><path d="m4 6 7.106-3.79a2 2 0 0 1 1.788 0L20 6"/><path d="m6 11-3.52 2.147a1 1 0 0 0-.48.854V19a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a1 1 0 0 0-.48-.853L18 11"/><path d="M6 5v16"/><circle cx="12" cy="9" r="2"/></symbol>
+<symbol id="i-rapor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-libur" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12a10.06 10.06 1 0 0-20 0Z"/><path d="M12 12v8a2 2 0 0 0 4 0"/><path d="M12 2v1"/></symbol>
+<symbol id="i-megaphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/></symbol>
+<symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></symbol>
+</defs></svg>
+
+<div id="loadingScreen">
+  <img src="../guru-cibisd2.png" alt="Logo"/>
+  <div class="ls-title">Bantu Guru Yuk</div>
+  <div class="ls-sub">Teks Sekolah · by pak.choyy</div>
+  <div class="ls-spinner"></div>
+</div>
+
+<div id="installPopup">
+  <span><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install Teks Sekolah di HP kamu!</span>
+  <button class="btn-install" onclick="installApp()">Install</button>
+  <button class="btn-install-close" onclick="closeInstall()" aria-label="Tutup"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+</div>
+
+<div id="toast" role="status"></div>
+<div id="menuOverlay" onclick="closeMenu()"></div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="../guru-cibisd2.png" alt="Logo"/>
+      <div class="header-brand-text"><h1>BGY | Teks Sekolah</h1></div>
+    </div>
+    <div class="header-right">
+      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
+      <button class="hdr-btn" onclick="toggleMenu()" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item active" id="mi-home" onclick="showTab('home');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-house"/></svg> Home</button>
+        <button class="dropdown-item" id="mi-tentang" onclick="showTab('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
+        <div class="dropdown-divider"></div>
+        <div data-bgy-menu></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ TAB HOME ══ -->
+<div id="tab-home">
+<main>
+  <div class="hint-bar">
+    <svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> <span>Pilih jenis</span> → <span>Isi identitas sekolah</span> (sekali saja) → <span>Isi detail</span> → <span>Cetak / Word / Kirim WA</span>
+  </div>
+
+  <div class="two-col">
+    <div class="col-left">
+      <div class="card">
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Pilih Jenis Teks</div>
+        <div class="jenis-grid" id="jenisGrid"></div>
+      </div>
+
+      <details class="idt" id="idtBox">
+        <summary><svg class="ic" aria-hidden="true"><use href="#i-school"/></svg> Identitas Sekolah <span class="idt-sum" id="idtSum"></span><svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg></summary>
+        <div class="idt-body">
+          <div class="fgrid" id="idtFields"></div>
+          <div class="form-group">
+            <label>Logo Sekolah / Daerah (opsional)</label>
+            <div class="logo-row">
+              <div class="logo-prev" id="logoPrev"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></div>
+              <input type="file" id="logoInput" accept="image/*" style="flex:1;font-size:.74rem;min-width:0;"/>
+              <button type="button" class="btn-sm btn-ghost" id="logoDel" onclick="hapusLogo()" style="flex:none;min-width:0;" hidden aria-label="Hapus logo"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg></button>
+            </div>
+            <div class="hint">Tersimpan di HP/laptop ini saja, tidak diunggah ke server.</div>
+          </div>
+        </div>
+      </details>
+
+      <div class="card" id="suratCard">
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg> <span id="detailTitle">Detail Surat</span></div>
+        <div class="fgrid" id="detailFields"></div>
+        <button type="button" class="btn-sm btn-ghost" onclick="resetDetail()" style="width:100%;"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Kosongkan detail</button>
+      </div>
+
+      <div class="card" id="aiCard" hidden>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg> <span id="aiTitle">Detail Sambutan</span></div>
+        <div class="quota-box" id="quotaBox"><span>Sisa generate hari ini</span><b id="quotaNum">2 / 2</b></div>
+        <div class="fgrid" id="aiFields"></div>
+        <button type="button" class="btn-primary" id="btnGenerate" onclick="generateAi()"><svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg> <span>Buat dengan AI</span></button>
+        <div class="btn-row" style="margin-top:8px;">
+          <button type="button" class="btn-sm" onclick="salinPrompt()"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin prompt</button>
+          <button type="button" class="btn-sm" onclick="window.open('https://gemini.google.com','_blank','noopener')">Buka Gemini</button>
+          <button type="button" class="btn-sm" onclick="window.open('https://chatgpt.com','_blank','noopener')">Buka ChatGPT</button>
+        </div>
+        <div class="hint">Kuota habis? Salin prompt lalu tempel ke ChatGPT / Gemini.</div>
+      </div>
+    </div>
+
+    <div class="col-right" id="colRight">
+      <div class="card" id="suratPreview">
+        <div class="prev-bar">
+          <span class="prev-label">Pratinjau</span>
+          <span class="hint" style="margin:0;">Bagian <span style="background:#fef3c7;color:#b45309;padding:0 4px;border-radius:3px;">kuning</span> belum diisi</span>
+        </div>
+        <div class="paper-wrap"><div class="paper" id="paper"></div></div>
+        <div class="btn-row" style="margin-top:12px;">
+          <button type="button" class="btn-sm" onclick="cetak()"><svg class="ic" aria-hidden="true"><use href="#i-printer"/></svg> Cetak / PDF</button>
+          <button type="button" class="btn-sm" onclick="unduhWord()"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> Word</button>
+          <button type="button" class="btn-sm" onclick="salinTeks()"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin teks</button>
+          <button type="button" class="btn-sm btn-wa" onclick="kirimWa()"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Kirim WA</button>
+        </div>
+        <div class="hint" style="margin-top:6px;">Cetak / PDF paling rapi (logo ikut). Word untuk diedit lagi.</div>
+      </div>
+
+      <div class="card" id="aiPreview" hidden>
+        <div class="prev-bar"><span class="prev-label">Hasil</span></div>
+        <div id="aiResult"><div class="prompt-placeholder"><div class="ph-icon"><svg class="ic" aria-hidden="true"><use href="#i-mic"/></svg></div><p>Isi detail lalu tekan <b>Buat dengan AI</b>.</p></div></div>
+        <div class="btn-row" style="margin-top:12px;" id="aiActions" hidden>
+          <button type="button" class="btn-sm" onclick="salinAi()"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin</button>
+          <button type="button" class="btn-sm" onclick="unduhAiWord()"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> Word</button>
+          <button type="button" class="btn-sm btn-wa" onclick="kirimAiWa()"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Kirim WA</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- ══ TAB TENTANG & KONTAK ══ -->
+<div id="tab-tentang" hidden>
+<main style="max-width:760px;">
+  <div class="card about">
+    <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Aplikasi</div>
+    <p style="font-size:.8rem;color:var(--text-light);">Bantu Guru Yuk — Teks Sekolah · v26.9.1</p>
+    <p><b>Teks Sekolah</b> membantu guru dan wali kelas membuat surat sekolah yang rapi dalam hitungan menit: tinggal isi, cetak, atau langsung kirim ke grup WhatsApp wali murid.</p>
+    <ul>
+      <li>Undangan pembagian rapor</li>
+      <li>Undangan rapat orang tua / wali murid</li>
+      <li>Pemberitahuan libur semester</li>
+      <li>Pemberitahuan kegiatan sekolah</li>
+      <li>Surat panggilan orang tua</li>
+      <li>Kop surat dengan logo, tanda tangan kepala sekolah atau wali kelas</li>
+      <li>Cetak / PDF, unduh Word, salin teks, kirim WhatsApp</li>
+    </ul>
+    <p style="margin-top:10px;">Identitas sekolah dan isian terakhir disimpan di perangkat ini saja, jadi tidak perlu mengetik ulang.</p>
+    <div style="font-size:.8rem;color:var(--text-light);"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg> <a href="https://www.bantuguruyuk.web.id" target="_blank" style="color:var(--blue);">bantuguruyuk.web.id</a></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Kontak</div>
+    <p style="font-size:.84rem;line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau usul jenis surat baru:</p>
+    <div class="contact-btns">
+      <button onclick="window.open('https://wa.me/6289530713597?text='+encodeURIComponent('Halo Pak Choyy, saya mau kasih saran untuk Teks Sekolah BGY: '),'_blank')" style="background:#25D366;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp Pak Choyy</button>
+      <button onclick="window.open('https://tiktok.com/@pak.choyy','_blank')" style="background:#000;"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> TikTok @pak.choyy</button>
+    </div>
+  </div>
+</main>
+</div>
+
+<div id="printArea"><div class="paper" id="printPaper"></div></div>
+<div data-bgy-info></div>
+<footer>
+  <div class="footer-title">Teks Sekolah</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> &bull; v26.9.1</div>
+</footer>
+
+<script>
+/* Saklar fitur AI (Sambutan & Naskah MC).
+   Aktifkan setelah GEMINI_TEKS_1 (dst.) diisi di environment server (lihat /api/generate-teks.js). */
+const AI_AKTIF = false;
+const AI_LIMIT = 2;           // generate AI per hari (gratis)
+const AI_ENDPOINT = '/api/generate-teks';
+
+const LS_IDT = 'bgy_teks_identitas';
+const LS_VAL = 'bgy_teks_isian';
+const LS_JENIS = 'bgy_teks_jenis';
+const LS_LOGO = 'bgy_teks_logo';
+
+const HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+function todayIso(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function defaultTA(){const d=new Date(),y=d.getFullYear();return d.getMonth()>=6?y+'/'+(y+1):(y-1)+'/'+y;}
+function defaultSemester(){return new Date().getMonth()>=6?'Ganjil':'Genap';}
+
+/* ─── Definisi kolom ─── */
+const IDT_FIELDS = [
+  {k:'instansi1',label:'Instansi atas (baris 1)',ph:'PEMERINTAH KABUPATEN ...',full:true},
+  {k:'instansi2',label:'Instansi atas (baris 2)',ph:'DINAS PENDIDIKAN',full:true},
+  {k:'sekolah',label:'Nama sekolah',ph:'SD Negeri 1 ...',full:true},
+  {k:'alamat',label:'Alamat & kontak',ph:'Jl. ... No. ..., Telp. ..., Email ...',full:true},
+  {k:'kota',label:'Kota/tempat surat',ph:'mis. Cibinong'},
+  {k:'zona',label:'Zona waktu',type:'select',options:['WIB','WITA','WIT'],def:'WIB'},
+  {k:'kepsek',label:'Nama kepala sekolah',ph:'Nama lengkap & gelar',full:true},
+  {k:'nipKepsek',label:'NIP kepala sekolah',ph:'Kosongkan jika tidak ada'},
+  {k:'salam',label:'Salam pembuka',type:'select',options:[['umum','Dengan hormat'],['islami',"Assalamu'alaikum"]],def:'umum'}
+];
+
+const F = {
+  kelas:{label:'Kelas',ph:'mis. 4A'},
+  semester:{label:'Semester',type:'select',options:['Ganjil','Genap'],def:defaultSemester},
+  tahunAjaran:{label:'Tahun ajaran',ph:'2026/2027',def:defaultTA},
+  tgl:{label:'Hari/tanggal acara',type:'date'},
+  jamMulai:{label:'Jam mulai',type:'time',def:'08:00'},
+  jamSelesai:{label:'Jam selesai',type:'time',hint:'Kosong = "selesai"'},
+  tempat:{label:'Tempat',ph:'mis. Ruang Kelas 4A',full:true},
+  catatanRapor:{label:'Catatan (satu baris satu poin)',type:'textarea',rows:3,full:true,
+    def:'Rapor diambil langsung oleh orang tua/wali murid, tidak dapat diwakilkan kepada peserta didik.\nMohon hadir tepat waktu.'},
+  namaAcara:{label:'Nama acara',ph:'Rapat Orang Tua/Wali Murid',def:'Rapat Orang Tua/Wali Murid',full:true},
+  agenda:{label:'Agenda (satu baris satu poin)',type:'textarea',rows:3,full:true,
+    def:'Penyampaian program sekolah semester ini\nPerkembangan belajar peserta didik\nLain-lain'},
+  tglMulai:{label:'Libur mulai',type:'date'},
+  tglSelesai:{label:'Libur sampai',type:'date'},
+  tglMasuk:{label:'Masuk kembali',type:'date',full:true},
+  pesanLibur:{label:'Pesan untuk orang tua (satu baris satu poin)',type:'textarea',rows:3,full:true,
+    def:'Mendampingi putra/putri tetap belajar dan membaca di rumah.\nMenjaga kesehatan dan keselamatan putra/putri selama liburan.\nMembatasi penggunaan gawai sesuai kebutuhan.'},
+  namaKegiatan:{label:'Nama kegiatan',ph:'mis. Peringatan Hari Guru Nasional',full:true},
+  peserta:{label:'Peserta',ph:'mis. seluruh peserta didik / Kelas 5 dan 6',full:true},
+  ketentuan:{label:'Ketentuan / perlengkapan (satu baris satu poin)',type:'textarea',rows:3,full:true,
+    def:'Peserta didik memakai seragam sesuai jadwal.\nMembawa bekal makanan dan minuman.'},
+  biaya:{label:'Biaya (opsional)',ph:'Kosongkan jika gratis',full:true},
+  namaSiswa:{label:'Nama peserta didik',ph:'Nama lengkap',full:true},
+  keperluan:{label:'Keperluan',type:'textarea',rows:2,full:true,
+    def:'Membicarakan perkembangan belajar dan sikap putra/putri Bapak/Ibu di sekolah.'},
+  nomor:{label:'Nomor surat',ph:'mis. 421.2/045/SD',full:true},
+  lampiran:{label:'Lampiran',def:'-'},
+  tanggalSurat:{label:'Tanggal surat',type:'date',def:todayIso},
+  ttd:{label:'Ditandatangani',type:'select',options:[['kepsek','Kepala sekolah'],['walas','Wali kelas']],full:true,rerender:true},
+  namaWalas:{label:'Nama wali kelas',ph:'Nama lengkap & gelar',full:true,showIf:v=>v.ttd==='walas'},
+  nipWalas:{label:'NIP wali kelas',ph:'Kosongkan jika tidak ada',showIf:v=>v.ttd==='walas'},
+  mengetahui:{label:'Kepala sekolah ikut "Mengetahui"',type:'check',def:true,showIf:v=>v.ttd==='walas'}
+};
+const SURAT_TAIL = ['#Nomor & tanda tangan','nomor','lampiran','tanggalSurat','ttd','namaWalas','nipWalas','mengetahui'];
+
+/* ─── Jenis surat (template, tanpa AI) ─── */
+const JENIS = {
+  rapor:{nama:'Undangan Rapor',desc:'Pembagian rapor ke wali murid',icon:'i-rapor',ttd:'walas',
+    perihal:'Undangan Pembagian Rapor',
+    fields:['kelas','semester','tahunAjaran','tgl','jamMulai','jamSelesai','tempat','catatanRapor']},
+  rapat:{nama:'Undangan Rapat',desc:'Rapat orang tua / komite',icon:'i-users',ttd:'kepsek',
+    perihal:'Undangan Rapat',
+    fields:['namaAcara','kelas','tgl','jamMulai','jamSelesai','tempat','agenda']},
+  libur:{nama:'Pemberitahuan Libur',desc:'Libur semester & masuk kembali',icon:'i-libur',ttd:'kepsek',
+    perihal:'Pemberitahuan Libur Semester',
+    fields:['semester','tahunAjaran','tglMulai','tglSelesai','tglMasuk','pesanLibur']},
+  kegiatan:{nama:'Pemberitahuan Kegiatan',desc:'Lomba, peringatan, kunjungan',icon:'i-megaphone',ttd:'kepsek',
+    perihal:'Pemberitahuan Kegiatan',
+    fields:['namaKegiatan','peserta','tgl','jamMulai','jamSelesai','tempat','ketentuan','biaya']},
+  panggilan:{nama:'Panggilan Orang Tua',desc:'Undang orang tua ke sekolah',icon:'i-user',ttd:'walas',
+    perihal:'Panggilan Orang Tua/Wali',
+    fields:['namaSiswa','kelas','tgl','jamMulai','tempat','keperluan']}
+};
+
+/* ─── Jenis AI (disembunyikan sampai AI_AKTIF = true) ─── */
+const AI_F = {
+  acara:{label:'Acara',type:'select',full:true,rerender:true,options:['Hari Guru Nasional','Pembagian Rapor','Perpisahan / Pelepasan Kelas 6','Pembukaan Kegiatan / Lomba','Peringatan Hari Besar Nasional','Rapat Orang Tua / Komite','Lainnya']},
+  acaraLain:{label:'Nama acara',ph:'Tulis nama acara',full:true,showIf:v=>v.acara==='Lainnya'},
+  peran:{label:'Disampaikan oleh',type:'select',full:true,options:['Kepala Sekolah','Guru / Wali Kelas','Ketua Komite','Perwakilan Orang Tua','Perwakilan Siswa']},
+  durasi:{label:'Durasi',type:'select',options:[['3','± 3 menit'],['5','± 5 menit'],['8','± 8 menit']],def:'5'},
+  gaya:{label:'Gaya bahasa',type:'select',options:['Formal','Hangat & akrab','Menyentuh / haru']},
+  susunan:{label:'Susunan acara (satu baris satu acara)',type:'textarea',rows:5,full:true,
+    def:'Pembukaan\nMenyanyikan lagu Indonesia Raya\nSambutan Kepala Sekolah\nInti acara\nDoa\nPenutup'},
+  catatanAi:{label:'Catatan tambahan (opsional)',type:'textarea',rows:2,full:true,ph:'mis. sebut prestasi lomba, ucapan terima kasih ke komite, pantun pembuka'}
+};
+const JENIS_AI = {
+  sambutan:{nama:'Sambutan',desc:'Hari Guru, rapor, perpisahan',icon:'i-mic',fields:['acara','acaraLain','peran','durasi','gaya','catatanAi']},
+  mc:{nama:'Naskah MC',desc:'Pembawa acara lengkap',icon:'i-mic',fields:['acara','acaraLain','gaya','susunan','catatanAi']}
+};
+
+/* ─── State ─── */
+function loadJson(k,f){try{const v=JSON.parse(localStorage.getItem(k)||'null');return v&&typeof v==='object'?v:f;}catch(e){return f;}}
+function saveJson(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+const idt = loadJson(LS_IDT,{});
+const val = loadJson(LS_VAL,{});
+let logo = '';
+try{ logo = localStorage.getItem(LS_LOGO)||''; }catch(e){}
+if(!/^data:image\/(png|jpeg|webp);base64,/.test(logo)) logo='';
+let jenis = 'rapor';
+try{ const j=localStorage.getItem(LS_JENIS); if(JENIS[j]||(AI_AKTIF&&JENIS_AI[j])) jenis=j; }catch(e){}
+
+function fieldDefault(def){
+  const d=def.def;
+  if(typeof d==='function') return d();
+  if(d!==undefined) return d;
+  if(def.type==='select'){const o=def.options[0];return Array.isArray(o)?o[0]:o;}
+  return '';
+}
+IDT_FIELDS.forEach(f=>{ if(idt[f.k]===undefined) idt[f.k]=fieldDefault(f); });
+function ensureDefaults(keys,defs){keys.forEach(k=>{ if(k[0]!=='#'&&val[k]===undefined) val[k]=fieldDefault(defs[k]); });}
+
+/* ─── Util ─── */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function lines(s){return String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);}
+function parseDate(iso){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||'');return m?new Date(+m[1],+m[2]-1,+m[3]):null;}
+function tglPanjang(iso){const d=parseDate(iso);return d?d.getDate()+' '+BULAN[d.getMonth()]+' '+d.getFullYear():'';}
+function hariTgl(iso){const d=parseDate(iso);return d?HARI[d.getDay()]+', '+tglPanjang(iso):'';}
+function jam(t){return t?t.replace(':','.'):'';}
+let _toastT;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_toastT);_toastT=setTimeout(()=>t.classList.remove('show'),2800);}
+
+/* ─── Render kolom form ─── */
+function inputHtml(id,def,value){
+  const ph=def.ph?` placeholder="${esc(def.ph)}"`:'';
+  if(def.type==='select'){
+    return `<select id="${id}">`+def.options.map(o=>{const [v,l]=Array.isArray(o)?o:[o,o];return `<option value="${esc(v)}"${String(value)===String(v)?' selected':''}>${esc(l)}</option>`;}).join('')+`</select>`;
+  }
+  if(def.type==='textarea') return `<textarea id="${id}" rows="${def.rows||3}"${ph}>${esc(value)}</textarea>`;
+  if(def.type==='check') return `<label class="check-row"><input type="checkbox" id="${id}"${value?' checked':''}/> ${esc(def.label)}</label>`;
+  return `<input type="${def.type||'text'}" id="${id}" value="${esc(value)}"${ph} autocomplete="off"/>`;
+}
+function renderFields(container,keys,defs,store,prefix){
+  container.innerHTML=keys.map(k=>{
+    if(k[0]==='#') return `<div class="sub-head">${esc(k.slice(1))}</div>`;
+    const d=defs[k]; if(d.showIf&&!d.showIf(store)) return '';
+    const id=prefix+k;
+    const lbl=d.type==='check'?'':`<label for="${id}">${esc(d.label)}</label>`;
+    const hint=d.hint?`<div class="hint">${esc(d.hint)}</div>`:'';
+    return `<div class="form-group${d.full?' full':''}">${lbl}${inputHtml(id,d,store[k])}${hint}</div>`;
+  }).join('');
+  keys.forEach(k=>{
+    if(k[0]==='#') return;
+    const el=document.getElementById(prefix+k); if(!el) return;
+    const d=defs[k];
+    const ev=(d.type==='select'||d.type==='check'||d.type==='date'||d.type==='time')?'change':'input';
+    el.addEventListener(ev,()=>{
+      store[k]=d.type==='check'?el.checked:el.value;
+      onChange();
+      if(d.rerender) renderAll(false);
+    });
+    if(ev==='change'&&d.type!=='select'&&d.type!=='check') el.addEventListener('input',()=>{store[k]=el.value;onChange();});
+  });
+}
+
+let _saveT;
+function onChange(){
+  clearTimeout(_saveT);
+  _saveT=setTimeout(()=>{saveJson(LS_IDT,idt);saveJson(LS_VAL,val);},300);
+  updateIdtSum();
+  if(JENIS[jenis]) renderPaper();
+}
+
+function renderJenisGrid(){
+  const all=Object.entries(JENIS).map(([k,j])=>[k,j,false]);
+  if(AI_AKTIF) Object.entries(JENIS_AI).forEach(([k,j])=>all.push([k,j,true]));
+  document.getElementById('jenisGrid').innerHTML=all.map(([k,j,ai])=>
+    `<button type="button" class="jc${k===jenis?' active':''}" onclick="pilihJenis('${k}')">
+      <span class="jn"><svg class="ic" aria-hidden="true"><use href="#${j.icon}"/></svg>${esc(j.nama)}${ai?'<span class="ai-tag">AI</span>':''}</span>
+      <span class="jd">${esc(j.desc)}</span></button>`).join('');
+}
+
+function renderAll(scrollTop){
+  renderJenisGrid();
+  renderFields(document.getElementById('idtFields'),IDT_FIELDS.map(f=>f.k),Object.fromEntries(IDT_FIELDS.map(f=>[f.k,f])),idt,'idt_');
+  const isAi=!!JENIS_AI[jenis];
+  document.getElementById('suratCard').hidden=isAi;
+  document.getElementById('suratPreview').hidden=isAi;
+  document.getElementById('aiCard').hidden=!isAi;
+  document.getElementById('aiPreview').hidden=!isAi;
+  if(isAi){
+    const j=JENIS_AI[jenis];
+    ensureDefaults(j.fields,AI_F);
+    document.getElementById('aiTitle').textContent='Detail '+j.nama;
+    renderFields(document.getElementById('aiFields'),j.fields,AI_F,val,'f_');
+    renderQuota();
+  }else{
+    const j=JENIS[jenis];
+    const keys=['#'+j.nama,...j.fields,...SURAT_TAIL];
+    ensureDefaults(keys,F);
+    document.getElementById('detailTitle').textContent='Detail '+j.nama;
+    renderFields(document.getElementById('detailFields'),keys,F,val,'f_');
+    renderPaper();
+  }
+  updateIdtSum();
+  if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function pilihJenis(k){
+  if(k===jenis) return;
+  jenis=k;
+  try{localStorage.setItem(LS_JENIS,k);}catch(e){}
+  if(JENIS[k]) val.ttd=JENIS[k].ttd;
+  renderAll(false);
+  saveJson(LS_VAL,val);
+  gaEvent('teks_pilih_jenis',{jenis:k});
+}
+
+function resetDetail(){
+  const j=JENIS[jenis]; if(!j) return;
+  [...j.fields,'nomor','lampiran','tanggalSurat'].forEach(k=>{val[k]=fieldDefault(F[k]);});
+  renderAll(false); saveJson(LS_VAL,val);
+  showToast('Detail dikosongkan. Identitas sekolah tetap tersimpan.');
+}
+
+function updateIdtSum(){
+  document.getElementById('idtSum').textContent=idt.sekolah?'· '+idt.sekolah:'· belum diisi';
+}
+
+/* ─── Logo ─── */
+function renderLogo(){
+  const p=document.getElementById('logoPrev');
+  p.innerHTML=logo?`<img src="${logo}" alt="Logo"/>`:'<svg class="ic" aria-hidden="true"><use href="#i-image"/></svg>';
+  document.getElementById('logoDel').hidden=!logo;
+}
+document.getElementById('logoInput').addEventListener('change',e=>{
+  const file=e.target.files&&e.target.files[0]; if(!file) return;
+  if(!/^image\//.test(file.type)){showToast('File harus berupa gambar.');return;}
+  const img=new Image(), url=URL.createObjectURL(file);
+  img.onload=()=>{
+    const max=200, s=Math.min(1,max/Math.max(img.width,img.height));
+    const c=document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    logo=c.toDataURL('image/png'); URL.revokeObjectURL(url);
+    try{localStorage.setItem(LS_LOGO,logo);}catch(err){showToast('Logo terlalu besar untuk disimpan, tapi tetap dipakai sekarang.');}
+    renderLogo(); renderPaper();
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);showToast('Gambar tidak bisa dibaca.');};
+  img.src=url;
+  e.target.value='';
+});
+function hapusLogo(){logo='';try{localStorage.removeItem(LS_LOGO);}catch(e){}renderLogo();renderPaper();}
+
+/* ─── Susun isi surat (satu struktur untuk pratinjau, Word, dan teks WA) ─── */
+function P(v,ph){return {v:v||'',ph:ph||'……………'};}
+function waktuStr(v){
+  const z=idt.zona||'WIB';
+  if(!v.jamMulai) return '';
+  return jam(v.jamMulai)+' '+z+' s.d. '+(v.jamSelesai?jam(v.jamSelesai)+' '+z:'selesai');
+}
+function buildDoc(){
+  const v=val, j=JENIS[jenis], sk=idt.sekolah;
+  const kelasTxt=v.kelas?'Kelas '+v.kelas:'';
+  const doc={perihal:j.perihal,kepada:[],body:[]};
+  const par=(...parts)=>doc.body.push({t:'p',parts});
+  const detail=rows=>doc.body.push({t:'table',rows});
+  const list=(items,title)=>{if(items.length)doc.body.push({t:'list',title,items});};
+
+  if(jenis==='rapor'){
+    doc.kepada=['Bapak/Ibu Orang Tua/Wali Murid',[ 'Kelas ',P(v.kelas)],[P(sk,'nama sekolah')]];
+    par('Sehubungan dengan berakhirnya kegiatan pembelajaran Semester ',P(v.semester),' Tahun Ajaran ',P(v.tahunAjaran),', dengan ini kami mengundang Bapak/Ibu Orang Tua/Wali Murid ',kelasTxt?kelasTxt:P('','Kelas …'),' untuk hadir dalam kegiatan pembagian Laporan Hasil Belajar (Rapor) peserta didik, yang akan dilaksanakan pada:');
+    detail([['Hari/Tanggal',P(hariTgl(v.tgl))],['Waktu',P(waktuStr(v))],['Tempat',P(v.tempat||(v.kelas?'Ruang Kelas '+v.kelas:''))],['Acara',['Pembagian Rapor Semester ',P(v.semester)]]]);
+    list(lines(v.catatanRapor),'Catatan:');
+    par('Mengingat pentingnya acara tersebut, kami mohon Bapak/Ibu dapat hadir tepat waktu. Atas perhatian dan kehadiran Bapak/Ibu, kami ucapkan terima kasih.');
+  }else if(jenis==='rapat'){
+    doc.kepada=['Bapak/Ibu Orang Tua/Wali Murid',[kelasTxt||P(sk,'nama sekolah')]];
+    par('Dengan ini kami mengundang Bapak/Ibu Orang Tua/Wali Murid'+(kelasTxt?' '+kelasTxt:'')+' untuk hadir dalam kegiatan ',P(v.namaAcara,'nama acara'),' yang akan dilaksanakan pada:');
+    detail([['Hari/Tanggal',P(hariTgl(v.tgl))],['Waktu',P(waktuStr(v))],['Tempat',P(v.tempat)]]);
+    list(lines(v.agenda),'Adapun agenda kegiatan tersebut adalah:');
+    par('Mengingat pentingnya acara tersebut, kami sangat mengharapkan kehadiran Bapak/Ibu tepat pada waktunya. Atas perhatian dan kehadiran Bapak/Ibu, kami ucapkan terima kasih.');
+  }else if(jenis==='libur'){
+    doc.kepada=['Bapak/Ibu Orang Tua/Wali Murid',[P(sk,'nama sekolah')]];
+    const next=v.semester==='Genap'?'Tahun Ajaran baru':'Semester Genap';
+    par('Diberitahukan kepada Bapak/Ibu Orang Tua/Wali Murid bahwa sesuai dengan kalender pendidikan Tahun Ajaran ',P(v.tahunAjaran),', libur Semester ',P(v.semester),' dilaksanakan mulai tanggal ',P(tglPanjang(v.tglMulai)),' sampai dengan ',P(tglPanjang(v.tglSelesai)),'. Kegiatan pembelajaran '+next+' dimulai kembali pada hari ',P(hariTgl(v.tglMasuk)),'.');
+    list(lines(v.pesanLibur),'Selama masa libur, kami mohon Bapak/Ibu berkenan:');
+    par('Demikian pemberitahuan ini kami sampaikan. Atas perhatian dan kerja sama Bapak/Ibu, kami ucapkan terima kasih.');
+  }else if(jenis==='kegiatan'){
+    doc.kepada=['Bapak/Ibu Orang Tua/Wali Murid',[P(sk,'nama sekolah')]];
+    par('Dengan ini kami memberitahukan bahwa sekolah akan menyelenggarakan kegiatan ',P(v.namaKegiatan,'nama kegiatan'),' yang diikuti oleh ',P(v.peserta,'peserta'),'. Kegiatan tersebut akan dilaksanakan pada:');
+    const rows=[['Hari/Tanggal',P(hariTgl(v.tgl))],['Waktu',P(waktuStr(v))],['Tempat',P(v.tempat)]];
+    if(v.biaya) rows.push(['Biaya',P(v.biaya)]);
+    detail(rows);
+    list(lines(v.ketentuan),'Sehubungan dengan kegiatan tersebut, mohon perhatian Bapak/Ibu untuk hal-hal berikut:');
+    par('Demikian pemberitahuan ini kami sampaikan. Atas perhatian dan kerja sama Bapak/Ibu, kami ucapkan terima kasih.');
+  }else if(jenis==='panggilan'){
+    doc.kepada=['Bapak/Ibu Orang Tua/Wali dari',[P(v.namaSiswa,'nama peserta didik'),' (Kelas ',P(v.kelas,'…'),')']];
+    par('Dengan ini kami mengharapkan kehadiran Bapak/Ibu di sekolah pada:');
+    detail([['Hari/Tanggal',P(hariTgl(v.tgl))],['Waktu',P(v.jamMulai?jam(v.jamMulai)+' '+(idt.zona||'WIB'):'')],['Tempat',P(v.tempat)],['Keperluan',P(v.keperluan)]]);
+    par('Mengingat pentingnya hal tersebut, kami mohon Bapak/Ibu dapat hadir tepat waktu. Apabila berhalangan, mohon menghubungi wali kelas. Atas perhatian dan kerja sama Bapak/Ibu, kami ucapkan terima kasih.');
+  }
+  return doc;
+}
+function signers(){
+  const v=val, kepsekCol={jab:['Kepala ',P(idt.sekolah,'Sekolah')],nama:P(idt.kepsek,'nama kepala sekolah'),nip:idt.nipKepsek};
+  if(v.ttd==='walas'){
+    const walas={jab:['Wali Kelas ',P(v.kelas,'…')],nama:P(v.namaWalas,'nama wali kelas'),nip:v.nipWalas};
+    return v.mengetahui?[{...kepsekCol,pre:'Mengetahui,'},walas]:[walas];
+  }
+  return [kepsekCol];
+}
+
+/* bagian: string | P() | array campuran → HTML / teks */
+function partsHtml(x){
+  if(Array.isArray(x)) return x.map(partsHtml).join('');
+  if(x&&typeof x==='object') return x.v?esc(x.v):`<span class="ph">${esc(x.ph)}</span>`;
+  return esc(x);
+}
+function partsTxt(x){
+  if(Array.isArray(x)) return x.map(partsTxt).join('');
+  if(x&&typeof x==='object') return x.v||'…';
+  return String(x);
+}
+
+function paperHtml(){
+  const doc=buildDoc(), islami=idt.salam==='islami';
+  const kop=`<div class="kop ${logo?'has-logo':'no-logo'}"><div class="kop-logo">${logo?`<img src="${logo}" alt="Logo"/>`:''}</div><div class="kop-text">`+
+    (idt.instansi1?`<div class="k1">${esc(idt.instansi1)}</div>`:'')+
+    (idt.instansi2?`<div class="k2">${esc(idt.instansi2)}</div>`:'')+
+    `<div class="k3">${partsHtml(P(idt.sekolah,'NAMA SEKOLAH'))}</div>`+
+    (idt.alamat?`<div class="k4">${esc(idt.alamat)}</div>`:'')+`</div></div>`;
+  const tgl=`<div class="tgl">${partsHtml(P(idt.kota,'Kota'))}, ${partsHtml(P(tglPanjang(val.tanggalSurat)))}</div>`;
+  const meta=`<table class="meta"><tr><td>Nomor</td><td>:</td><td>${partsHtml(P(val.nomor,'………………'))}</td></tr>`+
+    `<tr><td>Lampiran</td><td>:</td><td>${esc(val.lampiran||'-')}</td></tr>`+
+    `<tr><td>Perihal</td><td>:</td><td><b>${esc(doc.perihal)}</b></td></tr></table>`;
+  const kpd=`<div class="kpd">Kepada Yth.<br/>`+doc.kepada.map(l=>partsHtml(l)).join('<br/>')+`<br/>di Tempat</div>`;
+  const open=`<p>${islami?"Assalamu'alaikum Warahmatullahi Wabarakatuh,":'Dengan hormat,'}</p>`;
+  const body=doc.body.map(b=>{
+    if(b.t==='p') return `<p>${partsHtml(b.parts)}</p>`;
+    if(b.t==='table') return `<table class="detail">`+b.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>:</td><td>${partsHtml(r[1])}</td></tr>`).join('')+`</table>`;
+    if(b.t==='list') return (b.title?`<p style="margin-bottom:.3em;">${esc(b.title)}</p>`:'')+`<ol>`+b.items.map(i=>`<li>${esc(i)}</li>`).join('')+`</ol>`;
+    return '';
+  }).join('');
+  const close=islami?`<p>Wassalamu'alaikum Warahmatullahi Wabarakatuh.</p>`:'';
+  const s=signers();
+  const anyPre=s.some(c=>c.pre);
+  const ttd=`<div class="ttd">`+s.map((c,i)=>`<div class="ttd-col${s.length===1||i===1?' right':''}">${c.pre?esc(c.pre)+'<br/>':(anyPre?'&nbsp;<br/>':'')}${partsHtml(c.jab)},<div class="ttd-name">${partsHtml(c.nama)}</div>${c.nip?'NIP. '+esc(c.nip):''}</div>`).join('')+`</div>`;
+  return kop+tgl+meta+kpd+open+body+close+ttd;
+}
+function renderPaper(){ if(JENIS[jenis]) document.getElementById('paper').innerHTML=paperHtml(); }
+
+function suratTxt(wa){
+  const doc=buildDoc(), islami=idt.salam==='islami', b=s=>wa?'*'+s+'*':s;
+  const out=[];
+  out.push(b(doc.perihal.toUpperCase()));
+  out.push(partsTxt(P(idt.sekolah,'Nama Sekolah')));
+  out.push('');
+  if(val.nomor) out.push('Nomor: '+val.nomor);
+  out.push(partsTxt(P(idt.kota,'Kota'))+', '+partsTxt(P(tglPanjang(val.tanggalSurat))));
+  out.push('');
+  out.push('Kepada Yth.'); doc.kepada.forEach(l=>out.push(partsTxt(l))); out.push('di Tempat');
+  out.push('');
+  out.push(islami?"Assalamu'alaikum Warahmatullahi Wabarakatuh,":'Dengan hormat,');
+  out.push('');
+  doc.body.forEach(x=>{
+    if(x.t==='p'){out.push(partsTxt(x.parts));out.push('');}
+    else if(x.t==='table'){x.rows.forEach(r=>out.push(r[0]+' : '+partsTxt(r[1])));out.push('');}
+    else if(x.t==='list'){if(x.title)out.push(x.title);x.items.forEach((it,i)=>out.push((i+1)+'. '+it));out.push('');}
+  });
+  if(islami){out.push("Wassalamu'alaikum Warahmatullahi Wabarakatuh.");out.push('');}
+  const s=signers(), last=s[s.length-1];
+  out.push(partsTxt(last.jab)+',');
+  out.push(b(partsTxt(last.nama)));
+  if(last.nip) out.push('NIP. '+last.nip);
+  return out.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+
+/* ─── Aksi surat ─── */
+function isianKurang(){ return document.querySelectorAll('#paper .ph').length; }
+function peringatanKosong(){
+  const n=isianKurang();
+  if(n) showToast(n+' bagian masih kosong (kuning). Tetap diproses.');
+}
+function siapCetak(){ document.getElementById('printPaper').innerHTML=JENIS[jenis]?paperHtml():''; }
+window.addEventListener('beforeprint',siapCetak);
+function cetak(){ peringatanKosong(); siapCetak(); gaEvent('teks_cetak',{jenis}); setTimeout(()=>window.print(),isianKurang()?600:0); }
+function wordDoc(title,inner,css){
+  return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${esc(title)}</title>`+
+    `<style>@page{size:21cm 29.7cm;margin:1.8cm 2cm;}body{font-family:'Times New Roman',serif;font-size:12pt;line-height:1.5;}p{margin:0 0 8pt;text-align:justify;}${css||''}</style></head><body>${inner}</body></html>`;
+}
+function unduhBlob(html,nama){
+  const blob=new Blob(['﻿',html],{type:'application/msword'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=nama;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+}
+function namaFile(){return (JENIS[jenis]||JENIS_AI[jenis]).nama.replace(/[^a-z0-9]+/gi,'-')+(val.kelas?'-Kelas-'+String(val.kelas).replace(/[^a-z0-9]+/gi,''):'')+'.doc';}
+function unduhWord(){
+  peringatanKosong();
+  const css='.kop{border-bottom:3pt double #000;margin-bottom:10pt;text-align:center;}.kop-logo{display:none;}.k1,.k2{font-weight:bold;text-transform:uppercase;}.k3{font-size:15pt;font-weight:bold;text-transform:uppercase;}.k4{font-size:10pt;}'+
+    '.tgl{text-align:right;}td{vertical-align:top;padding:0 4pt 0 0;}.detail{margin-left:24pt;}.ttd-col{margin-left:55%;margin-top:14pt;}.ttd-name{margin-top:48pt;font-weight:bold;text-decoration:underline;}.ph{color:#000;}';
+  const tmp=document.createElement('div'); tmp.innerHTML=paperHtml();
+  tmp.querySelectorAll('.ttd').forEach(t=>{
+    const cols=[...t.querySelectorAll('.ttd-col')];
+    const tbl=`<table style="width:100%;margin-top:14pt;"><tr>`+(cols.length===2?`<td style="width:50%;">${cols[0].innerHTML}</td><td style="width:50%;">${cols[1].innerHTML}</td>`:`<td style="width:55%;"></td><td>${cols[0].innerHTML}</td>`)+`</tr></table>`;
+    t.outerHTML=tbl;
+  });
+  tmp.querySelectorAll('.ttd-name').forEach(n=>{n.outerHTML=`<p style="margin-top:48pt;margin-bottom:0;font-weight:bold;text-decoration:underline;">${n.innerHTML}</p>`;});
+  unduhBlob(wordDoc(JENIS[jenis].perihal,tmp.innerHTML,css),namaFile());
+  gaEvent('teks_word',{jenis});
+  showToast('File Word diunduh.');
+}
+async function salinKe(text,pesan){
+  try{await navigator.clipboard.writeText(text);}
+  catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(err){}ta.remove();}
+  showToast(pesan||'Tersalin.');
+}
+function salinTeks(){ salinKe(suratTxt(false),'Teks surat tersalin.'); gaEvent('teks_salin',{jenis}); }
+function kirimWa(){
+  peringatanKosong();
+  gaEvent('teks_wa',{jenis});
+  window.open('https://wa.me/?text='+encodeURIComponent(suratTxt(true)),'_blank','noopener');
+}
+
+/* ═══ AI: Sambutan & Naskah MC (aktif bila AI_AKTIF = true) ═══ */
+let aiText='';
+function quotaKey(){return 'bgy_teks_ai_'+todayIso();}
+function quotaUsed(){try{return parseInt(localStorage.getItem(quotaKey())||'0',10)||0;}catch(e){return 0;}}
+function quotaLeft(){return Math.max(0,AI_LIMIT-quotaUsed());}
+function renderQuota(){
+  const left=quotaLeft();
+  document.getElementById('quotaNum').textContent=left+' / '+AI_LIMIT;
+  document.getElementById('quotaBox').classList.toggle('habis',left===0);
+  document.getElementById('btnGenerate').disabled=left===0;
+}
+function buildAiPrompt(){
+  const v=val, j=JENIS_AI[jenis], acara=v.acara==='Lainnya'?(v.acaraLain||'acara sekolah'):v.acara;
+  const islami=idt.salam==='islami';
+  const sk=idt.sekolah||'sekolah kami';
+  const umum=[
+    `Nama sekolah: ${sk}.`,
+    `Acara: ${acara}.`,
+    jenis==='sambutan'?`Durasi bicara: sekitar ${v.durasi} menit (± ${Number(v.durasi)*120} kata).`:'',
+    `Gaya bahasa: ${v.gaya}. Bahasa Indonesia baku yang luwes, mudah dibacakan, kalimat tidak terlalu panjang.`,
+    islami?"Gunakan salam pembuka Assalamu'alaikum Warahmatullahi Wabarakatuh dan salam penutup yang sesuai.":'Gunakan salam pembuka yang umum dan inklusif untuk semua agama.',
+    v.catatanAi?`Catatan tambahan: ${v.catatanAi}`:''
+  ].filter(Boolean);
+  if(jenis==='mc'){
+    return [
+      'Kamu adalah pembawa acara (MC) berpengalaman di sekolah Indonesia.',
+      'Tuliskan naskah MC lengkap untuk acara berikut.',
+      ...umum,
+      'Susunan acara:', ...lines(v.susunan).map((s,i)=>`${i+1}. ${s}`),
+      'Ketentuan: tulis per bagian sesuai susunan acara dengan judul bagian (tanpa simbol markdown seperti # atau **). Sertakan kalimat transisi antarbagian, sapaan hormat kepada tamu (kepala sekolah, dewan guru, komite, orang tua, peserta didik), dan tanda [nama] untuk nama yang perlu diisi sendiri. Jangan mengarang nama orang.'
+    ].join('\n');
+  }
+  return [
+    `Kamu adalah penulis teks sambutan untuk ${v.peran} di sekolah Indonesia.`,
+    `Tuliskan teks sambutan yang akan dibacakan oleh ${v.peran}.`,
+    ...umum,
+    'Struktur: salam pembuka, penghormatan kepada hadirin, ucapan syukur, isi utama sesuai acara, harapan/pesan, permohonan maaf, salam penutup.',
+    'Ketentuan: teks siap dibacakan, tanpa simbol markdown (# atau **), tanpa judul tambahan. Gunakan tanda [nama] untuk nama yang perlu diisi sendiri. Jangan mengarang nama orang, angka, atau prestasi yang tidak disebutkan.'
+  ].join('\n');
+}
+function salinPrompt(){ salinKe(buildAiPrompt(),'Prompt tersalin. Tempel ke ChatGPT / Gemini.'); gaEvent('teks_salin_prompt',{jenis}); }
+async function generateAi(){
+  if(!AI_AKTIF) return;
+  if(quotaLeft()===0){showToast('Kuota hari ini habis. Pakai Salin prompt dulu ya.');return;}
+  const btn=document.getElementById('btnGenerate'), old=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML='<span class="spin-sm"></span> <span>Sedang menulis...</span>';
+  try{
+    const res=await fetch(AI_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:buildAiPrompt(),jenis})});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data.text) throw new Error(data.error||'Gagal membuat teks');
+    aiText=data.text.replace(/\*\*/g,'').replace(/^#+\s*/gm,'').trim();
+    try{localStorage.setItem(quotaKey(),String(quotaUsed()+1));}catch(e){}
+    document.getElementById('aiResult').innerHTML=`<div class="ai-out">${esc(aiText)}</div>`;
+    document.getElementById('aiActions').hidden=false;
+    gaEvent('teks_ai_generate',{jenis});
+    if(window.innerWidth<=960) document.getElementById('aiPreview').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){
+    showToast('Gagal: '+e.message+'. Coba lagi atau pakai Salin prompt.');
+  }finally{
+    btn.innerHTML=old; renderQuota();
+  }
+}
+function salinAi(){ if(aiText) salinKe(aiText,'Teks tersalin.'); }
+function kirimAiWa(){ if(aiText) window.open('https://wa.me/?text='+encodeURIComponent(aiText),'_blank','noopener'); }
+function unduhAiWord(){
+  if(!aiText) return;
+  const inner=aiText.split(/\n{2,}/).map(p=>`<p>${esc(p).replace(/\n/g,'<br/>')}</p>`).join('');
+  unduhBlob(wordDoc(JENIS_AI[jenis].nama,inner),namaFile());
+}
+
+/* ─── Menu, tab, mode gelap, install ─── */
+function toggleMenu(){
+  const open=!document.getElementById('dropdownMenu').classList.contains('open');
+  document.getElementById('dropdownMenu').classList.toggle('open',open);
+  document.getElementById('menuOverlay').classList.toggle('open',open);
+}
+function closeMenu(){
+  document.getElementById('dropdownMenu').classList.remove('open');
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+document.addEventListener('click',e=>{
+  if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button')) closeMenu();
+});
+function showTab(tab){
+  ['home','tentang'].forEach(t=>{
+    document.getElementById('tab-'+t).hidden=t!==tab;
+    document.getElementById('mi-'+t).classList.toggle('active',t===tab);
+  });
+  window.scrollTo(0,0);
+}
+function setDarkIcon(){document.getElementById('darkIcon').setAttribute('href',document.body.classList.contains('dark')?'#i-sun':'#i-moon');}
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  try{localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');}catch(e){}
+  setDarkIcon();
+}
+try{ if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark'); }catch(e){}
+setDarkIcon();
+
+if(typeof window.installApp!=='function') window.installApp=function(){ if(window.bgyInstall) window.bgyInstall(); closeInstall(); };
+function closeInstall(){
+  document.getElementById('installPopup').classList.remove('show');
+  try{localStorage.setItem('bgy_teks_installClosed',String(Date.now()));}catch(e){}
+}
+window.addEventListener('beforeinstallprompt',()=>{
+  let last=0; try{last=parseInt(localStorage.getItem('bgy_teks_installClosed')||'0',10);}catch(e){}
+  if(Date.now()-last>86400000) setTimeout(()=>document.getElementById('installPopup').classList.add('show'),2000);
+});
+
+window.addEventListener('load',()=>{
+  const ls=document.getElementById('loadingScreen');
+  if(ls){ls.style.opacity='0';setTimeout(()=>ls.remove(),400);}
+});
+
+/* ─── Mulai ─── */
+if(!AI_AKTIF&&JENIS_AI[jenis]) jenis='rapor';
+if(val.ttd===undefined&&JENIS[jenis]) val.ttd=JENIS[jenis].ttd;
+document.getElementById('idtBox').open=!idt.sekolah;
+renderLogo();
+renderAll(false);
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{ navigator.serviceWorker.register('/teks-sekolah/sw.js',{scope:'/teks-sekolah/'}).catch(()=>{}); });
+}
+</script>
+</body>
+</html>

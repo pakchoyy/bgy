@@ -13,7 +13,7 @@ Acuan hidup: **Katrol Nilai** (`/katrol-nilai/`) dan **Kokurikuler** (`/kokuriku
 | Nama brand | **Bantu Guru Yuk** — selalu pakai spasi, bukan "BantuGuruYuk" |
 | Singkatan | **BGY** |
 | Judul header | Tulis `BGY \| Nama Tool` di HTML. `bgy-info.js` otomatis menampilkan **"Bantu Guru Yuk \| Nama Tool"** kalau muat satu baris, kalau tidak tetap **"BGY \| Nama Tool"** |
-| Nama tool | Singkat & jelas: *Buat Soal, Modul Ajar, Prompt LKPD, Prompt Game, Kokurikuler, Katrol Nilai, Draft TP, Simpan Sandi* |
+| Nama tool | Singkat & jelas: *Buat Soal, Modul Ajar, Prompt LKPD, Prompt Game, Kokurikuler, Katrol Nilai, Draft TP, Teks Sekolah, Simpan Sandi* |
 | Kredit | `Bantu Guru Yuk \| by pak.choyy` (splash/loading) dan `© 2026 Bantu Guru Yuk by pak.choyy • vXX` (footer) |
 | `<title>` | `Bantu Guru Yuk \| Nama Tool` |
 
@@ -275,3 +275,4 @@ Semua warna lewat variabel CSS supaya otomatis ikut berganti.
 - [ ] Tambahkan ke `INFO_ITEMS` (dan `MENU_ITEMS` bila termasuk 4 tools utama) di `bgy-info.js`
 - [ ] Tambahkan ke `sitemap.xml`
 - [ ] Tes di HP 360px & 390px, mode gelap, dan offline
+- [ ] Fitur AI yang belum siap: bangun lengkap, tapi sembunyikan dengan saklar di kode (contoh: `AI_AKTIF` di Teks Sekolah) supaya tinggal dinyalakan
