@@ -343,9 +343,14 @@ on('btn-save-change-pin', 'click', () => {
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   const isDark = theme === 'dark';
-  document.getElementById('btn-theme-toggle').textContent = isDark ? '☀️' : '🌙';
+  const use = document.getElementById('theme-icon-use');
+  if (use) use.setAttribute('href', isDark ? '#icon-sun' : '#icon-moon');
   const label = document.getElementById('theme-label');
-  if (label) label.textContent = isDark ? '🌙 Gelap' : '☀️ Terang';
+  if (label) {
+    label.innerHTML = isDark
+      ? '<svg class="icon icon-sm"><use href="#icon-moon"></use></svg> Gelap'
+      : '<svg class="icon icon-sm"><use href="#icon-sun"></use></svg> Terang';
+  }
 }
 function toggleTheme() {
   const current = localStorage.getItem(LS_THEME) || 'light';
@@ -468,7 +473,7 @@ function getFilteredAccounts() {
 
 function accountCardHtml(acc) {
   const initial = (acc.icon || acc.serviceName || '?').slice(0, 2).toUpperCase();
-  const star = acc.favorite ? '<span class="account-fav-star">★</span>' : '';
+  const star = acc.favorite ? '<span class="account-fav-star"><svg class="icon"><use href="#icon-star-filled"></use></svg></span>' : '';
   const maskedPw = acc.password ? '••••••••••' : '(kosong)';
   return `
     <button class="account-card" data-id="${acc.id}">
@@ -640,7 +645,9 @@ function openDetail(id) {
   document.getElementById('detail-notes').textContent = acc.notes || '-';
 
   const favBtn = document.getElementById('btn-detail-favorite');
-  favBtn.textContent = acc.favorite ? '★ Favorit' : '☆ Favorit';
+  favBtn.innerHTML = acc.favorite
+    ? '<svg class="icon icon-sm"><use href="#icon-star-filled"></use></svg> Favorit'
+    : '<svg class="icon icon-sm"><use href="#icon-star"></use></svg> Favorit';
 
   document.getElementById('modal-detail').hidden = false;
 }
@@ -675,7 +682,9 @@ on('btn-detail-favorite', 'click', async () => {
   acc.updatedAt = nowIso();
   await putAccount(acc);
   await refreshAccounts();
-  document.getElementById('btn-detail-favorite').textContent = acc.favorite ? '★ Favorit' : '☆ Favorit';
+  document.getElementById('btn-detail-favorite').innerHTML = acc.favorite
+    ? '<svg class="icon icon-sm"><use href="#icon-star-filled"></use></svg> Favorit'
+    : '<svg class="icon icon-sm"><use href="#icon-star"></use></svg> Favorit';
 });
 
 on('btn-edit-account', 'click', () => {
