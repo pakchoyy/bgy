@@ -1182,7 +1182,7 @@ function startTicker() {
     slides[i].classList.remove('active');
     i = (i + 1) % slides.length;
     slides[i].classList.add('active');
-  }, 4000);
+  }, 6000);
 }
 
 function hideSplash(startedAt) {
