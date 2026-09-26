@@ -888,9 +888,20 @@ a { text-decoration: none; color: inherit; }
 @media (max-width: 520px) {
   .tools-grid { grid-template-columns: 1fr; }
   .testimonial-grid { grid-template-columns: 1fr; }
-  .hero-btns { flex-direction: column; }
-  .btn-hero { justify-content: center; }
-  .hero-title { font-size: 1.6rem; }
+  .hero { padding: 18px 16px; gap: 0; }
+  .hero-right { display: none; }
+  .hero-eyebrow { font-size: .58rem; margin-bottom: 10px; }
+  .hero-title { font-size: 1.35rem; margin-bottom: 6px; }
+  .hero-desc { font-size: .8rem; line-height: 1.55; margin-bottom: 12px; }
+  .hero-chips { display: none; }
+  .hero-btns { flex-direction: row; gap: 8px; }
+  .btn-hero { justify-content: center; flex: 1; padding: 10px 8px; font-size: .8rem; }
+  .hide-sm { display: none; }
+  .topbar-wordmark { font-size: clamp(1.15rem, 5.6vw, 1.5rem) !important; }
+  .topbar-right { gap: 6px; }
+  .starter-card { grid-template-columns: 1fr; gap: 10px; padding: 14px; }
+  .starter-icon { display: none; }
+  .starter-card .guide-btn, .starter-card a, .starter-card button { width: 100%; justify-content: center; }
   .trust-bar { flex-wrap: wrap; gap: 14px; }
   .trust-divider { display: none; }
   .trust-item { min-width: 80px; }
@@ -1201,7 +1212,7 @@ a { text-decoration: none; color: inherit; }
         <div class="hero-chip"><svg class="ic" aria-hidden="true"><use href="#i-cap"/></svg> Kurikulum Merdeka</div>
       </div>
       <div class="hero-btns">
-        <a href="/soal" class="btn-hero btn-hero-primary"><svg class="ic" aria-hidden="true"><use href="#i-soal"/></svg> Buat Soal Sekarang</a>
+        <a href="/soal" class="btn-hero btn-hero-primary"><svg class="ic" aria-hidden="true"><use href="#i-soal"/></svg> Buat Soal<span class="hide-sm"> Sekarang</span></a>
         <a href="/modul-ajar" class="btn-hero btn-hero-ghost"><svg class="ic" aria-hidden="true"><use href="#i-modul"/></svg> Modul Ajar</a>
       </div>
     </div>

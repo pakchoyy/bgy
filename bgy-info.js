@@ -4,7 +4,7 @@
       <div data-bgy-menu></div> di dalam menu hamburger. Tombol "Install BGY" ikut tampil di atasnya,
       kecuali slot diberi atribut data-bgy-install="off".
       Teks mengikuti warna teks menu, jadi pastikan wadah menu punya `color` yang sesuai tema.
-   3. Bar Info menempel di bawah layar (kecuali slot diberi data-bgy-info-static, mis. Simpan Sandi).
+   3. Bar Info menempel di bawah layar (kecuali slot diberi data-bgy-info-static, mis. Simpan Sandi). Beranda tanpa bar Info.
    4. Judul header "BGY | ..." otomatis ditulis "Bantu Guru Yuk | ..." bila muat satu baris.
    5. Kartu di bawah layar muncul halus (fade + naik) saat digulir.
    Link ke halaman yang sedang dibuka otomatis disembunyikan. */
@@ -342,7 +342,7 @@
     adaptHeader();
     revealOnScroll();
     mountMenu();
-    if (items.length < 2) return;
+    if (items.length < 2 || page === 'home') return;
     var style = document.createElement('style');
     style.textContent = css;
     document.head.appendChild(style);
