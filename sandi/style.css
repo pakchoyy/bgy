@@ -290,7 +290,7 @@ button, input, select, textarea { font-family: inherit; }
   position: fixed;
   left: 0; right: 0;
   bottom: 58px;
-  height: 42px;
+  height: 46px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -340,10 +340,13 @@ button, input, select, textarea { font-family: inherit; }
 .ticker-text {
   font-size: 12.5px;
   font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.25;
+  text-align: center;
   min-width: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .ticker-slide .cta {
   animation: cta-glow 2s ease-in-out infinite;
