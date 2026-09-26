@@ -457,8 +457,6 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
         <div class="dropdown-divider"></div>
         <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" onclick="installApp();closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install BGY</button>
-        <div class="dropdown-divider"></div>
         <div data-bgy-menu></div>
       </div>
     </div>
@@ -752,7 +750,7 @@ function closeMenu(){
   document.getElementById('menuOverlay').classList.remove('open');
 }
 document.addEventListener('click', function(e){
-  if (e.target.closest && e.target.closest('#dropdownMenu [data-bgy-menu] a')) closeMenu();
+  if (e.target.closest && e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button')) closeMenu();
 });
 function selectTab(tab){
   ['home','petunjuk','tentang'].forEach(t => {

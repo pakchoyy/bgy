@@ -1,7 +1,9 @@
 /* Bantu Guru Yuk — iklan antar-tools yang dipakai bersama semua halaman.
    1. Bar "Info"  : ubah INFO_ITEMS. Tampil di <div data-bgy-info></div> jika ada, kalau tidak di atas <footer>.
-   2. Menu tools  : ubah MENU_ITEMS. Tampil hanya jika halaman punya <div data-bgy-menu></div> (di dalam menu hamburger).
-      Teks mengikuti warna teks menu, jadi pastikan wadah menu punya `color` gelap/terang yang sesuai tema.
+   2. Menu tools  : ubah MENU_ITEMS (maks 4 supaya tidak membingungkan). Tampil hanya jika halaman punya
+      <div data-bgy-menu></div> di dalam menu hamburger. Tombol "Install BGY" ikut tampil di atasnya,
+      kecuali slot diberi atribut data-bgy-install="off".
+      Teks mengikuti warna teks menu, jadi pastikan wadah menu punya `color` yang sesuai tema.
    Link ke halaman yang sedang dibuka otomatis disembunyikan. */
 (function () {
   'use strict';
@@ -19,10 +21,11 @@
   ];
   // Ikon Lucide (lucide.dev, lisensi ISC) — isi <svg viewBox="0 0 24 24">
   var ICONS = {
+    install: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
+    installed: '<path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/>',
     soal: '<path d="M14.364 13.634a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 0 0-3.004-3.004z"/><path d="M14.487 7.858A1 1 0 0 1 14 7V2"/><path d="M20 19.645V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l2.516 2.516"/><path d="M8 18h1"/>',
     modul: '<path d="M12 5v16"/><path d="M20.001 19A2 2 0 0 0 22 17V5a2 2 0 0 0-1.999-2L16 3.002A5 5 0 0 0 12 5a5 5 0 0 0-4-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 1.999 2H8a5 5 0 0 1 4 2 5 5 0 0 1 4-2z"/>',
     lkpd: '<path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/>',
-    presensi: '<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/>',
     game: '<line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>'
   };
 
@@ -30,7 +33,6 @@
     { icon: ICONS.soal, title: 'Buat Soal', desc: 'Buat soal gak sampai 10 menit', url: 'https://www.bantuguruyuk.web.id/soal', path: '/soal' },
     { icon: ICONS.modul, title: 'Modul Ajar', desc: 'Sat-set, anti bingung', url: 'https://www.bantuguruyuk.web.id/modul-ajar', path: '/modul-ajar' },
     { icon: ICONS.lkpd, title: 'Prompt LKPD', desc: 'Praktis buat prompt LKPD', url: 'https://www.bantuguruyuk.web.id/lkpd', path: '/lkpd' },
-    { icon: ICONS.presensi, title: 'Presensi Digital', desc: 'Presensi & rekap sat-set', url: 'https://presiswa.bantuguruyuk.web.id' },
     { icon: ICONS.game, title: 'Prompt Game', desc: 'Sat-set buat prompt game IFP', url: 'https://bmedia.bantuguruyuk.web.id/buat' }
   ];
   var ALL_TOOLS_URL = 'https://www.bantuguruyuk.web.id';
@@ -113,8 +115,70 @@
     '.bgym-divider{height:1px;background:rgba(127,127,127,.2);margin:4px 0;}',
     '.bgym-all{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:13px;font-weight:700;color:#0d9488!important;text-decoration:none!important;white-space:nowrap;}',
     '.bgym-all span{min-width:0;overflow:hidden;text-overflow:ellipsis;}',
-    '.bgym-all svg{flex:none;width:18px;height:18px;}'
+    '.bgym-all svg{flex:none;width:18px;height:18px;}',
+    '.bgym-install{display:flex;align-items:center;gap:10px;width:100%;padding:11px 16px;border:none;background:none;color:inherit;font:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer;}',
+    '.bgym-install:hover,.bgym-install:active{background:rgba(14,165,160,.1);}',
+    '.bgym-install svg{flex:none;width:18px;height:18px;color:#0d9488;}',
+    '.bgym-toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);max-width:calc(100vw - 32px);width:max-content;background:#1f2937;color:#fff;',
+    'padding:11px 16px;border-radius:12px;font-size:13.5px;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:100000;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}',
+    '.bgym-toast-show{opacity:1;transform:translate(-50%,0);}'
   ].join('');
+
+  /* ---- Install aplikasi (PWA halaman ini) ---- */
+  var deferredInstall = null;
+  var installKey = 'bgy_installed_' + page;
+  window.addEventListener('beforeinstallprompt', function (e) { deferredInstall = e; });
+  window.addEventListener('appinstalled', function () {
+    deferredInstall = null;
+    try { localStorage.setItem(installKey, '1'); } catch (e) {}
+    updateInstallItem();
+  });
+  function isStandalone() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  }
+  function wasInstalled() {
+    try { return localStorage.getItem(installKey) === '1'; } catch (e) { return false; }
+  }
+  function toast(msg) {
+    var t = document.getElementById('bgym-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'bgym-toast';
+      t.setAttribute('role', 'status');
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.className = 'bgym-toast bgym-toast-show';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.className = 'bgym-toast'; }, 4200);
+  }
+  function doInstall() {
+    if (isStandalone()) { toast('Kamu sudah install aplikasi ini dan sedang memakainya.'); return; }
+    if (deferredInstall) {
+      var ev = deferredInstall;
+      deferredInstall = null;
+      try {
+        ev.prompt();
+        ev.userChoice.then(function (c) {
+          if (c && c.outcome === 'accepted') { try { localStorage.setItem(installKey, '1'); } catch (e) {} }
+          updateInstallItem();
+        });
+        return;
+      } catch (e) { /* prompt sudah dipakai banner halaman; lanjut ke petunjuk */ }
+    }
+    if (wasInstalled()) { toast('Kamu sudah install aplikasi ini. Buka dari ikon di layar HP.'); return; }
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    toast(ios
+      ? 'Buka di Safari, ketuk tombol Bagikan lalu pilih "Tambah ke Layar Utama".'
+      : 'Buka menu ⋮ di browser lalu pilih "Instal aplikasi" / "Tambahkan ke layar utama". Kalau tidak ada, berarti sudah terinstall.');
+  }
+  var installBtn = null;
+  function updateInstallItem() {
+    if (!installBtn) return;
+    var done = isStandalone() || (wasInstalled() && !deferredInstall);
+    installBtn.querySelector('svg').innerHTML = done ? ICONS.installed : ICONS.install;
+    installBtn.querySelector('.bgym-install-text').textContent = done ? 'Sudah terinstall' : 'Install BGY';
+  }
 
   function mountMenu() {
     var slot = document.querySelector('[data-bgy-menu]');
@@ -122,8 +186,23 @@
     var style = document.createElement('style');
     style.textContent = menuCss;
     document.head.appendChild(style);
-    var html = '<div class="bgym-label">Tools Bantu Guru Yuk lainnya</div>';
-    slot.innerHTML = html;
+    slot.innerHTML = '';
+    if (slot.getAttribute('data-bgy-install') !== 'off') {
+      installBtn = document.createElement('button');
+      installBtn.type = 'button';
+      installBtn.className = 'bgym-install';
+      installBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg><span class="bgym-install-text"></span>';
+      installBtn.addEventListener('click', function () { track('menu', 'Install', page); doInstall(); });
+      slot.appendChild(installBtn);
+      updateInstallItem();
+      var d0 = document.createElement('div');
+      d0.className = 'bgym-divider';
+      slot.appendChild(d0);
+    }
+    var label = document.createElement('div');
+    label.className = 'bgym-label';
+    label.textContent = 'Tools Bantu Guru Yuk lainnya';
+    slot.appendChild(label);
     MENU_ITEMS.filter(notHere).forEach(function (it) {
       var a = document.createElement('a');
       a.className = 'bgym-item';

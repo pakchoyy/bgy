@@ -416,7 +416,6 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
           <span id="historiBadge" class="dropdown-badge" style="display:none;"></span>
         </button>
         <button class="dropdown-item" id="mi-tentang" onclick="showTab('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
-        <button class="dropdown-item" onclick="installApp();closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install BGY</button>
         <div class="dropdown-divider"></div>
         <div data-bgy-menu></div>
       </div>
@@ -1360,7 +1359,7 @@ function closeMenu(){
   document.getElementById('menuOverlay').classList.remove('open');
 }
 document.addEventListener('click',function(e){
-  if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a'))closeMenu();
+  if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button'))closeMenu();
 });
 function showTab(tab){
   ['home','tentang','histori'].forEach(t=>{

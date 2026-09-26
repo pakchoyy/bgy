@@ -517,7 +517,7 @@ function closeMenu(){
 // TABS
 // ============================================================
 document.addEventListener('click',function(e){
-  if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a'))closeMenu();
+  if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button'))closeMenu();
 });
 function selectTab(tab){
   ['home','histori','tentang'].forEach(t=>{
