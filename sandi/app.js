@@ -690,13 +690,31 @@ function getFilteredAccounts() {
   return list;
 }
 
+const SERVICE_COLORS = [
+  [/gmail|google/, '#ea4335'], [/canva/, '#7d2ae8'], [/dapodik/, '#1d4ed8'],
+  [/pmm|merdeka mengajar|belajar\.id/, '#0284c7'], [/simpatika|emis|kemenag/, '#15803d'],
+  [/info ?gtk|gtk/, '#9333ea'], [/chatgpt|openai/, '#10a37f'], [/claude/, '#d97757'],
+  [/gemini/, '#4285f4'], [/facebook|\bfb\b/, '#1877f2'], [/instagram|\big\b/, '#e1306c'],
+  [/whatsapp|\bwa\b/, '#25d366'], [/youtube/, '#ff0000'], [/tiktok/, '#111827'],
+  [/microsoft|outlook|office|teams/, '#0078d4'], [/zoom/, '#2d8cff'], [/quizizz|wayground/, '#8854c0'],
+  [/kahoot/, '#46178f'], [/shopee/, '#ee4d2d'], [/tokopedia/, '#03ac0e'], [/bank|bri|bni|bca|mandiri|bsi/, '#0f4c81'],
+];
+const FALLBACK_COLORS = ['#0ea5a0', '#0d7a8a', '#6366f1', '#f59e0b', '#ec4899', '#14b8a6', '#8b5cf6', '#ef4444'];
+function serviceColor(name) {
+  const n = (name || '').toLowerCase();
+  for (const [re, color] of SERVICE_COLORS) if (re.test(n)) return color;
+  let h = 0;
+  for (const ch of n) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return FALLBACK_COLORS[h % FALLBACK_COLORS.length];
+}
+
 function accountCardHtml(acc) {
   const initial = (acc.icon || acc.serviceName || '?').slice(0, 2).toUpperCase();
   const star = acc.favorite ? '<span class="account-fav-star"><svg class="icon"><use href="#icon-star-filled"></use></svg></span>' : '';
   const maskedPw = acc.password ? '••••••••••' : '(kosong)';
   return `
     <button class="account-card" data-id="${acc.id}">
-      <div class="account-icon">${escapeHtml(initial)}</div>
+      <div class="account-icon" style="background:${serviceColor(acc.serviceName)}">${escapeHtml(initial)}</div>
       <div class="account-info">
         <div class="account-service">${escapeHtml(acc.serviceName)} ${star}</div>
         <div class="account-username">${escapeHtml(acc.username || maskedPw)}</div>
@@ -805,6 +823,25 @@ function openEditForm(acc) {
   document.getElementById('modal-detail').hidden = true;
   document.getElementById('modal-form').hidden = false;
 }
+
+function generatePassword(length = 14) {
+  const sets = ['ABCDEFGHJKLMNPQRSTUVWXYZ', 'abcdefghijkmnopqrstuvwxyz', '23456789', '!@#$%&*?-_'];
+  const all = sets.join('');
+  const rand = (n) => crypto.getRandomValues(new Uint32Array(1))[0] % n;
+  const chars = sets.map((set) => set[rand(set.length)]);
+  while (chars.length < length) chars.push(all[rand(all.length)]);
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = rand(i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  return chars.join('');
+}
+on('btn-generate-password', 'click', () => {
+  const input = document.getElementById('field-password');
+  input.value = generatePassword();
+  input.type = 'text';
+  showToast('Password kuat dibuat ✓ Jangan lupa Simpan');
+});
 
 on('btn-toggle-password', 'click', () => {
   const input = document.getElementById('field-password');
@@ -949,8 +986,46 @@ on('btn-confirm-ok', 'click', async () => {
 /* =========================================================
    SETTINGS: export / import / delete all / autolock
    ========================================================= */
-on('btn-export', 'click', async () => {
-  const data = { app: 'SANDI', version: 1, exportedAt: nowIso(), accounts: state.accounts };
+async function backupKey(password, salt) {
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations: 200000, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
+}
+async function encryptBackup(payload, password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await backupKey(password, salt);
+  const data = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(payload)));
+  return { app: 'SANDI', format: 'bgy-enc', version: 1, salt: b64(salt), iv: b64(iv), data: b64(data) };
+}
+async function decryptBackup(file, password) {
+  const key = await backupKey(password, unb64(file.salt));
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: unb64(file.iv) }, key, unb64(file.data));
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+on('btn-export', 'click', () => {
+  ['export-pass', 'export-pass2'].forEach((id) => { document.getElementById(id).value = ''; });
+  document.getElementById('export-error').hidden = true;
+  document.getElementById('modal-export').hidden = false;
+});
+on('btn-close-export', 'click', () => { document.getElementById('modal-export').hidden = true; });
+on('btn-export-plain', 'click', () => downloadBackup(null));
+on('btn-export-locked', 'click', () => {
+  const p1 = document.getElementById('export-pass').value;
+  const p2 = document.getElementById('export-pass2').value;
+  const err = document.getElementById('export-error');
+  if (p1.length < 6) { err.textContent = 'Password minimal 6 karakter.'; err.hidden = false; return; }
+  if (p1 !== p2) { err.textContent = 'Password tidak sama.'; err.hidden = false; return; }
+  downloadBackup(p1);
+});
+
+async function downloadBackup(password) {
+  let data = { app: 'SANDI', version: 1, exportedAt: nowIso(), accounts: state.accounts };
+  if (password) data = await encryptBackup(data, password);
+  document.getElementById('modal-export').hidden = true;
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/octet-stream' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -962,14 +1037,32 @@ on('btn-export', 'click', async () => {
   URL.revokeObjectURL(url);
   localStorage.setItem(LS_LAST_EXPORT, String(Date.now()));
   document.getElementById('backup-reminder').hidden = true;
-  showToast('Data berhasil di-export ✓');
-});
+  showToast(password ? 'Backup terkunci tersimpan ✓' : 'Data berhasil di-export ✓');
+}
 
 on('btn-import', 'click', () => {
   document.getElementById('import-file-input').click();
 });
 
 let pendingImportData = null;
+let pendingEncryptedBackup = null;
+on('btn-import-pass-cancel', 'click', () => {
+  document.getElementById('modal-import-pass').hidden = true;
+  pendingEncryptedBackup = null;
+});
+on('btn-import-pass-ok', 'click', async () => {
+  const err = document.getElementById('import-pass-error');
+  try {
+    const parsed = await decryptBackup(pendingEncryptedBackup, document.getElementById('import-pass').value);
+    if (!Array.isArray(parsed.accounts)) throw new Error('invalid');
+    pendingImportData = parsed.accounts;
+    pendingEncryptedBackup = null;
+    document.getElementById('modal-import-pass').hidden = true;
+    document.getElementById('modal-import-confirm').hidden = false;
+  } catch (e) {
+    err.hidden = false;
+  }
+});
 on('import-file-input', 'change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -977,6 +1070,14 @@ on('import-file-input', 'change', (e) => {
   reader.onload = () => {
     try {
       const parsed = JSON.parse(reader.result);
+      if (parsed && parsed.format === 'bgy-enc') {
+        pendingEncryptedBackup = parsed;
+        document.getElementById('import-pass').value = '';
+        document.getElementById('import-pass-error').hidden = true;
+        document.getElementById('modal-import-pass').hidden = false;
+        e.target.value = '';
+        return;
+      }
       if (!parsed || !Array.isArray(parsed.accounts)) throw new Error('invalid');
       pendingImportData = parsed.accounts;
       document.getElementById('modal-import-confirm').hidden = false;
@@ -1070,6 +1171,8 @@ async function boot() {
   document.getElementById('autolock-select').value = autolockVal;
 }
 
+on('btn-update-reload', 'click', () => location.reload());
+
 /* Promo ticker: rotate one product link at a time */
 function startTicker() {
   const slides = document.querySelectorAll('#ticker-fade .ticker-slide');
@@ -1105,6 +1208,15 @@ function init() {
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+      const hadController = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (hadController) document.getElementById('update-banner').hidden = false;
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          navigator.serviceWorker.getRegistration().then((r) => r && r.update()).catch(() => {});
+        }
+      });
       navigator.serviceWorker.register('./sw.js').catch(() => {
         /* offline support degrades gracefully if SW fails */
       });

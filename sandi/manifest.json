@@ -3,7 +3,7 @@
   "name": "Simpan Sandi — BantuGuruYuk",
   "short_name": "Simpan Sandi",
   "description": "Catatan akun digital guru: aman, terenkripsi, bisa offline. Bagian dari BantuGuruYuk.",
-  "start_url": "./?v=8",
+  "start_url": "./?v=9",
   "scope": "./",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
