@@ -934,11 +934,11 @@ on('btn-confirm-ok', 'click', async () => {
    ========================================================= */
 on('btn-export', 'click', async () => {
   const data = { app: 'SANDI', version: 1, exportedAt: nowIso(), accounts: state.accounts };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/octet-stream' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'sandi-backup.json';
+  a.download = `sandi-backup-${new Date().toISOString().slice(0, 10)}.bgy`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

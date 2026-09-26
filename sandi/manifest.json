@@ -2,7 +2,7 @@
   "name": "SANDI — BantuGuruYuk",
   "short_name": "SANDI",
   "description": "Simpan akun digital guru dengan simpel.",
-  "start_url": "./?v=6",
+  "start_url": "./?v=7",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f5f7fb",

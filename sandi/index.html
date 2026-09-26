@@ -9,7 +9,7 @@
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
-<link rel="stylesheet" href="./style.css?v=6">
+<link rel="stylesheet" href="./style.css?v=7">
 </head>
 <body>
 
@@ -194,7 +194,7 @@
       <h3 class="settings-group-title">Data</h3>
       <button id="btn-export" class="settings-row"><span><svg class="icon icon-sm"><use href="#icon-download"></use></svg> Export Data</span></button>
       <button id="btn-import" class="settings-row"><span><svg class="icon icon-sm"><use href="#icon-upload"></use></svg> Import Data</span></button>
-      <input type="file" id="import-file-input" accept="application/json" hidden>
+      <input type="file" id="import-file-input" accept=".bgy,.json,application/json,application/octet-stream" hidden>
       <button id="btn-delete-all" class="settings-row settings-row-danger"><span><svg class="icon icon-sm"><use href="#icon-trash"></use></svg> Hapus Semua Data</span></button>
     </div>
 
@@ -447,6 +447,6 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="./app.js?v=6"></script>
+<script src="./app.js?v=7"></script>
 </body>
 </html>
