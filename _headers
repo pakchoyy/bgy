@@ -45,3 +45,7 @@
 # Gambar aset — cache panjang (jarang berubah)
 /sandi/icons/*.png
   Cache-Control: public, max-age=604800
+
+# ══ Bar Info bersama (bgy-info.js) — selalu cek versi terbaru ══
+/bgy-info.js
+  Cache-Control: no-cache

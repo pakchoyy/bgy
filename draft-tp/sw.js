@@ -16,6 +16,7 @@ self.addEventListener('activate', e=>{
 });
 
 self.addEventListener('fetch', e=>{
+  if (new URL(e.request.url).pathname === '/bgy-info.js') return; // bar Info selalu versi terbaru
   if(e.request.method!=='GET') return;
   e.respondWith(
     caches.match(e.request).then(cached=>{

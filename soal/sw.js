@@ -40,6 +40,7 @@ self.addEventListener('activate', e => {
 // ── Fetch: strategi per tipe request ──
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
+  if (new URL(e.request.url).pathname === '/bgy-info.js') return; // bar Info selalu versi terbaru
 
   // 1. API request (generate soal, supabase, gtag) → network only, jangan cache
   if (

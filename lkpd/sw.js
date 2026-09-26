@@ -41,6 +41,7 @@ self.addEventListener("activate", event => {
 
 // FETCH (SMART STRATEGY)
 self.addEventListener("fetch", event => {
+  if (new URL(event.request.url).pathname === '/bgy-info.js') return; // bar Info selalu versi terbaru
 
   // SKIP API (biar tidak ganggu fetch Gemini kamu)
   if (event.request.url.includes("script.google.com")) return;
