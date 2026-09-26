@@ -4,6 +4,9 @@
       <div data-bgy-menu></div> di dalam menu hamburger. Tombol "Install BGY" ikut tampil di atasnya,
       kecuali slot diberi atribut data-bgy-install="off".
       Teks mengikuti warna teks menu, jadi pastikan wadah menu punya `color` yang sesuai tema.
+   3. Bar Info menempel di bawah layar (kecuali slot diberi data-bgy-info-static, mis. Simpan Sandi).
+   4. Judul header "BGY | ..." otomatis ditulis "Bantu Guru Yuk | ..." bila muat satu baris.
+   5. Kartu di bawah layar muncul halus (fade + naik) saat digulir.
    Link ke halaman yang sedang dibuka otomatis disembunyikan. */
 (function () {
   'use strict';
@@ -241,7 +244,103 @@
     slot.appendChild(all);
   }
 
+  /* ---- 3. Bar Info menempel di bawah layar ---- */
+  var dockCss = [
+    'html.bgyi-docked .bgyi-wrap{position:fixed;left:0;right:0;bottom:0;z-index:900;height:calc(46px + env(safe-area-inset-bottom));',
+    'padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 16px rgba(0,0,0,.12);}',
+    'html.bgyi-docked body{padding-bottom:calc(46px + env(safe-area-inset-bottom));}',
+    'html.bgyi-docked #toast,html.bgyi-docked .toast,html.bgyi-docked .bgym-toast,html.bgyi-docked #installPopup[style*="bottom"],',
+    'html.bgyi-docked [style*="position:fixed;bottom:24px"]{bottom:calc(70px + env(safe-area-inset-bottom))!important;}'
+  ].join('');
+  function dockBar(wrap, slot) {
+    if (slot && slot.hasAttribute('data-bgy-info-static')) return;
+    if (getComputedStyle(wrap).display === 'none') return;
+    var st = document.createElement('style');
+    st.textContent = dockCss;
+    document.head.appendChild(st);
+    document.documentElement.classList.add('bgyi-docked');
+  }
+
+  /* ---- 4. Judul header adaptif ---- */
+  function adaptHeader() {
+    var h1 = document.querySelector('header h1, .app-header h1');
+    if (!h1) return;
+    var st = document.createElement('style');
+    st.textContent = '.bgyh-s{display:none}h1.bgyh-short .bgyh-l{display:none}h1.bgyh-short .bgyh-s{display:inline}.header-brand-text{min-width:0;overflow:hidden}h1.bgyh-tight{font-size:.86rem!important;letter-spacing:-.1px}';
+    document.head.appendChild(st);
+    var busy = false;
+    function brand() {
+      if (h1.querySelector('.bgyh')) return;
+      var node = h1.firstChild;
+      while (node && node.nodeType === 3 && !node.nodeValue.trim()) node = node.nextSibling;
+      if (!node || node.nodeType !== 3) return;
+      var m = node.nodeValue.match(/^(\s*)BGY\b/);
+      if (!m) return;
+      busy = true;
+      var span = document.createElement('span');
+      span.className = 'bgyh';
+      span.innerHTML = '<span class="bgyh-l">Bantu Guru Yuk</span><span class="bgyh-s">BGY</span>';
+      node.nodeValue = node.nodeValue.slice(m[0].length);
+      h1.insertBefore(span, node);
+      busy = false;
+    }
+    var hdr = h1.closest('header, .app-header');
+    var actions = hdr && hdr.querySelector('.header-right, .header-actions');
+    function tooWide() {
+      if (h1.scrollWidth > h1.clientWidth + 1) return true;
+      if (!actions) return false;
+      return h1.getBoundingClientRect().right > actions.getBoundingClientRect().left - 4;
+    }
+    function fit() {
+      if (!h1.clientWidth) return;
+      h1.classList.remove('bgyh-short', 'bgyh-tight');
+      if (tooWide()) h1.classList.add('bgyh-short');
+      if (tooWide()) h1.classList.add('bgyh-tight');
+    }
+    brand();
+    fit();
+    if ('ResizeObserver' in window) new ResizeObserver(fit).observe(h1);
+    window.addEventListener('resize', fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    if ('MutationObserver' in window) {
+      new MutationObserver(function () { if (!busy) { brand(); fit(); } }).observe(h1, { childList: true });
+    }
+  }
+
+  /* ---- 5. Animasi muncul saat digulir ---- */
+  function revealOnScroll() {
+    if (!('IntersectionObserver' in window)) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (document.documentElement.classList.contains('embed-mode')) return;
+    var st = document.createElement('style');
+    st.textContent = '.bgy-reveal{opacity:0;transform:translateY(16px);}' +
+      '.bgy-reveal.bgy-in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease;}';
+    document.head.appendChild(st);
+    var targets = document.querySelectorAll('.card, .page-card, .contoh-item, .tool-card, .settings-group, .feat-card');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        io.unobserve(el);
+        el.classList.add('bgy-in');
+        el.addEventListener('transitionend', function done() {
+          el.classList.remove('bgy-reveal', 'bgy-in');
+          el.removeEventListener('transitionend', done);
+        });
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+    var vh = window.innerHeight;
+    Array.prototype.forEach.call(targets, function (el) {
+      var r = el.getBoundingClientRect();
+      if (!r.height || r.top < vh) return;
+      el.classList.add('bgy-reveal');
+      io.observe(el);
+    });
+  }
+
   function mount() {
+    adaptHeader();
+    revealOnScroll();
     mountMenu();
     if (items.length < 2) return;
     var style = document.createElement('style');
@@ -275,6 +374,7 @@
     if (slot) slot.appendChild(wrap);
     else if (footer) footer.parentNode.insertBefore(wrap, footer);
     else document.body.appendChild(wrap);
+    dockBar(wrap, slot);
 
     var wide = window.matchMedia('(min-width: 768px)');
     function setSpeed() {
