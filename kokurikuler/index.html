@@ -63,7 +63,7 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .hdr-btn:hover{background:rgba(255,255,255,.22);}
 .hdr-menu-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;position:relative;}
 .hdr-menu-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:99px;padding:0 4px;font-size:.55rem;font-weight:800;line-height:14px;min-width:14px;text-align:center;display:none;}
-.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:180px;overflow:hidden;display:none;z-index:400;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:180px;width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
 .dropdown-menu.open{display:block;}
 .dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;}
 .dropdown-item:hover{background:var(--gray-100);}
@@ -78,6 +78,10 @@ body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
 main{max-width:1200px;margin:0 auto;padding:20px;width:100%;flex:1;}
 @media(max-width:640px){main{padding:10px;}}
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block;}
+.card-title .ic,.dropdown-item .ic{color:var(--blue);width:18px;height:18px;}
+.hdr-btn .ic,.hdr-menu-btn .ic{width:18px;height:18px;}
+.ph-icon .ic{width:44px;height:44px;}
 .card-title{font-size:.82rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:8px;}
 .two-col{display:grid;grid-template-columns:380px 1fr;gap:16px;align-items:start;}
 @media(max-width:900px){.two-col{grid-template-columns:1fr;}}
@@ -136,6 +140,8 @@ footer a{color:inherit;text-decoration:underline;}
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 </head>
 <body>
+<!-- Ikon Lucide (lucide.dev, ISC) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs><symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol><symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></symbol><symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></symbol><symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2" /><path d="M12 18h.01" /></symbol><symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol><symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></symbol><symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol><symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" /></symbol><symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></symbol><symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></symbol><symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M12 11h4" /><path d="M12 16h4" /><path d="M8 11h.01" /><path d="M8 16h.01" /></symbol><symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></symbol><symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /><path d="m14 7 3 3" /><path d="M5 6v4" /><path d="M19 14v4" /><path d="M10 2v2" /><path d="M7 8H3" /><path d="M21 16h-4" /><path d="M11 3H9" /></symbol><symbol id="i-unlock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 9.9-1" /></symbol><symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" /></symbol><symbol id="i-at" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></symbol><symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></symbol><symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></symbol><symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /><path d="m21.854 2.147-10.94 10.939" /></symbol><symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol><symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /></symbol><symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9.536V7a4 4 0 0 1 4-4h1.5a.5.5 0 0 1 .5.5V5a4 4 0 0 1-4 4 4 4 0 0 0-4 4c0 2 1 3 1 5a5 5 0 0 1-1 3" /><path d="M4 9a5 5 0 0 1 8 4 5 5 0 0 1-8-4" /><path d="M5 21h14" /></symbol></defs></svg>
 
 <!-- LOADING -->
 <div id="loadingScreen">
@@ -147,9 +153,9 @@ footer a{color:inherit;text-decoration:underline;}
 
 <!-- INSTALL POPUP -->
 <div id="installPopup">
-  <span>📲 Install aplikasi Bantu Guru Yuk</span>
+  <span><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install aplikasi Bantu Guru Yuk</span>
   <button class="btn-install" onclick="installApp()">Install</button>
-  <button class="btn-install-close" onclick="closeInstall()">✕</button>
+  <button class="btn-install-close" onclick="closeInstall()" aria-label="Tutup"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
 </div>
 
 <div id="menuOverlay" onclick="closeMenu()"></div>
@@ -164,20 +170,21 @@ footer a{color:inherit;text-decoration:underline;}
       </div>
     </div>
     <div class="header-right">
-      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang">🌙</button>
-      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu">
-        ☰
+      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
+      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu" aria-label="Menu">
+        <svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg>
         <span id="menuBadge" class="hdr-menu-badge"></span>
       </button>
       <div class="dropdown-menu" id="dropdownMenu">
-        <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()">🏠 Home</button>
+        <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-house"/></svg> Home</button>
         <button class="dropdown-item" id="mi-histori" onclick="selectTab('histori');closeMenu()">
-          🕒 Histori
+          <svg class="ic" aria-hidden="true"><use href="#i-history"/></svg> Histori
           <span id="historiBadge" class="dropdown-badge" style="display:none;"></span>
         </button>
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
-        <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
+        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
+        <div class="dropdown-divider"></div>
+        <div data-bgy-menu></div>
       </div>
     </div>
   </div>
@@ -187,10 +194,10 @@ footer a{color:inherit;text-decoration:underline;}
 <div id="tab-tentang" style="display:none;">
 <main>
   <div class="card">
-    <div class="card-title">ℹ️ Tentang Aplikasi</div>
+    <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Aplikasi</div>
     <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Modul Kokurikuler v26.5.0</p>
     <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Generator Modul Kokurikuler SD</b> membantu guru SD membuat prompt lengkap untuk menghasilkan Modul Ajar Kokurikuler sesuai <b>Panduan Kokurikuler 2025</b> dari Kemendikdasmen.</p>
-    <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur</h4>
+    <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">Fitur</h4>
     <ul style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
       <li>Generate prompt modul kokurikuler SD lengkap &amp; siap cetak</li>
       <li>Sesuai Panduan Kokurikuler 2025 (Kemendikdasmen) &amp; Kurikulum Merdeka</li>
@@ -200,6 +207,14 @@ footer a{color:inherit;text-decoration:underline;}
       <li>Histori 20 prompt terakhir</li>
     </ul>
   </div>
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Kontak</div>
+    <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau aktivasi Pro:</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp</button>
+      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> TikTok</button>
+    </div>
+  </div>
 </main>
 </div>
 
@@ -208,40 +223,27 @@ footer a{color:inherit;text-decoration:underline;}
 <main>
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-      <div class="card-title" style="margin-bottom:0;border:none;padding:0;">🕒 Histori Prompt</div>
-      <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 11px;font-size:.74rem;font-weight:700;cursor:pointer;">🗑️ Hapus Semua</button>
+      <div class="card-title" style="margin-bottom:0;border:none;padding:0;"><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg> Histori Prompt</div>
+      <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 11px;font-size:.74rem;font-weight:700;cursor:pointer;"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg> Hapus Semua</button>
     </div>
-    <div id="historiList"><div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya! 😊</div></div>
+    <div id="historiList"><div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya!</div></div>
   </div>
 </main>
 </div>
 
-<!-- TAB KONTAK -->
-<div id="tab-kontak" style="display:none;">
-<main>
-  <div class="card">
-    <div class="card-title">📬 Kontak</div>
-    <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau aktivasi Pro:</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp</button>
-      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok</button>
-    </div>
-  </div>
-</main>
-</div>
 
 <!-- TAB HOME -->
 <div id="tab-home">
 <main>
 
   <div class="hint-bar">
-    💡 <span>Isi form</span> → <span>Generate Prompt</span> → <span>Salin Prompt</span> → <span>Paste ke Claude / Gemini</span> → <span>Kirim</span> → <span>Tunggu hasilnya 🎉</span>
+    <svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> <span>Isi form</span> → <span>Generate Prompt</span> → <span>Salin Prompt</span> → <span>Paste ke Claude / Gemini</span> → <span>Kirim</span> → <span>Tunggu hasilnya</span>
   </div>
 
   <div class="two-col">
     <div class="col-left">
       <div class="card">
-        <div class="card-title">📋 Identitas Modul</div>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Identitas Modul</div>
 
         <!-- LIMIT BAR -->
         <div id="limitBarWrapper" style="display:none;">
@@ -252,12 +254,12 @@ footer a{color:inherit;text-decoration:underline;}
           <label>Tema Projek / Kokurikuler</label>
           <select id="temaSelect" onchange="handleTemaSelect()">
             <option value="">-- Pilih tema --</option>
-            <option value="Lingkunganku Sehat, Aku Kuat">🌿 Lingkunganku Sehat, Aku Kuat</option>
-            <option value="Budaya Nusantaraku">🎭 Budaya Nusantaraku</option>
-            <option value="Hemat Energi, Selamatkan Bumi">💡 Hemat Energi, Selamatkan Bumi</option>
-            <option value="Kebiasaan Baik Anak Indonesia Hebat">⭐ Kebiasaan Baik Anak Indonesia Hebat</option>
-            <option value="Bersama Kita Bisa: Kolaborasi & Gotong Royong">🤝 Bersama Kita Bisa: Kolaborasi &amp; Gotong Royong</option>
-            <option value="__lainnya__">✏️ Lainnya (tulis sendiri)...</option>
+            <option value="Lingkunganku Sehat, Aku Kuat">Lingkunganku Sehat, Aku Kuat</option>
+            <option value="Budaya Nusantaraku">Budaya Nusantaraku</option>
+            <option value="Hemat Energi, Selamatkan Bumi">Hemat Energi, Selamatkan Bumi</option>
+            <option value="Kebiasaan Baik Anak Indonesia Hebat">Kebiasaan Baik Anak Indonesia Hebat</option>
+            <option value="Bersama Kita Bisa: Kolaborasi & Gotong Royong">Bersama Kita Bisa: Kolaborasi &amp; Gotong Royong</option>
+            <option value="__lainnya__">Lainnya (tulis sendiri)...</option>
           </select>
           <input type="text" id="temaProjek" placeholder="Tulis tema kokurikulermu..." style="display:none;margin-top:6px;"/>
         </div>
@@ -314,7 +316,7 @@ footer a{color:inherit;text-decoration:underline;}
       </div>
 
       <div class="card">
-        <div class="card-title">⚙️ Pengaturan Output</div>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-settings"/></svg> Pengaturan Output</div>
         <div class="row-2">
           <div class="form-group">
             <label>Gaya Bahasa</label>
@@ -338,22 +340,22 @@ footer a{color:inherit;text-decoration:underline;}
       <div id="errorBox" class="error-box"></div>
 
       <button class="btn btn-primary" id="btnGenerate" onclick="generatePrompt()">
-        ✨ Generate Prompt Modul <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;">(2/2)</span>
+        <svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Prompt Modul <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;">(2/2)</span>
       </button>
 
       <!-- AKTIVASI PRO -->
       <div class="aktivasi-box" id="aktivasiBox">
-        <div class="ak-label">🔓 Aktivasi Pro — Generate Unlimited</div>
+        <div class="ak-label"><svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> Aktivasi Pro — Generate Unlimited</div>
 
         <!-- TAB SWITCHER -->
         <div style="display:flex;gap:4px;margin-bottom:10px;background:#f1f5f9;border-radius:8px;padding:3px;">
           <button id="tabKodeBtn" onclick="switchAktivasiTab('kode')"
             style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:#f59e0b;color:#fff;transition:all .2s;">
-            🔑 Kode Aktivasi
+            <svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Kode Aktivasi
           </button>
           <button id="tabEmailBtn" onclick="switchAktivasiTab('email')"
             style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;">
-            📧 Sudah Beli? Login Email
+            <svg class="ic" aria-hidden="true"><use href="#i-at"/></svg> Sudah Beli? Login Email
           </button>
         </div>
 
@@ -384,7 +386,7 @@ footer a{color:inherit;text-decoration:underline;}
     <!-- KOLOM KANAN -->
     <div class="col-right">
       <div class="card" id="hasilCard">
-        <div class="card-title">📄 Prompt Siap Pakai</div>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Prompt Siap Pakai</div>
 
         <!-- PREVIEW MODUL CONTOH -->
         <div id="previewModul" style="display:block;">
@@ -392,7 +394,7 @@ footer a{color:inherit;text-decoration:underline;}
             <!-- Watermark -->
             <div id="previewWatermark" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;display:flex;align-items:flex-start;justify-content:flex-end;padding:18px 14px 0 0;">
               <div style="transform:rotate(-8deg);transform-origin:top right;background:rgba(14,165,160,0.13);border:2px solid rgba(14,165,160,0.35);border-radius:10px;padding:8px 16px;backdrop-filter:blur(2px);">
-                <div style="font-size:.82rem;font-weight:900;color:rgba(14,165,160,0.7);text-align:center;line-height:1.4;letter-spacing:.5px;text-transform:uppercase;">✨ Contoh Hasil<br/>Generate Prompt</div>
+                <div style="font-size:.82rem;font-weight:900;color:rgba(14,165,160,0.7);text-align:center;line-height:1.4;letter-spacing:.5px;text-transform:uppercase;">Contoh Hasil<br/>Generate Prompt</div>
               </div>
             </div>
             <!-- Gambar halaman -->
@@ -409,25 +411,25 @@ footer a{color:inherit;text-decoration:underline;}
             <span style="margin-left:8px;opacity:.6;">· Contoh modul hasil AI</span>
           </div>
           <div style="margin-top:8px;background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.3);border-radius:9px;padding:9px 12px;font-size:.74rem;color:#92400e;text-align:center;">
-            💡 Ini contoh modul yang dihasilkan dari prompt. <b>Generate sekarang</b> untuk buat modulmu sendiri!
+            <svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> Ini contoh modul yang dihasilkan dari prompt. <b>Generate sekarang</b> untuk buat modulmu sendiri!
           </div>
         </div>
 
         <div class="prompt-placeholder" id="promptPlaceholder" style="display:none;">
-          <div class="ph-icon">📄</div>
+          <div class="ph-icon"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></div>
           <p>Isi form di kiri lalu klik<br/><b>Generate Prompt Modul</b></p>
         </div>
         <div id="promptContent" style="display:none;">
           <div class="prompt-result" id="hasilPrompt"></div>
           <div style="margin-top:10px;display:flex;flex-direction:column;gap:7px;">
-            <button class="btn btn-copy" onclick="copyPrompt()">📋 Salin Prompt</button>
-            <div class="notif-box" id="notifCopy">✅ Prompt berhasil disalin!</div>
+            <button class="btn btn-copy" onclick="copyPrompt()"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin Prompt</button>
+            <div class="notif-box" id="notifCopy"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> Prompt berhasil disalin!</div>
           </div>
           <div style="margin-top:10px;background:rgba(14,165,160,.07);border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:10px 12px;">
-            <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;">🚀 Kirim ke AI — Prompt otomatis tersalin, langsung paste!</div>
+            <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg> Kirim ke AI — Prompt otomatis tersalin, langsung paste!</div>
             <div style="display:flex;gap:8px;">
-              <button class="btn btn-gemini" onclick="openAI('gemini')">✨ Buka Gemini</button>
-              <button class="btn btn-claude" onclick="openAI('claude')">🧡 Buka Claude</button>
+              <button class="btn btn-gemini" onclick="openAI('gemini')">Buka Gemini</button>
+              <button class="btn btn-claude" onclick="openAI('claude')">Buka Claude</button>
             </div>
             <div style="font-size:.68rem;color:var(--text-light);margin-top:6px;">Setelah terbuka, tekan <b>Ctrl+V</b> (atau tahan layar → Tempel) lalu kirim.</div>
           </div>
@@ -466,7 +468,7 @@ const sbClient = window.supabase.createClient(
     if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>ls.remove(),400);}
   });
   const saved=localStorage.getItem('theme');
-  if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️';}
+  if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkIcon').setAttribute('href','#i-sun');}
   updateLimitDisplay();
   updateHistoriBadge();
   restoreAutoSave();
@@ -486,7 +488,7 @@ const sbClient = window.supabase.createClient(
 function toggleDark(){
   document.body.classList.toggle('dark');
   const d=document.body.classList.contains('dark');
-  document.getElementById('darkBtn').textContent=d?'☀️':'🌙';
+  document.getElementById('darkIcon').setAttribute('href',d?'#i-sun':'#i-moon');
   localStorage.setItem('theme',d?'dark':'light');
 }
 
@@ -514,8 +516,11 @@ function closeMenu(){
 // ============================================================
 // TABS
 // ============================================================
+document.addEventListener('click',function(e){
+  if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a'))closeMenu();
+});
 function selectTab(tab){
-  ['home','histori','tentang','kontak'].forEach(t=>{
+  ['home','histori','tentang'].forEach(t=>{
     const d=document.getElementById('tab-'+t);
     if(d)d.style.display=t===tab?'block':'none';
     const mi=document.getElementById('mi-'+t);
@@ -573,13 +578,13 @@ function generatePrompt(){
   const dimensi=[...document.querySelectorAll('.cb-dimensi:checked')].map(c=>c.value).join(', ');
 
   const errBox=document.getElementById('errorBox');
-  if(!tema){errBox.textContent='⚠️ Tema projek belum dipilih atau diisi.';errBox.style.display='block';return;}
-  if(!dimensi){errBox.textContent='⚠️ Pilih minimal satu dimensi profil lulusan.';errBox.style.display='block';return;}
+  if(!tema){errBox.textContent='Tema projek belum dipilih atau diisi.';errBox.style.display='block';return;}
+  if(!dimensi){errBox.textContent='Pilih minimal satu dimensi profil lulusan.';errBox.style.display='block';return;}
   errBox.style.display='none';
 
   const lc=checkLimit();
   if(!lc.ok){
-    errBox.textContent='⛔ Batas generate harian ('+DAILY_LIMIT+'x) sudah habis. Aktivasi Pro atau coba besok.';
+    errBox.textContent='Batas generate harian ('+DAILY_LIMIT+'x) sudah habis. Aktivasi Pro atau coba besok.';
     errBox.style.display='block';return;
   }
 
@@ -655,7 +660,7 @@ Provide the download link — this is the ONLY acceptable response format.
   // ✅ GA4 event generate
   gaEvent('generate_modul_kokurikuler',{fase,jenis,tema,tipe_user:isPro()?'pro':'free'});
 
-  document.getElementById('generateFeedback').textContent='✅ Prompt siap! Salin lalu paste ke Claude atau Gemini.';
+  document.getElementById('generateFeedback').textContent='Prompt siap! Salin lalu paste ke Claude atau Gemini.';
   setTimeout(()=>document.getElementById('generateFeedback').textContent='',4000);
 
   if(window.innerWidth<900){
@@ -715,16 +720,16 @@ function openAI(tipe){
   const fb=document.getElementById('generateFeedback');
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(txt).then(()=>{
-      fb.textContent='✅ Prompt disalin! Paste (Ctrl+V) di '+nama+' yang baru terbuka.';
+      fb.textContent='Prompt disalin! Paste (Ctrl+V) di '+nama+' yang baru terbuka.';
       setTimeout(()=>fb.textContent='',5000);
     }).catch(()=>{
       fallbackCopy(txt);
-      fb.textContent='✅ Prompt disalin! Paste di '+nama+'.';
+      fb.textContent='Prompt disalin! Paste di '+nama+'.';
       setTimeout(()=>fb.textContent='',5000);
     });
   } else {
     fallbackCopy(txt);
-    fb.textContent='✅ Prompt disalin! Paste di '+nama+'.';
+    fb.textContent='Prompt disalin! Paste di '+nama+'.';
     setTimeout(()=>fb.textContent='',5000);
   }
 }
@@ -751,11 +756,11 @@ function updateHistoriBadge(){
 function renderHistoriList(){
   const list=getHistoriList();
   const el=document.getElementById('historiList');
-  if(!list.length){el.innerHTML='<div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya! 😊</div>';return;}
+  if(!list.length){el.innerHTML='<div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya!</div>';return;}
   el.innerHTML=list.map(item=>`
     <div class="histori-item" onclick="loadHistoriItem(${item.id})">
-      <div class="hi-meta">🕒 ${item.tanggal} &nbsp;|&nbsp; ${item.fase}</div>
-      <div class="hi-preview">🌱 ${item.tema||'(tanpa tema)'}</div>
+      <div class="hi-meta"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg> ${item.tanggal} &nbsp;|&nbsp; ${item.fase}</div>
+      <div class="hi-preview"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg> ${item.tema||'(tanpa tema)'}</div>
     </div>`).join('');
 }
 function loadHistoriItem(id){
@@ -808,7 +813,7 @@ function updateLimitDisplay(){
     if(ab)ab.style.display='none';
     if(ub)ub.style.display='none';
     if(lbw)lbw.style.display='none';
-    if(btn){btn.innerHTML='✨ Generate Prompt Modul';btn.disabled=false;}
+    if(btn){btn.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Prompt Modul';btn.disabled=false;}
     return;
   }
 
@@ -819,10 +824,10 @@ function updateLimitDisplay(){
   }
   if(btn){
     if(remaining===0){
-      btn.innerHTML='⛔ Limit Habis — Coba Besok';
+      btn.innerHTML='Limit Habis — Coba Besok';
       btn.disabled=true;
     } else {
-      btn.innerHTML='✨ Generate Prompt Modul <span style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;">('+remaining+'/'+DAILY_LIMIT+')</span>';
+      btn.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Prompt Modul <span style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;">('+remaining+'/'+DAILY_LIMIT+')</span>';
       btn.disabled=false;
     }
   }
@@ -949,7 +954,7 @@ document.querySelectorAll('.cb-dimensi').forEach(c=>c.addEventListener('change',
       // Tampilkan pesan, user tinggal klik Aktifkan
       const msg=document.getElementById('aktivasiMsg');
       if(msg){
-        msg.textContent='✅ Kode berhasil dimuat! Klik tombol Aktifkan untuk melanjutkan.';
+        msg.textContent='Kode berhasil dimuat. Klik tombol Aktifkan untuk melanjutkan.';
         msg.style.color='#0d7a8a';
       }
       // Scroll ke kotak aktivasi
@@ -1017,7 +1022,7 @@ window.addEventListener('load', initPreviewModul);
 <!-- UPGRADE POPUP -->
 <div id="upgradePopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;">
   <div style="background:var(--card-bg);border-radius:18px;padding:30px 24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3);position:relative;">
-    <div style="font-size:2.2rem;margin-bottom:10px;">🔒</div>
+    <div style="margin-bottom:10px;color:#d97706;"><svg class="ic" style="width:40px;height:40px" aria-hidden="true"><use href="#i-lock"/></svg></div>
     <div style="font-weight:800;font-size:1.05rem;margin-bottom:8px;color:var(--text)">Fitur Khusus PRO</div>
     <div style="font-size:.85rem;color:var(--text-light);margin-bottom:22px;line-height:1.6">
       Tombol <strong>Salin Prompt</strong> dan <strong>Buka AI</strong> hanya untuk member PRO.<br><br>
@@ -1025,7 +1030,7 @@ window.addEventListener('load', initPreviewModul);
     </div>
     <a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank"
       style="display:block;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border-radius:10px;padding:11px 0;font-weight:800;font-size:.92rem;text-align:center;width:100%;margin-bottom:10px;text-decoration:none;">
-      🚀 Upgrade ke PRO Sekarang
+      Upgrade ke PRO Sekarang
     </a>
     <button onclick="document.getElementById('upgradePopup').style.display='none';"
       style="background:var(--gray-100);color:var(--text-light);border:none;border-radius:10px;padding:9px 0;font-size:.82rem;cursor:pointer;width:100%;">
