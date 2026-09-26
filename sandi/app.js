@@ -1174,12 +1174,45 @@ async function boot() {
 
 on('btn-update-reload', 'click', () => location.reload());
 
-/* Promo ticker: rotate one product link at a time */
+/* Promo ticker: fade one product at a time on phones, scrolling marquee on wide screens.
+   Both pause while hovered/focused so the link is easy to click. */
 function startTicker() {
-  const slides = document.querySelectorAll('#ticker-fade .ticker-slide');
+  const box = document.getElementById('ticker-fade');
+  if (!box) return;
+  const slides = Array.from(box.querySelectorAll('.ticker-slide'));
   if (slides.length < 2) return;
+
+  const track = document.createElement('div');
+  track.className = 'ticker-track';
+  slides.forEach((s) => track.appendChild(s));
+  slides.forEach((s) => {
+    const clone = s.cloneNode(true);
+    clone.classList.add('ticker-clone');
+    clone.classList.remove('active');
+    clone.setAttribute('aria-hidden', 'true');
+    clone.tabIndex = -1;
+    track.appendChild(clone);
+  });
+  box.appendChild(track);
+
+  const wide = window.matchMedia('(min-width: 768px)');
+  const setSpeed = () => {
+    if (wide.matches) track.style.setProperty('--marquee-duration', `${Math.max(20, track.scrollWidth / 2 / 50)}s`);
+  };
+  if ('ResizeObserver' in window) new ResizeObserver(setSpeed).observe(track);
+  else window.addEventListener('load', setSpeed);
+  if (wide.addEventListener) wide.addEventListener('change', setSpeed);
+
+  let paused = false;
+  const wrap = box.closest('.ticker-wrap');
+  wrap.addEventListener('mouseenter', () => { paused = true; });
+  wrap.addEventListener('mouseleave', () => { paused = false; });
+  wrap.addEventListener('focusin', () => { paused = true; });
+  wrap.addEventListener('focusout', () => { paused = false; });
+
   let i = 0;
   setInterval(() => {
+    if (paused || wide.matches) return;
     slides[i].classList.remove('active');
     i = (i + 1) % slides.length;
     slides[i].classList.add('active');

@@ -727,3 +727,27 @@ button, input, select, textarea { font-family: inherit; }
   .app-header { padding: 0 12px; }
   .header-logo { width: 32px; height: 32px; }
 }
+
+/* Ticker track: phones fade (slides stacked), wide screens scroll */
+.ticker-track { position: absolute; inset: 0; }
+.ticker-clone { display: none !important; }
+@media (min-width: 768px) {
+  .ticker-fade {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+  }
+  .ticker-track {
+    right: auto;
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: ticker-marquee var(--marquee-duration, 40s) linear infinite;
+  }
+  .ticker-wrap:hover .ticker-track, .ticker-wrap:focus-within .ticker-track { animation-play-state: paused; }
+  .ticker-slide { position: static; opacity: 1; pointer-events: auto; transition: none; flex: none; padding-right: 40px; }
+  .ticker-text { display: block; white-space: nowrap; }
+  .ticker-clone { display: flex !important; }
+}
+@keyframes ticker-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
