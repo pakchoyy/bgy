@@ -34,115 +34,154 @@
 <meta name="twitter:title" content="Bantu Guru Yuk | Generator Media Ajar Gratis">
 <meta name="twitter:description" content="Buat LKPD, Poster, Infografis otomatis untuk Kurikulum Merdeka.">
 <style>
-/* ===== BASE ===== */
-*{box-sizing:border-box;}
-body{font-family:'Segoe UI',sans-serif;margin:0;padding:0;background:#eef2f7;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
+  --blue:#0ea5a0;--teal-dark:#0d7a8a;--radius:12px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;--text-light:#64748b;--border:#e2e8f0;--input-bg:#f8fafc;--gray-100:#f1f5f9;
+}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;--text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;--gray-100:#273449;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s;}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block;}
 
-/* ===== LOADING ===== */
-#loadingScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#4dabf7,#6cc6a6);display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;z-index:99999;}
+/* ══ LOADING ══ */
+#loadingScreen{position:fixed;inset:0;background:var(--grad);display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;z-index:99999;}
 
-/* ===== INSTALL POPUP ===== */
-#installPopup{position:fixed;top:-160px;left:0;right:0;background:#2f9e44;color:#fff;padding:15px;text-align:center;transition:.4s;z-index:9999;}
+/* ══ INSTALL POPUP ══ */
+#installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+#installPopup.show{top:0;}
+#installPopup button{border:none;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;}
+.btn-install{background:#fff;color:#0d7a8a;}
+.btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
 
-/* ===== HEADER ===== */
-.header{background:linear-gradient(90deg,#6cc6a6,#4dabf7);color:#fff;padding:14px 18px;width:100%;transition:background .4s;}
+/* ══ HEADER ══ */
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;object-fit:contain;}
+.header-brand h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.25;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.hdr-btn .ic{width:18px;height:18px;}
+.badge-free,.badge-pro{display:inline-block;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:middle;letter-spacing:.5px;}
+.badge-free{background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.35);}
+.badge-pro{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.dropdown-item:hover{background:var(--gray-100);}
+.dropdown-item.active{color:var(--blue);}
+.dropdown-item .ic{color:var(--blue);width:18px;height:18px;}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+#menuOverlay{display:none;position:fixed;inset:0;z-index:250;}
+#menuOverlay.open{display:block;}
 
-.badge-pro{display:inline-block;background:linear-gradient(90deg,#f59f00,#ffd43b);color:#1a1a2e;font-size:11px;font-weight:bold;padding:3px 10px;border-radius:10px;margin-left:6px;vertical-align:middle;letter-spacing:.5px;}
-
-/* ===== NAVBAR ===== */
-.navbar{padding:10px;text-align:center;}
-.navbar a{display:inline-block;margin:0 5px;padding:6px 14px;font-weight:bold;cursor:pointer;border-radius:20px;background:linear-gradient(90deg,#6cc6a6,#4dabf7);color:white;font-size:14px;user-select:none;}
-.navbar a.active{background:linear-gradient(90deg,#f59f00,#ffd43b);color:#000;}
-
-/* ===== CONTAINER ===== */
-.container{max-width:760px;margin:20px auto 10px;background:#fff;padding:24px;border-radius:14px;}
-
-/* ===== FORM ===== */
-label{font-weight:bold;display:block;margin-top:14px;}
-select,input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;font-family:inherit;font-size:14px;}
-textarea{height:180px;resize:vertical;}
-#jenisBox,#modeBox,#jumlahBox{display:none;}
-
-/* ===== BUTTONS ===== */
-button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;color:#fff;cursor:pointer;font-weight:bold;font-size:14px;}
-.btn-green{background:#2f9e44;}
-.btn-blue{background:#1971c2;}
-.btn-chatgpt{background:#10a37f;font-size:16px;padding:14px;}
-.btn-purple{background:#6741d9;}
-.btn-gemini-open{background:linear-gradient(90deg,#4285f4,#34a853);font-size:16px;padding:14px;}
-.btn-red{background:#e03131;}
-.btn-gray{background:#868e96;font-size:13px;}
-
-/* ===== NOTIF ===== */
-#notif{display:none;background:#2f9e44;color:#fff;padding:10px;margin-top:10px;border-radius:8px;text-align:center;}
-
-/* ===== SECTION ===== */
+/* ══ LAYOUT / CARD ══ */
+main{max-width:760px;margin:0 auto;padding:16px 12px 20px;width:100%;flex:1;}
+.container{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;}
+.card-title{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding-bottom:10px;}
+.card-title .ic{color:var(--blue);width:18px;height:18px;}
+.hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.78rem;color:var(--text);line-height:1.7;}
+.hint-bar span{font-weight:700;color:var(--teal-dark);}
+body.dark .hint-bar span{color:#5eead4;}
+.hint-bar .ic{color:var(--blue);}
 .section{display:none;}
 .section.active{display:block;}
+.container h3{font-size:1rem;margin:4px 0 10px;}
+.container h4{font-size:.85rem;margin:14px 0 6px;}
+.container p{font-size:.86rem;line-height:1.7;margin-bottom:10px;}
+.container ul{font-size:.84rem;line-height:1.9;padding-left:20px;margin-bottom:10px;}
 
-/* ===== UPLOAD REF ===== */
-#previewRefBox{display:none;margin-top:10px;background:#fff8e1;border:2px solid #f59f00;border-radius:10px;padding:12px;text-align:center;}
-#previewRefBox img{width:160px;height:160px;object-fit:cover;border-radius:10px;border:2px solid #f59f00;display:block;margin:10px auto 0;}
-#previewRefBox p{margin:8px 0 0;font-size:13px;color:#e67700;font-weight:bold;}
+/* ══ FORM ══ */
+label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.5px;}
+select,input,textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;color:var(--text);background:var(--input-bg);font-family:inherit;outline:none;transition:border-color .2s;}
+select:focus,input:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+textarea{height:170px;resize:vertical;line-height:1.55;}
+#jenisBox,#modeBox,#jumlahBox{display:none;}
 
-/* ===== LIMIT BAR ===== */
-#limitBar{background:linear-gradient(90deg,rgba(108,198,166,0.5),rgba(77,171,247,0.5));border-radius:12px;padding:16px 18px;margin-bottom:6px;box-shadow:0 4px 16px rgba(77,171,247,0.2);text-align:center;backdrop-filter:blur(4px);}
+/* ══ BUTTONS ══ */
+.container button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:10px;color:#fff;cursor:pointer;font-weight:700;font-size:.9rem;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:filter .15s;}
+.container button:active{filter:brightness(.94);}
+.btn-green{background:var(--grad);box-shadow:0 4px 14px rgba(14,165,160,.25);}
+.btn-gray{background:var(--gray-100)!important;color:var(--text)!important;border:1.5px solid var(--border)!important;}
+.btn-blue{background:var(--teal-dark);}
+.btn-chatgpt{background:#10a37f;}
+.btn-gemini-open{background:linear-gradient(90deg,#4285f4,#34a853);}
+.btn-purple{background:linear-gradient(135deg,#f59e0b,#d97706)!important;}
+.btn-red{background:#dc2626;}
+.ai-note{font-size:.76rem;color:var(--text-light);margin-top:10px;text-align:center;}
 
-#limitBar .limit-row{display:flex;justify-content:center;align-items:center;gap:8px;}
-#limitText{font-size:16px;font-weight:600;color:#1a1a1a;}
-#limitCount{font-weight:bold;font-size:24px;color:#1a1a1a;}
-#limitCount.pro-badge{color:#1a1a1a;font-size:26px;}
-#limitSub{font-size:13px;color:#333;margin-top:5px;}
-#limitCount.habis{color:#e03131;}
-#limitCount.pro-badge{color:#6741d9;}
+/* ══ NOTIF ══ */
+#notif{display:none;background:rgba(14,165,160,.1);color:var(--teal-dark);border:1.5px solid rgba(14,165,160,.3);padding:9px;margin-top:8px;border-radius:8px;text-align:center;font-size:.82rem;font-weight:600;}
+body.dark #notif{color:#5eead4;}
 
-/* ===== PRO BADGE ===== */
-.badge-pro{display:inline-block;background:linear-gradient(90deg,#6741d9,#9775fa);color:white;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;}
-.badge-free{display:inline-block;background:#868e96;color:white;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+/* ══ UPLOAD REF ══ */
+#previewRefBox{display:none;margin-top:10px;background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.4);border-radius:10px;padding:12px;text-align:center;font-size:.84rem;}
+#previewRefBox img{width:160px;height:160px;object-fit:cover;border-radius:10px;display:block;margin:10px auto 0;}
+#previewRefBox p{margin:8px 0 0;font-size:.8rem;color:#b45309;}
 
-/* ===== HISTORI ===== */
-#historiBox{display:none;margin-top:20px;border-top:2px dashed #dee2e6;padding-top:16px;}
-#historiBox h4{margin:0 0 10px;font-size:15px;color:#495057;}
-.histori-item{background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.2s;}
-.histori-item:hover{background:#e9ecef;border-color:#adb5bd;}
-.histori-item .h-meta{font-size:11px;color:#868e96;margin-bottom:4px;}
-.histori-item .h-preview{font-size:13px;color:#343a40;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* ══ LIMIT BAR ══ */
+#limitBar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:12px;padding:12px 14px;margin-bottom:6px;text-align:center;}
+#limitBar .limit-row{display:flex;justify-content:center;align-items:baseline;gap:8px;}
+#limitText{font-size:.85rem;font-weight:600;color:var(--text);}
+#limitCount{font-weight:800;font-size:1.3rem;color:var(--teal-dark);}
+body.dark #limitCount{color:#5eead4;}
+#limitCount.habis{color:#dc2626;}
+#limitCount.pro-badge{color:#d97706;}
+#limitSub{font-size:.75rem;color:var(--text-light);margin-top:4px;}
+#badgeUpgrade{background:linear-gradient(135deg,#f59e0b,#d97706)!important;border:none!important;color:#fff!important;}
 
-/* ===== MODAL AKTIVASI ===== */
-#modalOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;justify-content:center;align-items:center;}
+/* ══ HISTORI ══ */
+.histori-item{background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.2s;}
+.histori-item:hover{border-color:var(--blue);}
+.histori-item .h-meta{font-size:.72rem;color:var(--text-light);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.histori-item .h-preview{font-size:.84rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ══ MODAL AKTIVASI ══ */
+#modalOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10000;justify-content:center;align-items:center;}
 #modalOverlay.show{display:flex;}
-#modalBox{background:#fff;border-radius:16px;padding:24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);}
-#modalBox h3{margin:0 0 6px;color:#6741d9;}
-#modalBox p{font-size:13px;color:#555;margin:0 0 16px;}
-#inputKodePro{text-align:center;font-size:16px;letter-spacing:2px;font-weight:bold;text-transform:uppercase;}
-#modalError{display:none;color:#e03131;font-size:13px;margin-top:8px;}
-#modalSuccess{display:none;color:#2f9e44;font-size:13px;margin-top:8px;font-weight:bold;}
-.spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
+#modalBox{background:var(--card-bg);color:var(--text);border-radius:16px;padding:24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+#modalBox h3{margin:6px 0;color:#d97706;font-size:1.05rem;}
+#modalBox p{font-size:.82rem;color:var(--text-light);margin:0 0 14px;}
+#modalBox button{width:100%;padding:11px;border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+#btnAktivasi{background:linear-gradient(135deg,#f59e0b,#d97706)!important;}
+#inputKodePro{text-align:center;font-size:1rem;letter-spacing:2px;font-weight:700;text-transform:uppercase;font-family:monospace;}
+#modalError{display:none;color:#dc2626;font-size:.8rem;margin-top:8px;}
+#modalSuccess{display:none;color:#059669;font-size:.8rem;margin-top:8px;font-weight:700;}
+.spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ===== PRO BANNER ===== */
-#proBanner{display:none;margin-top:14px;background:linear-gradient(135deg,#1a1a2e,#2d1b69);border:2px solid #f59f00;border-radius:12px;padding:18px;cursor:pointer;text-align:center;box-shadow:0 4px 20px rgba(245,159,0,0.2);}
-#proBanner:hover{box-shadow:0 6px 24px rgba(245,159,0,0.35);}
-#proBanner .pro-title{font-size:17px;font-weight:bold;color:#ffd43b;}
-#proBanner .pro-sub{font-size:12px;color:rgba(255,255,255,0.65);margin-top:5px;}
+/* ══ PRO BANNER ══ */
+#proBanner{display:none;margin-top:14px;background:linear-gradient(135deg,#1a1a2e,#2d1b69);border:2px solid #f59e0b;border-radius:12px;padding:18px;cursor:pointer;text-align:center;}
+#proBanner .pro-title{font-size:1rem;font-weight:700;color:#fcd34d;}
+#proBanner .pro-sub{font-size:.75rem;color:rgba(255,255,255,.65);margin-top:5px;}
 
-/* ===== CONTOH GRID ===== */
-.contoh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+/* ══ CONTOH ══ */
+.contoh-title{display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700;font-size:.88rem;margin:22px 0 10px;color:var(--text);}
+.contoh-title .ic{color:var(--blue);}
+.contoh-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .contoh-item{text-align:center;}
-.contoh-item img{width:100%;border-radius:10px;border:2px solid #ddd;}
-.contoh-label{font-size:14px;font-weight:bold;margin-top:6px;background:#fff176;display:inline-block;padding:2px 10px;border-radius:6px;color:#333;}
+.contoh-item img{width:100%;border-radius:10px;border:1px solid var(--border);display:block;}
+.contoh-label{font-size:.76rem;font-weight:700;margin-top:6px;display:inline-block;padding:2px 10px;border-radius:99px;background:rgba(14,165,160,.1);color:var(--teal-dark);}
+body.dark .contoh-label{color:#5eead4;}
 
-/* ===== FOOTER ===== */
-.footer{margin-top:20px;background:linear-gradient(90deg,#6cc6a6,#4dabf7);padding:20px 18px;text-align:center;color:#fff;line-height:1.9;}
-.footer .badge-ft{font-size:11px;background:rgba(255,255,255,0.2);display:inline-block;padding:3px 10px;border-radius:10px;margin-bottom:8px;}
-.footer .credit{font-size:14px;font-weight:bold;}
-.footer .credit a{color:#fff176;text-decoration:underline;font-weight:bold;}
-.footer .visitor{font-size:13px;margin-top:4px;opacity:.9;}
-.footer .visitor a{color:white;text-decoration:none;}
+/* ══ FOOTER ══ */
+footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 12px;margin-top:auto;}
+footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
+footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.85);}
+footer .footer-sub a{color:#fff;font-weight:700;}
+footer .visitor{font-size:.7rem;margin-top:4px;opacity:.85;}
+footer .visitor a{color:#fff;text-decoration:none;}
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+<script src="/bgy-info.js"></script>
 </head>
 <body>
+<!-- Ikon Lucide (lucide.dev, ISC) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs><symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol><symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></symbol><symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2" /><path d="M12 18h.01" /></symbol><symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol><symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></symbol><symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol><symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" /></symbol><symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></symbol><symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></symbol><symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /><path d="m14 7 3 3" /><path d="M5 6v4" /><path d="M19 14v4" /><path d="M10 2v2" /><path d="M7 8H3" /><path d="M21 16h-4" /><path d="M11 3H9" /></symbol><symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></symbol><symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></symbol><symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></symbol><symbol id="i-gem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 3 8 9l4 13 4-13-2.5-6" /><path d="M17 3a2 2 0 0 1 1.6.8l3 4a2 2 0 0 1 .013 2.382l-7.99 10.986a2 2 0 0 1-3.247 0l-7.99-10.986A2 2 0 0 1 2.4 7.8l2.998-3.997A2 2 0 0 1 7 3z" /><path d="M2 9h20" /></symbol><symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></symbol><symbol id="i-paperclip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551" /></symbol><symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol><symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /></symbol><symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" /><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" /><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" /></symbol><symbol id="i-bot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></symbol><symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" /><path d="M20 2v4" /><path d="M22 4h-4" /><circle cx="4" cy="20" r="2" /></symbol></defs></svg>
 
 <!-- LOADING -->
 <div id="loadingScreen">
@@ -154,55 +193,58 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
 
 <!-- INSTALL POPUP -->
 <div id="installPopup">
-  <span style="font-weight:bold;">Install aplikasi Bantu Guru Yuk</span>
-  <button onclick="installApp()" style="margin-left:10px;background:white;color:#2f9e44;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;width:auto;">Install</button>
-  <button onclick="closeInstall()" style="margin-left:6px;background:rgba(255,255,255,0.2);color:white;border:none;padding:6px 10px;border-radius:6px;font-weight:bold;cursor:pointer;width:auto;">✕</button>
+  <span><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install aplikasi Bantu Guru Yuk</span>
+  <button class="btn-install" onclick="installApp()">Install</button>
+  <button class="btn-install-close" onclick="closeInstall()" aria-label="Tutup"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
 </div>
 
 <!-- MODAL AKTIVASI PRO -->
 <div id="modalOverlay" onclick="tutupModal(event)">
   <div id="modalBox">
-    <div style="font-size:32px;">💎</div>
+    <div style="color:#d97706;"><svg class="ic" style="width:36px;height:36px" aria-hidden="true"><use href="#i-gem"/></svg></div>
     <h3>Aktivasi BGY Pro</h3>
     <p>Masukkan kode aktivasi yang kamu dapatkan dari Pak Choyy</p>
     <input type="text" id="inputKodePro" placeholder="BGY-XXXX-0000" maxlength="20">
     <div id="modalError"></div>
     <div id="modalSuccess"></div>
-    <button id="btnAktivasi" onclick="aktivasiPro()" style="background:linear-gradient(90deg,#6741d9,#9775fa);margin-top:14px;">✨ Aktivasi Sekarang</button>
-    <button onclick="tutupModal()" style="background:#dee2e6;color:#495057;margin-top:8px;font-size:13px;">Tutup</button>
+    <button id="btnAktivasi" onclick="aktivasiPro()" style="margin-top:14px;">Aktivasi Sekarang</button>
+    <button onclick="tutupModal()" style="background:var(--gray-100);color:var(--text);margin-top:8px;font-size:13px;">Tutup</button>
     <div style="margin-top:12px;font-size:12px;color:#aaa;">
       Belum punya kode? Hubungi via
-      <a href="https://wa.me/6289530713597" target="_blank" style="color:#6741d9;font-weight:bold;">WhatsApp</a> atau
-      <a href="https://tiktok.com/@pak.choyy" target="_blank" style="color:#6741d9;font-weight:bold;">TikTok</a>
+      <a href="https://wa.me/6289530713597" target="_blank" style="color:#d97706;font-weight:bold;">WhatsApp</a> atau
+      <a href="https://tiktok.com/@pak.choyy" target="_blank" style="color:#d97706;font-weight:bold;">TikTok</a>
     </div>
   </div>
 </div>
 
 <!-- HEADER -->
-<div class="header">
-  <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;">
-    <img src="/lkpd/guru-cibisd2.png" style="width:54px;height:54px;object-fit:contain;" alt="Logo">
-    <div>
-      <div style="font-size:22px;font-weight:bold;letter-spacing:1px;line-height:1.2;">
-        BANTU GURU YUK
-        <span id="headerBadge" class="badge-free">FREE</span>
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="/lkpd/guru-cibisd2.png" alt="Logo">
+      <h1>Bantu Guru Yuk | Prompt LKPD <span id="headerBadge" class="badge-free">FREE</span></h1>
+    </div>
+    <div class="header-right">
+      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
+      <button class="hdr-btn" onclick="toggleMenu()" title="Menu" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item active" id="mi-home" onclick="showSection('home');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-house"/></svg> Home</button>
+        <button class="dropdown-item" id="mi-histori" onclick="showSection('histori');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg> Histori</button>
+        <button class="dropdown-item" id="mi-tentang" onclick="showSection('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
+        <div class="dropdown-divider"></div>
+        <div data-bgy-menu></div>
       </div>
-      <div style="font-size:13px;font-weight:600;opacity:.95;margin-top:2px;">Prompt Generator Media Ajar</div>
-      <div style="font-size:11px;opacity:.8;margin-top:2px;">v26.5.0</div>
     </div>
   </div>
-</div>
+</header>
+<div id="menuOverlay" onclick="closeMenu()"></div>
 
-<!-- NAVBAR -->
-<div class="navbar">
-  <a onclick="showSection('home',event)" class="active">Home</a>
-  <a onclick="showSection('histori',event)">Histori</a>
-  <a onclick="showSection('tentang',event)">Tentang</a>
-  <a onclick="showSection('kontak',event)">Kontak</a>
-</div>
+<main>
 
 <!-- ===== HOME ===== -->
 <div id="home" class="container section active">
+<div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg> Buat Prompt Media Ajar</div>
+<div class="hint-bar"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> <span>Isi form</span> → <span>Generate Prompt</span> → <span>Salin</span> → <span>Paste ke ChatGPT / Gemini</span></div>
 <div id="limitBar">
 
   <div class="limit-row">
@@ -228,7 +270,7 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
     padding:4px 14px;
     border-radius:20px;
     text-decoration:none;">
-    💎 Upgrade ke Pro →
+    Upgrade ke Pro →
     </a>
 
   </div>
@@ -299,41 +341,37 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;col
   <input type="file" id="uploadRef" accept="image/*" style="display:none;">
 
   <div id="previewRefBox">
-    <b>📎 Gambar Referensi Kamu:</b>
+    <b><svg class="ic" aria-hidden="true"><use href="#i-paperclip"/></svg> Gambar Referensi Kamu:</b>
     <img id="previewRefImg" src="" alt="Referensi">
-    <p>⚠️ Jangan lupa <b>lampirkan gambar ini</b> ke ChatGPT / Gemini setelah paste prompt!</p>
+    <p><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg> Jangan lupa <b>lampirkan gambar ini</b> ke ChatGPT / Gemini setelah paste prompt!</p>
   </div>
 
   <!-- TOMBOL AKSI -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
-    <button class="btn-green" onclick="generatePrompt()" id="btnGenerate">⚡ Generate Prompt</button>
-    <button class="btn-gray" onclick="resetForm()">🔄 Reset Form</button>
+    <button class="btn-green" onclick="generatePrompt()" id="btnGenerate"><svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Prompt</button>
+    <button class="btn-gray" onclick="resetForm()"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Reset Form</button>
   </div>
 
   <textarea id="hasil" placeholder="Prompt akan muncul di sini..." style="margin-top:12px;"></textarea>
-  <button class="btn-blue" onclick="copyPrompt()">📋 Salin Prompt</button>
-  <div id="notif">✅ Prompt berhasil disalin!</div>
+  <button class="btn-blue" onclick="copyPrompt()"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin Prompt</button>
+  <div id="notif">Prompt berhasil disalin!</div>
 
-  <div style="font-size:13px;color:#0b7285;margin-top:8px;text-align:center;font-weight:bold;">
+  <div class="ai-note">
     Disarankan menggunakan ChatGPT untuk hasil paling akurat
   </div>
 
-  <button class="btn-chatgpt" onclick="openGPT()">🤖 Open ChatGPT</button>
-  <button class="btn-gemini-open" onclick="openGemini()">✨ Open Gemini</button>
-<button class="btn-purple" 
-onclick="gtag('event','klik_pro'); bukaModal();" 
-style="margin-top:10px; background:linear-gradient(90deg,#6741d9,#9775fa);">
-💎 Aktivasi BGY Pro
-</button>
+  <button class="btn-chatgpt" onclick="openGPT()">Buka ChatGPT</button>
+  <button class="btn-gemini-open" onclick="openGemini()">Buka Gemini</button>
+<button class="btn-purple" onclick="gtag('event','klik_pro'); bukaModal();"><svg class="ic" aria-hidden="true"><use href="#i-gem"/></svg> Aktivasi BGY Pro</button>
 
   <!-- CONTOH -->
-  <div style="margin-top:24px;">
-    <div style="text-align:center;font-weight:bold;font-size:15px;margin-bottom:10px;color:#444;">📸 Contoh Hasil Generate Prompt</div>
+  <div>
+    <div class="contoh-title"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg> Contoh Hasil Generate Prompt</div>
     <div class="contoh-grid">
-      <div class="contoh-item"><img src="/lkpd/contoh-lkpd.jpg" alt="LKPD"><div class="contoh-label">📄 LKPD</div></div>
-      <div class="contoh-item"><img src="/lkpd/contoh-poster.jpg" alt="Poster"><div class="contoh-label">🖼️ Poster</div></div>
-      <div class="contoh-item"><img src="/lkpd/contoh-infografis.jpg" alt="Infografis"><div class="contoh-label">📊 Infografis</div></div>
-      <div class="contoh-item"><img src="/lkpd/contoh-mewarnai.jpg" alt="Mewarnai"><div class="contoh-label">🎨 Mewarnai</div></div>
+      <div class="contoh-item"><img src="/lkpd/contoh-lkpd.jpg" alt="LKPD"><div class="contoh-label">LKPD</div></div>
+      <div class="contoh-item"><img src="/lkpd/contoh-poster.jpg" alt="Poster"><div class="contoh-label">Poster</div></div>
+      <div class="contoh-item"><img src="/lkpd/contoh-infografis.jpg" alt="Infografis"><div class="contoh-label">Infografis</div></div>
+      <div class="contoh-item"><img src="/lkpd/contoh-mewarnai.jpg" alt="Mewarnai"><div class="contoh-label">Mewarnai</div></div>
     </div>
   </div>
 
@@ -342,17 +380,17 @@ style="margin-top:10px; background:linear-gradient(90deg,#6741d9,#9775fa);">
 <!-- ===== HISTORI ===== -->
 <div id="histori" class="container section">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-    <h3 style="margin:0;">📋 Histori Prompt</h3>
-    <button onclick="hapusHistori()" style="width:auto;padding:6px 12px;background:#e03131;font-size:12px;margin:0;">🗑️ Hapus Semua</button>
+    <div class="card-title" style="margin:0;border:none;padding:0;"><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg> Histori Prompt</div>
+    <button onclick="hapusHistori()" style="width:auto;padding:6px 12px;background:#fee2e2;color:#dc2626;font-size:12px;margin:0;"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg> Hapus Semua</button>
   </div>
   <div id="historiList">
-    <div style="text-align:center;color:#aaa;padding:30px 0;font-size:14px;">Belum ada histori prompt.</div>
+    <div style="text-align:center;color:var(--text-light);padding:30px 0;font-size:14px;">Belum ada histori prompt.</div>
   </div>
 </div>
 
 <!-- ===== TENTANG ===== -->
 <div id="tentang" class="container section">
-  <h3>Tentang Aplikasi</h3>
+  <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Aplikasi</div>
   <p><b>Bantu Guru Yuk v26.5.0</b> adalah generator media ajar yang membantu guru membuat bahan pembelajaran secara cepat, rapi, dan siap cetak.</p>
   <p>Dirancang khusus untuk <b>Kurikulum Merdeka</b>, tersedia untuk jenjang PAUD, TK, SD, SMP, dan SMA.</p>
   <h4>Fitur Free:</h4>
@@ -362,43 +400,37 @@ style="margin-top:10px; background:linear-gradient(90deg,#6741d9,#9775fa);">
     <li>Histori 5 prompt terakhir</li>
     <li>Reset form</li>
   </ul>
-  <h4>Fitur Pro 💎:</h4>
+  <h4>Fitur Pro:</h4>
   <ul>
     <li>Generate prompt <b>unlimited</b></li>
     <li>Histori <b>50 prompt</b> terakhir</li>
     <li>Badge Pro eksklusif</li>
     <li>Prioritas fitur baru</li>
   </ul>
-<button class="btn-purple" onclick="bukaModal()" style="background:linear-gradient(90deg,#6741d9,#9775fa);">
-  💎 Aktivasi BGY Pro
-</button>
+<button class="btn-purple" onclick="bukaModal()"><svg class="ic" aria-hidden="true"><use href="#i-gem"/></svg> Aktivasi BGY Pro</button>
   <h4 style="margin-top:20px;">Versi:</h4><p>v26.5.0</p>
   <h4>Pengembang:</h4><p>Pak Choyy</p>
-</div>
-
-<!-- ===== KONTAK ===== -->
-<div id="kontak" class="container section">
-  <h3>Kontak</h3>
+  <div class="card-title" style="margin-top:22px;"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Kontak</div>
   <p>Untuk info lebih lanjut, bantuan penggunaan, kritik, saran, atau pembelian kode Pro:</p>
-  <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;">WhatsApp</button>
-  <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;">TikTok</button>
+  <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp</button>
+  <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> TikTok</button>
   <p style="margin-top:15px;font-size:13px;color:#555;">Masukan dan saran Anda sangat membantu pengembangan aplikasi ini.</p>
 </div>
 
+
+</main>
+
 <!-- ===== FOOTER ===== -->
 <div data-bgy-info></div>
-<div class="footer">
-  <div class="badge-ft">✨ Versi Free & Pro tersedia</div>
-  <div class="credit">
-    © 2026 Bantu Guru Yuk by
-    <a href="https://tiktok.com/@pak.choyy" target="_blank">Pak.Choyy</a>
-  </div>
+<footer>
+  <div class="footer-title">Prompt LKPD</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://tiktok.com/@pak.choyy" target="_blank">pak.choyy</a> • v26.5.0</div>
   <div class="visitor">
     <a href="https://www.counters-free.net/">Total Pengunjung</a>
     <script type="text/javascript" src="https://www.freevisitorcounters.com/auth.php?id=5670b1ee46ce1ccae5c30b7f86650bf5ced3f40e"></script>
     <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1509735/t/9"></script>
   </div>
-</div>
+</footer>
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
@@ -461,10 +493,10 @@ function updateUI(){
   btn.style.display = "none";
 });
     // Limit bar - sama warna tapi teks unlimited
-    bar.style.background = "linear-gradient(90deg,rgba(108,198,166,0.5),rgba(77,171,247,0.5))";
+    bar.style.background = "";
     countEl.textContent  = "∞ Unlimited";
     countEl.className    = "pro-badge";
-    sub.innerHTML        = '<span style="color:#1a1a1a;">💎 BGY Pro aktif</span>';
+    sub.innerHTML        = 'BGY Pro aktif';
     // Sembunyikan badge upgrade
     const bu = document.getElementById("badgeUpgrade");
     if(bu) bu.style.display = "none";
@@ -473,7 +505,7 @@ function updateUI(){
     const sisa = getSisaGenerate();
     countEl.textContent = sisa + " / " + FREE_LIMIT;
     countEl.className   = sisa === 0 ? "habis" : "";
-    sub.innerHTML       = 'Reset tiap tengah malam<br><a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" id="badgeUpgrade" style="display:inline-block;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:4px 14px;border-radius:20px;text-decoration:none;letter-spacing:.3px;">💎 Upgrade ke Pro →</a>';
+    sub.innerHTML       = 'Reset tiap tengah malam<br><a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" id="badgeUpgrade" style="display:inline-block;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:4px 14px;border-radius:20px;text-decoration:none;letter-spacing:.3px;">Upgrade ke Pro →</a>';
   }
 
   // Render histori
@@ -527,14 +559,14 @@ function renderHistori(){
   const list = getHistori();
   const el   = document.getElementById("historiList");
   if(!list.length){
-    el.innerHTML = '<div style="text-align:center;color:#aaa;padding:30px 0;font-size:14px;">Belum ada histori prompt.</div>';
+    el.innerHTML = '<div style="text-align:center;color:var(--text-light);padding:30px 0;font-size:14px;">Belum ada histori prompt.</div>';
     return;
   }
   const maxH = isPro() ? PRO_HISTORI : FREE_HISTORI;
   el.innerHTML = list.slice(0, maxH).map((h, i) => {
     const tgl = new Date(h.ts).toLocaleString("id-ID", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
     return `<div class="histori-item" onclick="muatHistori(${i})">
-      <div class="h-meta">📅 ${tgl} &nbsp;|&nbsp; ${h.kelas} &nbsp;|&nbsp; ${h.media}</div>
+      <div class="h-meta"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg> ${tgl} &nbsp;|&nbsp; ${h.kelas} &nbsp;|&nbsp; ${h.media}</div>
       <div class="h-preview">${h.materi || "(materi kosong)"}</div>
     </div>`;
   }).join("");
@@ -544,9 +576,7 @@ function muatHistori(idx){
   const list = getHistori();
   if(!list[idx]) return;
   hasil.value = list[idx].prompt;
-  showSection("home", {target: document.querySelector(".navbar a")});
-  // aktifkan tab home
-  document.querySelectorAll(".navbar a").forEach((a,i)=>{ if(i===0) a.classList.add("active"); else a.classList.remove("active"); });
+  showSection("home");
   hasil.scrollIntoView({behavior:"smooth", block:"center"});
 }
 
@@ -616,7 +646,7 @@ async function aktivasiPro(){
   }
 
   btn.disabled  = false;
-  btn.innerHTML = "✨ Aktivasi Sekarang";
+  btn.innerHTML = "Aktivasi Sekarang";
 }
 
 function logoutPro(){
@@ -689,7 +719,7 @@ document.getElementById("uploadRef").addEventListener("change", function(){
   const old  = document.getElementById("gayaRef"); if(old) old.remove();
   const opt  = document.createElement("option");
   opt.value  = "Referensi gambar: " + file.name;
-  opt.text   = "📎 Referensi: " + file.name;
+  opt.text   = "Referensi: " + file.name;
   opt.id     = "gayaRef";
   gaya.appendChild(opt); gaya.value = opt.value;
   const reader = new FileReader();
@@ -804,12 +834,34 @@ function openGemini(){
   window.open("https://gemini.google.com");
 }
 
-function showSection(id, e){
+function showSection(id){
   document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
-  document.querySelectorAll(".navbar a").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll("#dropdownMenu .dropdown-item[id^='mi-']").forEach(x=>x.classList.toggle("active", x.id==="mi-"+id));
   document.getElementById(id).classList.add("active");
-  if(e && e.target) e.target.classList.add("active");
   if(id==="histori") renderHistori();
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+// MENU & DARK MODE (sama dengan halaman BGY lain)
+// ============================================================
+function toggleMenu(){
+  const open=!document.getElementById("dropdownMenu").classList.contains("open");
+  document.getElementById("dropdownMenu").classList.toggle("open",open);
+  document.getElementById("menuOverlay").classList.toggle("open",open);
+}
+function closeMenu(){
+  document.getElementById("dropdownMenu").classList.remove("open");
+  document.getElementById("menuOverlay").classList.remove("open");
+}
+document.addEventListener("click",function(e){
+  if(e.target.closest&&e.target.closest("#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button"))closeMenu();
+});
+function toggleDark(){
+  document.body.classList.toggle("dark");
+  const d=document.body.classList.contains("dark");
+  document.getElementById("darkIcon").setAttribute("href",d?"#i-sun":"#i-moon");
+  localStorage.setItem("theme",d?"dark":"light");
 }
 
 // ============================================================
@@ -819,14 +871,14 @@ window.addEventListener("beforeinstallprompt", e=>{
   const closedAt = localStorage.getItem("installClosedAt");
   if(closedAt && (Date.now()-parseInt(closedAt)) < 86400000) return;
   e.preventDefault(); deferredPrompt=e;
-  installPopup.style.top="0";
+  setTimeout(()=>installPopup.classList.add("show"),2000);
 });
 function installApp(){
   if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(()=>deferredPrompt=null); }
   closeInstall();
 }
 function closeInstall(){
-  installPopup.style.top="-160px";
+  installPopup.classList.remove("show");
   localStorage.setItem("installClosedAt", Date.now().toString());
 }
 
@@ -839,6 +891,7 @@ document.addEventListener("DOMContentLoaded", function(){
       .then(r=>console.log("SW registered:",r.scope))
       .catch(e=>console.error("SW error:",e));
   }
+  if(localStorage.getItem("theme")==="dark"){document.body.classList.add("dark");document.getElementById("darkIcon").setAttribute("href","#i-sun");}
   autoMapel();
   autoStyle();
   updateUI();
@@ -862,7 +915,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
       const okEl = document.getElementById("modalSuccess");
       if(okEl){
-        okEl.textContent = "✅ Kode berhasil dimuat, silakan klik Aktivasi!";
+        okEl.textContent = "Kode berhasil dimuat, silakan klik Aktivasi.";
         okEl.style.display = "block";
       }
     }
@@ -872,6 +925,5 @@ document.addEventListener("DOMContentLoaded", function(){
   } catch(e) {}
 })();
 </script>
-<script src="/bgy-info.js" defer></script>
 </body>
 </html>
