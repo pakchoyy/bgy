@@ -128,7 +128,12 @@ body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
 .hdr-btn:hover{background:rgba(255,255,255,.22);}
 .hdr-menu-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;position:relative;}
 .hdr-menu-badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:99px;padding:0 4px;font-size:.55rem;font-weight:800;line-height:14px;min-width:14px;text-align:center;display:none;}
-.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:180px;overflow:hidden;display:none;z-index:400;}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block;}
+.card-title .ic,.dropdown-item .ic{color:var(--blue);width:18px;height:18px;}
+.hdr-btn .ic,.hdr-menu-btn .ic{width:18px;height:18px;}
+.ph-icon .ic{width:44px;height:44px;}
+.go-icon .ic{width:34px;height:34px;color:#fff;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);min-width:180px;width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
 .dropdown-menu.open{display:block;}
 .dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;}
 .dropdown-item:hover{background:var(--gray-100);}
@@ -250,6 +255,8 @@ footer a{color:inherit;text-decoration:underline;}
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 </head>
 <body>
+<!-- Ikon Lucide (lucide.dev, ISC) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs><symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol><symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M12 7v5l4 2" /></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></symbol><symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2" /><path d="M12 18h.01" /></symbol><symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol><symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></symbol><symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol><symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" /></symbol><symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></symbol><symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></symbol><symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M12 11h4" /><path d="M12 16h4" /><path d="M8 11h.01" /><path d="M8 16h.01" /></symbol><symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72" /><path d="m14 7 3 3" /><path d="M5 6v4" /><path d="M19 14v4" /><path d="M10 2v2" /><path d="M7 8H3" /><path d="M21 16h-4" /><path d="M11 3H9" /></symbol><symbol id="i-unlock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 9.9-1" /></symbol><symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" /></symbol><symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></symbol><symbol id="i-soal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.364 13.634a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 0 0-3.004-3.004z" /><path d="M14.487 7.858A1 1 0 0 1 14 7V2" /><path d="M20 19.645V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l2.516 2.516" /><path d="M8 18h1" /></symbol><symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /></symbol><symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></symbol><symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /><path d="m21.854 2.147-10.94 10.939" /></symbol><symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></symbol><symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></symbol></defs></svg>
 
 <!-- LOADING -->
 <div id="loadingScreen">
@@ -266,7 +273,7 @@ footer a{color:inherit;text-decoration:underline;}
     <div class="go-ring go-ring1"></div>
     <div class="go-ring go-ring2"></div>
     <div class="go-ring go-ring3"></div>
-    <div class="go-icon">📝</div>
+    <div class="go-icon"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></div>
   </div>
   <div class="go-title" id="goTitle">Menyusun modul ajar</div>
   <div class="go-sub" id="goSub">Struktur dan kelengkapan diperiksa otomatis.</div>
@@ -299,9 +306,9 @@ footer a{color:inherit;text-decoration:underline;}
 
 <!-- INSTALL POPUP -->
 <div id="installPopup">
-  <span>📲 Install aplikasi Bantu Guru Yuk</span>
+  <span><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install aplikasi Bantu Guru Yuk</span>
   <button class="btn-install" onclick="installApp()">Install</button>
-  <button class="btn-install-close" onclick="closeInstall()">✕</button>
+  <button class="btn-install-close" onclick="closeInstall()" aria-label="Tutup"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
 </div>
 
 <div id="menuOverlay" onclick="closeMenu()"></div>
@@ -316,24 +323,20 @@ footer a{color:inherit;text-decoration:underline;}
       </div>
     </div>
     <div class="header-right">
-      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang">🌙</button>
-      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu">
-        ☰
+      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
+      <button class="hdr-menu-btn" onclick="toggleMenu()" title="Menu" aria-label="Menu">
+        <svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg>
         <span id="menuBadge" class="hdr-menu-badge"></span>
       </button>
       <div class="dropdown-menu" id="dropdownMenu">
-        <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()">🏠 Home</button>
+        <button class="dropdown-item active" id="mi-home" onclick="selectTab('home');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-house"/></svg> Home</button>
         <button class="dropdown-item" id="mi-histori" onclick="selectTab('histori');closeMenu()">
-          🕒 Histori
+          <svg class="ic" aria-hidden="true"><use href="#i-history"/></svg> Histori
           <span id="historiBadge" class="dropdown-badge" style="display:none;"></span>
         </button>
-        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()">ℹ️ Tentang</button>
-        <button class="dropdown-item" id="mi-kontak" onclick="selectTab('kontak');closeMenu()">📬 Kontak</button>
-        <button class="dropdown-item" onclick="installApp();closeMenu()">📲 Install BGY</button>
+        <button class="dropdown-item" id="mi-tentang" onclick="selectTab('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="https://bantuguruyuk.web.id" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-          🌐 BantuGuruYuk
-        </a>
+        <div data-bgy-menu></div>
       </div>
     </div>
   </div>
@@ -343,10 +346,10 @@ footer a{color:inherit;text-decoration:underline;}
 <div id="tab-tentang" style="display:none;">
 <main>
   <div class="card">
-    <div class="card-title">ℹ️ Tentang Aplikasi</div>
+    <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Aplikasi</div>
     <p style="font-size:.82rem;color:var(--text-light);margin-bottom:10px;">Bantu Guru Yuk — Modul Ajar v26.7.0</p>
     <p style="font-size:.85rem;color:var(--text);line-height:1.8;margin-bottom:12px;"><b>Pembuat Modul Ajar dan RPP</b> untuk SD, SMP, SMA, SMK, serta madrasah. Pilih Deep Learning, KBC Madrasah, atau K13/RPP; sistem akan menyesuaikan struktur dokumennya secara otomatis.</p>
-    <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">✨ Fitur</h4>
+    <h4 style="font-size:.82rem;font-weight:700;margin:12px 0 6px;">Fitur</h4>
     <ul style="font-size:.82rem;color:var(--text);line-height:2.2;padding-left:18px;">
       <li>Dua pilihan hasil: prompt untuk AI lain atau modul siap unduh</li>
       <li>Struktur berbeda sesuai jenjang dan kurikulum yang dipilih</li>
@@ -356,6 +359,14 @@ footer a{color:inherit;text-decoration:underline;}
       <li>Menyimpan 20 hasil terakhir</li>
     </ul>
   </div>
+  <div class="card" style="margin-top:16px;">
+    <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Kontak</div>
+    <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau aktivasi Pro:</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp</button>
+      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> TikTok</button>
+    </div>
+  </div>
 </main>
 </div>
 
@@ -364,27 +375,14 @@ footer a{color:inherit;text-decoration:underline;}
 <main>
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-      <div class="card-title" style="margin-bottom:0;border:none;padding:0;">🕒 Histori Prompt</div>
-      <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 11px;font-size:.74rem;font-weight:700;cursor:pointer;">🗑️ Hapus Semua</button>
+      <div class="card-title" style="margin-bottom:0;border:none;padding:0;"><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg> Histori Prompt</div>
+      <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 11px;font-size:.74rem;font-weight:700;cursor:pointer;"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg> Hapus Semua</button>
     </div>
     <div id="historiList"><div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Buat modul atau prompt terlebih dahulu.</div></div>
   </div>
 </main>
 </div>
 
-<!-- TAB KONTAK -->
-<div id="tab-kontak" style="display:none;">
-<main>
-  <div class="card">
-    <div class="card-title">📬 Kontak</div>
-    <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau aktivasi Pro:</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">💬 WhatsApp</button>
-      <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;">🎵 TikTok</button>
-    </div>
-  </div>
-</main>
-</div>
 
 <!-- TAB HOME -->
 <div id="tab-home">
@@ -396,20 +394,20 @@ footer a{color:inherit;text-decoration:underline;}
     <!-- ============ KOLOM KIRI: FORM ============ -->
     <div class="col-left">
       <div class="card">
-        <div class="card-title" id="formTitle">📋 Identitas Modul Ajar</div>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> <span id="formTitle">Identitas Modul Ajar</span></div>
 
         <div class="mode-toggle" aria-label="Mode hasil modul ajar">
-          <label class="mode-chip"><input type="radio" name="outputMode" value="prompt" checked onchange="updateOutputModeUI()"/><span>📝 Buat Prompt</span></label>
-          <label class="mode-chip"><input type="radio" name="outputMode" value="direct" onchange="updateOutputModeUI()"/><span>⚡ Buat Modul Langsung</span></label>
+          <label class="mode-chip"><input type="radio" name="outputMode" value="prompt" checked onchange="updateOutputModeUI()"/><span><svg class="ic" aria-hidden="true"><use href="#i-soal"/></svg> Buat Prompt</span></label>
+          <label class="mode-chip"><input type="radio" name="outputMode" value="direct" onchange="updateOutputModeUI()"/><span><svg class="ic" aria-hidden="true"><use href="#i-zap"/></svg> Buat Modul Langsung</span></label>
         </div>
         <div class="source-note" id="outputModeHelp">Prompt dibuat untuk ditempel ke AI lain.</div>
 
         <div class="form-group">
           <label>Kurikulum / Jenis Perangkat Ajar</label>
           <div role="radiogroup" aria-label="Pilih kurikulum" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
-            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="MERDEKA" checked onchange="toggleKurikulum()"/><span>📘 Deep Learning</span></label>
-            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="KBC" onchange="toggleKurikulum()"/><span>💚 KBC Madrasah</span></label>
-            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="K13" onchange="toggleKurikulum()"/><span>📗 K13 / RPP</span></label>
+            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="MERDEKA" checked onchange="toggleKurikulum()"/><span>Deep Learning</span></label>
+            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="KBC" onchange="toggleKurikulum()"/><span>KBC Madrasah</span></label>
+            <label class="jenjang-chip"><input type="radio" name="kurikulum" value="K13" onchange="toggleKurikulum()"/><span>K13 / RPP</span></label>
           </div>
           <div class="source-note" id="curriculumHelp">Modul Kurikulum Merdeka dengan pendekatan Pembelajaran Mendalam.</div>
         </div>
@@ -436,10 +434,10 @@ footer a{color:inherit;text-decoration:underline;}
         <div class="form-group">
           <label id="jenjangSatuanLabel">Jenjang Sekolah</label>
           <div role="radiogroup" aria-labelledby="jenjangSatuanLabel" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
-            <label class="jenjang-chip" id="jc-sd"><input type="radio" name="jenjang" value="SD" checked onchange="onJenjangChange()"/><span>🏫 SD</span></label>
-            <label class="jenjang-chip" id="jc-smp"><input type="radio" name="jenjang" value="SMP" onchange="onJenjangChange()"/><span>🏫 SMP</span></label>
-            <label class="jenjang-chip" id="jc-sma"><input type="radio" name="jenjang" value="SMA" onchange="onJenjangChange()"/><span>🏫 SMA</span></label>
-            <label class="jenjang-chip" id="jc-smk"><input type="radio" name="jenjang" value="SMK" onchange="onJenjangChange()"/><span>🏫 SMK</span></label>
+            <label class="jenjang-chip" id="jc-sd"><input type="radio" name="jenjang" value="SD" checked onchange="onJenjangChange()"/><span>SD</span></label>
+            <label class="jenjang-chip" id="jc-smp"><input type="radio" name="jenjang" value="SMP" onchange="onJenjangChange()"/><span>SMP</span></label>
+            <label class="jenjang-chip" id="jc-sma"><input type="radio" name="jenjang" value="SMA" onchange="onJenjangChange()"/><span>SMA</span></label>
+            <label class="jenjang-chip" id="jc-smk"><input type="radio" name="jenjang" value="SMK" onchange="onJenjangChange()"/><span>SMK</span></label>
           </div>
         </div>
 
@@ -552,7 +550,7 @@ footer a{color:inherit;text-decoration:underline;}
       <div id="errorBox" class="error-box" role="alert" aria-live="assertive" style="display:none;margin-bottom:8px;"></div>
 
       <button class="btn btn-primary" id="btnGenerate" onclick="generatePrompt()">
-        <span id="btnLabel">✨ Buat Prompt Modul Ajar</span>
+        <svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> <span id="btnLabel">Buat Prompt Modul Ajar</span>
       </button>
       <button class="btn btn-tool" id="btnRestoreDraft" type="button" onclick="restoreGenerationDraft()" style="display:none;width:100%;margin-top:7px;">Pulihkan draf terakhir</button>
       <div id="limitInfo" style="font-size:.75rem;text-align:center;margin-top:5px;color:#64748b;min-height:16px;"></div>
@@ -562,7 +560,7 @@ footer a{color:inherit;text-decoration:underline;}
       <div id="aktivasiBox" style="margin-top:12px;border:2px solid #f59e0b;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(245,158,11,.15);">
         <div style="background:linear-gradient(135deg,#f59e0b,#d97706);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
           <div style="font-size:.8rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;">
-            🔓 <span>Aktivasi Pro</span>
+            <svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> <span>Aktivasi Pro</span>
             <span style="background:rgba(255,255,255,.25);font-size:.6rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
           </div>
           <a href="https://bantuguruyuk.web.id/aktvs-ma.html" target="_blank"
@@ -573,7 +571,7 @@ footer a{color:inherit;text-decoration:underline;}
         <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(14,165,160,.04));">
           <!-- MODE 1: Input kode -->
           <div id="modeKode" style="display:none;">
-            <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;font-weight:600;">✉️ Masukkan email + kode aktivasi kamu:</div>
+            <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;font-weight:600;"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Masukkan email + kode aktivasi kamu:</div>
             <div style="display:flex;flex-direction:column;gap:7px;">
               <input type="email" id="inputEmailKode" placeholder="Email pembelian..."
                 style="width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;transition:border-color .2s;"
@@ -584,7 +582,7 @@ footer a{color:inherit;text-decoration:underline;}
                   onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='var(--border)'"/>
                 <button onclick="verifikasiKode()"
                   style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:9px;padding:8px 15px;font-size:.82rem;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(245,158,11,.35);">
-                  🔑 Aktifkan
+                  <svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Aktifkan
                 </button>
               </div>
             </div>
@@ -617,10 +615,10 @@ footer a{color:inherit;text-decoration:underline;}
     <!-- ============ KOLOM KANAN: PROMPT OUTPUT ============ -->
     <div class="col-right">
       <div class="card" id="hasilCard">
-        <div class="card-title" id="outputTitle">📄 Prompt Siap Pakai</div>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> <span id="outputTitle">Prompt Siap Pakai</span></div>
 
         <div class="prompt-placeholder" id="promptPlaceholder">
-          <div class="ph-icon">📝</div>
+          <div class="ph-icon"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></div>
           <p id="outputPlaceholderText">Isi form di kiri lalu pilih<br/><b>Buat Prompt Modul Ajar</b><br/><span style="font-size:.74rem;opacity:.7;">Prompt siap ditempel ke AI lain</span></p>
         </div>
 
@@ -631,8 +629,8 @@ footer a{color:inherit;text-decoration:underline;}
           </div>
           <div class="prompt-result" id="hasilPrompt"></div>
           <div id="copyOutputWrap" style="margin-top:10px;display:flex;flex-direction:column;gap:7px;">
-            <button class="btn btn-copy" id="btnCopyOutput" onclick="copyPrompt()">📋 Salin Prompt</button>
-            <div class="notif-box" id="notifCopy">✅ Prompt berhasil disalin!</div>
+            <button class="btn btn-copy" id="btnCopyOutput" onclick="copyPrompt()"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> <span class="btn-text">Salin Prompt</span></button>
+            <div class="notif-box" id="notifCopy">Prompt berhasil disalin!</div>
           </div>
           <div class="export-direct-bar" id="directExportBar">
             <button class="btn btn-word" type="button" onclick="downloadModulWord()">Unduh Word</button>
@@ -640,12 +638,12 @@ footer a{color:inherit;text-decoration:underline;}
             <button class="btn btn-tool" type="button" id="btnRetryGenerate" onclick="retryLastGeneration()">Buat ulang</button>
           </div>
           <div id="aiForwardBox" style="margin-top:10px;background:rgba(14,165,160,.07);border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:10px 12px;">
-            <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;">🚀 Kirim ke Claude — Prompt otomatis tersalin, langsung paste!</div>
+            <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg> Kirim ke Claude — Prompt otomatis tersalin, langsung paste!</div>
             <div style="display:flex;gap:8px;">
-              <button class="btn btn-claude" style="width:100%;" onclick="openAI('claude')">🧡 Buka Claude</button>
+              <button class="btn btn-claude" style="width:100%;" onclick="openAI('claude')">Buka Claude</button>
             </div>
             <div style="font-size:.68rem;color:var(--text-light);margin-top:6px;">Setelah terbuka, tekan <b>Ctrl+V</b> (atau tahan layar → Tempel) lalu kirim.</div>
-            <div style="font-size:.68rem;color:#b45309;margin-top:5px;font-weight:600;">⚠️ Jika terkena limit Claude, silahkan coba ganti akun Claude.</div>
+            <div style="font-size:.68rem;color:#b45309;margin-top:5px;font-weight:600;"><svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg> Jika terkena limit Claude, silahkan coba ganti akun Claude.</div>
           </div>
           <div id="generateFeedback" style="font-size:.75rem;text-align:center;margin-top:6px;min-height:14px;color:#15803d;"></div>
         </div>
@@ -666,7 +664,7 @@ footer a{color:inherit;text-decoration:underline;}
 <!-- UPGRADE POPUP -->
 <div id="upgradePopup" role="dialog" aria-modal="true" aria-labelledby="upgradeTitle" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:center;justify-content:center;">
   <div style="background:var(--card-bg);border-radius:18px;padding:30px 24px;max-width:340px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3);position:relative;">
-    <div style="font-size:2.2rem;margin-bottom:10px;">🔒</div>
+    <div style="margin-bottom:10px;color:#d97706;"><svg class="ic" style="width:40px;height:40px" aria-hidden="true"><use href="#i-lock"/></svg></div>
     <div id="upgradeTitle" style="font-weight:800;font-size:1.05rem;margin-bottom:8px;color:var(--text)">Akses Pro</div>
     <div style="font-size:.85rem;color:var(--text-light);margin-bottom:22px;line-height:1.6">
       Jatah gratis harian sudah digunakan atau tindakan ini memerlukan akses Pro.<br><br>
@@ -953,7 +951,7 @@ function onFaseChange(){
     if(ls){ls.style.opacity='0';ls.style.transition='opacity .4s';setTimeout(()=>ls.remove(),400);}
   });
   const saved=localStorage.getItem('theme');
-  if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️';}
+  if(saved==='dark'){document.body.classList.add('dark');document.getElementById('darkIcon').setAttribute('href','#i-sun');}
   checkProStatus();    // ← harus sebelum updateLimitDisplay!
   updateLimitDisplay();
   updateHistoriBadge();
@@ -976,7 +974,7 @@ function onFaseChange(){
 function toggleDark(){
   document.body.classList.toggle('dark');
   const d=document.body.classList.contains('dark');
-  document.getElementById('darkBtn').textContent=d?'☀️':'🌙';
+  document.getElementById('darkIcon').setAttribute('href',d?'#i-sun':'#i-moon');
   localStorage.setItem('theme',d?'dark':'light');
 }
 
@@ -1004,8 +1002,11 @@ function closeMenu(){
 // ============================================================
 // TABS
 // ============================================================
+document.addEventListener('click',function(e){
+  if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button'))closeMenu();
+});
 function selectTab(tab){
-  ['home','histori','tentang','kontak'].forEach(t=>{
+  ['home','histori','tentang'].forEach(t=>{
     const d=document.getElementById('tab-'+t);
     if(d)d.style.display=t===tab?'block':'none';
     const mi=document.getElementById('mi-'+t);
@@ -1036,7 +1037,7 @@ function subscriptionIsActive(data){
   return !!data?.is_pro && (data.plan_type!=='annual' || (data.active_until && new Date(data.active_until).getTime()>Date.now()));
 }
 function subscriptionLabel(data){
-  return data.plan_type==='annual' ? `⭐ Pro aktif sampai ${new Date(data.active_until).toLocaleDateString('id-ID')}` : '⭐ Pro Lifetime aktif — Generate Unlimited';
+  return data.plan_type==='annual' ? `Pro aktif sampai ${new Date(data.active_until).toLocaleDateString('id-ID')}` : 'Pro Lifetime aktif — Generate Unlimited';
 }
 
 function checkLimit(){
@@ -1257,11 +1258,11 @@ function updateOutputModeUI(){
   const promptContent=document.getElementById('promptContent');
   const promptPlaceholder=document.getElementById('promptPlaceholder');
   if(btnLbl)btnLbl.textContent=promptMode?`Buat Prompt ${baseLabel}`:`Buat Langsung ${baseLabel}`;
-  if(outputTitle)outputTitle.textContent=promptMode?'📄 Prompt Siap Pakai':'📄 Hasil Modul Ajar';
+  if(outputTitle)outputTitle.textContent=promptMode?'Prompt Siap Pakai':'Hasil Modul Ajar';
   if(placeholder)placeholder.innerHTML=promptMode
     ?`Isi form di kiri lalu pilih<br/><b>Buat Prompt ${baseLabel}</b><br/><span style="font-size:.74rem;opacity:.7;">Prompt siap ditempel ke AI lain</span>`
     :`Isi form di kiri lalu pilih<br/><b>Buat Langsung ${baseLabel}</b><br/><span style="font-size:.74rem;opacity:.7;">Hasil final tampil di sini</span>`;
-  if(copyBtn)copyBtn.textContent=promptMode?'📋 Salin Prompt':'📋 Salin Hasil Modul';
+  if(copyBtn){const t=copyBtn.querySelector('.btn-text');(t||copyBtn).textContent=promptMode?'Salin Prompt':'Salin Hasil Modul';}
   if(aiBox)aiBox.style.display=promptMode?'':'none';
   const hasMatchingOutput=!!_currentOutputText&&hasil?.dataset.mode===mode;
   const isDirectOutput=hasMatchingOutput&&mode==='direct';
@@ -1885,7 +1886,7 @@ function toggleKurikulum(){
   const labels={SD:isKBC?'MI':'SD',SMP:isKBC?'MTs':'SMP',SMA:isKBC?'MA':'SMA',SMK:isKBC?'MAK':'SMK'};
   Object.entries(labels).forEach(([key,label])=>{
     const span=document.querySelector(`#jc-${key.toLowerCase()} span`);
-    if(span)span.textContent='🏫 '+label;
+    if(span)span.textContent=label;
   });
   const namaLabel=document.getElementById('namaSatuanLabel');
   const jenjangLabel=document.getElementById('jenjangSatuanLabel');
@@ -1915,7 +1916,7 @@ function toggleKurikulum(){
     _currentOutputText='';
     delete hasil.dataset.mode;
   }
-  document.getElementById('formTitle').textContent=isK13?'📋 Identitas RPP Kurikulum 2013':isKBC?'📋 Identitas Modul Ajar KBC Madrasah':'📋 Identitas Modul Ajar';
+  document.getElementById('formTitle').textContent=isK13?'Identitas RPP Kurikulum 2013':isKBC?'Identitas Modul Ajar KBC Madrasah':'Identitas Modul Ajar';
   onJenjangChange();
   updateOutputModeUI();
 }
@@ -2656,7 +2657,7 @@ function copyPrompt(){
   if(!txt){alert(getOutputMode()==='direct'?'Buat modul terlebih dahulu.':'Buat prompt terlebih dahulu.');return;}
   if(!isPro()){showUpgradePopup();return;}
   gaEvent('salin_prompt_modul_ajar',{tipe_user:'pro'});
-  const showNotif=()=>{const n=document.getElementById('notifCopy');n.textContent=getOutputMode()==='direct'?'✅ Hasil modul berhasil disalin!':'✅ Prompt berhasil disalin!';n.style.display='block';setTimeout(()=>n.style.display='none',3000);};
+  const showNotif=()=>{const n=document.getElementById('notifCopy');n.textContent=getOutputMode()==='direct'?'Hasil modul berhasil disalin!':'Prompt berhasil disalin!';n.style.display='block';setTimeout(()=>n.style.display='none',3000);};
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(txt).then(showNotif).catch(()=>{fallbackCopy(txt);showNotif();});
   }else{fallbackCopy(txt);showNotif();}
