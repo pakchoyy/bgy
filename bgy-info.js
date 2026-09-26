@@ -127,7 +127,7 @@
   /* ---- Install aplikasi (PWA halaman ini) ---- */
   var deferredInstall = null;
   var installKey = 'bgy_installed_' + page;
-  window.addEventListener('beforeinstallprompt', function (e) { deferredInstall = e; });
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredInstall = e; updateInstallItem(); });
   window.addEventListener('appinstalled', function () {
     deferredInstall = null;
     try { localStorage.setItem(installKey, '1'); } catch (e) {}
@@ -180,9 +180,21 @@
     installBtn.querySelector('.bgym-install-text').textContent = done ? 'Sudah terinstall' : 'Install BGY';
   }
 
+  window.bgyInstall = doInstall;
+
+  /* Halaman dengan menu bersama: tombol "Install" di banner pengingat halaman ikut memakai install PWA ini. */
+  function takeOverPageInstall() {
+    var hide = function () {
+      var pop = document.getElementById('installPopup');
+      if (pop) pop.classList.remove('show');
+    };
+    window.installApp = function () { hide(); doInstall(); };
+  }
+
   function mountMenu() {
     var slot = document.querySelector('[data-bgy-menu]');
     if (!slot) return;
+    if (slot.getAttribute('data-bgy-install') !== 'off') takeOverPageInstall();
     var style = document.createElement('style');
     style.textContent = menuCss;
     document.head.appendChild(style);

@@ -253,6 +253,7 @@ footer a{color:inherit;text-decoration:underline;}
 #menuOverlay.open{display:block;}
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+<script src="/bgy-info.js"></script>
 </head>
 <body>
 <!-- Ikon Lucide (lucide.dev, ISC) -->
@@ -2784,6 +2785,5 @@ function closeUpgradePopup(){
 document.getElementById('upgradePopup').addEventListener('click',function(e){if(e.target===this)closeUpgradePopup();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('upgradePopup').style.display==='flex')closeUpgradePopup();});
 </script>
-<script src="/bgy-info.js" defer></script>
 </body>
 </html>
