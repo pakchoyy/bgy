@@ -398,15 +398,15 @@
     '@media(max-width:560px){.pk-grid3{grid-template-columns:1fr 1fr;}.pk-grid3>:first-child{grid-column:1/-1;}}',
     '.pk-sem{border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:12px;}',
     '.pk-sem-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-weight:800;font-size:.84rem;}',
-    '.pk-sum{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(14,165,160,.1);color:var(--blue-dark);}',
+    '.pk-sum{font-size:.75rem;font-weight:700;padding:3px 9px;border-radius:99px;background:rgba(14,165,160,.1);color:var(--blue-dark);}',
     '.pk-sum.bad{background:#fee2e2;color:#b91c1c;}',
     'body.dark .pk-sum{color:#5eead4;}body.dark .pk-sum.bad{background:rgba(220,38,38,.18);color:#fca5a5;}',
     '.pk-row{display:grid;grid-template-columns:24px 1fr 58px auto;gap:6px;align-items:start;margin-bottom:6px;}',
-    '.pk-row .n{font-size:.72rem;font-weight:800;color:var(--blue-dark);padding-top:10px;text-align:center;}',
+    '.pk-row .n{font-size:.75rem;font-weight:800;color:var(--blue-dark);padding-top:10px;text-align:center;}',
     '.pk-row textarea{min-height:40px;font-size:.8rem;padding:7px 9px;line-height:1.4;}',
     '.pk-row input{text-align:center;padding:8px 4px;}',
     '.pk-tw{display:flex;flex-direction:column;min-width:0;}',
-    '.pk-cc{align-self:flex-end;font-size:.62rem;font-weight:700;color:var(--text-light);margin-top:2px;}',
+    '.pk-cc{align-self:flex-end;font-size:.75rem;font-weight:700;color:var(--text-light);margin-top:2px;}',
     '.pk-cc.bad{color:#dc2626;}body.dark .pk-cc.bad{color:#fca5a5;}',
     '.pk-act{display:flex;gap:3px;}',
     '.pk-ib{width:30px;height:36px;border:1.5px solid var(--border);border-radius:7px;background:var(--card-bg);color:var(--text-light);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-family:inherit;}',
@@ -417,7 +417,7 @@
     '.pk-btn:hover{border-color:var(--blue);color:var(--blue);}',
     '.pk-btn.pri{background:var(--grad);color:#fff;border-color:transparent;}',
     '.pk-btn.pri:hover{color:#fff;opacity:.9;}',
-    '.pk-hint{font-size:.7rem;color:var(--text-light);line-height:1.5;margin-top:6px;}',
+    '.pk-hint{font-size:.75rem;color:var(--text-light);line-height:1.5;margin-top:6px;}',
     '.pk-lib{display:grid;grid-template-columns:1fr 1fr 1.4fr 30px;gap:6px;margin-bottom:6px;align-items:center;}',
     '@media(max-width:560px){.pk-lib{grid-template-columns:1fr 1fr 30px;}.pk-lib .ket{grid-column:1/3;grid-row:2;}}',
     '.pk-lib input{padding:7px 8px;font-size:.8rem;}',
@@ -526,7 +526,7 @@
     var docOpt = [['semua', 'Semua dokumen'], ['atp', 'ATP'], ['efektif', 'Rincian Minggu Efektif'], ['prota', 'Prota'], ['prosem', 'Prosem (Sem 1 & 2)']]
       .map(function (o) { return '<option value="' + o[0] + '"' + (P.doc === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('');
     root.innerHTML = '<div class="card"><div class="card-title pk-head"><span><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> ATP, Prota &amp; Prosem</span>' +
-      '<button type="button" class="pk-btn" data-a="reset" style="font-size:.7rem">Mulai baru</button></div>' +
+      '<button type="button" class="pk-btn" data-a="reset" style="font-size:.75rem">Mulai baru</button></div>' +
       '<div class="pk-tabs" role="tablist">' + TABS.map(function (t) { return '<button type="button" class="pk-tab' + (P.tab === t[0] ? ' active' : '') + '" data-tab="' + t[0] + '" role="tab">' + t[1] + '</button>'; }).join('') + '</div>' +
       '<div id="pkBody">' + body + '</div>' +
       '<div class="pk-out"><select id="pkDoc" aria-label="Dokumen">' + docOpt + '</select>' +

@@ -86,7 +86,7 @@ main{display:grid;grid-template-columns:375px 1fr;gap:22px;padding:22px;max-widt
 
 /* ══ FORM ══ */
 .form-group{margin-bottom:11px;}
-label{display:block;font-size:.71rem;font-weight:600;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
+label{display:block;font-size:.75rem;font-weight:600;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
 input[type=text],input[type=date],input[type=number],input[type=password],select,textarea{width:100%;padding:8px 11px;border:2px solid var(--border);border-radius:10px;font-size:.84rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s,box-shadow .2s;outline:none;}
 select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-light) 50%),linear-gradient(135deg,var(--text-light) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 12px) 50%;background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:34px;cursor:pointer;}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);}
@@ -95,58 +95,58 @@ textarea{resize:vertical;min-height:58px;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 .school-info{margin-bottom:15px;padding-bottom:13px;border-bottom:1px solid var(--border);}
-.school-info h3{font-size:.74rem;font-weight:700;color:var(--text-light);margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px;}
+.school-info h3{font-size:.75rem;font-weight:700;color:var(--text-light);margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px;}
 
 /* Logo upload */
 .logo-upload-area{border:2px dashed var(--border);border-radius:10px;padding:7px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;min-height:60px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;}
 .logo-upload-area:hover{border-color:var(--blue);}
 .logo-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:none;padding:0;}
 .logo-preview-thumb{max-height:44px;max-width:78px;border-radius:4px;object-fit:contain;display:none;}
-.logo-upload-hint{font-size:.66rem;color:var(--text-light);line-height:1.4;}
+.logo-upload-hint{font-size:.75rem;color:var(--text-light);line-height:1.4;}
 
 /* Gemini key box */
 .gemini-key-box{background:linear-gradient(135deg,rgba(59,130,246,.07),rgba(16,185,129,.07));border:1.5px solid #bfdbfe;border-radius:12px;padding:11px 13px;margin-bottom:11px;}
-.gemini-key-box .gk-label{font-size:.71rem;font-weight:700;color:#1d4ed8;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.gemini-key-box .gk-label{font-size:.75rem;font-weight:700;color:#1d4ed8;margin-bottom:5px;display:flex;align-items:center;gap:5px;}
 .gemini-key-row{display:flex;gap:6px;align-items:center;}
 .gemini-key-row input{flex:1;font-size:.8rem;}
 .gemini-key-row button{white-space:nowrap;background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:7px 11px;font-size:.76rem;font-weight:700;cursor:pointer;}
-.gemini-status{font-size:.7rem;margin-top:5px;min-height:14px;}
+.gemini-status{font-size:.75rem;margin-top:5px;min-height:14px;}
 body.dark .gemini-key-box{border-color:#1e40af;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(16,185,129,.08));}
 
 /* Materi checklist */
 .materi-box{border:2px solid var(--border);border-radius:10px;padding:7px 9px;max-height:165px;overflow-y:auto;background:var(--input-bg);position:relative;}
 .materi-box-wrap{position:relative;}
-.materi-box-wrap::after{content:'▾ scroll';position:absolute;bottom:2px;right:8px;font-size:.65rem;color:var(--text-light);pointer-events:none;opacity:.7;}
+.materi-box-wrap::after{content:'▾ scroll';position:absolute;bottom:2px;right:8px;font-size:.75rem;color:var(--text-light);pointer-events:none;opacity:.7;}
 .materi-box .cb-label{display:flex;align-items:flex-start;gap:6px;font-size:.81rem;color:var(--text);font-weight:normal;cursor:pointer;padding:3px 0;border-bottom:1px solid var(--border);text-transform:none;letter-spacing:0;}
 .materi-box .cb-label:last-child{border-bottom:none;}
 .materi-box input[type=checkbox]{width:14px;height:14px;min-width:14px;padding:0;margin-top:2px;accent-color:var(--blue);}
 .materi-empty{font-size:.77rem;color:var(--text-light);padding:6px 0;text-align:center;}
-.btn-pilih-semua{font-size:.69rem;padding:3px 8px;background:var(--gray-100);color:var(--text);border:1px solid var(--border);border-radius:7px;cursor:pointer;margin-bottom:5px;font-weight:600;transition:background .2s;}
+.btn-pilih-semua{font-size:.75rem;padding:3px 8px;background:var(--gray-100);color:var(--text);border:1px solid var(--border);border-radius:7px;cursor:pointer;margin-bottom:5px;font-weight:600;transition:background .2s;}
 .btn-pilih-semua:hover{background:var(--gray-200);}
 body.dark .btn-pilih-semua{background:#374151;color:#f1f5f9;}
 .materi-mode-toggle{display:flex;gap:4px;margin-bottom:6px;}
-.materi-mode-btn{flex:1;padding:4px 8px;font-size:.69rem;font-weight:700;border:1.5px solid var(--border);border-radius:7px;background:var(--input-bg);color:var(--text-light);cursor:pointer;transition:all .15s;text-align:center;}
+.materi-mode-btn{flex:1;padding:4px 8px;font-size:.75rem;font-weight:700;border:1.5px solid var(--border);border-radius:7px;background:var(--input-bg);color:var(--text-light);cursor:pointer;transition:all .15s;text-align:center;}
 .materi-mode-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
 #materiKetikArea{width:100%;min-height:80px;resize:vertical;font-size:.82rem;padding:8px 10px;border:2px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);display:none;}
 #materiKetikArea:focus{border-color:var(--blue);}
-#materiKetikHint{font-size:.68rem;color:var(--text-light);margin-top:3px;display:none;}
+#materiKetikHint{font-size:.75rem;color:var(--text-light);margin-top:3px;display:none;}
 
 /* Tingkat kesulitan */
 .kesulitan-grid{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px;}
-.kesulitan-grid label{display:flex;align-items:center;gap:3px;font-size:.73rem;color:var(--text);font-weight:600;text-transform:none;letter-spacing:0;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:3px 8px;cursor:pointer;transition:all .2s;flex-direction:column;align-items:center;gap:1px;min-width:52px;text-align:center;}
+.kesulitan-grid label{display:flex;align-items:center;gap:3px;font-size:.75rem;color:var(--text);font-weight:600;text-transform:none;letter-spacing:0;background:var(--input-bg);border:1px solid var(--border);border-radius:7px;padding:3px 8px;cursor:pointer;transition:all .2s;flex-direction:column;align-items:center;gap:1px;min-width:52px;text-align:center;}
 .kesulitan-grid label:has(input:checked){background:#cff0ef;border-color:#0ea5a0;color:#0d6e6a;}
 body.dark .kesulitan-grid label:has(input:checked){background:#0d3a47;color:#5eead4;border-color:#0ea5a0;}
 .kesulitan-grid label:hover{border-color:var(--blue);}
-.kesulitan-grid label small{font-size:.58rem;font-weight:400;color:var(--text-light);line-height:1.1;}
+.kesulitan-grid label small{font-size:.75rem;font-weight:400;color:var(--text-light);line-height:1.1;}
 .kesulitan-grid label:has(input:checked) small{color:#0d7a8a;}
 body.dark .kesulitan-grid label:has(input:checked) small{color:#5eead4;}
 .kesulitan-grid input[type=checkbox]{width:12px;height:12px;padding:0;accent-color:#0ea5a0;}
-.smart-hint{margin-top:7px;padding:9px 11px;border:1px solid rgba(14,165,160,.28);background:rgba(14,165,160,.08);border-radius:10px;font-size:.72rem;line-height:1.6;color:var(--text);}
+.smart-hint{margin-top:7px;padding:9px 11px;border:1px solid rgba(14,165,160,.28);background:rgba(14,165,160,.08);border-radius:10px;font-size:.75rem;line-height:1.6;color:var(--text);}
 .smart-hint strong{color:#0d7a8a;}
 body.dark .smart-hint{background:rgba(14,165,160,.12);}
 body.dark .smart-hint strong{color:#5eead4;}
 .preset-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-.preset-chip{border:1px solid var(--border);background:var(--input-bg);color:var(--text);border-radius:8px;padding:5px 9px;font-size:.7rem;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,transform .15s;}
+.preset-chip{border:1px solid var(--border);background:var(--input-bg);color:var(--text);border-radius:8px;padding:5px 9px;font-size:.75rem;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,transform .15s;}
 .preset-chip:hover{border-color:var(--blue);}
 .preset-chip:active{transform:scale(.96);}
 .menu-action{display:block;width:100%;padding:9px 14px;font-size:.8rem;cursor:pointer;border:none;background:var(--card-bg);color:var(--text);text-align:left;font-family:inherit;}
@@ -260,13 +260,13 @@ footer a{color:#fff;text-decoration:none;}
 /* Footer */
 footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
 footer .footer-title{font-size:.86rem;font-weight:700;margin-bottom:2px;}
-footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
+footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
 
 /* Responsive */
 @media(max-width:960px){
   main{grid-template-columns:1fr;padding:12px;gap:13px;}
   #previewBox{padding:8mm 8mm 8mm 10mm;font-size:10.5pt;width:794px;box-sizing:border-box;}
-  .btn{padding:6px 10px;font-size:.76rem;}
+  .btn{padding:9px 12px;font-size:.82rem;min-height:40px;}
   .doc-school-name{font-size:12pt;}.doc-ujian-title{font-size:10pt;}
   .col-preview{overflow-x:auto;}
 }
@@ -276,7 +276,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
   .header-brand p{display:none;}
   .version-badge{font-size:.58rem;padding:2px 7px;}
   .export-bar{gap:4px;}
-  .export-bar .btn{padding:5px 8px;font-size:.72rem;}
+  .export-bar .btn{padding:10px 12px;font-size:.84rem;min-height:42px;flex:1 1 auto;justify-content:center;}
   .navbar{gap:4px;}
   .navbar a{padding:6px 10px;font-size:.78rem;}
 }
@@ -542,7 +542,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
               <img id="thumb1" class="logo-preview-thumb" alt=""/>
               <div id="hint1" class="logo-upload-hint"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg><br>Upload<br><small>PNG/JPG</small></div>
             </div>
-            <button id="hapus1" class="btn btn-secondary" style="margin-top:3px;font-size:.67rem;padding:2px 7px;display:none;" onclick="hapusLogo('logoInput1','logo1','thumb1','hint1','hapus1')"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg> Hapus</button>
+            <button id="hapus1" class="btn btn-secondary" style="margin-top:3px;font-size:.75rem;padding:2px 7px;display:none;" onclick="hapusLogo('logoInput1','logo1','thumb1','hint1','hapus1')"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg> Hapus</button>
           </div>
           <div class="form-group" style="margin-bottom:0;">
             <label>Logo Pemda (Kanan)</label>
@@ -551,7 +551,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
               <img id="thumb2" class="logo-preview-thumb" alt=""/>
               <div id="hint2" class="logo-upload-hint"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg><br>Upload<br><small>PNG/JPG</small></div>
             </div>
-            <button id="hapus2" class="btn btn-secondary" style="margin-top:3px;font-size:.67rem;padding:2px 7px;display:none;" onclick="hapusLogo('logoInput2','logo2','thumb2','hint2','hapus2')"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg> Hapus</button>
+            <button id="hapus2" class="btn btn-secondary" style="margin-top:3px;font-size:.75rem;padding:2px 7px;display:none;" onclick="hapusLogo('logoInput2','logo2','thumb2','hint2','hapus2')"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg> Hapus</button>
           </div>
         </div>
         <div class="form-group">
@@ -677,7 +677,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         </select>
         <div class="row-3">
           <div>
-            <label>PG <span id="opsiNote" style="font-size:.67rem;color:#0ea5a0;">(A-C)</span></label>
+            <label>PG <span id="opsiNote" style="font-size:.75rem;color:#0ea5a0;">(A-C)</span></label>
             <input type="number" id="jmlPG" min="0" max="40" value="10"/>
           </div>
           <div><label>Isian</label><input type="number" id="jmlIsian" min="0" max="20" value="5"/></div>
@@ -701,7 +701,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       </button>
       <div id="generateFeedback" style="font-size:.78rem;margin-top:6px;min-height:18px;text-align:center;color:var(--text-light);"></div>
       <div id="limitInfo" style="font-size:.75rem;text-align:center;margin-top:4px;color:#64748b;"></div>
-      <div id="limitReset" style="font-size:.68rem;text-align:center;color:var(--text-light);margin-top:2px;font-style:italic;">(reset tiap tengah malam)</div>
+      <div id="limitReset" style="font-size:.75rem;text-align:center;color:var(--text-light);margin-top:2px;font-style:italic;">(reset tiap tengah malam)</div>
       <button class="btn btn-secondary" id="btnReset" onclick="resetForm()" style="margin-top:6px;width:100%;font-size:.8rem;"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Reset Form</button>
 
       <!-- AKTIVASI PRO -->
@@ -711,10 +711,10 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
     <div style="background:linear-gradient(135deg,#f59e0b,#d97706);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
       <div style="font-size:.8rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;">
         <svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> <span>Aktivasi Pro</span>
-        <span style="background:rgba(255,255,255,.25);font-size:.6rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
+        <span style="background:rgba(255,255,255,.25);font-size:.75rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
       </div>
       <a href="https://lynk.id/kreacy/mplxqygkqj36" target="_blank"
-        style="font-size:.65rem;font-weight:700;color:#fff;background:rgba(255,255,255,.2);padding:3px 9px;border-radius:99px;text-decoration:none;border:1px solid rgba(255,255,255,.4);">
+        style="font-size:.75rem;font-weight:700;color:#fff;background:rgba(255,255,255,.2);padding:3px 9px;border-radius:99px;text-decoration:none;border:1px solid rgba(255,255,255,.4);">
         Beli Pro →
       </a>
     </div>
@@ -725,7 +725,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
       <!-- MODE 1: Input kode (dari redirect aktvs-bs) -->
       <div id="modeKode" style="display:none;">
-        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:8px;font-weight:600;">
+        <div style="font-size:.75rem;color:var(--text-light);margin-bottom:8px;font-weight:600;">
           <svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Masukkan email + kode aktivasi kamu:
         </div>
         <div style="display:flex;flex-direction:column;gap:7px;">
@@ -744,14 +744,14 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
             </button>
           </div>
         </div>
-        <div style="font-size:.67rem;color:var(--text-light);margin-top:7px;text-align:center;">
+        <div style="font-size:.75rem;color:var(--text-light);margin-top:7px;text-align:center;">
           Sudah pernah aktivasi? <a href="#" onclick="tampilModeEmail();return false;" style="color:#d97706;font-weight:700;">Cek pakai email</a>
         </div>
       </div>
 
       <!-- MODE 2: Cek email (default) -->
       <div id="modeEmail" style="display:block;">
-        <div style="font-size:.72rem;color:var(--text-light);margin-bottom:7px;">
+        <div style="font-size:.75rem;color:var(--text-light);margin-bottom:7px;">
           Sudah beli? Masukkan email pembelian untuk cek status:
         </div>
         <div style="display:flex;gap:6px;">
@@ -764,12 +764,12 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
             Cek
           </button>
         </div>
-        <div style="font-size:.67rem;color:var(--text-light);margin-top:7px;text-align:center;">
+        <div style="font-size:.75rem;color:var(--text-light);margin-top:7px;text-align:center;">
           Punya kode aktivasi? <a href="#" onclick="tampilModeKode();return false;" style="color:#d97706;font-weight:700;">Masukkan kode</a>
         </div>
       </div>
 
-      <div id="aktivasiMsg" style="font-size:.73rem;margin-top:8px;min-height:14px;font-weight:600;"></div>
+      <div id="aktivasiMsg" style="font-size:.75rem;margin-top:8px;min-height:14px;font-weight:600;"></div>
     </div>
   </div>
 
@@ -797,9 +797,9 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
             <button class="menu-action" type="button" onclick="exportWord({rubrik:false});closeWordMenu()">Tanpa rubrik</button>
           </div>
         </div>
-        <span title="Disarankan Download PDF untuk hasil terbaik!" style="display:inline-flex;align-items:center;justify-content:center;background:#fef9c3;border:1.5px solid #fde047;border-radius:8px;padding:4px 10px;font-size:.72rem;color:#854d0e;font-weight:700;cursor:default;gap:4px;white-space:nowrap;"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> PDF lebih rapi</span>
+        <span title="Disarankan Download PDF untuk hasil terbaik!" style="display:inline-flex;align-items:center;justify-content:center;background:#fef9c3;border:1.5px solid #fde047;border-radius:8px;padding:4px 10px;font-size:.75rem;color:#854d0e;font-weight:700;cursor:default;gap:4px;white-space:nowrap;"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> PDF lebih rapi</span>
       </div>
-      <div style="margin-top:8px;font-size:.72rem;color:var(--text-light);">
+      <div style="margin-top:8px;font-size:.75rem;color:var(--text-light);">
         Kunci + kisi-kisi ada di halaman terakhir. &nbsp;|&nbsp; ← → ganti halaman, Ctrl+G generate.
       </div>
     </div>
@@ -810,6 +810,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
       <button id="btnNext" onclick="nextPage()" disabled>▶</button>
     </div>
 
+    <div data-bgy-contoh="/soal/contoh/hal-{n}.webp" data-bgy-count="5" data-bgy-title="Contoh hasil: Soal Bahasa Indonesia Kelas 2" style="margin-bottom:10px;"></div>
     <div class="preview-scroll-wrapper">
     <div id="previewBox" style="position:relative;">
       <div class="empty-state" id="watermarkState">
@@ -3184,8 +3185,8 @@ function buildSoalRow(b){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="pg" data-idx="${pgIdx}">${escHtml(b.item.soal)}</span>
         <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
-          <button onclick="regenerateSoalItem('pg',${pgIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
-          <button onclick="openEditModal('pg',${pgIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+          <button onclick="regenerateSoalItem('pg',${pgIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
+          <button onclick="openEditModal('pg',${pgIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
         </span>
       </div>
       ${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
@@ -3196,8 +3197,8 @@ function buildSoalRow(b){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="isian" data-idx="${isIdx}">${escHtml(b.item.soal)}</span>
         <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
-          <button onclick="regenerateSoalItem('isian',${isIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
-          <button onclick="openEditModal('isian',${isIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+          <button onclick="regenerateSoalItem('isian',${isIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
+          <button onclick="openEditModal('isian',${isIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
         </span>
       </div>
       <br><span class="isian-garis">&nbsp;</span></td></tr><tr><td colspan="2" style="height:3px;"></td></tr>`;
@@ -3210,8 +3211,8 @@ function buildSoalRow(b){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="uraian" data-idx="${urIdx}">${escHtml(b.item.soal)}</span>
         <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
-          <button onclick="regenerateSoalItem('uraian',${urIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
-          <button onclick="openEditModal('uraian',${urIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
+          <button onclick="regenerateSoalItem('uraian',${urIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
+          <button onclick="openEditModal('uraian',${urIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
         </span>
       </div>
       <div class="uraian-kotak"></div></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;

@@ -1,5 +1,5 @@
 /* BGY Katrol Nilai — Service Worker v26.5.1 */
-const CACHE_NAME = 'bgy-katrol-v2';
+const CACHE_NAME = 'bgy-katrol-v3';
 const CACHE_URLS = [
   '/katrol-nilai/',
   '/katrol-nilai/index.html',

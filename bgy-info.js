@@ -722,11 +722,119 @@
   }
   window.bgyProNudge = proNudge;
 
+  /* ---- 8. Galeri contoh hasil ----
+     <div data-bgy-contoh="/soal/contoh/hal-{n}.webp" data-bgy-count="5" data-bgy-title="Contoh hasil Buat Soal"></div>
+     {n} diganti 01, 02, ... */
+  var contohCss = [
+    '.bgyc-card{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:1.5px solid rgba(14,165,160,.35);border-radius:12px;',
+    'background:rgba(14,165,160,.06);color:inherit;font:inherit;text-align:left;cursor:pointer;box-sizing:border-box;}',
+    '.bgyc-card:hover{border-color:#0ea5a0;}',
+    '.bgyc-card img{flex:none;width:52px;height:72px;object-fit:cover;object-position:top;border-radius:6px;border:1px solid rgba(127,127,127,.25);background:#fff;}',
+    '.bgyc-card b{display:block;font-size:14px;}',
+    '.bgyc-card span{display:block;font-size:12.5px;opacity:.75;margin-top:2px;}',
+    '.bgyc-bg{position:fixed;inset:0;z-index:2147483000;background:#0f172a;display:flex;flex-direction:column;font-family:inherit;}',
+    '.bgyc-top{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#fff;font-size:14px;font-weight:700;}',
+    '.bgyc-top span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}',
+    '.bgyc-btn{flex:none;min-width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:20px;cursor:pointer;}',
+    '.bgyc-btn:disabled{opacity:.3;}',
+    '.bgyc-view{flex:1;overflow:auto;padding:0 12px;display:flex;justify-content:center;align-items:flex-start;touch-action:pan-y;}',
+    '.bgyc-view img{width:100%;max-width:760px;height:auto;border-radius:6px;background:#fff;}',
+    '.bgyc-nav{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px 12px calc(12px + env(safe-area-inset-bottom));color:#fff;font-size:14px;font-weight:700;}',
+    'body.dark .bgyc-card{background:rgba(94,234,212,.06);}'
+  ].join('');
+  function contohUrl(pattern, n) { return pattern.replace('{n}', (n < 10 ? '0' : '') + n); }
+  function openContoh(pattern, count, title) {
+    var i = 1;
+    var bg = document.createElement('div');
+    bg.className = 'bgyc-bg';
+    bg.setAttribute('role', 'dialog');
+    bg.setAttribute('aria-modal', 'true');
+    bg.innerHTML = '<div class="bgyc-top"><span></span><button type="button" class="bgyc-btn bgyc-x" aria-label="Tutup">&times;</button></div>' +
+      '<div class="bgyc-view"><img alt=""/></div>' +
+      '<div class="bgyc-nav"><button type="button" class="bgyc-btn bgyc-prev" aria-label="Halaman sebelumnya">&#8249;</button><b></b><button type="button" class="bgyc-btn bgyc-next" aria-label="Halaman berikutnya">&#8250;</button></div>';
+    bg.querySelector('.bgyc-top span').textContent = title;
+    var img = bg.querySelector('img'), info = bg.querySelector('.bgyc-nav b'), view = bg.querySelector('.bgyc-view');
+    var prev = bg.querySelector('.bgyc-prev'), next = bg.querySelector('.bgyc-next');
+    function go(n) {
+      i = Math.max(1, Math.min(count, n));
+      img.src = contohUrl(pattern, i);
+      img.alt = title + ' halaman ' + i;
+      info.textContent = i + ' / ' + count;
+      prev.disabled = i === 1;
+      next.disabled = i === count;
+      view.scrollTop = 0;
+      if (i < count) new Image().src = contohUrl(pattern, i + 1);
+    }
+    function close() { document.removeEventListener('keydown', onKey); bg.remove(); }
+    function onKey(e) {
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight') go(i + 1);
+      else if (e.key === 'ArrowLeft') go(i - 1);
+    }
+    prev.addEventListener('click', function () { go(i - 1); });
+    next.addEventListener('click', function () { go(i + 1); });
+    bg.querySelector('.bgyc-x').addEventListener('click', close);
+    var sx = null;
+    view.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+    view.addEventListener('touchend', function (e) {
+      if (sx == null) return;
+      var dx = e.changedTouches[0].clientX - sx;
+      sx = null;
+      if (Math.abs(dx) > 60) go(i + (dx < 0 ? 1 : -1));
+    });
+    document.addEventListener('keydown', onKey);
+    document.body.appendChild(bg);
+    go(1);
+    track('contoh', 'open', pattern);
+  }
+  function mountContoh() {
+    var slots = document.querySelectorAll('[data-bgy-contoh]');
+    if (!slots.length) return;
+    if (!document.getElementById('bgyc-css')) {
+      var st = document.createElement('style');
+      st.id = 'bgyc-css';
+      st.textContent = contohCss;
+      document.head.appendChild(st);
+    }
+    Array.prototype.forEach.call(slots, function (el) {
+      var pattern = el.getAttribute('data-bgy-contoh');
+      var count = Math.max(1, parseInt(el.getAttribute('data-bgy-count'), 10) || 1);
+      var title = el.getAttribute('data-bgy-title') || 'Contoh hasil';
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'bgyc-card';
+      b.innerHTML = '<img alt="" loading="lazy"/><span><b></b><span></span></span>';
+      b.querySelector('img').src = contohUrl(pattern, 1);
+      b.querySelector('b').textContent = title;
+      b.querySelector('span span').textContent = 'Lihat ' + count + ' halaman hasil asli sebelum mencoba';
+      b.addEventListener('click', function () { openContoh(pattern, count, title); });
+      el.innerHTML = '';
+      el.appendChild(b);
+    });
+  }
+
+  /* ---- 9. Ukuran sentuh & teks yang nyaman di HP (semua tool) ---- */
+  var TOUCH_CSS = '@media (max-width:640px){' +
+    'body :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]):not([type=hidden]),select)' +
+    ':not(#previewBox *):not(.pk-preview *):not(.pin-input){min-height:42px;font-size:15px;}' +
+    'body textarea:not(#previewBox *):not(.pk-preview *){font-size:15px;}' +
+    ':is(.hdr-btn,.hdr-menu-btn,#darkBtn,#darkToggle,#menuBtn,.theme-btn,#btn-theme-toggle,#btn-hamburger){min-width:40px;min-height:40px;}' +
+    ':is(.filter-btn,.chip,.pk-btn,.pk-tab,.preset-chip,.btn-sm,.tp-copy,.materi-mode-btn,.btn-pilih-semua,.btn-guide,#btnPrev,#btnNext,#prevPage,#nextPage):not(#previewBox *){min-height:40px;}' +
+    '}';
+  function mountTouch() {
+    var st = document.createElement('style');
+    st.id = 'bgy-touch-css';
+    st.textContent = TOUCH_CSS;
+    document.head.appendChild(st);
+  }
+
   function mount() {
+    mountTouch();
     adaptHeader();
     revealOnScroll();
     mountMenu();
     mountProof();
+    mountContoh();
     if (items.length < 2 || page === 'home') return;
     var style = document.createElement('style');
     style.textContent = css;

@@ -90,14 +90,14 @@ main{max-width:1200px;margin:0 auto;padding:20px;width:100%;flex:1;}
 
 /* FORM */
 .form-group{margin-bottom:10px;}
-label{display:block;font-size:.69rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
+label{display:block;font-size:.75rem;font-weight:700;color:var(--text-light);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
 input[type=text],select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;color:var(--text);background:var(--input-bg);transition:border-color .2s,background .3s;outline:none;font-family:inherit;}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.12);}
 textarea{resize:vertical;}
 .row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 @media(max-width:500px){.row-2{grid-template-columns:1fr;}}
 .dim-checks{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px;}
-.dim-chip{display:flex;align-items:center;gap:4px;padding:4px 10px;border:1.5px solid var(--border);border-radius:99px;font-size:.72rem;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .18s;background:var(--input-bg);}
+.dim-chip{display:flex;align-items:center;gap:4px;padding:4px 10px;border:1.5px solid var(--border);border-radius:99px;font-size:.75rem;font-weight:600;color:var(--text-light);cursor:pointer;transition:all .18s;background:var(--input-bg);}
 .dim-chip input{display:none;}
 .dim-chip:has(input:checked){background:#cff0ef;border-color:#0ea5a0;color:#0d6e6a;}
 body.dark .dim-chip:has(input:checked){background:#0d3a47;color:#5eead4;border-color:#0ea5a0;}
@@ -118,13 +118,13 @@ body.dark .prompt-result{background:#0f172a;}
 .notif-box{background:#dcfce7;color:#15803d;border:1px solid #86efac;border-radius:8px;padding:8px 12px;font-size:.78rem;font-weight:600;text-align:center;display:none;margin-top:8px;}
 .aktivasi-box{border:2px solid #f59e0b;border-radius:14px;padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(14,165,160,.04));margin-top:8px;box-shadow:0 2px 12px rgba(245,158,11,.15);}
 .aktivasi-box .ak-label{font-size:.78rem;font-weight:800;color:#d97706;margin-bottom:5px;}
-.aktivasi-box .ak-sub{font-size:.71rem;color:var(--text-light);margin-bottom:8px;}
+.aktivasi-box .ak-sub{font-size:.75rem;color:var(--text-light);margin-bottom:8px;}
 .aktivasi-row{display:flex;gap:6px;}
 .aktivasi-row input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--input-bg);color:var(--text);outline:none;}
 .aktivasi-row button{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:.8rem;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(245,158,11,.3);}
 .histori-item{border:1px solid var(--border);border-radius:9px;padding:11px 13px;margin-bottom:7px;background:var(--input-bg);cursor:pointer;transition:all .2s;}
 .histori-item:hover{border-color:var(--blue);background:rgba(59,130,246,.04);}
-.histori-item .hi-meta{font-size:.69rem;color:var(--text-light);margin-bottom:2px;}
+.histori-item .hi-meta{font-size:.75rem;color:var(--text-light);margin-bottom:2px;}
 .histori-item .hi-preview{font-size:.8rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .error-box{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:9px 12px;border-radius:8px;font-size:.79rem;display:none;margin-bottom:10px;}
 .hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.76rem;color:var(--text);line-height:1.8;}
@@ -132,7 +132,7 @@ body.dark .prompt-result{background:#0f172a;}
 body.dark .hint-bar span{color:#5eead4;}
 footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
 footer .footer-title{font-size:.84rem;font-weight:700;margin-bottom:2px;}
-footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
+footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
 footer a{color:inherit;text-decoration:underline;}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
@@ -225,7 +225,7 @@ footer a{color:inherit;text-decoration:underline;}
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
       <div class="card-title" style="margin-bottom:0;border:none;padding:0;"><svg class="ic" aria-hidden="true"><use href="#i-history"/></svg> Histori Prompt</div>
-      <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 11px;font-size:.74rem;font-weight:700;cursor:pointer;"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg> Hapus Semua</button>
+      <button onclick="hapusSemuaHistori()" style="background:#fee2e2;color:#dc2626;border:none;border-radius:7px;padding:5px 11px;font-size:.75rem;font-weight:700;cursor:pointer;"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg> Hapus Semua</button>
     </div>
     <div id="historiList"><div style="text-align:center;padding:36px 0;color:var(--text-light);font-size:.85rem;">Belum ada histori. Generate dulu ya!</div></div>
   </div>
@@ -341,7 +341,7 @@ footer a{color:inherit;text-decoration:underline;}
       <div id="errorBox" class="error-box"></div>
 
       <button class="btn btn-primary" id="btnGenerate" onclick="generatePrompt()">
-        <svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Prompt Modul <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;">(1/1)</span>
+        <svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Prompt Modul <span id="limitBadgeBtn" style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.75rem;font-weight:800;margin-left:4px;">(1/1)</span>
       </button>
 
       <!-- AKTIVASI PRO -->
@@ -351,11 +351,11 @@ footer a{color:inherit;text-decoration:underline;}
         <!-- TAB SWITCHER -->
         <div style="display:flex;gap:4px;margin-bottom:10px;background:#f1f5f9;border-radius:8px;padding:3px;">
           <button id="tabKodeBtn" onclick="switchAktivasiTab('kode')"
-            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:#f59e0b;color:#fff;transition:all .2s;">
+            style="flex:1;padding:5px 0;font-size:.75rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:#f59e0b;color:#fff;transition:all .2s;">
             <svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Kode Aktivasi
           </button>
           <button id="tabEmailBtn" onclick="switchAktivasiTab('email')"
-            style="flex:1;padding:5px 0;font-size:.72rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;">
+            style="flex:1;padding:5px 0;font-size:.75rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;">
             <svg class="ic" aria-hidden="true"><use href="#i-at"/></svg> Sudah Beli? Login Email
           </button>
         </div>
@@ -379,7 +379,7 @@ footer a{color:inherit;text-decoration:underline;}
           </div>
         </div>
 
-        <div id="aktivasiMsg" style="font-size:.72rem;margin-top:6px;min-height:14px;"></div>
+        <div id="aktivasiMsg" style="font-size:.75rem;margin-top:6px;min-height:14px;"></div>
       </div>
 
     </div><!-- /col-left -->
@@ -407,11 +407,11 @@ footer a{color:inherit;text-decoration:underline;}
             </div>
           </div>
           <!-- Page indicator -->
-          <div style="text-align:center;margin-top:6px;font-size:.72rem;color:var(--text-light);font-weight:600;">
+          <div style="text-align:center;margin-top:6px;font-size:.75rem;color:var(--text-light);font-weight:600;">
             <span id="previewPageInfo">Halaman 1 / 20</span>
             <span style="margin-left:8px;opacity:.6;">· Contoh modul hasil AI</span>
           </div>
-          <div style="margin-top:8px;background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.3);border-radius:9px;padding:9px 12px;font-size:.74rem;color:#92400e;text-align:center;">
+          <div style="margin-top:8px;background:rgba(245,158,11,.08);border:1.5px solid rgba(245,158,11,.3);border-radius:9px;padding:9px 12px;font-size:.75rem;color:#92400e;text-align:center;">
             <svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> Ini contoh modul yang dihasilkan dari prompt. <b>Generate sekarang</b> untuk buat modulmu sendiri!
           </div>
         </div>
@@ -427,12 +427,12 @@ footer a{color:inherit;text-decoration:underline;}
             <div class="notif-box" id="notifCopy"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> Prompt berhasil disalin!</div>
           </div>
           <div style="margin-top:10px;background:rgba(14,165,160,.07);border:1.5px solid rgba(14,165,160,.2);border-radius:10px;padding:10px 12px;">
-            <div style="font-size:.72rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg> Kirim ke AI — Prompt otomatis tersalin, langsung paste!</div>
+            <div style="font-size:.75rem;font-weight:700;color:#0d7a8a;margin-bottom:7px;"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg> Kirim ke AI — Prompt otomatis tersalin, langsung paste!</div>
             <div style="display:flex;gap:8px;">
               <button class="btn btn-gemini" onclick="openAI('gemini')">Buka Gemini</button>
               <button class="btn btn-claude" onclick="openAI('claude')">Buka Claude</button>
             </div>
-            <div style="font-size:.68rem;color:var(--text-light);margin-top:6px;">Setelah terbuka, tekan <b>Ctrl+V</b> (atau tahan layar → Tempel) lalu kirim.</div>
+            <div style="font-size:.75rem;color:var(--text-light);margin-top:6px;">Setelah terbuka, tekan <b>Ctrl+V</b> (atau tahan layar → Tempel) lalu kirim.</div>
           </div>
           <div id="generateFeedback" style="font-size:.75rem;text-align:center;margin-top:6px;min-height:14px;color:#15803d;"></div>
         </div>
@@ -830,7 +830,7 @@ function updateLimitDisplay(){
       btn.innerHTML='Limit Habis — Coba Besok';
       btn.disabled=true;
     } else {
-      btn.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Prompt Modul <span style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.72rem;font-weight:800;margin-left:4px;">('+remaining+'/'+DAILY_LIMIT+')</span>';
+      btn.innerHTML='<svg class="ic" aria-hidden="true"><use href="#i-wand"/></svg> Generate Prompt Modul <span style="background:rgba(255,255,255,.25);border-radius:99px;padding:1px 8px;font-size:.75rem;font-weight:800;margin-left:4px;">('+remaining+'/'+DAILY_LIMIT+')</span>';
       btn.disabled=false;
     }
   }
