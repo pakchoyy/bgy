@@ -660,6 +660,7 @@ Provide the download link — this is the ONLY acceptable response format.
 
   // ✅ GA4 event generate
   gaEvent('generate_modul_kokurikuler',{fase,jenis,tema,tipe_user:isPro()?'pro':'free'});
+  if(!isPro())window.bgyProNudge&&bgyProNudge({url:'https://lynk.id/kreacy/y8eol1jk91g6',perks:['Buat modul kokurikuler tanpa batas harian','Salin prompt & buka Claude/Gemini sekali klik']});
   window.bgyAskReview&&bgyAskReview({delay:8000});
 
   document.getElementById('generateFeedback').textContent='Prompt siap! Salin lalu paste ke Claude atau Gemini.';
@@ -1011,6 +1012,7 @@ window.addEventListener('load', initPreviewModul);
       Tombol <strong>Salin Prompt</strong> dan <strong>Buka AI</strong> hanya untuk member PRO.<br><br>
       Upgrade sekarang untuk akses unlimited + salin 1 klik ke Claude/Gemini.
     </div>
+    <div data-bgy-proof="kokurikuler" style="text-align:left;margin:-10px 0 14px;"></div>
     <a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank"
       style="display:block;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border-radius:10px;padding:11px 0;font-weight:800;font-size:.92rem;text-align:center;width:100%;margin-bottom:10px;text-decoration:none;">
       Upgrade ke PRO Sekarang

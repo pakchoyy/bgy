@@ -275,6 +275,7 @@ footer .visitor a{color:#fff;text-decoration:none;}
     </a>
 
   </div>
+  <div data-bgy-proof="lkpd"></div>
 
 </div>
 
@@ -806,6 +807,7 @@ function generatePrompt(){
   tambahGenerate();
   simpanHistori(p);
   updateUI();
+  if(!isPro())window.bgyProNudge&&bgyProNudge({url:'https://lynk.id/kreacy/nq35v4y36gz8',perks:['Generate prompt LKPD tanpa batas harian (gratis hanya '+FREE_LIMIT+'x/hari)','Simpan riwayat hingga '+PRO_HISTORI+' prompt']});
 }
 
 // ============================================================

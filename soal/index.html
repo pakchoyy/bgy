@@ -713,7 +713,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
         <svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> <span>Aktivasi Pro</span>
         <span style="background:rgba(255,255,255,.25);font-size:.6rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
       </div>
-      <a href="http://lynk.id/kreacy/mplxqygkqj36" target="_blank"
+      <a href="https://lynk.id/kreacy/mplxqygkqj36" target="_blank"
         style="font-size:.65rem;font-weight:700;color:#fff;background:rgba(255,255,255,.2);padding:3px 9px;border-radius:99px;text-decoration:none;border:1px solid rgba(255,255,255,.4);">
         Beli Pro →
       </a>
@@ -721,6 +721,7 @@ footer .footer-sub{font-size:.7rem;color:rgba(255,255,255,.8);}
 
     <!-- Body -->
     <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(14,165,160,.04));">
+      <div data-bgy-proof="soal" style="margin:-6px 0 10px;"></div>
 
       <!-- MODE 1: Input kode (dari redirect aktvs-bs) -->
       <div id="modeKode" style="display:none;">
@@ -2021,6 +2022,7 @@ ${rawText}`;
     setTimeout(()=>{document.getElementById('previewBox').scrollIntoView({behavior:'smooth',block:'start'});scalePreview();},200);
     setTimeout(()=>enableInlineEdit(),400);
     showGenerateFeedback('Soal berhasil dibuat!',3000);
+    if(!isPro())window.bgyProNudge&&bgyProNudge({url:'https://lynk.id/kreacy/mplxqygkqj36',perks:['Buat soal tanpa batas harian (gratis hanya '+DAILY_LIMIT+'x/hari)','Langsung jadi PDF & Word siap cetak'],delay:3500});
     document.getElementById('userFeedbackBox').style.display='block';
     autoSaveForm();
     updateLimitDisplay();

@@ -1,7 +1,7 @@
 // BGY Buat Soal — Service Worker v1.0
 // Cache: aset statis saja. API/generate tetap butuh internet.
 
-const CACHE = 'bgy-soal-v2';
+const CACHE = 'bgy-soal-v3';
 const OFFLINE_URL = '/soal/offline.html';
 
 // Aset yang di-cache saat install

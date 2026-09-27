@@ -675,6 +675,7 @@ footer a{color:inherit;text-decoration:underline;}
       </div>
       Pro menyediakan pembuatan tanpa batas, salin satu kali pilih, serta akses cepat ke AI.
     </div>
+    <div data-bgy-proof="modul-ajar" style="text-align:left;margin:-10px 0 14px;"></div>
     <a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank"
       style="display:block;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border-radius:10px;padding:11px 0;font-weight:800;font-size:.92rem;text-align:center;width:100%;margin-bottom:10px;text-decoration:none;">
       Lihat pilihan Pro
@@ -2630,6 +2631,7 @@ async function generatePrompt(options={}){
     updateHistoriBadge();
 
     gaEvent('generate_prompt_modul_ajar',{kurikulum,jenjang:j,mapel,fase,topik,tipe_user:isPro()?'pro':'free'});
+    if(!isPro())window.bgyProNudge&&bgyProNudge({url:'https://lynk.id/kreacy/y8eol1jk91g6',perks:['Buat modul ajar tanpa batas harian (gratis hanya '+DAILY_LIMIT+'x/hari)','Salin sekali klik & buka AI langsung']});
     window.bgyAskReview&&bgyAskReview({delay:8000});
 
     document.getElementById('generateFeedback').textContent=outputMode==='direct'?'Modul selesai dan lolos pemeriksaan struktur. Verifikasi CP/KD dengan dokumen sekolah sebelum digunakan.':'Prompt siap. Salin lalu tempel ke AI pilihan Anda.';

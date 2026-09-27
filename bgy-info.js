@@ -263,10 +263,6 @@
     b.addEventListener('click', onClick);
     return b;
   }
-  function toolName() {
-    var t = String(document.title || '').split('|').pop().trim();
-    return t || 'Bantu Guru Yuk';
-  }
   function shareTool() {
     var name = toolName();
     var url = location.origin + location.pathname + '?utm_source=share&utm_medium=' + encodeURIComponent(page);
@@ -437,7 +433,7 @@
     opts = opts || {};
     var tool = String(opts.tool || page).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40) || 'home';
     if (!opts.force) {
-      if (reviewAsked) return;
+      if (reviewAsked || nudgeShown) return;
       if (lsGet('bgy_review_done_' + tool)) return;
       if (Number(lsGet('bgy_review_snooze_' + tool) || 0) > Date.now()) return;
       if (Date.now() - Number(lsGet('bgy_review_last') || 0) < REVIEW_GAP_DAYS * 864e5) return;
@@ -538,10 +534,140 @@
   }
   window.bgyAskReview = askReview;
 
+  /* ---- 7. Bukti ulasan & tawaran Pro ----
+     <div data-bgy-proof="soal"></div> → rating rata-rata + kutipan ulasan (tersembunyi bila ulasan < 3).
+     window.bgyProNudge({url, perks:[...]}) → kartu kecil "coba Pro" setelah hasil jadi, maks 1x/hari per tool. */
+  var nudgeShown = false;
+  var proofData = null;
+  function loadProof() {
+    if (proofData) return proofData;
+    var h = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
+    proofData = Promise.all([
+      fetch(SB_URL + '/rest/v1/rpc/bgy_review_stats', { method: 'POST', headers: h, body: '{}' }).then(function (r) { return r.ok ? r.json() : []; }),
+      fetch(SB_URL + '/rest/v1/bgy_reviews?select=tool,rating,body,name,school&approved=eq.true&body=not.is.null&rating=gte.4&order=created_at.desc&limit=30', { headers: h })
+        .then(function (r) { return r.ok ? r.json() : []; })
+    ]).then(function (res) {
+      var st = Array.isArray(res[0]) && res[0][0];
+      if (!st || Number(st.total) < 3) return null;
+      return { avg: Number(st.avg_rating), total: Number(st.total), list: Array.isArray(res[1]) ? res[1] : [] };
+    }).catch(function () { return null; });
+    return proofData;
+  }
+  var proofCss = [
+    '.bgyp{font-size:12.5px;line-height:1.45;margin-top:10px;}',
+    '.bgyp-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:700;}',
+    '.bgyp-stars{color:#f59e0b;letter-spacing:1px;font-size:14px;}',
+    '.bgyp-q{margin-top:5px;padding:8px 10px;border-radius:9px;background:rgba(14,165,160,.07);font-style:italic;}',
+    '.bgyp-who{display:block;font-style:normal;font-size:11.5px;opacity:.7;margin-top:3px;}',
+    '.bgyn{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:100000;max-width:380px;margin:0 auto;',
+    'background:#fff;color:#1e293b;border-radius:16px;padding:16px 16px 14px;box-shadow:0 12px 40px rgba(15,23,42,.28);border:1px solid #e2e8f0;',
+    'transform:translateY(20px);opacity:0;transition:transform .25s,opacity .25s;font-family:inherit;box-sizing:border-box;}',
+    '.bgyn.show{transform:none;opacity:1;}',
+    '@media (min-width:700px){.bgyn{left:auto;right:20px;bottom:20px;}}',
+    '.bgyn-t{font-size:15px;font-weight:800;padding-right:26px;}',
+    '.bgyn ul{margin:8px 0 0;padding:0;list-style:none;font-size:13px;}',
+    '.bgyn li{display:flex;gap:7px;align-items:flex-start;margin-top:4px;}',
+    '.bgyn li svg{flex:none;width:16px;height:16px;color:#0d9488;margin-top:1px;}',
+    '.bgyn-btns{display:flex;gap:8px;margin-top:12px;}',
+    '.bgyn-btns a,.bgyn-btns button{flex:1;padding:10px;border-radius:10px;font-size:13.5px;font-weight:700;text-align:center;cursor:pointer;font-family:inherit;text-decoration:none;}',
+    '.bgyn-go{flex:1.6!important;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff!important;border:none;}',
+    '.bgyn-later{background:#f8fafc;color:#64748b;border:1.5px solid #e2e8f0;}',
+    '.bgyn-x{position:absolute;top:8px;right:8px;width:30px;height:30px;border:none;background:none;color:#64748b;cursor:pointer;border-radius:8px;font-size:18px;line-height:1;}',
+    'body.dark .bgyn{background:#1e293b;color:#f1f5f9;border-color:#334155;}',
+    'body.dark .bgyn-later{background:#0f172a;border-color:#334155;color:#94a3b8;}',
+    'body.dark .bgyp-q{background:rgba(94,234,212,.08);}'
+  ].join('');
+  function ensureProofCss() {
+    if (document.getElementById('bgyp-css')) return;
+    var st = document.createElement('style');
+    st.id = 'bgyp-css';
+    st.textContent = proofCss;
+    document.head.appendChild(st);
+  }
+  function buildProof(d, tool) {
+    var box = document.createElement('div');
+    box.className = 'bgyp';
+    var top = document.createElement('div');
+    top.className = 'bgyp-top';
+    var stars = document.createElement('span');
+    stars.className = 'bgyp-stars';
+    stars.textContent = '★★★★★';
+    var txt = document.createElement('span');
+    txt.textContent = d.avg.toFixed(1).replace('.', ',') + ' dari ' + d.total + ' ulasan guru';
+    top.appendChild(stars);
+    top.appendChild(txt);
+    box.appendChild(top);
+    var q = d.list.filter(function (r) { return r.tool === tool; })[0] || d.list[0];
+    if (q && q.body) {
+      var qe = document.createElement('div');
+      qe.className = 'bgyp-q';
+      qe.textContent = '"' + (q.body.length > 140 ? q.body.slice(0, 137) + '...' : q.body) + '"';
+      var who = document.createElement('span');
+      who.className = 'bgyp-who';
+      who.textContent = [q.name || 'Guru', q.school].filter(Boolean).join(' · ');
+      qe.appendChild(who);
+      box.appendChild(qe);
+    }
+    return box;
+  }
+  function mountProof() {
+    var slots = document.querySelectorAll('[data-bgy-proof]');
+    if (!slots.length) return;
+    loadProof().then(function (d) {
+      if (!d) return;
+      ensureProofCss();
+      Array.prototype.forEach.call(slots, function (el) {
+        el.innerHTML = '';
+        el.appendChild(buildProof(d, el.getAttribute('data-bgy-proof') || page));
+      });
+    });
+  }
+  function proNudge(opts) {
+    opts = opts || {};
+    if (!opts.url || document.querySelector('.bgyn')) return;
+    var key = 'bgy_nudge_' + page, today = new Date().toDateString();
+    if (lsGet(key) === today) return;
+    lsSet(key, today);
+    nudgeShown = true;
+    ensureProofCss();
+    var check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var card = document.createElement('div');
+    card.className = 'bgyn';
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-label', 'Tawaran Pro');
+    card.innerHTML = '<button type="button" class="bgyn-x" aria-label="Tutup">&times;</button><div class="bgyn-t"></div><ul></ul><div class="bgyn-proof"></div>' +
+      '<div class="bgyn-btns"><button type="button" class="bgyn-later">Nanti</button><a class="bgyn-go" target="_blank" rel="noopener">Lihat Pro</a></div>';
+    card.querySelector('.bgyn-t').textContent = opts.title || 'Hasilnya jadi! Mau tanpa batas?';
+    var ul = card.querySelector('ul');
+    (opts.perks || ['Pakai tanpa batas harian']).forEach(function (t) {
+      var li = document.createElement('li');
+      li.innerHTML = check + '<span></span>';
+      li.querySelector('span').textContent = t;
+      ul.appendChild(li);
+    });
+    var go = card.querySelector('.bgyn-go');
+    go.href = withUtm(opts.url, 'nudge');
+    function close() {
+      card.classList.remove('show');
+      setTimeout(function () { card.remove(); }, 250);
+    }
+    go.addEventListener('click', function () { track('nudge', 'Lihat Pro', opts.url); close(); });
+    card.querySelector('.bgyn-later').addEventListener('click', function () { track('nudge', 'Nanti', page); close(); });
+    card.querySelector('.bgyn-x').addEventListener('click', close);
+    loadProof().then(function (d) { if (d) card.querySelector('.bgyn-proof').appendChild(buildProof(d, page)); });
+    setTimeout(function () {
+      document.body.appendChild(card);
+      requestAnimationFrame(function () { card.classList.add('show'); });
+      track('nudge', 'shown', page);
+    }, opts.delay == null ? 2500 : opts.delay);
+  }
+  window.bgyProNudge = proNudge;
+
   function mount() {
     adaptHeader();
     revealOnScroll();
     mountMenu();
+    mountProof();
     if (items.length < 2 || page === 'home') return;
     var style = document.createElement('style');
     style.textContent = css;
