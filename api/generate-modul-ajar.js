@@ -89,6 +89,10 @@ export default async function handler(req, res) {
       ? [requestedModel, ...models.filter(model => model !== requestedModel)]
       : models;
     const requestDeadline = Date.now() + 105000;
+    // Gemini 2.5 "berpikir" dulu sebelum menulis; untuk modul panjang itu menambah puluhan detik per tahap.
+    const thinkingBudget = Number.parseInt(process.env.GEMINI_MA_THINKING ?? '0', 10);
+    const thinkingFor = model => (/gemini-2\.5/.test(model) && Number.isFinite(thinkingBudget) && thinkingBudget >= 0)
+      ? { thinkingConfig: { thinkingBudget } } : {};
 
     attemptsLoop:
     for (let apiKey of keys) {
@@ -101,7 +105,7 @@ export default async function handler(req, res) {
         try {
           const controller = new AbortController();
           timeout = setTimeout(() => controller.abort(), Math.min(50000, remainingMs));
-          const response = await fetch(
+          const callGemini = extra => fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
             {
               method: 'POST',
@@ -114,13 +118,19 @@ export default async function handler(req, res) {
                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
                 generationConfig: {
                   temperature: 0.45,
-                  maxOutputTokens: body?.stage ? 12288 : 32768
+                  maxOutputTokens: body?.stage ? 12288 : 32768,
+                  ...extra
                 }
               })
             }
           );
 
-          const data = await response.json();
+          let response = await callGemini(thinkingFor(model));
+          let data = await response.json();
+          if (response.status === 400 && /thinking/i.test(data?.error?.message || '')) {
+            response = await callGemini({});
+            data = await response.json();
+          }
           if (response.ok) {
             const text = (data.candidates || [])
               .flatMap(candidate => candidate.content?.parts || [])

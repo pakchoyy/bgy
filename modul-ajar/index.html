@@ -696,7 +696,7 @@ const STORAGE_KEY_HISTORI = 'bgy_ma_histori';
 const STORAGE_KEY_LIMIT   = 'bgy_ma_limit';
 const STORAGE_KEY_DRAFT   = 'bgy_ma_generation_draft_v2';
 let _lastGenerationRequest=null;
-let _activeGenerationController=null;
+const _activeGenerationControllers=new Set();
 let _generationCancelled=false;
 let _currentOutputText='';
 let _isPro = false;
@@ -1107,7 +1107,7 @@ function _stopGoMessages(){clearTimeout(_goMsgTimer);}
 
 function cancelGeneration(){
   _generationCancelled=true;
-  if(_activeGenerationController)_activeGenerationController.abort();
+  _activeGenerationControllers.forEach(ctrl=>ctrl.abort());
   const errBox=document.getElementById('errorBox');
   if(errBox){errBox.textContent='Pembuatan dibatalkan. Draf tahap yang sudah selesai tetap tersimpan.';errBox.style.display='block';}
   setLoading(false);
@@ -1504,45 +1504,54 @@ function updateDraftRecoveryButton(){
 async function generateDirectInStages(basePrompt,meta,options={}){
   const stages=getDirectStages(meta.kurikulum);
   let parts=[];
-  let startStage=0;
   if(options.resume){
     try{
       const draft=JSON.parse(localStorage.getItem(STORAGE_KEY_DRAFT)||'null');
       const same=draft?.meta?.kurikulum===meta.kurikulum&&draft?.meta?.mapel===meta.mapel&&draft?.meta?.topik===meta.topik;
-      if(same&&!draft.complete&&Array.isArray(draft.parts)){parts=draft.parts;startStage=Math.min(draft.nextStage||parts.length,stages.length);}
+      if(same&&!draft.complete&&Array.isArray(draft.parts))parts=draft.parts;
     }catch(error){}
   }
-  for(let i=startStage;i<stages.length;i++){
+  const runStage=async(i,context)=>{
+    const text=await requestStageWithRetry(buildStagePrompt(basePrompt,stages[i],i,stages.length,'',context),{stage:i+1});
+    parts[i]=removeDuplicateIdentity(stripStageOutput(text));
+    const next=stages.findIndex((_,k)=>!parts[k]);
+    saveGenerationDraft({raw:composeDirectDocument(meta,parts),meta,parts,complete:false,nextStage:next<0?stages.length:next});
+  };
+  const fail=(i,error)=>{
+    if(parts.some(Boolean))saveGenerationDraft({raw:composeDirectDocument(meta,parts),meta,parts,complete:false,nextStage:i});
+    return new Error(`Gagal pada tahap ${i+1} (${stages[i].name}). ${error.message}`);
+  };
+  // Tahap 1 (identitas, CP, TP, KKTP) jadi acuan; tahap lain lalu dibuat bersamaan supaya jauh lebih cepat.
+  if(!parts[0]){
     if(_generationCancelled)throw new Error('Pembuatan dibatalkan.');
-    const stage=stages[i];
-    setStageProgress(i+1,stages.length,stage.name);
-    const previousContent=parts.slice(0,i).filter(Boolean).join('\n\n');
-    const stagePrompt=buildStagePrompt(basePrompt,stage,i,stages.length,'',previousContent);
-    try{
-      const text=await requestStageWithRetry(stagePrompt,{stage:i+1});
-      parts[i]=removeDuplicateIdentity(stripStageOutput(text));
-      const raw=composeDirectDocument(meta,parts);
-      saveGenerationDraft({raw,meta,parts,complete:false,nextStage:i+1});
-    }catch(error){
-      if(parts.length){
-        const raw=composeDirectDocument(meta,parts);
-        saveGenerationDraft({raw,meta,parts,complete:false,nextStage:i});
-      }
-      throw new Error(`Gagal pada tahap ${i+1} (${stage.name}). ${error.message}`);
+    setStageProgress(1,stages.length,stages[0].name);
+    try{await runStage(0,'');}catch(error){throw fail(0,error);}
+  }
+  const rest=stages.map((_,i)=>i).filter(i=>i>0&&!parts[i]);
+  if(rest.length){
+    if(_generationCancelled)throw new Error('Pembuatan dibatalkan.');
+    setStageProgress(2,stages.length,rest.map(i=>stages[i].name.toLowerCase()).join(', ')+' (bersamaan)');
+    const results=await Promise.allSettled(rest.map(i=>runStage(i,parts[0])));
+    const firstFail=results.findIndex(r=>r.status==='rejected');
+    if(firstFail>=0){
+      if(_generationCancelled)throw new Error('Pembuatan dibatalkan.');
+      throw fail(rest[firstFail],results[firstFail].reason);
     }
   }
 
   let raw=composeDirectDocument(meta,parts);
   const failedStages=[...new Set(auditModule(raw).filter(check=>!check.ok).map(check=>check.stage))];
-  for(const stageNumber of failedStages){
+  if(failedStages.length)setStageProgress(stages.length,stages.length,'Menyempurnakan '+failedStages.map(n=>stages[n-1].name.toLowerCase()).join(', '));
+  await Promise.all(failedStages.map(async stageNumber=>{
     if(_generationCancelled)throw new Error('Pembuatan dibatalkan.');
     const i=stageNumber-1;
     const stage=stages[i];
-    setStageProgress(i+1,stages.length,`Menyempurnakan ${stage.name.toLowerCase()}`);
     const otherStages=parts.filter((part,index)=>index!==i&&part).join('\n\n');
     const repairPrompt=buildStagePrompt(basePrompt,stage,i,stages.length,'- Hasil sebelumnya belum lolos pemeriksaan kelengkapan. Pastikan seluruh komponen tahap ini tersedia, konkret, konsisten, dan alokasi waktunya tepat.',otherStages);
     const text=await requestStageWithRetry(repairPrompt,{stage:i+1},2);
     parts[i]=removeDuplicateIdentity(stripStageOutput(text));
+  }));
+  if(failedStages.length){
     raw=composeDirectDocument(meta,parts);
     saveGenerationDraft({raw,meta,parts,complete:false,nextStage:stages.length});
   }
@@ -2530,7 +2539,7 @@ CATATAN UNTUK MODE GENERATE LANGSUNG DI APLIKASI:
 - ${outputScope}
 - Mulai langsung dari isi yang diminta tanpa salam atau penjelasan proses.`;
   const ctrl=new AbortController();
-  _activeGenerationController=ctrl;
+  _activeGenerationControllers.add(ctrl);
   const tid=setTimeout(()=>ctrl.abort(),120000);
   try{
     const resp=await fetch('/api/generate-modul-ajar',{
@@ -2561,7 +2570,7 @@ CATATAN UNTUK MODE GENERATE LANGSUNG DI APLIKASI:
     throw e;
   }finally{
     clearTimeout(tid);
-    if(_activeGenerationController===ctrl)_activeGenerationController=null;
+    _activeGenerationControllers.delete(ctrl);
   }
 }
 
