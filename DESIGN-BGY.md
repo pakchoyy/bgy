@@ -77,9 +77,14 @@ Teks teal di latar gelap: `#5eead4`.
 |---|---|
 | Judul header | `1rem`, 800, satu baris (`white-space:nowrap; overflow:hidden; text-overflow:ellipsis`) |
 | Judul kartu | `.82–.9rem`, 700 |
-| Label form | `.69rem`, 700, **HURUF BESAR**, `letter-spacing:.5px`, warna `--text-light` |
-| Isi / input | `.83–.88rem` |
-| Keterangan kecil | `.7–.76rem`, `--text-light` |
+| Label form | `.75rem`, 700, **HURUF BESAR**, `letter-spacing:.5px`, warna `--text-light` |
+| Isi / input | `.83–.88rem` (di HP otomatis 15px, lihat di bawah) |
+| Keterangan kecil | `.75–.78rem`, `--text-light` |
+
+**Batas minimum (wajib):**
+- Teks di layar **minimal 12px (`.75rem`)**. Pengecualian hanya badge kecil (`FREE`, `PRO`, angka notifikasi) dan dokumen cetak/pratinjau (pakai `pt`).
+- Target sentuh di HP **minimal 40px** (tombol ikon, chip, filter) dan **42px** (input, select). `bgy-info.js` sudah memasang aturan ini otomatis di layar ≤640px (input/select 42px + huruf 15px, tombol ikon header 40px, chip 40px). Kalau membuat kelas tombol baru yang kecil, tambahkan ke daftar `TOUCH_CSS` di `bgy-info.js`.
+- Tombol aksi utama (Download, Generate, Simpan) **jangan diperkecil** di media query HP — justru dibuat lebar penuh.
 
 ---
 
@@ -131,7 +136,7 @@ header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;b
 .header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;}
 .header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
 .header-brand img{width:36px;height:36px;border-radius:10px;}
-.hdr-btn{height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);
+.hdr-btn{height:40px;min-width:40px;border-radius:10px;border:1.5px solid rgba(255,255,255,.3);
   background:rgba(255,255,255,.1);color:#fff;display:flex;align-items:center;justify-content:center;}
 ```
 - Tinggi **60px**, menempel di atas (sticky), gradient teal.
@@ -153,6 +158,8 @@ Urutan isi:
    - **Install BGY** (install PWA; tertulis "Sudah terinstall" bila sudah)
    - **Tools Bantu Guru Yuk lainnya** — maks **4** tools (tool halaman sendiri otomatis disembunyikan)
    - **Semua Tools Bantu Guru Yuk** (satu baris)
+   - **Bagikan ke teman guru** — Web Share di HP (fallback WhatsApp), link ber-UTM `utm_source=share`; kode voucher dari tab Promo ikut ditempel
+   - **Kritik & saran** — WhatsApp Pak Choy (6289530713597) dengan pesan berisi nama tool
 
 ```css
 .dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);
@@ -252,9 +259,44 @@ Semua warna lewat variabel CSS supaya otomatis ikut berganti.
   ```js
   if (new URL(e.request.url).pathname === '/bgy-info.js') return;
   ```
+- **Nama cache unik per tool** (`bgy-<tool>-vN`) dan saat `activate` **hanya hapus cache milik sendiri**. Semua tool berbagi Cache Storage satu domain; menghapus semua cache lain merusak offline tool lain:
+  ```js
+  keys.filter(k => k.startsWith('bgy-<tool>-') && k !== CACHE).map(k => caches.delete(k))
+  ```
+- Daftarkan SW dengan scope foldernya: `navigator.serviceWorker.register('/<tool>/sw.js',{scope:'/<tool>/'})`. Tool tanpa SW sendiri dilayani SW root (`/sw.js`).
 - **Banner pengingat install** `#installPopup` (class `show`), muncul 2 detik setelah buka bila belum terinstall, ditutup → muncul lagi setelah 24 jam. Tombol Install cukup memanggil `installApp()` — `bgy-info.js` otomatis mengarahkannya ke dialog install PWA asli.
 - Aset versi: tambahkan `?v=N` di CSS/JS dan naikkan nama cache SW setiap rilis besar.
-- `_headers`: HTML & `sw.js` `no-cache`; ikon cache panjang.
+- Header HTTP diatur di **`/vercel.json`** (hosting Vercel; `_headers` tidak dibaca): `sw.js` & `bgy-info.js` `no-cache`, `/admin` `X-Frame-Options: DENY`, gambar statis cache 7 hari.
+- Gambar besar **jangan di-base64 di HTML**. Simpan sebagai file WebP (lebar ±900px, kualitas ±72) dan muat saat dibutuhkan.
+
+---
+
+## 14. Komponen jualan, ulasan & contoh hasil (dari `bgy-info.js`)
+
+Semua komponen ini sudah jadi; tool cukup memasang atribut atau memanggil fungsi.
+
+| Komponen | Cara pakai | Keterangan |
+|---|---|---|
+| Form ulasan | `window.bgyAskReview&&bgyAskReview({delay:3000})` setelah hasil **berhasil** | Bintang 1–5 + teks opsional → tabel `bgy_reviews`. Jeda tanya ulang diurus otomatis |
+| Tawaran Pro | `if(!isPro())window.bgyProNudge&&bgyProNudge({url:'<link Lynk>',perks:['…','…']})` setelah hasil gratis jadi | Kartu kecil bawah layar, maks 1×/hari per tool, tombol "Lihat Pro" (UTM `nudge`), ikut menampilkan promo & ulasan |
+| Bukti ulasan | `<div data-bgy-proof="<tool>"></div>` di dekat tombol Beli/Upgrade | ★ rata-rata + kutipan ulasan 4–5★ (tersembunyi bila ulasan < 3) + promo/voucher/garansi/bundling dari admin |
+| Contoh hasil | `<div data-bgy-contoh="/<tool>/contoh/hal-{n}.webp" data-bgy-count="5" data-bgy-title="Contoh hasil …"></div>` | Kartu thumbnail → penampil layar penuh, geser kiri/kanan. `{n}` = 01, 02, … |
+| Promo | Diisi di `/admin` → tab **Promo** (tabel `bgy_settings`, key `promo`) | Teks promo + tanggal berakhir, kode voucher, link paket bundling, teks garansi. Link wajib `https://` |
+
+Aturan: tawaran Pro **tidak** muncul untuk pengguna Pro dan tidak bersamaan dengan form ulasan (ulasan mengalah di tampilan yang sama).
+
+---
+
+## 15. Keamanan & hosting
+
+- **Hosting**: Vercel (static + `/api/*` serverless). Cloudflare untuk DNS/domain.
+- **API AI** (`/api/generate-*.js`): kunci API hanya di env Vercel, tidak pernah di browser. Setiap endpoint wajib: izin origin (`BGY_ALLOWED_ORIGINS`), batas per IP (±10/menit), batas panjang prompt, kunci API di header `x-goog-api-key` (bukan di URL), dan tidak meneruskan isi error mentah dari penyedia AI.
+- **Gemini**: urutan model lewat env (`GEMINI_<TOOL>_MODEL`), beberapa kunci (`GEMINI_<TOOL>_1..6`) dicoba bergantian. Untuk teks panjang matikan/kecilkan "thinking" (2.5: `thinkingBudget:0`, 3.x: `thinkingLevel:'low'`) dengan fallback tanpa pengaturan bila model menolak.
+- **Supabase**: anon key boleh di browser; semua tabel pakai RLS. Tulis data publik hanya lewat RPC `security definer` yang memvalidasi input. Admin dikenali lewat `bgy_is_admin()` (email di `bgy_admins` + email terverifikasi).
+- **innerHTML**: data dari pengguna/database **selalu** lewat `esc()` atau `textContent`. URL dari database hanya dipakai bila `https://`.
+- **Pustaka CDN**: kunci versi persis (mis. `@supabase/supabase-js@2.117.2`). Kode harus tetap jalan bila CDN gagal dimuat (`window.supabase && window.supabase.createClient(...)`).
+- **Data lokal sensitif** (Simpan Sandi): enkripsi AES-GCM dengan kunci PBKDF2 dari PIN; verifikasi PIN juga PBKDF2 bergaram, bukan hash cepat.
+- Halaman internal (`/admin`, `/k`, halaman aktivasi) diberi `<meta name="robots" content="noindex,nofollow">`.
 
 ---
 
@@ -276,4 +318,8 @@ Semua warna lewat variabel CSS supaya otomatis ikut berganti.
 - [ ] Tambahkan ke `sitemap.xml`
 - [ ] Panggil `window.bgyAskReview&&bgyAskReview({delay:3000})` setelah pengguna **berhasil** mendapat hasil (unduh/salin/cetak), bukan saat halaman dibuka. Form ulasan, jeda tanya ulang, dan pengiriman sudah diurus `bgy-info.js`; tambahkan nama tool di `TOOL_NAMES` pada `/admin` dan Beranda
 - [ ] Tes di HP 360px & 390px, mode gelap, dan offline
+- [ ] Tidak ada teks layar < 12px; tombol/input di HP ≥ 40px (bagian 3)
+- [ ] SW: nama cache unik `bgy-<tool>-vN`, hanya hapus cache sendiri (bagian 12)
+- [ ] Tool berbayar: `bgyProNudge` setelah hasil gratis, `data-bgy-proof` dekat tombol Beli, `data-bgy-contoh` bila ada contoh hasil (bagian 14). Ikuti `PRO-LISENSI.md`
+- [ ] Endpoint AI baru: izin origin + batas per IP + batas prompt (bagian 15)
 - [ ] Fitur AI yang belum siap: bangun lengkap, tapi sembunyikan dengan saklar di kode (contoh: `AI_AKTIF` di Teks Sekolah) supaya tinggal dinyalakan

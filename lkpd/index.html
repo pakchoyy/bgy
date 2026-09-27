@@ -473,8 +473,18 @@ const installPopup = document.getElementById("installPopup");
 // ============================================================
 // HELPERS: PRO STATUS
 // ============================================================
+// Dulu LKPD memakai kunci "bgy_pro" yang juga dipakai Buat Soal; pindahkan ke kunci sendiri.
+try{
+  if(localStorage.getItem("bgy_pro") === "1"){
+    localStorage.setItem("bgy_pro_lkpd", "1");
+    const oldCode = localStorage.getItem("bgy_pro_code");
+    if(oldCode) localStorage.setItem("bgy_pro_lkpd_code", oldCode);
+    localStorage.removeItem("bgy_pro");
+    localStorage.removeItem("bgy_pro_code");
+  }
+}catch(e){}
 function isPro(){
-  return localStorage.getItem("bgy_pro") === "1";
+  return localStorage.getItem("bgy_pro_lkpd") === "1";
 }
 
 function updateUI(){
@@ -632,8 +642,8 @@ async function aktivasiPro(){
     const data = await res.json();
 
     if(data.valid){
-      localStorage.setItem("bgy_pro", "1");
-      localStorage.setItem("bgy_pro_code", kode.toUpperCase());
+      localStorage.setItem("bgy_pro_lkpd", "1");
+      localStorage.setItem("bgy_pro_lkpd_code", kode.toUpperCase());
       okEl.textContent   = data.message || "Aktivasi berhasil!";
       okEl.style.display = "block";
       updateUI();
@@ -653,8 +663,8 @@ async function aktivasiPro(){
 
 function logoutPro(){
   if(!confirm("Keluar dari mode Pro?")) return;
-  localStorage.removeItem("bgy_pro");
-  localStorage.removeItem("bgy_pro_code");
+  localStorage.removeItem("bgy_pro_lkpd");
+  localStorage.removeItem("bgy_pro_lkpd_code");
   updateUI();
 }
 
@@ -739,7 +749,7 @@ function generatePrompt(){
   gtag('event', 'generate_prompt');
   // Cek limit
   if(!isPro() && getSisaGenerate() <= 0){
-    if(confirm("Limit harian kamu sudah habis (4x/hari).\n\nUpgrade ke Pro untuk generate unlimited?\n\nTekan OK untuk info aktivasi.")){window.open("https://lynk.id/kreacy/nq35v4y36gz8","_blank");}
+    if(confirm("Limit harian kamu sudah habis ("+FREE_LIMIT+"x/hari).\n\nUpgrade ke Pro untuk generate unlimited?\n\nTekan OK untuk info aktivasi.")){window.open("https://lynk.id/kreacy/nq35v4y36gz8","_blank");}
     return;
   }
 
