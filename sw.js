@@ -1,7 +1,7 @@
 // BGY root Service Worker (scope /) — melayani Beranda & tool tanpa SW sendiri.
 // Cache: aset statis saja. API/generate tetap butuh internet.
 
-const CACHE = 'bgy-root-v11';
+const CACHE = 'bgy-root-v12';
 
 // Aset yang di-cache saat install (disesuaikan dengan jalur modul-ajar)
 const PRECACHE = [

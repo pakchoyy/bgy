@@ -50,10 +50,28 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 
 @media(max-width:440px){.item-actions .bl{display:none;}}
 .msg{font-size:.8rem;margin-top:8px;min-height:1em;}
 .msg.err{color:#dc2626;}
+.chart-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:.84rem;margin:4px 0 8px;}
+.chart-head span{font-size:.76rem;color:var(--text-light);}
+.chart{position:relative;display:grid;grid-template-columns:repeat(var(--n,30),1fr);gap:2px;align-items:end;height:160px;padding-top:18px;border-bottom:1px solid var(--border);}
+.chart-grid{position:absolute;left:0;right:0;top:18px;border-top:1px dashed var(--border);pointer-events:none;}
+.chart-grid span{position:absolute;right:0;top:-17px;font-size:.72rem;color:var(--text-light);}
+.bar{height:100%;display:flex;align-items:flex-end;background:none;border:none;padding:0;cursor:pointer;min-width:0;}
+.bar i{display:block;width:100%;background:#0ea5a0;border-radius:4px 4px 0 0;}
+.bar:hover i,.bar.on i,.bar:focus-visible i{background:#0d7a8a;}
+body.dark .bar:hover i,body.dark .bar.on i{background:#5eead4;}
+.chart-tip{font-size:.8rem;margin-top:6px;color:var(--text);}
+.chart-axis{display:flex;justify-content:space-between;font-size:.74rem;color:var(--text-light);margin-top:4px;}
+.tbl-wrap{overflow-x:auto;}
+.stat-tbl{width:100%;border-collapse:collapse;font-size:.8rem;}
+.stat-tbl th{text-align:right;font-size:.72rem;color:var(--text-light);font-weight:700;padding:6px 6px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.stat-tbl td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.stat-tbl th:first-child,.stat-tbl td:first-child{text-align:left;}
+.stat-tbl .empty{text-align:center;color:var(--text-light);white-space:normal;}
 .hint{font-size:.78rem;color:var(--text-light);line-height:1.5;margin:-4px 0 12px;}
 .chk{display:flex!important;align-items:center;gap:8px;font-size:.86rem;font-weight:700;text-transform:none;letter-spacing:0;cursor:pointer;}
 .chk input{width:18px;height:18px;accent-color:var(--blue);}
 .tabs{display:flex;gap:6px;margin-bottom:12px;}
+@media(max-width:520px){.tabs{display:grid;grid-template-columns:1fr 1fr;}}
 .tab{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);font-weight:700;font-size:.84rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;}
 .tab.active{border-color:var(--blue);background:rgba(14,165,160,.1);color:var(--teal-dark);}
 body.dark .tab.active{color:#5eead4;}
@@ -105,6 +123,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
 <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></symbol>
 <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
 <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
 <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
 <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
@@ -154,6 +173,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
       <button class="tab active" id="tab-links" onclick="showTab('links')"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Link Bio</button>
       <button class="tab" id="tab-reviews" onclick="showTab('reviews')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Ulasan</button>
       <button class="tab" id="tab-promo" onclick="showTab('promo')"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo</button>
+      <button class="tab" id="tab-stat" onclick="showTab('stat')"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg> Statistik</button>
     </div>
 
     <div id="pane-links" class="card">
@@ -178,6 +198,27 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
         <button class="btn" onclick="loadReviews()"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Muat ulang</button>
       </div>
       <div id="reviewList"></div>
+    </div>
+
+    <div id="pane-stat" class="card" hidden>
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg> Guru yang memakai BGY</div>
+      <div class="toolbar">
+        <select id="statDays" onchange="loadStats()" aria-label="Rentang waktu"><option value="7">7 hari terakhir</option><option value="30" selected>30 hari terakhir</option><option value="90">90 hari terakhir</option></select>
+        <button class="btn" onclick="loadStats()"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Muat ulang</button>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b id="sToday">-</b><span>Guru hari ini</span></div>
+        <div class="stat"><b id="s7">-</b><span>7 hari</span></div>
+        <div class="stat"><b id="s30">-</b><span>30 hari</span></div>
+      </div>
+      <div class="chart-head"><b>Guru unik per hari</b><span id="chartRange"></span></div>
+      <div class="chart" id="statChart" role="img" aria-label="Grafik guru unik per hari"></div>
+      <div class="chart-tip" id="chartTip" hidden></div>
+      <div class="chart-axis"><span id="axisFrom"></span><span id="axisTo"></span></div>
+      <div class="chart-head" style="margin-top:16px"><b>Per tool</b><span id="periodTotal"></span></div>
+      <div class="tbl-wrap"><table class="stat-tbl"><thead><tr><th>Tool</th><th>Guru</th><th>Buka</th><th>Hasil</th><th>Klik Pro</th><th>Install</th><th>Bagikan</th></tr></thead><tbody id="toolRows"></tbody></table></div>
+      <p class="hint" style="margin-top:10px">Guru = browser unik (ID acak anonim, tanpa nama/email). Buka dihitung maks 1x sehari per tool. Hasil = berhasil membuat/menyalin/mengunduh. Klik Pro = klik link Lynk.</p>
+      <div class="msg" id="statMsg"></div>
     </div>
 
     <div id="pane-promo" class="card" hidden>
@@ -236,7 +277,7 @@ const ICONS={
   calendar:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
   star:'<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>'
 };
-const TOOL_NAMES={'soal':'Buat Soal','modul-ajar':'Modul Ajar','lkpd':'Prompt LKPD','kokurikuler':'Kokurikuler','katrol-nilai':'Katrol Nilai','draft-tp':'Draft TP','teks-sekolah':'Teks Sekolah','sandi':'Simpan Sandi','home':'Beranda'};
+const TOOL_NAMES={'soal':'Buat Soal','modul-ajar':'Modul Ajar','lkpd':'Prompt LKPD','kokurikuler':'Kokurikuler','katrol-nilai':'Katrol Nilai','draft-tp':'Draft TP','teks-sekolah':'Teks Sekolah','sandi':'Simpan Sandi','home':'Beranda','k':'Link Bio /k'};
 
 let links=[], reviews=[];
 
@@ -275,7 +316,38 @@ document.getElementById('loginForm').addEventListener('submit',async e=>{
 async function logout(){await sb.auth.signOut();show('loginCard');}
 
 function showTab(t){
-  ['links','reviews','promo'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+  if(t==='stat')loadStats();
+  ['links','reviews','promo','stat'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+}
+
+/* ─── Statistik ─── */
+const fmtN=n=>Number(n||0).toLocaleString('id-ID');
+const fmtDay=d=>new Date(d+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+async function loadStats(){
+  const days=Number(document.getElementById('statDays').value)||30;
+  const msg=document.getElementById('statMsg');msg.className='msg';msg.textContent='Memuat...';
+  const {data,error}=await sb.rpc('bgy_usage_stats',{p_days:days});
+  if(error){msg.className='msg err';msg.textContent=/function|does not exist/i.test(error.message)?'Jalankan migrasi 20260929_usage_tracker.sql di Supabase dulu.':'Gagal memuat: '+error.message;return;}
+  msg.textContent='';
+  document.getElementById('sToday').textContent=fmtN(data.today);
+  document.getElementById('s7').textContent=fmtN(data.last7);
+  document.getElementById('s30').textContent=fmtN(data.last30);
+  document.getElementById('periodTotal').textContent=fmtN(data.period)+' guru dalam '+days+' hari';
+  const daily=data.daily||[];
+  const max=Math.max(1,...daily.map(d=>d.guru));
+  const chart=document.getElementById('statChart');
+  chart.innerHTML='<div class="chart-grid"><span>'+fmtN(max)+'</span></div>'+daily.map((d,i)=>
+    `<button type="button" class="bar" data-i="${i}" aria-label="${esc(fmtDay(d.day))}: ${d.guru} guru, ${d.hasil} hasil"><i style="height:${d.guru?Math.max(3,Math.round(d.guru/max*100)):0}%"></i></button>`).join('');
+  chart.style.setProperty('--n',daily.length);
+  document.getElementById('axisFrom').textContent=daily.length?fmtDay(daily[0].day):'';
+  document.getElementById('axisTo').textContent=daily.length?fmtDay(daily[daily.length-1].day):'';
+  const tip=document.getElementById('chartTip');
+  const show=b=>{const d=daily[b.dataset.i];tip.innerHTML='<b>'+esc(fmtDay(d.day))+'</b> · '+fmtN(d.guru)+' guru · '+fmtN(d.hasil)+' hasil';tip.hidden=false;
+    chart.querySelectorAll('.bar.on').forEach(x=>x.classList.remove('on'));b.classList.add('on');};
+  chart.querySelectorAll('.bar').forEach(b=>{b.addEventListener('mouseenter',()=>show(b));b.addEventListener('focus',()=>show(b));b.addEventListener('click',()=>show(b));});
+  chart.onmouseleave=()=>{tip.hidden=true;chart.querySelectorAll('.bar.on').forEach(x=>x.classList.remove('on'));};
+  const rows=data.tools||[];
+  document.getElementById('toolRows').innerHTML=rows.length?rows.map(t=>`<tr><td>${esc(TOOL_NAMES[t.tool]||t.tool)}</td><td><b>${fmtN(t.guru)}</b></td><td>${fmtN(t.buka)}</td><td>${fmtN(t.hasil)}</td><td>${fmtN(t.pro)}</td><td>${fmtN(t.install)}</td><td>${fmtN(t.share)}</td></tr>`).join(''):'<tr><td colspan="7" class="empty">Belum ada data. Data mulai terkumpul setelah migrasi dijalankan.</td></tr>';
 }
 
 /* ─── Promo ─── */

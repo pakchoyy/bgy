@@ -135,6 +135,7 @@
   var installKey = 'bgy_installed_' + page;
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredInstall = e; updateInstallItem(); });
   window.addEventListener('appinstalled', function () {
+    usage('install');
     deferredInstall = null;
     try { localStorage.setItem(installKey, '1'); } catch (e) {}
     updateInstallItem();
@@ -280,6 +281,7 @@
     var text = SHARE_TEXT[page] || ('Cobain ' + name + ' dari Bantu Guru Yuk, praktis buat guru.');
     if (promoNow && promoNow.voucher) text += ' Mau Pro? Pakai kode ' + promoNow.voucher.code + (promoNow.voucher.text ? ' (' + promoNow.voucher.text + ')' : '') + '.';
     track('menu', 'Bagikan', url);
+    usage('share');
     if (navigator.share) {
       // Link ditaruh di dalam teks: sebagian aplikasi (termasuk WhatsApp) membuang salah satu dari text/url.
       navigator.share({ title: name, text: text + '\n' + url }).catch(function () {});
@@ -444,6 +446,7 @@
   }
   function askReview(opts) {
     opts = opts || {};
+    if (!opts.force) usageHasil();
     var tool = String(opts.tool || page).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40) || 'home';
     if (!opts.force) {
       if (reviewAsked || nudgeShown) return;
@@ -840,8 +843,47 @@
     document.head.appendChild(st);
   }
 
+  /* ---- 10. Statistik pemakaian anonim (tab Statistik di /admin) ----
+     ID acak per browser, tanpa nama/email/IP. "open" maks 1x/hari per tool. */
+  function visitorId() {
+    var id = lsGet('bgy_vid');
+    if (!/^[0-9a-f-]{36}$/.test(id || '')) {
+      id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) { var r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3 | 8)).toString(16); });
+      lsSet('bgy_vid', id);
+    }
+    return id;
+  }
+  function usage(event) {
+    if (page === 'admin' || !window.fetch) return;
+    try {
+      fetch(SB_URL + '/rest/v1/rpc/bgy_track', {
+        method: 'POST',
+        keepalive: true,
+        headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ p_tool: (page || 'home').slice(0, 40), p_event: event, p_vid: visitorId() })
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  var lastHasil = 0;
+  function usageHasil() {
+    if (Date.now() - lastHasil < 20000) return;
+    lastHasil = Date.now();
+    usage('hasil');
+  }
+  function mountUsage() {
+    var key = 'bgy_trk_open_' + page, today = new Date().toDateString();
+    if (lsGet(key) !== today) { lsSet(key, today); usage('open'); }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href*="lynk.id"]');
+      if (a) usage('pro');
+    }, true);
+  }
+  window.bgyUsage = usage;
+
   function mount() {
     mountTouch();
+    mountUsage();
     adaptHeader();
     revealOnScroll();
     mountMenu();

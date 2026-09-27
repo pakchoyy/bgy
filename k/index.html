@@ -90,6 +90,13 @@ body.dark .lk.alt{background:linear-gradient(135deg,#0d4a47,#1a3a4a);border-colo
 const SB_URL='https://xtmpiqpmwirsrcsphsto.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w';
 const SB_HEAD={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'};
+(function(){try{
+  let v=localStorage.getItem('bgy_vid');
+  if(!/^[0-9a-f-]{36}$/.test(v||'')){v=crypto.randomUUID?crypto.randomUUID():null;if(v)localStorage.setItem('bgy_vid',v);}
+  const d=new Date().toDateString();
+  if(v&&localStorage.getItem('bgy_trk_open_k')!==d){localStorage.setItem('bgy_trk_open_k',d);
+    fetch(SB_URL+'/rest/v1/rpc/bgy_track',{method:'POST',keepalive:true,headers:SB_HEAD,body:JSON.stringify({p_tool:'k',p_event:'open',p_vid:v})}).catch(()=>{});}
+}catch(e){}})();
 
 /* Cadangan bila database belum siap / gagal dimuat */
 const FALLBACK=[
