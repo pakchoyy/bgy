@@ -160,6 +160,8 @@
     var base = Math.floor(inf.tersedia / s.tp.length), sisa = inf.tersedia % s.tp.length;
     s.tp.forEach(function (t, i) { t.jp = base + (i < sisa ? 1 : 0); });
   }
+  var MAXTP = 100;
+  function ccHtml(t) { var n = String(t || '').length; return '<span class="pk-cc' + (n > MAXTP ? ' bad' : '') + '">' + n + '/' + MAXTP + '</span>'; }
   function tempel() {
     var k = document.getElementById('pkPasteSem').value;
     var mode = document.getElementById('pkPasteMode').value;
@@ -173,7 +175,8 @@
     document.getElementById('pkPasteTxt').value = '';
     document.getElementById('pkPaste').hidden = true;
     save(); render();
-    toast(rows.length + ' TP ditambahkan ke semester ' + k + '.');
+    var panjang = rows.filter(function (r) { return r.t.length > MAXTP; }).length;
+    toast(panjang ? panjang + ' TP > ' + MAXTP + ' karakter. Persingkat yang merah.' : rows.length + ' TP ditambahkan ke semester ' + k + '.');
   }
 
   /* ─── dokumen (pratinjau, cetak, Word) ─── */
@@ -372,6 +375,9 @@
     '.pk-row .n{font-size:.72rem;font-weight:800;color:var(--blue-dark);padding-top:10px;text-align:center;}',
     '.pk-row textarea{min-height:40px;font-size:.8rem;padding:7px 9px;line-height:1.4;}',
     '.pk-row input{text-align:center;padding:8px 4px;}',
+    '.pk-tw{display:flex;flex-direction:column;min-width:0;}',
+    '.pk-cc{align-self:flex-end;font-size:.62rem;font-weight:700;color:var(--text-light);margin-top:2px;}',
+    '.pk-cc.bad{color:#dc2626;}body.dark .pk-cc.bad{color:#fca5a5;}',
     '.pk-act{display:flex;gap:3px;}',
     '.pk-ib{width:30px;height:36px;border:1.5px solid var(--border);border-radius:7px;background:var(--card-bg);color:var(--text-light);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-family:inherit;}',
     '.pk-ib:hover{border-color:var(--blue);color:var(--blue);}.pk-ib.del:hover{border-color:#dc2626;color:#dc2626;}',
@@ -431,7 +437,7 @@
       field('JP / Minggu', inp('pkJp', P.jp, '', 'number')) + '</div>' +
       '<div class="pk-btns"><button type="button" class="pk-btn pri" data-a="bank">Ambil TP dari bank (Sem 1 & 2)</button>' +
       '<button type="button" class="pk-btn" data-a="paste">Tempel TP sendiri</button></div>' +
-      '<div class="pk-hint">"Ambil dari bank" memakai Jenis CP, Kelas &amp; Mapel di form atas. JP/minggu terisi perkiraan struktur kurikulum; sesuaikan dengan sekolahmu.</div>' +
+      '<div class="pk-hint">Tiap TP maksimal 100 karakter supaya bisa langsung masuk e-Rapor. "Ambil dari bank" memakai Jenis CP, Kelas &amp; Mapel di form atas. JP/minggu terisi perkiraan struktur kurikulum; sesuaikan dengan sekolahmu.</div>' +
       '<div id="pkPaste" class="pk-sem" hidden><div class="pk-sem-h">Tempel TP (satu baris satu TP)</div>' +
       '<textarea id="pkPasteTxt" rows="5" placeholder="Peserta didik dapat ...&#10;Peserta didik dapat ..."></textarea>' +
       '<div class="pk-btns"><select id="pkPasteSem" style="width:auto"><option value="1">Semester 1</option><option value="2">Semester 2</option></select>' +
@@ -443,7 +449,7 @@
         ' <span class="pk-sum' + (bad ? ' bad' : '') + '" id="pkSum' + k + '">' + inf.jpTotal + ' / ' + inf.tersedia + ' JP</span>' +
         '<button type="button" class="pk-btn" data-a="rata" data-k="' + k + '" style="margin-left:auto">Bagi JP rata</button></div>';
       P.sem[k].tp.forEach(function (t, i) {
-        h += '<div class="pk-row"><span class="n">' + (i + 1) + '</span><textarea rows="2" data-k="' + k + '" data-i="' + i + '" data-f="t">' + esc(t.t) + '</textarea>' +
+        h += '<div class="pk-row"><span class="n">' + (i + 1) + '</span><div class="pk-tw"><textarea rows="2" maxlength="' + MAXTP + '" data-k="' + k + '" data-i="' + i + '" data-f="t">' + esc(t.t) + '</textarea>' + ccHtml(t.t) + '</div>' +
           '<input type="number" min="0" max="200" value="' + num(t.jp, 0) + '" data-k="' + k + '" data-i="' + i + '" data-f="jp" aria-label="JP"/>' +
           '<span class="pk-act"><button type="button" class="pk-ib" data-a="up" data-k="' + k + '" data-i="' + i + '" aria-label="Naik">&#8593;</button>' +
           '<button type="button" class="pk-ib" data-a="down" data-k="' + k + '" data-i="' + i + '" aria-label="Turun">&#8595;</button>' +
@@ -540,7 +546,7 @@
     if (el.id === 'pkTa') { P.ta = el.value; save(); return; }
     if (el.id && el.id.indexOf('pkI_') === 0) { P.idt[el.id.slice(4)] = el.value; save(); return; }
     if (!f || !k) return;
-    if (f === 't') P.sem[k].tp[i].t = el.value;
+    if (f === 't') { P.sem[k].tp[i].t = el.value; var cc = el.nextElementSibling; if (cc) cc.outerHTML = ccHtml(el.value); }
     else if (f === 'jp') P.sem[k].tp[i].jp = num(el.value, 0);
     else if (f === 'mulai' || f === 'selesai') P.sem[k][f] = el.value;
     else if (f === 'lm') P.sem[k].libur[i].mulai = el.value;
