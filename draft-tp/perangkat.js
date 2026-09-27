@@ -161,6 +161,35 @@
     s.tp.forEach(function (t, i) { t.jp = base + (i < sisa ? 1 : 0); });
   }
   var MAXTP = 100;
+  var RINGKAS = [
+    [/\s*dalam kehidupan sehari-hari\b/gi, ''], [/\bsesuai dengan\b/gi, 'sesuai'], [/\bdi lingkungan sekitar(nya)?\b/gi, 'di sekitar'],
+    [/\b(baik )?secara lisan maupun (tulisan|tertulis)\b/gi, 'lisan dan tulis'], [/\bdengan baik dan benar\b/gi, 'dengan benar'],
+    [/\byang (ada|terdapat) (di|pada|dalam)\b/gi, '$2'], [/\bmelalui kegiatan\b/gi, 'melalui'], [/\bdengan menggunakan\b/gi, 'dengan'],
+    [/\bberdasarkan\b/gi, 'sesuai'], [/\bdengan memperhatikan (penggunaan )?/gi, 'memakai '], [/\bmengidentifikasi\b/gi, 'mengenali'], [/\bmendeskripsikan\b/gi, 'menjelaskan'],
+    [/\bmendemonstrasikan\b/gi, 'memperagakan'], [/\bmengimplementasikan\b/gi, 'menerapkan'], [/\bmenginterpretasikan\b/gi, 'menafsirkan'],
+    [/\bberbagai macam\b/gi, 'beragam'], [/\bsecara (sederhana|tepat|baik|benar|runtut|mandiri)\b/gi, ''], [/\bdengan (baik|tepat|benar)\b/gi, '']
+  ];
+  function padatkan(t) {
+    var s = String(t || '').replace(/\s+/g, ' ').trim();
+    var rapi = function (x) { x = x.replace(/\s+([,.;])/g, '$1').replace(/\s{2,}/g, ' ').replace(/[\s,;:]+$/, '').trim(); return x.charAt(0).toUpperCase() + x.slice(1); };
+    s = rapi(s.replace(/^(peserta didik|murid|siswa|anak)\s+(diharapkan\s+)?(dapat|mampu|bisa)\s+/i, '').replace(/\.$/, ''));
+    if (s.length <= MAXTP) return s;
+    for (var i = 0; i < RINGKAS.length && s.length > MAXTP; i++) s = rapi(s.replace(RINGKAS[i][0], RINGKAS[i][1]));
+    for (var j = 0; j < 8 && s.length > MAXTP; j++) {
+      var u = s.replace(/\b([A-Za-z-]+) ([A-Za-z-]+)((?:, [A-Za-z-]+)*)(,?)( dan| atau)? \1 /i, '$1 $2$3$4$5 ');
+      if (u === s) break; s = rapi(u);
+    }
+    if (s.length > MAXTP) s = rapi(s.replace(/\s*\([^)]*\)/g, ''));
+    var anak = /\s(sehingga|agar|supaya|untuk|melalui|dengan cara|yang)\s/gi, m, pot = -1;
+    while (s.length > MAXTP) {
+      pot = -1; anak.lastIndex = 0;
+      while ((m = anak.exec(s))) if (m.index >= 30) pot = m.index;
+      if (pot < 0) break;
+      s = rapi(s.slice(0, pot));
+    }
+    if (s.length > MAXTP) s = rapi(s.slice(0, MAXTP + 1).replace(/\s+\S*$/, '').replace(/(\s+(dan|atau|serta|yang|di|ke|dari|pada|dengan|sesuai|untuk|secara))+$/i, ''));
+    return s;
+  }
   function ccHtml(t) { var n = String(t || '').length; return '<span class="pk-cc' + (n > MAXTP ? ' bad' : '') + '">' + n + '/' + MAXTP + '</span>'; }
   function tempel() {
     var k = document.getElementById('pkPasteSem').value;
@@ -169,14 +198,14 @@
       .map(function (l) { return l.replace(/^\s*(\d+[.)]|[-•*])\s*/, '').trim(); })
       .filter(Boolean);
     if (!lines.length) { toast('Tempel minimal satu TP.'); return; }
-    var rows = lines.map(function (t) { return { t: t.slice(0, 400), jp: 0 }; });
+    var dipadat = 0;
+    var rows = lines.map(function (t) { var p = padatkan(t); if (p !== t.replace(/\s+/g, ' ').trim() && t.length > MAXTP) dipadat++; return { t: p, jp: 0 }; });
     P.sem[k].tp = mode === 'ganti' ? rows : P.sem[k].tp.concat(rows);
     bagiRataDiam(k);
     document.getElementById('pkPasteTxt').value = '';
     document.getElementById('pkPaste').hidden = true;
     save(); render();
-    var panjang = rows.filter(function (r) { return r.t.length > MAXTP; }).length;
-    toast(panjang ? panjang + ' TP > ' + MAXTP + ' karakter. Persingkat yang merah.' : rows.length + ' TP ditambahkan ke semester ' + k + '.');
+    toast(dipadat ? dipadat + ' TP dipadatkan jadi ≤ ' + MAXTP + ' karakter. Cek lagi ya.' : rows.length + ' TP ditambahkan ke semester ' + k + '.');
   }
 
   /* ─── dokumen (pratinjau, cetak, Word) ─── */
@@ -437,7 +466,7 @@
       field('JP / Minggu', inp('pkJp', P.jp, '', 'number')) + '</div>' +
       '<div class="pk-btns"><button type="button" class="pk-btn pri" data-a="bank">Ambil TP dari bank (Sem 1 & 2)</button>' +
       '<button type="button" class="pk-btn" data-a="paste">Tempel TP sendiri</button></div>' +
-      '<div class="pk-hint">Tiap TP maksimal 100 karakter supaya bisa langsung masuk e-Rapor. "Ambil dari bank" memakai Jenis CP, Kelas &amp; Mapel di form atas. JP/minggu terisi perkiraan struktur kurikulum; sesuaikan dengan sekolahmu.</div>' +
+      '<div class="pk-hint">Tiap TP maksimal 100 karakter (e-Rapor). TP yang lebih panjang otomatis dipadatkan, intinya tetap. "Ambil dari bank" memakai Jenis CP, Kelas &amp; Mapel di form atas. JP/minggu terisi perkiraan struktur kurikulum; sesuaikan dengan sekolahmu.</div>' +
       '<div id="pkPaste" class="pk-sem" hidden><div class="pk-sem-h">Tempel TP (satu baris satu TP)</div>' +
       '<textarea id="pkPasteTxt" rows="5" placeholder="Peserta didik dapat ...&#10;Peserta didik dapat ..."></textarea>' +
       '<div class="pk-btns"><select id="pkPasteSem" style="width:auto"><option value="1">Semester 1</option><option value="2">Semester 2</option></select>' +
@@ -449,7 +478,7 @@
         ' <span class="pk-sum' + (bad ? ' bad' : '') + '" id="pkSum' + k + '">' + inf.jpTotal + ' / ' + inf.tersedia + ' JP</span>' +
         '<button type="button" class="pk-btn" data-a="rata" data-k="' + k + '" style="margin-left:auto">Bagi JP rata</button></div>';
       P.sem[k].tp.forEach(function (t, i) {
-        h += '<div class="pk-row"><span class="n">' + (i + 1) + '</span><div class="pk-tw"><textarea rows="2" maxlength="' + MAXTP + '" data-k="' + k + '" data-i="' + i + '" data-f="t">' + esc(t.t) + '</textarea>' + ccHtml(t.t) + '</div>' +
+        h += '<div class="pk-row"><span class="n">' + (i + 1) + '</span><div class="pk-tw"><textarea rows="2" data-k="' + k + '" data-i="' + i + '" data-f="t">' + esc(t.t) + '</textarea>' + ccHtml(t.t) + '</div>' +
           '<input type="number" min="0" max="200" value="' + num(t.jp, 0) + '" data-k="' + k + '" data-i="' + i + '" data-f="jp" aria-label="JP"/>' +
           '<span class="pk-act"><button type="button" class="pk-ib" data-a="up" data-k="' + k + '" data-i="' + i + '" aria-label="Naik">&#8593;</button>' +
           '<button type="button" class="pk-ib" data-a="down" data-k="' + k + '" data-i="' + i + '" aria-label="Turun">&#8595;</button>' +
@@ -555,6 +584,11 @@
     save(); refreshSums();
   }
   function onChange(e) {
+    var el = e.target;
+    if (el.dataset.f === 't' && el.value.length > MAXTP) {
+      el.value = padatkan(el.value);
+      toast('TP dipadatkan jadi ' + el.value.length + ' karakter. Cek lagi ya.');
+    }
     if (e.target.id === 'pkKelas') { P.kelas = e.target.value; save(); return; }
     if (e.target.id === 'pkDoc') { P.doc = e.target.value; save(); return; }
     onInput(e);
