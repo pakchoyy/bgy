@@ -59,7 +59,7 @@ export default async function handler(req, res) {
     process.env.GEMINI_MA5,
     process.env.GEMINI_MA_6
   ].filter((key, index, arr) => key && arr.indexOf(key) === index);
-  const models = (process.env.GEMINI_MA_MODEL || 'gemini-2.5-flash,gemini-2.5-flash-lite')
+  const models = (process.env.GEMINI_MA_MODEL || 'gemini-3.6-flash,gemini-2.5-flash,gemini-2.0-flash')
     .split(',')
     .map(model => model.trim())
     .filter(Boolean);
@@ -89,10 +89,14 @@ export default async function handler(req, res) {
       ? [requestedModel, ...models.filter(model => model !== requestedModel)]
       : models;
     const requestDeadline = Date.now() + 105000;
-    // Gemini 2.5 "berpikir" dulu sebelum menulis; untuk modul panjang itu menambah puluhan detik per tahap.
+    // Gemini 2.5/3.x "berpikir" dulu sebelum menulis; untuk modul panjang itu menambah puluhan detik per tahap.
     const thinkingBudget = Number.parseInt(process.env.GEMINI_MA_THINKING ?? '0', 10);
-    const thinkingFor = model => (/gemini-2\.5/.test(model) && Number.isFinite(thinkingBudget) && thinkingBudget >= 0)
-      ? { thinkingConfig: { thinkingBudget } } : {};
+    const thinkingLevel = process.env.GEMINI_MA_THINKING_LEVEL || 'low';
+    const thinkingFor = model => {
+      if (/gemini-[3-9]/.test(model)) return { thinkingConfig: { thinkingLevel } };
+      if (/gemini-2\.5/.test(model) && Number.isFinite(thinkingBudget) && thinkingBudget >= 0) return { thinkingConfig: { thinkingBudget } };
+      return {};
+    };
 
     attemptsLoop:
     for (let apiKey of keys) {
