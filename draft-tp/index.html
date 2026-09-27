@@ -535,13 +535,15 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
   <div class="page-inner">
   <div class="page-card">
     <div class="page-card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Aplikasi</div>
-    <div class="page-ver">Bantu Guru Yuk — Draft TP · v26.6.0</div>
+    <div class="page-ver">Bantu Guru Yuk — Draft TP · v26.9.0</div>
     <p><strong>Aplikasi Draft TP</strong> hadir untuk membantu guru menyusun Tujuan Pembelajaran sesuai Kurikulum Merdeka secara cepat dan akurat.</p>
     <div class="feat-title">Fitur</div>
     <ul>
       <li>Mendukung CP Baru (BSKAP 046/2025) &amp; CP Agama (BKPDM 020/2026)</li>
       <li>Bank TP untuk semua jenjang (SD, SMP, SMA)</li>
       <li>Hasil sudah dipadatkan (&lt; 100 karakter) langsung bisa disalin ke e-Rapor</li>
+      <li>ATP, Rincian Minggu Efektif, Prota &amp; Prosem otomatis (TP dari bank atau tempel sendiri)</li>
+      <li>Cetak/PDF, Word, dan Excel</li>
       <li>Dark mode &amp; responsif di HP dan laptop</li>
     </ul>
     <p>Dibuat oleh <strong>Pak Choyy</strong> · BGY Tools</p>
@@ -564,7 +566,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
   <div class="page-home-inner">
   <!-- HINT -->
   <div class="hint-box hint-wrap">
-    <svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>Generate Draft TP</strong> → Salin ke e-Rapor
+    <svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> <strong>Isi Form</strong> → Pilih CP → Pilih Kelas &amp; Semester → Pilih Mapel → Klik <strong>Generate Draft TP</strong> → Salin ke e-Rapor → Lanjut susun <strong>ATP, Prota &amp; Prosem</strong> di bawah
   </div>
   <div class="two-col">
 
@@ -651,6 +653,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
           </div>
           <div class="action-row">
             <button class="btn btn-teal" onclick="salinSemua()"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg> Salin Semua</button>
+            <button class="btn btn-outline" onclick="window.Perangkat&&Perangkat.fromBank(true)"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Susun ATP, Prota &amp; Prosem</button>
           </div>
           <div id="daftarTp"></div>
         </div>
@@ -658,6 +661,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
     </div>
 
   </div>
+  <div id="perangkat"></div>
   </div><!-- /page-home-inner -->
 </div><!-- /pageHome -->
 
@@ -673,7 +677,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 
 <footer>
   <div class="footer-title">Draft Tujuan Pembelajaran</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a class="footer-link" onclick="window.open('https://www.tiktok.com/@pak.choyy','_blank')">pak.choyy</a> · v26.6.0</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a class="footer-link" onclick="window.open('https://www.tiktok.com/@pak.choyy','_blank')">pak.choyy</a> · v26.9.0</div>
 </footer>
 
 <script>
@@ -1257,5 +1261,6 @@ window.addEventListener('beforeinstallprompt', function(){
   if(Date.now() - last > 86400000) setTimeout(() => document.getElementById('installBanner').classList.add('show'), 2000);
 });
 </script>
+<script src="./perangkat.js?v=1"></script>
 </body>
 </html>
