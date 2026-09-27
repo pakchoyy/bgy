@@ -61,6 +61,7 @@ Proyek: `xtmpiqpmwirsrcsphsto.supabase.co` (anon key boleh di browser, service r
 | `bgy_reviews` + `bgy_submit_review()` + `bgy_review_stats()` | ulasan pengguna | baca publik (yang disetujui), tulis lewat RPC |
 | `bgy_bio_links` + `bgy_bio_click()` | link di `/k` | baca publik, tulis admin |
 | `bgy_settings` (key `promo`) | promo, voucher, bundling, garansi | baca publik, tulis admin |
+| `bgy_docs` + `bgy_doc_download()` + Storage bucket `dokumen` | Dokumen Resmi (`/dokumen`): judul, nomor, tahun, kategori, sumber, ringkasan, file (maks 50 MB) atau link | baca publik (yang aktif), tulis & unggah admin |
 | `bgy_events` + `bgy_track()` + `bgy_usage_stats()` | statistik pemakaian anonim (ID acak per browser): open, hasil, pro, install, share | tulis lewat RPC (maks 300/hari per browser), ringkasan hanya admin |
 
 File migrasi di `supabase/migrations/` — jalankan berurutan di Supabase → SQL Editor. Semua aman dijalankan ulang.
@@ -71,7 +72,7 @@ Login email + sandi Supabase Auth. Email harus ada di `bgy_admins`:
 ```sql
 insert into public.bgy_admins (email) values ('email-kamu@contoh.com') on conflict do nothing;
 ```
-Tab: **Link Bio** (`/k`), **Ulasan** (tampil/sembunyikan/edit/hapus), **Promo**, **Statistik** (guru unik hari ini/7/30 hari, grafik harian, tabel per tool; dicatat otomatis oleh `bgy-info.js`).
+Tab: **Link Bio** (`/k`), **Ulasan** (tampil/sembunyikan/edit/hapus), **Promo**, **Dokumen** (tambah/edit dokumen resmi + upload file), **Statistik** (guru unik hari ini/7/30 hari, grafik harian, tabel per tool; dicatat otomatis oleh `bgy-info.js`).
 
 **Tab Promo** (tampil otomatis di kartu tawaran Pro & dekat tombol Beli semua tool berbayar):
 | Kolom | Contoh | Catatan |

@@ -123,6 +123,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
 <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></symbol>
 <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
 <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
 <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
 <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
@@ -173,6 +174,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
       <button class="tab active" id="tab-links" onclick="showTab('links')"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Link Bio</button>
       <button class="tab" id="tab-reviews" onclick="showTab('reviews')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Ulasan</button>
       <button class="tab" id="tab-promo" onclick="showTab('promo')"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo</button>
+      <button class="tab" id="tab-docs" onclick="showTab('docs')"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Dokumen</button>
       <button class="tab" id="tab-stat" onclick="showTab('stat')"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg> Statistik</button>
     </div>
 
@@ -198,6 +200,16 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
         <button class="btn" onclick="loadReviews()"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Muat ulang</button>
       </div>
       <div id="reviewList"></div>
+    </div>
+
+    <div id="pane-docs" class="card" hidden>
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Dokumen Resmi (bantuguruyuk.web.id/dokumen)</div>
+      <div class="toolbar">
+        <button class="btn" onclick="openDoc()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah dokumen</button>
+        <a class="btn" href="/dokumen/" target="_blank"><svg class="ic" aria-hidden="true"><use href="#i-ext"/></svg> Lihat halaman</a>
+      </div>
+      <input type="search" id="docQ" placeholder="Cari dokumen..." oninput="renderDocs()" style="margin-bottom:6px"/>
+      <div id="docList"></div>
     </div>
 
     <div id="pane-stat" class="card" hidden>
@@ -277,7 +289,7 @@ const ICONS={
   calendar:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
   star:'<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>'
 };
-const TOOL_NAMES={'soal':'Buat Soal','modul-ajar':'Modul Ajar','lkpd':'Prompt LKPD','kokurikuler':'Kokurikuler','katrol-nilai':'Katrol Nilai','draft-tp':'Draft TP','teks-sekolah':'Teks Sekolah','sandi':'Simpan Sandi','home':'Beranda','k':'Link Bio /k'};
+const TOOL_NAMES={'soal':'Buat Soal','modul-ajar':'Modul Ajar','lkpd':'Prompt LKPD','kokurikuler':'Kokurikuler','katrol-nilai':'Katrol Nilai','draft-tp':'Draft TP','teks-sekolah':'Teks Sekolah','sandi':'Simpan Sandi','home':'Beranda','k':'Link Bio /k','dokumen':'Dokumen Resmi'};
 
 let links=[], reviews=[];
 
@@ -317,7 +329,117 @@ async function logout(){await sb.auth.signOut();show('loginCard');}
 
 function showTab(t){
   if(t==='stat')loadStats();
-  ['links','reviews','promo','stat'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+  if(t==='docs'&&!docsLoaded)loadDocs();
+  ['links','reviews','promo','docs','stat'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+}
+
+/* ─── Dokumen Resmi ─── */
+const DOC_KATEGORI=['Kurikulum','CP & TP','Asesmen & Rapor','Pembelajaran','Guru & Kepegawaian','PMM & Kinerja','Administrasi Sekolah','Pedoman & Panduan','Lainnya'];
+const DOC_SUMBER=['Kemendikdasmen','BSKAP Kemendikdasmen','BKPDM Kemendikdasmen','Kemenag','Kemenpan RB','BKN','Dinas Pendidikan'];
+const DOC_MAX=50*1024*1024;
+let docs=[],docsLoaded=false;
+const fmtSize=b=>!b?'':b>=1048576?(b/1048576).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(b/1024))+' KB';
+async function loadDocs(){
+  const {data,error}=await sb.from('bgy_docs').select('*').order('created_at',{ascending:false}).limit(1000);
+  if(error){document.getElementById('docList').innerHTML='<div class="empty">'+(/relation|does not exist/i.test(error.message)?'Jalankan migrasi 20260930_dokumen.sql di Supabase dulu.':esc(error.message))+'</div>';return;}
+  docs=data;docsLoaded=true;renderDocs();
+}
+function renderDocs(){
+  const q=(document.getElementById('docQ').value||'').toLowerCase().trim();
+  const list=docs.filter(d=>!q||[d.title,d.nomor,d.kategori,d.sumber,d.tahun].join(' ').toLowerCase().includes(q));
+  const box=document.getElementById('docList');
+  if(!list.length){box.innerHTML='<div class="empty">'+(docs.length?'Tidak ada yang cocok.':'Belum ada dokumen. Tekan "Tambah dokumen".')+'</div>';return;}
+  box.innerHTML=list.map(d=>`<div class="item${d.active?'':' off'}">
+    <div class="li-ic">${use('i-file')}</div>
+    <div class="item-body">
+      <div class="item-title">${esc(d.title)} <span class="pill teal">${esc(d.kategori)}</span>${d.tahun?` <span class="pill gray">${esc(d.tahun)}</span>`:''}${d.active?'':' <span class="pill gray">Disembunyikan</span>'} <span class="pill teal">${d.downloads} unduh</span></div>
+      <div class="item-sub">${esc([d.nomor,d.sumber].filter(Boolean).join(' · '))}</div>
+      <div class="item-sub">${d.file_path?'File: '+esc(d.file_name||d.file_path)+' ('+fmtSize(d.file_size)+')':d.file_url?'Link: '+esc(d.file_url):'<b>Belum ada file/link</b>'}</div>
+      <div class="item-actions">
+        <button class="btn" onclick="toggleDoc(${d.id})">${use(d.active?'i-eye-off':'i-eye')} ${d.active?'Sembunyikan':'Tampilkan'}</button>
+        <button class="btn" onclick="openDoc(${d.id})" aria-label="Edit">${use('i-pen')}<span class="bl"> Edit</span></button>
+        <a class="btn" href="/dokumen/?d=${d.id}" target="_blank" aria-label="Lihat">${use('i-ext')}</a>
+        <button class="btn danger" onclick="deleteDoc(${d.id})" aria-label="Hapus">${use('i-trash')}<span class="bl"> Hapus</span></button>
+      </div>
+    </div></div>`).join('');
+}
+function openDoc(id){
+  const d=id?docs.find(x=>x.id===id):{title:'',nomor:'',tahun:new Date().getFullYear(),kategori:'Kurikulum',sumber:'Kemendikdasmen',sumber_url:'',ringkasan:'',file_url:'',active:true};
+  const opts=(arr,cur)=>arr.map(v=>`<option value="${esc(v)}">`).join('');
+  document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit dokumen':'Tambah dokumen'}</h3>
+    <div class="fg"><label for="dTitle">Judul dokumen *</label><input id="dTitle" maxlength="200" value="${esc(d.title)}" placeholder="mis. Capaian Pembelajaran Kurikulum Merdeka"/></div>
+    <div class="row2">
+      <div class="fg"><label for="dNomor">Nomor</label><input id="dNomor" maxlength="120" value="${esc(d.nomor||'')}" placeholder="mis. 046/H/KR/2025"/></div>
+      <div class="fg"><label for="dTahun">Tahun</label><input id="dTahun" type="number" min="1945" max="2100" value="${esc(d.tahun||'')}"/></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label for="dKat">Kategori</label><input id="dKat" maxlength="40" list="dKatList" value="${esc(d.kategori||'')}"/><datalist id="dKatList">${opts(DOC_KATEGORI)}</datalist></div>
+      <div class="fg"><label for="dSumber">Sumber</label><input id="dSumber" maxlength="120" list="dSumberList" value="${esc(d.sumber||'')}"/><datalist id="dSumberList">${opts(DOC_SUMBER)}</datalist></div>
+    </div>
+    <div class="fg"><label for="dSumberUrl">Link sumber resmi (opsional)</label><input id="dSumberUrl" maxlength="500" inputmode="url" value="${esc(d.sumber_url||'')}" placeholder="https://jdih.kemendikdasmen.go.id/..."/></div>
+    <div class="fg"><label for="dRingkas">Ringkasan <span id="dCount" style="float:right;text-transform:none">0/1500</span></label><textarea id="dRingkas" maxlength="1500" rows="6" placeholder="Isi pokok dokumen dalam beberapa kalimat atau poin.">${esc(d.ringkasan||'')}</textarea></div>
+    <div class="fg"><label for="dFile">Upload file (PDF/Word/Excel/PPT/ZIP, maks 50 MB)</label><input id="dFile" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip"/>
+      ${d.file_path?`<div class="hint" style="margin-top:4px">File sekarang: ${esc(d.file_name||d.file_path)} (${fmtSize(d.file_size)}). Pilih file baru untuk mengganti.</div>`:''}</div>
+    <div class="fg"><label for="dFileUrl">atau link file (Google Drive / situs resmi)</label><input id="dFileUrl" maxlength="500" inputmode="url" value="${esc(d.file_url||'')}" placeholder="https://drive.google.com/..."/></div>
+    <div class="fg"><label class="chk"><input type="checkbox" id="dActive" ${d.active?'checked':''}/> Tampilkan di halaman</label></div>
+    <div class="msg" id="docMsg"></div>
+    <div style="display:flex;gap:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" id="btnSaveDoc" onclick="saveDoc(${id||0})">Simpan</button></div>`;
+  const ta=document.getElementById('dRingkas'),cnt=document.getElementById('dCount');
+  const upd=()=>{cnt.textContent=ta.value.length+'/1500';};ta.addEventListener('input',upd);upd();
+  document.getElementById('modal').hidden=false;
+}
+function slugName(name){
+  const m=/\.([a-z0-9]{2,5})$/i.exec(name||'');const ext=m?m[1].toLowerCase():'pdf';
+  const base=String(name||'dokumen').replace(/\.[^.]*$/,'').normalize('NFKD').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'dokumen';
+  return Date.now().toString(36)+'-'+base+'.'+ext;
+}
+async function saveDoc(id){
+  const msg=document.getElementById('docMsg');msg.className='msg err';msg.textContent='';
+  const val=k=>document.getElementById(k).value.trim();
+  const tahun=val('dTahun');
+  const row={title:val('dTitle'),nomor:val('dNomor')||null,tahun:tahun?Number(tahun):null,kategori:val('dKat')||'Lainnya',sumber:val('dSumber')||null,
+    sumber_url:val('dSumberUrl')||null,ringkasan:val('dRingkas')||null,file_url:val('dFileUrl')||null,active:document.getElementById('dActive').checked,updated_at:new Date().toISOString()};
+  if(row.title.length<3){msg.textContent='Judul minimal 3 huruf.';return;}
+  if(row.tahun!==null&&!(row.tahun>=1945&&row.tahun<=2100)){msg.textContent='Tahun tidak valid.';return;}
+  for(const k of ['sumber_url','file_url']) if(row[k]&&!/^https:\/\/[^\s]+\.[^\s]+/i.test(row[k])){msg.textContent='Link harus diawali https://';return;}
+  const file=document.getElementById('dFile').files[0];
+  const old=id?docs.find(x=>x.id===id):null;
+  if(!file&&!row.file_url&&!(old&&old.file_path)){msg.textContent='Upload file atau isi link file dulu.';return;}
+  if(file&&file.size>DOC_MAX){msg.textContent='File lebih dari 50 MB. Pakai link Google Drive saja.';return;}
+  const btn=document.getElementById('btnSaveDoc');btn.disabled=true;
+  let uploaded=null;
+  try{
+    if(file){
+      msg.className='msg';msg.textContent='Mengunggah file ('+fmtSize(file.size)+')...';
+      const path=slugName(file.name);
+      const {error:upErr}=await sb.storage.from('dokumen').upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false});
+      if(upErr) throw upErr;
+      uploaded=path;
+      Object.assign(row,{file_path:path,file_name:file.name.slice(0,200),file_size:file.size});
+    }
+    msg.className='msg';msg.textContent='Menyimpan...';
+    const {error}=id?await sb.from('bgy_docs').update(row).eq('id',id):await sb.from('bgy_docs').insert(row);
+    if(error) throw error;
+    if(uploaded&&old&&old.file_path&&old.file_path!==uploaded) await sb.storage.from('dokumen').remove([old.file_path]);
+    closeModal();toast('Dokumen tersimpan.');loadDocs();
+  }catch(e){
+    if(uploaded) await sb.storage.from('dokumen').remove([uploaded]);
+    msg.className='msg err';msg.textContent='Gagal: '+(e.message||'coba lagi');
+  }finally{btn.disabled=false;}
+}
+async function toggleDoc(id){
+  const d=docs.find(x=>x.id===id);
+  const {error}=await sb.from('bgy_docs').update({active:!d.active,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error) return fail(error);
+  loadDocs();
+}
+async function deleteDoc(id){
+  const d=docs.find(x=>x.id===id);
+  if(!confirm('Hapus "'+d.title+'"? File yang diunggah ikut terhapus.')) return;
+  const {error}=await sb.from('bgy_docs').delete().eq('id',id);
+  if(error) return fail(error);
+  if(d.file_path) await sb.storage.from('dokumen').remove([d.file_path]);
+  toast('Dokumen dihapus.');loadDocs();
 }
 
 /* ─── Statistik ─── */

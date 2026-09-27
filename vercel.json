@@ -36,7 +36,7 @@
       ]
     },
     {
-      "source": "/:app(lkpd|sandi|teks-sekolah|soal|katrol-nilai|draft-tp|modul-ajar)/sw.js",
+      "source": "/:app(lkpd|sandi|teks-sekolah|soal|katrol-nilai|draft-tp|modul-ajar|dokumen)/sw.js",
       "headers": [
         {
           "key": "Cache-Control",

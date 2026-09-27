@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<script>if(!/\/$/.test(location.pathname)&&!/\.[a-z0-9]+$/i.test(location.pathname))location.replace(location.pathname+"/"+location.search+location.hash);</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bantu Guru Yuk | Dokumen Resmi</title>
+<link rel="icon" href="../guru-cibisd2.png" sizes="192x192" type="image/png"/>
+<link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
+<meta name="theme-color" content="#0ea5a0"/>
+<link rel="manifest" href="/dokumen/manifest.json"/>
+<meta name="description" content="Kumpulan dokumen resmi untuk guru: peraturan, keputusan, panduan, dan pedoman dari kementerian, lengkap dengan ringkasan singkat dan tombol unduh."/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-83WBBEE5BG');
+  function gaEvent(n,p){if(typeof gtag==='function')gtag('event',n,p||{});}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
+  --blue:#0ea5a0;--teal-dark:#0d7a8a;--gray-100:#f1f5f9;
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;--text-light:#64748b;
+  --border:#e2e8f0;--input-bg:#f8fafc;--radius:12px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;--text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;--gray-100:#1e293b;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;overflow-x:hidden;}
+[hidden]{display:none!important;}
+
+#installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+#installPopup.show{top:0;}
+#installPopup button{border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:.8rem;}
+.btn-install{background:#fff;color:#0d7a8a;}
+.btn-install-close{background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;}
+
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;max-width:1100px;margin:0 auto;}
+.header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
+.header-brand-text{min-width:0;overflow:hidden;}
+.header-brand-text h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{height:40px;min-width:40px;border-radius:10px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:.84rem;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s;border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.dropdown-item:hover{background:var(--gray-100);}
+body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
+.dropdown-item.active{color:var(--blue);}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+#menuOverlay{display:none;position:fixed;inset:0;z-index:250;}
+#menuOverlay.open{display:block;}
+
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block;}
+.card-title .ic,.dropdown-item .ic{color:var(--blue);width:18px;height:18px;}
+.hdr-btn .ic{width:18px;height:18px;}
+
+main{max-width:1100px;margin:0 auto;padding:20px;width:100%;flex:1;}
+@media(max-width:640px){main{padding:12px;}}
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+@media(max-width:640px){.card{padding:14px 12px;border-radius:10px;}}
+.card-title{font-size:.86rem;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--border);padding-bottom:8px;}
+.hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.8rem;color:var(--text);line-height:1.8;}
+.hint-bar span{font-weight:700;color:var(--teal-dark);}
+body.dark .hint-bar span{color:#5eead4;}
+
+/* Cari & filter */
+.tools{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px;}
+.search{position:relative;}
+.search .ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-light);}
+.search input{width:100%;padding:11px 12px 11px 38px;border:1.5px solid var(--border);border-radius:10px;font-size:.92rem;color:var(--text);background:var(--card-bg);font-family:inherit;outline:none;min-height:44px;}
+.search input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+select{padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.88rem;color:var(--text);background:var(--card-bg);font-family:inherit;outline:none;min-height:44px;}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{flex:none;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:99px;padding:8px 14px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;min-height:40px;}
+.chip.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.count{font-size:.8rem;color:var(--text-light);margin:0 0 10px;}
+
+/* Kartu dokumen */
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;}
+@media(max-width:640px){.docs{grid-template-columns:1fr;}}
+.doc{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:8px;scroll-margin-top:80px;}
+.doc.flash{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.25);}
+.doc-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.pill{font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:99px;background:rgba(14,165,160,.1);color:var(--teal-dark);}
+body.dark .pill{color:#5eead4;}
+.pill.gray{background:var(--input-bg);color:var(--text-light);border:1px solid var(--border);}
+.doc h2{font-size:1rem;font-weight:800;line-height:1.35;}
+.doc-no{font-size:.82rem;color:var(--text-light);}
+.doc-src{font-size:.82rem;display:flex;align-items:center;gap:6px;color:var(--text-light);}
+.doc-src a{color:var(--teal-dark);font-weight:700;text-decoration:none;}
+body.dark .doc-src a{color:#5eead4;}
+.doc-sum{font-size:.88rem;line-height:1.6;white-space:pre-line;}
+.doc-sum.clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.more{align-self:flex-start;background:none;border:none;color:var(--teal-dark);font-weight:700;font-size:.82rem;cursor:pointer;padding:4px 0;font-family:inherit;}
+body.dark .more{color:#5eead4;}
+.doc-meta{font-size:.78rem;color:var(--text-light);}
+.doc-btns{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:4px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:9px 12px;border-radius:10px;font-weight:700;font-size:.86rem;cursor:pointer;text-decoration:none;font-family:inherit;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);}
+.btn:hover{border-color:var(--blue);color:var(--blue);}
+.btn.pri{background:var(--grad);color:#fff;border:none;box-shadow:0 4px 14px rgba(14,165,160,.25);}
+.btn.pri:hover{color:#fff;opacity:.92;}
+.btn.icon{padding:9px 12px;}
+.empty{text-align:center;color:var(--text-light);padding:40px 16px;font-size:.9rem;line-height:1.6;}
+.empty .ic{width:44px;height:44px;opacity:.4;display:block;margin:0 auto 10px;}
+.skeleton{height:190px;border-radius:var(--radius);background:linear-gradient(90deg,var(--card-bg),var(--input-bg),var(--card-bg));background-size:200% 100%;animation:sk 1.2s infinite;border:1px solid var(--border);}
+@keyframes sk{to{background-position:-200% 0;}}
+@media (prefers-reduced-motion:reduce){.skeleton{animation:none;}}
+
+.about p,.about li{font-size:.88rem;line-height:1.7;}
+.about ul{margin:8px 0 8px 20px;}
+.contact-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.contact-btns button{flex:1;min-width:160px;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.86rem;cursor:pointer;font-family:inherit;}
+
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);background:#1f2937;color:#fff;padding:10px 18px;border-radius:99px;font-size:.84rem;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;z-index:9999;max-width:calc(100vw - 32px);text-align:center;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 12px;margin-top:auto;}
+footer .footer-title{font-size:.86rem;font-weight:700;}
+footer .footer-sub{font-size:.76rem;color:rgba(255,255,255,.85);}
+footer a{color:#fff;font-weight:700;}
+</style>
+<script src="/bgy-info.js"></script>
+<link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs>
+<symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+<symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+<symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+</defs></svg>
+
+<div id="installPopup">
+  <span><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install Dokumen Resmi di HP kamu!</span>
+  <button class="btn-install" onclick="installApp()">Install</button>
+  <button class="btn-install-close" onclick="closeInstall()" aria-label="Tutup"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+</div>
+<div id="toast" role="status"></div>
+<div id="menuOverlay" onclick="closeMenu()"></div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="../guru-cibisd2.png" alt="Logo"/>
+      <div class="header-brand-text"><h1>BGY | Dokumen Resmi</h1></div>
+    </div>
+    <div class="header-right">
+      <button id="darkBtn" class="hdr-btn" onclick="toggleDark()" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
+      <button class="hdr-btn" onclick="toggleMenu()" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item active" id="mi-home" onclick="showTab('home');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-house"/></svg> Home</button>
+        <button class="dropdown-item" id="mi-tentang" onclick="showTab('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
+        <div class="dropdown-divider"></div>
+        <div data-bgy-menu></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="tab-home">
+<main>
+  <div class="hint-bar">
+    <svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> <span>Cari dokumen</span> → <span>Baca ringkasan</span> → <span>Lihat / Unduh</span> → <span>Bagikan ke WA</span>
+  </div>
+  <div class="tools">
+    <label class="search"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><input type="search" id="q" placeholder="Cari dokumen..." aria-label="Cari dokumen" autocomplete="off"/></label>
+    <select id="sort" aria-label="Urutkan">
+      <option value="baru">Terbaru</option>
+      <option value="tahun">Tahun</option>
+      <option value="populer">Paling diunduh</option>
+    </select>
+  </div>
+  <div class="chips" id="chips" role="tablist" aria-label="Kategori"></div>
+  <p class="count" id="count"></p>
+  <div class="docs" id="docs">
+    <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+  </div>
+</main>
+</div>
+
+<div id="tab-tentang" hidden>
+<main style="max-width:760px;">
+  <div class="card about">
+    <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Aplikasi</div>
+    <p style="font-size:.8rem;color:var(--text-light);">Bantu Guru Yuk — Dokumen Resmi · v26.9.1</p>
+    <p><b>Dokumen Resmi</b> mengumpulkan peraturan, keputusan, panduan, dan pedoman dari kementerian yang sering dicari guru, supaya tidak perlu berburu di banyak situs.</p>
+    <ul>
+      <li>Judul, nomor, tahun, dan sumber resmi tiap dokumen</li>
+      <li>Ringkasan singkat supaya cepat paham isinya</li>
+      <li>Lihat, unduh, dan bagikan ke grup WhatsApp</li>
+    </ul>
+    <p>Dokumen adalah milik penerbitnya masing-masing. Selalu cek sumber resmi untuk versi terbaru.</p>
+  </div>
+  <div class="card">
+    <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Kontak</div>
+    <p style="font-size:.88rem;line-height:1.7;margin-bottom:14px;">Mau usul dokumen yang perlu ditambahkan, atau ada link yang rusak?</p>
+    <div class="contact-btns">
+      <button onclick="window.open('https://wa.me/6289530713597?text='+encodeURIComponent('Halo Pak Choyy, saya mau usul dokumen untuk Dokumen Resmi BGY: '),'_blank')" style="background:#25D366;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Chat WhatsApp</button>
+      <button onclick="window.open('https://tiktok.com/@pak.choyy','_blank')" style="background:#000;"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> TikTok @pak.choyy</button>
+    </div>
+  </div>
+</main>
+</div>
+
+<div data-bgy-info></div>
+<footer>
+  <div class="footer-title">Dokumen Resmi</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener">pak.choyy</a> &bull; v26.9.1</div>
+</footer>
+
+<script>
+const SB_URL='https://xtmpiqpmwirsrcsphsto.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w';
+const SB_HEAD={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json'};
+const LS_CACHE='bgy_docs_cache';
+
+let docs=[],kategori='Semua';
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const httpsUrl=u=>/^https:\/\/[^\s"'<>]+$/i.test(String(u||''))?String(u):'';
+function fileUrl(d,download){
+  if(d.file_path) return SB_URL+'/storage/v1/object/public/dokumen/'+d.file_path.split('/').map(encodeURIComponent).join('/')+(download?'?download='+encodeURIComponent(d.file_name||d.title):'');
+  return httpsUrl(d.file_url);
+}
+function fmtSize(b){if(!b)return '';return b>=1048576?(b/1048576).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(b/1024))+' KB';}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2600);}
+
+async function load(){
+  try{const c=JSON.parse(localStorage.getItem(LS_CACHE)||'null');if(Array.isArray(c)&&c.length){docs=c;render();}}catch(e){}
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/bgy_docs?select=id,title,nomor,tahun,kategori,sumber,sumber_url,ringkasan,file_path,file_url,file_name,file_size,downloads,created_at&active=eq.true&order=created_at.desc&limit=500',{headers:SB_HEAD});
+    if(!r.ok) throw new Error(r.status);
+    docs=await r.json();
+    try{localStorage.setItem(LS_CACHE,JSON.stringify(docs));}catch(e){}
+  }catch(e){
+    if(!docs.length){document.getElementById('docs').innerHTML='<div class="empty"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg>Daftar dokumen belum bisa dimuat. Cek internet lalu muat ulang halaman.</div>';document.getElementById('count').textContent='';return;}
+  }
+  render();
+  focusDeepLink();
+}
+function renderChips(){
+  const cats=['Semua',...Array.from(new Set(docs.map(d=>d.kategori).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'id'))];
+  if(!cats.includes(kategori)) kategori='Semua';
+  document.getElementById('chips').innerHTML=cats.map(c=>`<button type="button" class="chip${c===kategori?' active':''}" data-cat="${esc(c)}" role="tab" aria-selected="${c===kategori}">${esc(c)}</button>`).join('');
+}
+function filtered(){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  const sort=document.getElementById('sort').value;
+  let list=docs.filter(d=>kategori==='Semua'||d.kategori===kategori);
+  if(q){const words=q.split(/\s+/);list=list.filter(d=>{const hay=[d.title,d.nomor,d.tahun,d.sumber,d.kategori,d.ringkasan].join(' ').toLowerCase();return words.every(w=>hay.includes(w));});}
+  const byNew=(a,b)=>String(b.created_at).localeCompare(String(a.created_at));
+  if(sort==='tahun') list.sort((a,b)=>(b.tahun||0)-(a.tahun||0)||byNew(a,b));
+  else if(sort==='populer') list.sort((a,b)=>(b.downloads||0)-(a.downloads||0)||byNew(a,b));
+  else list.sort(byNew);
+  return list;
+}
+function card(d){
+  const view=fileUrl(d,false),dl=fileUrl(d,true),src=httpsUrl(d.sumber_url);
+  const meta=[d.file_path?'PDF/dokumen':'Link',fmtSize(d.file_size),d.downloads?d.downloads.toLocaleString('id-ID')+'x diunduh':''].filter(Boolean).join(' · ');
+  return `<article class="doc" id="doc-${d.id}">
+    <div class="doc-top"><span class="pill">${esc(d.kategori||'Lainnya')}</span>${d.tahun?`<span class="pill gray">${esc(d.tahun)}</span>`:''}</div>
+    <h2>${esc(d.title)}</h2>
+    ${d.nomor?`<div class="doc-no">${esc(d.nomor)}</div>`:''}
+    ${d.sumber||src?`<div class="doc-src"><svg class="ic" aria-hidden="true"><use href="#i-building"/></svg>${src?`<a href="${esc(src)}" target="_blank" rel="noopener">${esc(d.sumber||'Sumber resmi')}</a>`:esc(d.sumber)}</div>`:''}
+    ${d.ringkasan?`<div class="doc-sum clamp" id="sum-${d.id}">${esc(d.ringkasan)}</div><button type="button" class="more" data-more="${d.id}" hidden>Selengkapnya</button>`:''}
+    <div class="doc-meta">${esc(meta)}</div>
+    <div class="doc-btns">
+      ${view?`<a class="btn" href="${esc(view)}" target="_blank" rel="noopener" data-act="lihat" data-id="${d.id}"><svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg> Lihat</a>`:'<span></span>'}
+      ${dl?`<a class="btn pri" href="${esc(dl)}" ${d.file_path?'download':'target="_blank" rel="noopener"'} data-act="unduh" data-id="${d.id}"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> Unduh</a>`:'<span></span>'}
+      <button type="button" class="btn icon" data-share="${d.id}" aria-label="Bagikan ${esc(d.title)}"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg></button>
+    </div>
+  </article>`;
+}
+function render(){
+  renderChips();
+  const list=filtered();
+  const box=document.getElementById('docs');
+  document.getElementById('count').textContent=docs.length?list.length+' dari '+docs.length+' dokumen':'';
+  if(!docs.length){box.innerHTML='<div class="empty"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg>Belum ada dokumen. Segera diisi, cek lagi nanti ya.</div>';return;}
+  if(!list.length){box.innerHTML='<div class="empty"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg>Tidak ada dokumen yang cocok. Coba kata kunci lain.</div>';return;}
+  box.innerHTML=list.map(card).join('');
+  box.querySelectorAll('.doc-sum').forEach(el=>{
+    const btn=box.querySelector(`[data-more="${el.id.slice(4)}"]`);
+    if(btn&&el.scrollHeight>el.clientHeight+2) btn.hidden=false;
+  });
+}
+function focusDeepLink(){
+  const id=new URLSearchParams(location.search).get('d');
+  if(!id||!/^\d+$/.test(id)) return;
+  const el=document.getElementById('doc-'+id);
+  if(!el) return;
+  el.classList.add('flash');
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>el.classList.remove('flash'),2500);
+}
+document.getElementById('docs').addEventListener('click',e=>{
+  const more=e.target.closest('[data-more]');
+  if(more){const s=document.getElementById('sum-'+more.dataset.more);const open=s.classList.toggle('clamp');more.textContent=open?'Selengkapnya':'Tutup';return;}
+  const act=e.target.closest('[data-act]');
+  if(act){
+    const id=Number(act.dataset.id);
+    fetch(SB_URL+'/rest/v1/rpc/bgy_doc_download',{method:'POST',keepalive:true,headers:SB_HEAD,body:JSON.stringify({p_id:id})}).catch(()=>{});
+    const d=docs.find(x=>x.id===id);
+    gaEvent('dokumen_'+act.dataset.act,{judul:d?d.title:String(id)});
+    window.bgyAskReview&&bgyAskReview({delay:4000});
+    return;
+  }
+  const sh=e.target.closest('[data-share]');
+  if(sh){
+    const d=docs.find(x=>x.id===Number(sh.dataset.share));
+    if(!d) return;
+    const url=location.origin+'/dokumen/?d='+d.id+'&utm_source=share&utm_medium=dokumen';
+    const text=d.title+(d.nomor?' ('+d.nomor+')':'')+'\nUnduh di Dokumen Resmi Bantu Guru Yuk:\n'+url;
+    window.bgyUsage&&bgyUsage('share');
+    if(navigator.share) navigator.share({title:d.title,text}).catch(()=>{});
+    else window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank','noopener');
+  }
+});
+document.getElementById('chips').addEventListener('click',e=>{const c=e.target.closest('[data-cat]');if(!c)return;kategori=c.dataset.cat;render();});
+let qT;document.getElementById('q').addEventListener('input',()=>{clearTimeout(qT);qT=setTimeout(render,150);});
+document.getElementById('sort').addEventListener('change',render);
+
+/* ─── Menu, tab, mode gelap, install ─── */
+function toggleMenu(){const open=!document.getElementById('dropdownMenu').classList.contains('open');document.getElementById('dropdownMenu').classList.toggle('open',open);document.getElementById('menuOverlay').classList.toggle('open',open);}
+function closeMenu(){document.getElementById('dropdownMenu').classList.remove('open');document.getElementById('menuOverlay').classList.remove('open');}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button'))closeMenu();});
+function showTab(tab){['home','tentang'].forEach(t=>{document.getElementById('tab-'+t).hidden=t!==tab;document.getElementById('mi-'+t).classList.toggle('active',t===tab);});window.scrollTo(0,0);}
+function setDarkIcon(){document.getElementById('darkIcon').setAttribute('href',document.body.classList.contains('dark')?'#i-sun':'#i-moon');}
+function toggleDark(){document.body.classList.toggle('dark');try{localStorage.setItem('theme',document.body.classList.contains('dark')?'dark':'light');}catch(e){}setDarkIcon();}
+try{if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark');}catch(e){}
+setDarkIcon();
+if(typeof window.installApp!=='function') window.installApp=function(){if(window.bgyInstall)window.bgyInstall();closeInstall();};
+function closeInstall(){document.getElementById('installPopup').classList.remove('show');try{localStorage.setItem('bgy_dok_installClosed',String(Date.now()));}catch(e){}}
+window.addEventListener('beforeinstallprompt',()=>{let last=0;try{last=parseInt(localStorage.getItem('bgy_dok_installClosed')||'0',10);}catch(e){}if(Date.now()-last>86400000)setTimeout(()=>document.getElementById('installPopup').classList.add('show'),2000);});
+
+load();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/dokumen/sw.js',{scope:'/dokumen/'}).catch(()=>{});});}
+</script>
+</body>
+</html>

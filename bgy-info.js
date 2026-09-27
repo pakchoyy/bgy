@@ -21,7 +21,8 @@
     { text: 'Modul Ajar Kokurikuler sat-set', url: 'https://www.bantuguruyuk.web.id/kokurikuler', path: '/kokurikuler' },
     { text: 'Kumpulan Tujuan Pembelajaran terupdate', url: 'https://www.bantuguruyuk.web.id/draft-tp/', path: '/draft-tp' },
     { text: 'Undangan rapor jadi dalam 1 menit', url: 'https://www.bantuguruyuk.web.id/teks-sekolah/', path: '/teks-sekolah' },
-    { text: 'Simpan akun digital guru, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' }
+    { text: 'Simpan akun digital guru, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' },
+    { text: 'Dokumen resmi guru, tinggal unduh', url: 'https://www.bantuguruyuk.web.id/dokumen/', path: '/dokumen' }
   ];
   // Ikon Lucide (lucide.dev, lisensi ISC) — isi <svg viewBox="0 0 24 24">
   var ICONS = {
@@ -273,6 +274,7 @@
     'katrol-nilai': 'Cobain Katrol Nilai dari Bantu Guru Yuk: katrol nilai siswa otomatis, pilih metodenya, hasil langsung jadi.',
     'draft-tp': 'Cobain Draft TP dari Bantu Guru Yuk: TP siap tempel ke e-Rapor, plus ATP, Prota & Prosem otomatis.',
     'teks-sekolah': 'Cobain Teks Sekolah dari Bantu Guru Yuk: undangan rapor, rapat, dan pemberitahuan sekolah jadi dalam 1 menit.',
+    dokumen: 'Cobain Dokumen Resmi dari Bantu Guru Yuk: peraturan & panduan kementerian untuk guru, lengkap dengan ringkasan, tinggal unduh.',
     sandi: 'Cobain Simpan Sandi dari Bantu Guru Yuk: catat akun Dapodik, PMM, email sekolah, dan lainnya rapi di HP. Aman & bisa offline.'
   };
   function shareTool() {

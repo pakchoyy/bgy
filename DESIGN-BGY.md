@@ -13,7 +13,7 @@ Acuan hidup: **Katrol Nilai** (`/katrol-nilai/`) dan **Kokurikuler** (`/kokuriku
 | Nama brand | **Bantu Guru Yuk** — selalu pakai spasi, bukan "BantuGuruYuk" |
 | Singkatan | **BGY** |
 | Judul header | Tulis `BGY \| Nama Tool` di HTML. `bgy-info.js` otomatis menampilkan **"Bantu Guru Yuk \| Nama Tool"** kalau muat satu baris, kalau tidak tetap **"BGY \| Nama Tool"** |
-| Nama tool | Singkat & jelas: *Buat Soal, Modul Ajar, Prompt LKPD, Prompt Game, Kokurikuler, Katrol Nilai, Draft TP, Teks Sekolah, Simpan Sandi* |
+| Nama tool | Singkat & jelas: *Buat Soal, Modul Ajar, Prompt LKPD, Prompt Game, Kokurikuler, Katrol Nilai, Draft TP, Teks Sekolah, Simpan Sandi, Dokumen Resmi* |
 | Kredit | `Bantu Guru Yuk \| by pak.choyy` (splash/loading) dan `© 2026 Bantu Guru Yuk by pak.choyy • vXX` (footer) |
 | `<title>` | `Bantu Guru Yuk \| Nama Tool` |
 
