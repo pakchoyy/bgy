@@ -321,6 +321,7 @@ async function enterApp() {
   }
   if (!localStorage.getItem(LS_ONBOARDED)) {
     localStorage.setItem(LS_ONBOARDED, '1');
+    if (!hasPin()) setTimeout(() => showToast('Tips: aktifkan PIN di Pengaturan supaya data terenkripsi.'), 1500);
     if (state.accounts.length === 0) {
       document.getElementById('modal-sample-data').hidden = false;
     }
@@ -329,14 +330,11 @@ async function enterApp() {
 
 function initAuthFlow() {
   applyPinUi();
-  if (pinDisabled()) {
-    enterApp();
-  } else if (hasPin()) {
+  if (hasPin() && !pinDisabled()) {
     showScreen('screen-pin-lock');
     document.getElementById('pin-unlock').focus();
   } else {
-    showScreen('screen-pin-setup');
-    document.getElementById('pin-new').focus();
+    enterApp();
   }
 }
 
@@ -368,11 +366,7 @@ on('btn-pin-start', 'click', async () => {
   await enterApp();
 });
 
-on('btn-pin-skip', 'click', async () => {
-  localStorage.setItem(LS_PIN_OFF, '1');
-  applyPinUi();
-  await enterApp();
-});
+on('btn-pin-skip', 'click', () => showApp());
 
 /* PIN unlock */
 on('btn-unlock', 'click', unlockWithPin);
@@ -504,7 +498,6 @@ on('btn-pin-toggle', 'click', () => {
     document.getElementById('pin-confirm').value = '';
     document.getElementById('pin-setup-step-1').hidden = false;
     document.getElementById('pin-setup-step-2').hidden = true;
-    document.getElementById('btn-pin-skip').hidden = true;
     showScreen('screen-pin-setup');
     document.getElementById('pin-new').focus();
   } else {

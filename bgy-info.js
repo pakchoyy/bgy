@@ -25,6 +25,8 @@
   ];
   // Ikon Lucide (lucide.dev, lisensi ISC) — isi <svg viewBox="0 0 24 24">
   var ICONS = {
+    share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/>',
+    chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
     install: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
     installed: '<path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/>',
     soal: '<path d="M14.364 13.634a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 0 0-3.004-3.004z"/><path d="M14.487 7.858A1 1 0 0 1 14 7V2"/><path d="M20 19.645V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l2.516 2.516"/><path d="M8 18h1"/>',
@@ -243,7 +245,40 @@
     all.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg><span>Semua Tools Bantu Guru Yuk</span>';
     all.addEventListener('click', function () { track('menu', 'Semua Tools', ALL_TOOLS_URL); });
     slot.appendChild(all);
+    var d2 = document.createElement('div');
+    d2.className = 'bgym-divider';
+    slot.appendChild(d2);
+    slot.appendChild(menuButton(ICONS.share, 'Bagikan ke teman guru', shareTool));
+    slot.appendChild(menuButton(ICONS.chat, 'Kritik & saran', function () {
+      track('menu', 'Kritik & saran', 'wa');
+      window.open('https://wa.me/6289530713597?text=' + encodeURIComponent('Halo Pak Choy, saya pakai ' + toolName() + '. Kritik/saran/lapor bug: '), '_blank', 'noopener');
+    }));
   }
+  function menuButton(icon, text, onClick) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'bgym-install';
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + icon + '</svg><span></span>';
+    b.querySelector('span').textContent = text;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+  function toolName() {
+    var t = String(document.title || '').split('|').pop().trim();
+    return t || 'Bantu Guru Yuk';
+  }
+  function shareTool() {
+    var name = toolName();
+    var url = location.origin + location.pathname + '?utm_source=share&utm_medium=' + encodeURIComponent(page);
+    var text = 'Coba ' + name + ' dari Bantu Guru Yuk, praktis buat guru.';
+    track('menu', 'Bagikan', url);
+    if (navigator.share) {
+      navigator.share({ title: name, text: text, url: url }).catch(function () {});
+      return;
+    }
+    window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank', 'noopener');
+  }
+  window.bgyShare = shareTool;
 
   /* ---- 3. Bar Info menempel di bawah layar ---- */
   var dockCss = [
