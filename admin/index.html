@@ -49,6 +49,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 
 @media(max-width:440px){.item-actions .bl{display:none;}}
 .msg{font-size:.8rem;margin-top:8px;min-height:1em;}
 .msg.err{color:#dc2626;}
+.hint{font-size:.78rem;color:var(--text-light);line-height:1.5;margin:-4px 0 12px;}
+.chk{display:flex!important;align-items:center;gap:8px;font-size:.86rem;font-weight:700;text-transform:none;letter-spacing:0;cursor:pointer;}
+.chk input{width:18px;height:18px;accent-color:var(--blue);}
 .tabs{display:flex;gap:6px;margin-bottom:12px;}
 .tab{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);font-weight:700;font-size:.84rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;}
 .tab.active{border-color:var(--blue);background:rgba(14,165,160,.1);color:var(--teal-dark);}
@@ -101,6 +104,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
 <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></symbol>
 <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></symbol>
 <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
 <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
 <symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></symbol>
@@ -148,6 +152,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
     <div class="tabs">
       <button class="tab active" id="tab-links" onclick="showTab('links')"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Link Bio</button>
       <button class="tab" id="tab-reviews" onclick="showTab('reviews')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Ulasan</button>
+      <button class="tab" id="tab-promo" onclick="showTab('promo')"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo</button>
     </div>
 
     <div id="pane-links" class="card">
@@ -172,6 +177,30 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
         <button class="btn" onclick="loadReviews()"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Muat ulang</button>
       </div>
       <div id="reviewList"></div>
+    </div>
+
+    <div id="pane-promo" class="card" hidden>
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo &amp; penawaran Pro</div>
+      <p class="hint">Tampil di kartu tawaran Pro dan dekat tombol Beli di Buat Soal, Modul Ajar, Kokurikuler, dan Prompt LKPD. Kosongkan kolom yang tidak dipakai.</p>
+      <form id="promoForm">
+        <div class="fg"><label class="chk"><input type="checkbox" id="pActive"/> Tampilkan promo</label></div>
+        <div class="fg"><label for="pText">Teks promo</label><input id="pText" maxlength="80" placeholder="mis. Diskon 30% menjelang ASAS"/></div>
+        <div class="row2">
+          <div class="fg"><label for="pUntil">Berlaku sampai</label><input type="date" id="pUntil"/></div>
+          <div class="fg"><label for="pUrl">Link promo</label><input id="pUrl" maxlength="300" placeholder="https://lynk.id/..."/></div>
+        </div>
+        <div class="row2">
+          <div class="fg"><label for="vCode">Kode voucher</label><input id="vCode" maxlength="30" style="text-transform:uppercase" placeholder="mis. TEMANGURU"/></div>
+          <div class="fg"><label for="vText">Keterangan voucher</label><input id="vText" maxlength="60" placeholder="mis. diskon 10%"/></div>
+        </div>
+        <div class="row2">
+          <div class="fg"><label for="bText">Nama paket bundling</label><input id="bText" maxlength="60" placeholder="mis. Paket Guru Pro (semua tool)"/></div>
+          <div class="fg"><label for="bUrl">Link paket bundling</label><input id="bUrl" maxlength="300" placeholder="https://lynk.id/..."/></div>
+        </div>
+        <div class="fg"><label for="gText">Garansi</label><input id="gText" maxlength="80" placeholder="mis. Garansi uang kembali 3 hari"/></div>
+        <button class="btn-primary" type="submit" id="btnPromo">Simpan</button>
+        <div class="msg" id="promoMsg"></div>
+      </form>
     </div>
   </div>
 </main>
@@ -230,7 +259,7 @@ async function boot(){
     show('notAdmin');return;
   }
   show('panel');
-  loadLinks();loadReviews();
+  loadLinks();loadReviews();loadPromo();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -245,8 +274,34 @@ document.getElementById('loginForm').addEventListener('submit',async e=>{
 async function logout(){await sb.auth.signOut();show('loginCard');}
 
 function showTab(t){
-  ['links','reviews'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+  ['links','reviews','promo'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
 }
+
+/* ─── Promo ─── */
+const PROMO_FIELDS={pText:'promo_text',pUntil:'promo_until',pUrl:'promo_url',vCode:'voucher_code',vText:'voucher_text',bText:'bundle_text',bUrl:'bundle_url',gText:'garansi_text'};
+async function loadPromo(){
+  const {data,error}=await sb.from('bgy_settings').select('value').eq('key','promo').maybeSingle();
+  if(error){document.getElementById('promoMsg').textContent='Tabel pengaturan belum ada: jalankan migrasi 20260928_settings_promo.sql.';return;}
+  const v=(data&&data.value)||{};
+  document.getElementById('pActive').checked=!!v.promo_active;
+  Object.entries(PROMO_FIELDS).forEach(([id,k])=>{document.getElementById(id).value=v[k]||'';});
+}
+document.getElementById('promoForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const msg=document.getElementById('promoMsg');msg.className='msg';
+  const value={promo_active:document.getElementById('pActive').checked};
+  for(const [id,k] of Object.entries(PROMO_FIELDS)){
+    const val=document.getElementById(id).value.trim();
+    if(val&&/_url$/.test(k)&&!/^https:\/\//i.test(val)){msg.className='msg err';msg.textContent='Link harus diawali https://';return;}
+    if(val)value[k]=k==='voucher_code'?val.toUpperCase():val;
+  }
+  if(value.promo_active&&!value.promo_text){msg.className='msg err';msg.textContent='Isi teks promo dulu, atau matikan promo.';return;}
+  const btn=document.getElementById('btnPromo');btn.disabled=true;
+  const {error}=await sb.from('bgy_settings').upsert({key:'promo',value,updated_at:new Date().toISOString()});
+  btn.disabled=false;
+  if(error)return fail(error);
+  msg.textContent='Tersimpan. Tampil di tool dalam beberapa menit.';toast('Promo tersimpan');
+});
 
 /* ─── Link Bio ─── */
 async function loadLinks(){

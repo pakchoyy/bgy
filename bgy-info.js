@@ -267,6 +267,7 @@
     var name = toolName();
     var url = location.origin + location.pathname + '?utm_source=share&utm_medium=' + encodeURIComponent(page);
     var text = 'Coba ' + name + ' dari Bantu Guru Yuk, praktis buat guru.';
+    if (promoNow && promoNow.voucher) text += ' Mau Pro? Pakai kode ' + promoNow.voucher.code + (promoNow.voucher.text ? ' (' + promoNow.voucher.text + ')' : '') + '.';
     track('menu', 'Bagikan', url);
     if (navigator.share) {
       navigator.share({ title: name, text: text, url: url }).catch(function () {});
@@ -553,7 +554,59 @@
     }).catch(function () { return null; });
     return proofData;
   }
+  var promoData = null, promoNow = null;
+  function httpsUrl(u) { return /^https:\/\/[^\s"'<>]+$/i.test(String(u || '')) ? String(u) : ''; }
+  function loadPromo() {
+    if (promoData) return promoData;
+    promoData = fetch(SB_URL + '/rest/v1/bgy_settings?key=eq.promo&select=value', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (rows) {
+        var v = (Array.isArray(rows) && rows[0] && rows[0].value) || {};
+        var out = {};
+        var today = new Date(); today.setHours(0, 0, 0, 0);
+        var until = v.promo_until ? new Date(v.promo_until + 'T00:00:00') : null;
+        if (v.promo_active && v.promo_text && (!until || until >= today)) out.promo = { text: v.promo_text, url: httpsUrl(v.promo_url), until: until };
+        if (v.voucher_code) out.voucher = { code: String(v.voucher_code), text: v.voucher_text || '' };
+        if (v.bundle_url && httpsUrl(v.bundle_url)) out.bundle = { text: v.bundle_text || 'Paket hemat semua tool Pro', url: httpsUrl(v.bundle_url) };
+        if (v.garansi_text) out.garansi = v.garansi_text;
+        promoNow = Object.keys(out).length ? out : null;
+        return promoNow;
+      })
+      .catch(function () { return null; });
+    return promoData;
+  }
+  function buildPromo(p) {
+    var box = document.createElement('div');
+    box.className = 'bgyp bgyp-extra';
+    var add = function (cls, parts, href) {
+      var el = document.createElement(href ? 'a' : 'div');
+      el.className = cls;
+      if (href) { el.href = withUtm(href, 'promo'); el.target = '_blank'; el.rel = 'noopener'; el.addEventListener('click', function () { track('promo', cls, href); }); }
+      parts.forEach(function (x) {
+        var sp = document.createElement(x[0]);
+        if (x[1]) sp.className = x[1];
+        sp.textContent = x[2];
+        el.appendChild(sp);
+      });
+      box.appendChild(el);
+    };
+    if (p.promo) {
+      var tgl = p.promo.until ? ' · s.d. ' + p.promo.until.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) : '';
+      add('bgyp-promo', [['span', 'bgyp-tag', 'PROMO'], ['span', '', p.promo.text + tgl]], p.promo.url);
+    }
+    if (p.voucher) add('bgyp-line', [['span', '', 'Kode voucher '], ['b', 'bgyp-code', p.voucher.code], ['span', '', p.voucher.text ? ' · ' + p.voucher.text : '']]);
+    if (p.garansi) add('bgyp-line', [['span', '', '✓ ' + p.garansi]]);
+    if (p.bundle) add('bgyp-bundle', [['span', '', p.bundle.text + ' →']], p.bundle.url);
+    return box;
+  }
   var proofCss = [
+    '.bgyp-extra{margin-top:8px;display:flex;flex-direction:column;gap:5px;}',
+    '.bgyp-promo{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-weight:700;color:#b45309!important;text-decoration:none!important;}',
+    '.bgyp-tag{background:#f59e0b;color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.5px;padding:2px 7px;border-radius:99px;}',
+    '.bgyp-line{font-size:12.5px;}',
+    '.bgyp-code{font-family:monospace;font-size:13px;letter-spacing:1px;background:rgba(245,158,11,.14);padding:1px 6px;border-radius:5px;}',
+    '.bgyp-bundle{font-weight:700;color:#0d9488!important;text-decoration:none!important;}',
+    'body.dark .bgyp-promo{color:#fbbf24!important;}body.dark .bgyp-bundle{color:#5eead4!important;}',
     '.bgyp{font-size:12.5px;line-height:1.45;margin-top:10px;}',
     '.bgyp-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:700;}',
     '.bgyp-stars{color:#f59e0b;letter-spacing:1px;font-size:14px;}',
@@ -613,12 +666,14 @@
   function mountProof() {
     var slots = document.querySelectorAll('[data-bgy-proof]');
     if (!slots.length) return;
-    loadProof().then(function (d) {
-      if (!d) return;
+    Promise.all([loadPromo(), loadProof()]).then(function (res) {
+      var p = res[0], d = res[1];
+      if (!p && !d) return;
       ensureProofCss();
       Array.prototype.forEach.call(slots, function (el) {
         el.innerHTML = '';
-        el.appendChild(buildProof(d, el.getAttribute('data-bgy-proof') || page));
+        if (p) el.appendChild(buildPromo(p));
+        if (d) el.appendChild(buildProof(d, el.getAttribute('data-bgy-proof') || page));
       });
     });
   }
@@ -654,7 +709,11 @@
     go.addEventListener('click', function () { track('nudge', 'Lihat Pro', opts.url); close(); });
     card.querySelector('.bgyn-later').addEventListener('click', function () { track('nudge', 'Nanti', page); close(); });
     card.querySelector('.bgyn-x').addEventListener('click', close);
-    loadProof().then(function (d) { if (d) card.querySelector('.bgyn-proof').appendChild(buildProof(d, page)); });
+    Promise.all([loadPromo(), loadProof()]).then(function (res) {
+      var slot = card.querySelector('.bgyn-proof');
+      if (res[0]) slot.appendChild(buildPromo(res[0]));
+      if (res[1]) slot.appendChild(buildProof(res[1], page));
+    });
     setTimeout(function () {
       document.body.appendChild(card);
       requestAnimationFrame(function () { card.classList.add('show'); });
