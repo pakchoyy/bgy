@@ -7,6 +7,7 @@
 <meta name="description" content="Simpan akun digital guru dengan simpel.">
 <meta name="theme-color" content="#0ea5a0">
 <link rel="manifest" href="./manifest.json">
+<script>window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__bgyInstall=e;});</script>
 <link rel="icon" href="./icons/icon-192.png">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -14,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Simpan Sandi">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="application-name" content="Simpan Sandi">
-<link rel="stylesheet" href="./style.css?v=16">
+<link rel="stylesheet" href="./style.css?v=17">
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 </head>
 <body>
@@ -113,7 +114,6 @@
           <button id="menu-tentang" class="dropdown-item"><svg class="icon"><use href="#icon-info"></use></svg> Tentang Simpan Sandi</button>
           <button id="menu-lock" class="dropdown-item"><svg class="icon"><use href="#icon-lock"></use></svg> Kunci Sekarang</button>
           <button id="menu-install" class="dropdown-item"><svg class="icon"><use href="#icon-smartphone"></use></svg> Install Aplikasi</button>
-          <button id="menu-settings" class="dropdown-item"><svg class="icon"><use href="#icon-settings"></use></svg> Pengaturan</button>
           <div class="dropdown-divider"></div>
           <div data-bgy-menu data-bgy-install="off"></div>
         </nav>
@@ -134,7 +134,7 @@
 
   <!-- VIEW: Dashboard -->
   <main id="view-dashboard" class="view">
-    <p class="greeting">Halo, Guru 👋</p>
+    <p class="greeting" id="greeting">Halo, Guru</p>
 
     <div class="search-bar">
       <svg class="icon"><use href="#icon-search"></use></svg>
@@ -184,6 +184,14 @@
   <!-- VIEW: Settings -->
   <main id="view-settings" class="view" hidden>
     <h2 class="section-label">Pengaturan</h2>
+
+    <div class="settings-group">
+      <h3 class="settings-group-title">Profil</h3>
+      <label class="settings-row" for="nick-input">
+        <span>Nama panggilan</span>
+        <input type="text" id="nick-input" class="settings-input" maxlength="30" placeholder="mis. Bu Rina" autocomplete="nickname">
+      </label>
+    </div>
 
     <div class="settings-group">
       <h3 class="settings-group-title">Tampilan</h3>
@@ -452,9 +460,10 @@
       <p>Browser ini belum menampilkan tombol install otomatis. Install manual cukup 3 langkah:</p>
       <ol id="install-guide-android" class="install-steps">
         <li>Ketuk menu <b>⋮</b> di pojok kanan atas Chrome</li>
-        <li>Pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b></li>
-        <li>Ketuk <b>Instal</b> — ikon Simpan Sandi muncul di layar HP</li>
+        <li>Pilih <b>Instal aplikasi</b></li>
+        <li>Ketuk <b>Instal</b>, ikon Simpan Sandi muncul di layar HP seperti aplikasi biasa</li>
       </ol>
+      <p id="install-guide-note" class="install-note">Kalau pilihan <b>Instal aplikasi</b> tidak ada, kemungkinan Simpan Sandi sudah terinstall: buka dari ikon di layar HP.</p>
       <ol id="install-guide-ios" class="install-steps" hidden>
         <li>Buka halaman ini di <b>Safari</b></li>
         <li>Ketuk tombol <b>Bagikan</b> (kotak dengan panah ke atas)</li>
@@ -531,7 +540,7 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="./app.js?v=16"></script>
+<script src="./app.js?v=17"></script>
 <script src="/bgy-info.js" defer></script>
 </body>
 </html>

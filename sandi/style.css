@@ -633,3 +633,18 @@ button, input, select, textarea { font-family: inherit; }
   .header-logo { width: 32px; height: 32px; }
 }
 
+
+.settings-input {
+  flex: 0 1 55%;
+  min-width: 0;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg, transparent);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  padding: 8px 10px;
+  text-align: right;
+}
+.settings-input:focus { outline: none; border-color: var(--color-primary); }
+.install-note { font-size: 13px; color: var(--color-text-muted); margin: 10px 0 0; line-height: 1.5; }

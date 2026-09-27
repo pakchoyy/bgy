@@ -577,10 +577,6 @@ on('menu-tentang', 'click', () => {
 on('btn-close-about', 'click', () => {
   document.getElementById('modal-about').hidden = true;
 });
-on('menu-settings', 'click', () => {
-  closeHamburgerMenu();
-  switchView('settings');
-});
 on('menu-lock', 'click', () => {
   closeHamburgerMenu();
   lockApp();
@@ -594,15 +590,20 @@ on('menu-bgy', 'click', closeHamburgerMenu);
 /* =========================================================
    PWA INSTALL PROMPT
    ========================================================= */
-let deferredInstallPrompt = null;
+let deferredInstallPrompt = window.__bgyInstall || null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredInstallPrompt = e;
+  window.__bgyInstall = e;
   if (!localStorage.getItem('sandi_install_dismissed')) {
     document.getElementById('install-banner').hidden = false;
   }
 });
+if (deferredInstallPrompt && !localStorage.getItem('sandi_install_dismissed')) {
+  const banner = document.getElementById('install-banner');
+  if (banner) banner.hidden = false;
+}
 
 function isStandalone() {
   return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
@@ -633,8 +634,10 @@ async function triggerInstallPrompt() {
     return;
   }
   deferredInstallPrompt.prompt();
-  await deferredInstallPrompt.userChoice;
+  const choice = await deferredInstallPrompt.userChoice;
   deferredInstallPrompt = null;
+  window.__bgyInstall = null;
+  if (choice && choice.outcome === 'accepted') showToast('Simpan Sandi sedang dipasang di HP kamu');
   document.getElementById('install-banner').hidden = true;
 }
 
@@ -1169,7 +1172,24 @@ on('btn-backup-later', 'click', () => {
   document.getElementById('backup-reminder').hidden = true;
 });
 
+const LS_NICK = 'bgy_nama';
+function renderGreeting() {
+  const h = new Date().getHours();
+  const waktu = h < 11 ? 'Selamat pagi' : h < 15 ? 'Selamat siang' : h < 18 ? 'Selamat sore' : 'Selamat malam';
+  const nick = (localStorage.getItem(LS_NICK) || '').trim();
+  const el = document.getElementById('greeting');
+  if (el) el.textContent = waktu + ', ' + (nick || 'Guru');
+}
+on('nick-input', 'input', (e) => {
+  const v = e.target.value.trim().slice(0, 30);
+  if (v) localStorage.setItem(LS_NICK, v); else localStorage.removeItem(LS_NICK);
+  renderGreeting();
+});
+
 async function boot() {
+  const nickInput = document.getElementById('nick-input');
+  if (nickInput) nickInput.value = localStorage.getItem(LS_NICK) || '';
+  renderGreeting();
   await refreshAccounts();
   renderDashboard();
   updateBackupReminder();
