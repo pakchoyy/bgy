@@ -739,6 +739,9 @@ function accountCardHtml(acc) {
   const initial = (acc.icon || acc.serviceName || '?').slice(0, 2).toUpperCase();
   const star = acc.favorite ? '<span class="account-fav-star"><svg class="icon"><use href="#icon-star-filled"></use></svg></span>' : '';
   const maskedPw = acc.password ? '••••••••••' : '(kosong)';
+  const linkBtn = /^https?:\/\//i.test(acc.url || '')
+    ? `<a class="account-copy account-link" href="${escapeHtml(acc.url)}" target="_blank" rel="noopener noreferrer" data-link-id="${escapeHtml(acc.id)}" aria-label="Buka ${escapeHtml(acc.serviceName)}" title="Buka situs"><svg class="icon"><use href="#icon-globe"></use></svg></a>`
+    : '';
   const copyBtn = acc.username
     ? `<button type="button" class="account-copy" data-copy-id="${escapeHtml(acc.id)}" aria-label="Salin username ${escapeHtml(acc.serviceName)}" title="Salin username"><svg class="icon"><use href="#icon-copy"></use></svg></button>`
     : '';
@@ -750,9 +753,9 @@ function accountCardHtml(acc) {
           <div class="account-service">${escapeHtml(acc.serviceName)} ${star}</div>
           <div class="account-username">${escapeHtml(acc.username || maskedPw)}</div>
         </div>
-        ${copyBtn ? '' : '<div class="account-chevron">›</div>'}
+        ${copyBtn || linkBtn ? '' : '<div class="account-chevron">›</div>'}
       </button>
-      ${copyBtn}
+      ${linkBtn}${copyBtn}
     </div>
   `;
 }
@@ -787,7 +790,10 @@ function bindAccountList(listEl) {
   listEl.querySelectorAll('.account-card').forEach((card) => {
     card.addEventListener('click', () => openDetail(card.dataset.id));
   });
-  listEl.querySelectorAll('.account-copy').forEach((btn) => {
+  listEl.querySelectorAll('.account-link').forEach((a) => {
+    a.addEventListener('click', () => markUsed(a.dataset.linkId));
+  });
+  listEl.querySelectorAll('button.account-copy').forEach((btn) => {
     btn.addEventListener('click', async () => {
       const acc = state.accounts.find((a) => a.id === btn.dataset.copyId);
       if (!acc || !acc.username) return;
@@ -916,6 +922,7 @@ on('account-form', 'submit', async (e) => {
 
   await putAccount(account);
   await refreshAccounts();
+  if (!existing) noteAdded(1);
   document.getElementById('modal-form').hidden = true;
   showToast(existing ? 'Akun diperbarui ✓' : 'Akun disimpan ✓');
 });
@@ -1081,6 +1088,9 @@ async function downloadBackup(password) {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
   localStorage.setItem(LS_LAST_EXPORT, String(Date.now()));
+  localStorage.setItem(LS_ADDED, '0');
+  localStorage.removeItem(LS_BACKUP_FORCE);
+  updateBackupReminder();
   document.getElementById('backup-reminder').hidden = true;
   showToast(password ? 'Backup terkunci tersimpan ✓' : 'Data berhasil di-export ✓');
 }
@@ -1301,6 +1311,7 @@ on('import-excel-input', 'change', async (e) => {
       await putAccount({ id: makeId(), ...a, icon: a.serviceName.slice(0, 1).toUpperCase(), favorite: false, createdAt: nowIso(), updatedAt: nowIso() });
     }
     await refreshAccounts();
+    noteAdded(fresh.length, true);
     switchView('dashboard');
     showToast(fresh.length + ' akun berhasil diimpor. Hapus file Excel-nya dari HP ya, isinya berisi password.');
   } catch (err) {
@@ -1343,7 +1354,25 @@ function updateBackupReminder() {
   if (!el) return;
   const last = parseInt(localStorage.getItem(LS_LAST_EXPORT) || '0', 10);
   const snooze = parseInt(localStorage.getItem(LS_BACKUP_SNOOZE) || '0', 10);
-  el.hidden = !(state.accounts.length >= 3 && Date.now() - last > 30 * DAY && Date.now() > snooze);
+  const added = addedSinceBackup();
+  const byAdded = added >= 5 || (added > 0 && localStorage.getItem(LS_BACKUP_FORCE) === '1');
+  const byAge = state.accounts.length >= 3 && Date.now() - last > 30 * DAY;
+  el.hidden = !((byAdded || byAge) && state.accounts.length && Date.now() > snooze);
+  const txt = document.getElementById('backup-reminder-text');
+  if (txt) txt.textContent = byAdded
+    ? 'Ada ' + added + ' akun baru sejak backup terakhir. Backup sekarang supaya tidak hilang kalau HP rusak atau hilang.'
+    : 'Belum ada backup dalam 30 hari terakhir. Simpan cadangan supaya data aman kalau HP rusak atau hilang.';
+}
+const LS_ADDED = 'sandi_added_since_backup';
+const LS_BACKUP_FORCE = 'sandi_backup_force';
+function addedSinceBackup() { return parseInt(localStorage.getItem(LS_ADDED) || '0', 10) || 0; }
+function noteAdded(n, force) {
+  const before = addedSinceBackup();
+  const after = before + n;
+  localStorage.setItem(LS_ADDED, String(after));
+  if (force) localStorage.setItem(LS_BACKUP_FORCE, '1');
+  if (force || (before < 5 && after >= 5)) localStorage.removeItem(LS_BACKUP_SNOOZE);
+  updateBackupReminder();
 }
 on('btn-backup-now', 'click', () => document.getElementById('btn-export').click());
 on('btn-backup-later', 'click', () => {

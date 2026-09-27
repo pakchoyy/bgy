@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<script>if(!/\/$/.test(location.pathname)&&!/\.[a-z0-9]+$/i.test(location.pathname))location.replace(location.pathname+"/"+location.search+location.hash);</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Simpan Sandi | Bantu Guru Yuk</title>
 <meta name="description" content="Simpan akun digital guru dengan simpel.">
@@ -15,7 +16,7 @@
 <meta name="apple-mobile-web-app-title" content="Simpan Sandi">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="application-name" content="Simpan Sandi">
-<link rel="stylesheet" href="./style.css?v=18">
+<link rel="stylesheet" href="./style.css?v=19">
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 </head>
 <body>
@@ -143,7 +144,7 @@
 
     <div id="backup-reminder" class="backup-reminder" hidden>
       <svg class="icon"><use href="#icon-download"></use></svg>
-      <p>Belum ada backup dalam 30 hari terakhir. Simpan cadangan supaya data aman kalau HP rusak atau hilang.</p>
+      <p id="backup-reminder-text">Belum ada backup dalam 30 hari terakhir. Simpan cadangan supaya data aman kalau HP rusak atau hilang.</p>
       <div class="backup-actions">
         <button id="btn-backup-later" class="btn btn-secondary">Nanti</button>
         <button id="btn-backup-now" class="btn btn-primary">Backup sekarang</button>
@@ -551,7 +552,7 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="./app.js?v=18"></script>
+<script src="./app.js?v=19"></script>
 <script src="/bgy-info.js" defer></script>
 </body>
 </html>

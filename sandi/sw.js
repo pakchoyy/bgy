@@ -2,12 +2,12 @@
 
 /* SANDI service worker — caches core assets for offline use. */
 
-const CACHE_NAME = 'sandi-cache-v21';
+const CACHE_NAME = 'sandi-cache-v22';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './style.css?v=18',
-  './app.js?v=18',
+  './style.css?v=19',
+  './app.js?v=19',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -78,7 +78,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return response;
-      });
+      }).catch(() => caches.match(event.request, { ignoreSearch: true }));
     })
   );
 });
