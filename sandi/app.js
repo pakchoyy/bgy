@@ -260,21 +260,33 @@ const state = {
 const LS_PIN_OFF = 'sandi_pin_off';
 function hasPin() { return !!localStorage.getItem(LS_PIN); }
 function pinDisabled() { return localStorage.getItem(LS_PIN_OFF) === '1'; }
-async function hashPin(pin) {
-  if (!(window.crypto && crypto.subtle)) return pin;
+const LS_PIN_SALT = 'sandi_pin_salt';
+const hex = (buf) => Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+async function legacyHashPin(pin) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('sandi:' + pin));
-  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  return hex(buf);
+}
+/* PIN pendek: verifikasi pakai PBKDF2 bergaram supaya tidak bisa ditebak cepat dari localStorage. */
+async function hashPin(pin, salt) {
+  if (!(window.crypto && crypto.subtle)) return pin;
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: unb64(salt), iterations: 150000, hash: 'SHA-256' }, base, 256);
+  return 'v2:' + hex(bits);
 }
 async function savePin(pin) {
-  localStorage.setItem(LS_PIN, await hashPin(pin));
+  const salt = window.crypto ? b64(crypto.getRandomValues(new Uint8Array(16))) : '';
+  localStorage.setItem(LS_PIN_SALT, salt);
+  localStorage.setItem(LS_PIN, await hashPin(pin, salt));
   localStorage.removeItem(LS_PIN_OFF);
   applyPinUi();
 }
 async function checkPin(pin) {
   const stored = localStorage.getItem(LS_PIN);
   if (!stored) return false;
-  if (stored === pin) { await savePin(pin); return true; } // migrate legacy plain PIN
-  return stored === await hashPin(pin);
+  if (stored.startsWith('v2:')) return stored === await hashPin(pin, localStorage.getItem(LS_PIN_SALT) || '');
+  const legacyOk = stored === pin || (window.crypto && crypto.subtle && stored === await legacyHashPin(pin));
+  if (legacyOk) await savePin(pin);
+  return legacyOk;
 }
 function applyPinUi() {
   const off = pinDisabled() || !hasPin();
@@ -422,6 +434,7 @@ on('btn-close-forgot', 'click', () => {
 on('btn-forgot-reset', 'click', async () => {
   await clearAllAccounts();
   localStorage.removeItem(LS_PIN);
+  localStorage.removeItem(LS_PIN_SALT);
   localStorage.removeItem(LS_PIN_OFF);
   localStorage.removeItem(LS_ONBOARDED);
   localStorage.removeItem(LS_SALT);
@@ -714,7 +727,7 @@ function accountCardHtml(acc) {
   const star = acc.favorite ? '<span class="account-fav-star"><svg class="icon"><use href="#icon-star-filled"></use></svg></span>' : '';
   const maskedPw = acc.password ? '••••••••••' : '(kosong)';
   return `
-    <button class="account-card" data-id="${acc.id}">
+    <button class="account-card" data-id="${escapeHtml(acc.id)}">
       <div class="account-icon" style="background:${serviceColor(acc.serviceName)}">${escapeHtml(initial)}</div>
       <div class="account-info">
         <div class="account-service">${escapeHtml(acc.serviceName)} ${star}</div>

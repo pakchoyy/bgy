@@ -1,7 +1,7 @@
-// BGY Modul Ajar - Service Worker v7.0
+// BGY root Service Worker (scope /) — melayani Beranda & tool tanpa SW sendiri.
 // Cache: aset statis saja. API/generate tetap butuh internet.
 
-const CACHE = 'bgy-modul-ajar-v7';
+const CACHE = 'bgy-root-v8';
 
 // Aset yang di-cache saat install (disesuaikan dengan jalur modul-ajar)
 const PRECACHE = [
@@ -26,7 +26,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+      Promise.all(keys.filter(k => (k.startsWith('bgy-root-') || k === 'bgy-modul-ajar-v7') && k !== CACHE).map(k => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });

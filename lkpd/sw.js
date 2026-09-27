@@ -1,4 +1,4 @@
-const CACHE_NAME = "bantu-guru-v3";
+const CACHE_NAME = "bantu-guru-v4";
 
 // FILE WAJIB CACHE
 const CORE_ASSETS = [
@@ -27,7 +27,7 @@ self.addEventListener("activate", event => {
     caches.keys().then(keys => {
       return Promise.all(
         keys.map(key => {
-          if (key !== CACHE_NAME) {
+          if (key.startsWith("bantu-guru-") && key !== CACHE_NAME) {
             console.log("SW: Delete old cache", key);
             return caches.delete(key);
           }
@@ -45,6 +45,21 @@ self.addEventListener("fetch", event => {
 
   // SKIP API (biar tidak ganggu fetch Gemini kamu)
   if (event.request.url.includes("script.google.com")) return;
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request).then(r => r || caches.match("/lkpd/index.html")))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request)

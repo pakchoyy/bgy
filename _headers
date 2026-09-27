@@ -63,3 +63,12 @@
 # ══ Bar Info bersama (bgy-info.js) — selalu cek versi terbaru ══
 /bgy-info.js
   Cache-Control: no-cache
+
+# ══ Keamanan dasar ══
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/admin/*
+  X-Frame-Options: DENY
+  Cache-Control: no-store

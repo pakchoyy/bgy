@@ -1,12 +1,53 @@
 export const config = { api: { bodyParser: true } };
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+const buckets = globalThis.__bgySoalRateBuckets || new Map();
+globalThis.__bgySoalRateBuckets = buckets;
+const RATE_WINDOW_MS = 60 * 1000;
+const RATE_MAX = 10;
+
+function clientIp(req) {
+  const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return fwd || req.socket?.remoteAddress || 'unknown';
+}
+
+function isRateLimited(req) {
+  const now = Date.now();
+  const key = clientIp(req);
+  const recent = (buckets.get(key) || []).filter(t => now - t < RATE_WINDOW_MS);
+  recent.push(now);
+  buckets.set(key, recent);
+  if (buckets.size > 1000) {
+    for (const [ip, times] of buckets) {
+      if (!times.some(t => now - t < RATE_WINDOW_MS)) buckets.delete(ip);
+    }
+  }
+  return recent.length > RATE_MAX;
+}
+
+function guard(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  const origin = String(req.headers.origin || '');
+  const allowed = (process.env.BGY_ALLOWED_ORIGINS || 'https://bantuguruyuk.web.id,https://www.bantuguruyuk.web.id')
+    .split(',').map(v => v.trim()).filter(Boolean);
+  if (origin && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') { res.status(200).end(); return false; }
+  if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return false; }
+  if (origin && !allowed.includes(origin)) { res.status(403).json({ error: 'Origin tidak diizinkan' }); return false; }
+  if (isRateLimited(req)) {
+    res.setHeader('Retry-After', '60');
+    res.status(429).json({ error: 'Terlalu banyak permintaan. Tunggu satu menit lalu coba lagi.' });
+    return false;
+  }
+  return true;
+}
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+export default async function handler(req, res) {
+  if (!guard(req, res)) return;
 
   const keys = [
     process.env.GEMINI_SOAL_1,
@@ -28,7 +69,8 @@ export default async function handler(req, res) {
     }
 
     const prompt = body?.prompt;
-    if (!prompt) return res.status(400).json({ error: 'Prompt kosong' });
+    if (typeof prompt !== 'string' || !prompt.trim()) return res.status(400).json({ error: 'Prompt kosong' });
+    if (prompt.length > 60000) return res.status(413).json({ error: 'Prompt terlalu panjang' });
 
     let lastError = null;
 
@@ -67,12 +109,12 @@ export default async function handler(req, res) {
               .map(part => part.text || '')
               .join('');
             if (!text) {
-              lastError = { error: 'Respons Gemini kosong', model, detail: data };
+              lastError = { model, message: 'Respons Gemini kosong' };
               continue;
             }
             return res.status(200).json({ text, model });
           } else {
-            lastError = { model, detail: data };
+            lastError = { model, status: response.status, message: data?.error?.message || 'Request Gemini gagal' };
           }
 
         } catch (err) {

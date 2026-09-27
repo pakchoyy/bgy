@@ -62,7 +62,8 @@
     P = fresh();
   }
   var saveT;
-  function save() { clearTimeout(saveT); saveT = setTimeout(function () { try { localStorage.setItem(LS, JSON.stringify(P)); } catch (e) {} }, 250); }
+  function simpanSekarang() { clearTimeout(saveT); saveT = null; try { localStorage.setItem(LS, JSON.stringify(P)); } catch (e) {} }
+  function save() { clearTimeout(saveT); saveT = setTimeout(simpanSekarang, 250); }
 
   /* ─── minggu efektif ─── */
   function weeks(s) {
@@ -602,6 +603,7 @@
     window.addEventListener('afterprint', function () { document.documentElement.classList.remove('pk-printing'); pr.innerHTML = ''; });
     load();
     render();
+    window.addEventListener('pagehide', function () { if (saveT) simpanSekarang(); });
     root.addEventListener('click', onClick);
     root.addEventListener('input', onInput);
     root.addEventListener('change', onChange);

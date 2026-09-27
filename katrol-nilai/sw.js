@@ -1,5 +1,5 @@
 /* BGY Katrol Nilai — Service Worker v26.5.1 */
-const CACHE_NAME = 'bgy-katrol-v1';
+const CACHE_NAME = 'bgy-katrol-v2';
 const CACHE_URLS = [
   '/katrol-nilai/',
   '/katrol-nilai/index.html',
@@ -24,7 +24,7 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(
-        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+        keys.filter(k => k.startsWith('bgy-katrol-') && k !== CACHE_NAME).map(k => caches.delete(k))
       )
     )
   );

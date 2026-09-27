@@ -3,15 +3,54 @@
 
 export const config = { api: { bodyParser: true } };
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+const buckets = globalThis.__bgyHfRateBuckets || new Map();
+globalThis.__bgyHfRateBuckets = buckets;
+const RATE_WINDOW_MS = 60 * 1000;
+const RATE_MAX = 6;
+
+function clientIp(req) {
+  const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return fwd || req.socket?.remoteAddress || 'unknown';
+}
+
+function isRateLimited(req) {
+  const now = Date.now();
+  const key = clientIp(req);
+  const recent = (buckets.get(key) || []).filter(t => now - t < RATE_WINDOW_MS);
+  recent.push(now);
+  buckets.set(key, recent);
+  if (buckets.size > 1000) {
+    for (const [ip, times] of buckets) {
+      if (!times.some(t => now - t < RATE_WINDOW_MS)) buckets.delete(ip);
+    }
+  }
+  return recent.length > RATE_MAX;
+}
+
+function guard(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  const origin = String(req.headers.origin || '');
+  const allowed = (process.env.BGY_ALLOWED_ORIGINS || 'https://bantuguruyuk.web.id,https://www.bantuguruyuk.web.id')
+    .split(',').map(v => v.trim()).filter(Boolean);
+  if (origin && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method tidak diizinkan' });
+  if (req.method === 'OPTIONS') { res.status(200).end(); return false; }
+  if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return false; }
+  if (origin && !allowed.includes(origin)) { res.status(403).json({ error: 'Origin tidak diizinkan' }); return false; }
+  if (isRateLimited(req)) {
+    res.setHeader('Retry-After', '60');
+    res.status(429).json({ error: 'Terlalu banyak permintaan. Tunggu satu menit lalu coba lagi.' });
+    return false;
   }
+  return true;
+}
+
+export default async function handler(req, res) {
+  if (!guard(req, res)) return;
 
   // 🔑 Token Hugging Face — set di Vercel Environment Variables
   // Nama variable: HF_TOKEN (isi dengan token dari huggingface.co/settings/tokens)
@@ -27,9 +66,10 @@ export default async function handler(req, res) {
     }
 
     const prompt = body?.prompt;
-    if (!prompt) {
+    if (typeof prompt !== 'string' || !prompt.trim()) {
       return res.status(400).json({ error: 'Prompt kosong' });
     }
+    if (prompt.length > 2000) return res.status(413).json({ error: 'Prompt terlalu panjang' });
 
     // Prompt diperkuat untuk ilustrasi soal SD
     const fullPrompt = `${prompt}, cartoon illustration style, colorful, child-friendly, Indonesian elementary school, clean white background, no text, no words, simple and clear`;
@@ -67,8 +107,7 @@ export default async function handler(req, res) {
       }
 
       return res.status(500).json({
-        error: `Hugging Face error: ${response.status}`,
-        detail: errText
+        error: `Hugging Face error: ${response.status}`
       });
     }
 
