@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="Simpan Sandi">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="application-name" content="Simpan Sandi">
-<link rel="stylesheet" href="./style.css?v=17">
+<link rel="stylesheet" href="./style.css?v=18">
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 </head>
 <body>
@@ -150,6 +150,14 @@
       </div>
     </div>
 
+    <div class="list-tools">
+      <label for="sort-select">Urutkan</label>
+      <select id="sort-select">
+        <option value="az">A–Z</option>
+        <option value="recent">Terakhir dipakai</option>
+        <option value="category">Kategori</option>
+      </select>
+    </div>
     <div class="category-chips" id="category-chips">
       <button class="chip chip-active" data-category="Semua">Semua</button>
     </div>
@@ -225,6 +233,9 @@
       <button id="btn-export" class="settings-row"><span><svg class="icon icon-sm"><use href="#icon-download"></use></svg> Export Data</span></button>
       <button id="btn-import" class="settings-row"><span><svg class="icon icon-sm"><use href="#icon-upload"></use></svg> Import Data</span></button>
       <input type="file" id="import-file-input" accept=".bgy,.json,application/json,application/octet-stream" hidden>
+      <button id="btn-import-excel" class="settings-row"><span><svg class="icon icon-sm"><use href="#icon-upload"></use></svg> Import dari Excel / CSV</span></button>
+      <a id="link-template-excel" class="settings-row" href="./template-import-sandi.xlsx" download="Template-Import-Simpan-Sandi.xlsx"><span><svg class="icon icon-sm"><use href="#icon-download"></use></svg> Unduh template Excel</span></a>
+      <input type="file" id="import-excel-input" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
       <button id="btn-delete-all" class="settings-row settings-row-danger"><span><svg class="icon icon-sm"><use href="#icon-trash"></use></svg> Hapus Semua Data</span></button>
     </div>
 
@@ -540,7 +551,7 @@
 
 <div id="toast" class="toast" hidden></div>
 
-<script src="./app.js?v=17"></script>
+<script src="./app.js?v=18"></script>
 <script src="/bgy-info.js" defer></script>
 </body>
 </html>

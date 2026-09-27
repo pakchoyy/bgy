@@ -648,3 +648,31 @@ button, input, select, textarea { font-family: inherit; }
 }
 .settings-input:focus { outline: none; border-color: var(--color-primary); }
 .install-note { font-size: 13px; color: var(--color-text-muted); margin: 10px 0 0; line-height: 1.5; }
+
+.account-row { display: flex; align-items: stretch; gap: 8px; }
+.account-row .account-card { flex: 1; min-width: 0; }
+.account-copy {
+  flex: none;
+  width: 48px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.account-copy:active { transform: scale(.96); }
+.list-tools { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin: 4px 0 8px; font-size: 13px; color: var(--color-text-muted); }
+.list-tools select {
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 10px;
+  min-height: 38px;
+}

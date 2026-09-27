@@ -263,14 +263,26 @@
     b.addEventListener('click', onClick);
     return b;
   }
+  var SHARE_TEXT = {
+    home: 'Cobain Bantu Guru Yuk: kumpulan tools buat guru, dari bikin soal, modul ajar, sampai administrasi. Banyak yang gratis!',
+    soal: 'Cobain Buat Soal dari Bantu Guru Yuk: soal, kunci jawaban, dan kisi-kisi jadi gak sampai 10 menit, langsung PDF & Word.',
+    'modul-ajar': 'Cobain Modul Ajar dari Bantu Guru Yuk: modul ajar lengkap CP, TP, kegiatan, sampai asesmen, sat-set pakai AI.',
+    lkpd: 'Cobain Prompt LKPD dari Bantu Guru Yuk: isi form, prompt LKPD langsung siap ditempel ke ChatGPT atau Gemini.',
+    kokurikuler: 'Cobain Kokurikuler dari Bantu Guru Yuk: modul kokurikuler lintas disiplin jadi sat-set.',
+    'katrol-nilai': 'Cobain Katrol Nilai dari Bantu Guru Yuk: katrol nilai siswa otomatis, pilih metodenya, hasil langsung jadi.',
+    'draft-tp': 'Cobain Draft TP dari Bantu Guru Yuk: TP siap tempel ke e-Rapor, plus ATP, Prota & Prosem otomatis.',
+    'teks-sekolah': 'Cobain Teks Sekolah dari Bantu Guru Yuk: undangan rapor, rapat, dan pemberitahuan sekolah jadi dalam 1 menit.',
+    sandi: 'Cobain Simpan Sandi dari Bantu Guru Yuk: catat akun Dapodik, PMM, email sekolah, dan lainnya rapi di HP. Aman & bisa offline.'
+  };
   function shareTool() {
     var name = toolName();
     var url = location.origin + location.pathname + '?utm_source=share&utm_medium=' + encodeURIComponent(page);
-    var text = 'Coba ' + name + ' dari Bantu Guru Yuk, praktis buat guru.';
+    var text = SHARE_TEXT[page] || ('Cobain ' + name + ' dari Bantu Guru Yuk, praktis buat guru.');
     if (promoNow && promoNow.voucher) text += ' Mau Pro? Pakai kode ' + promoNow.voucher.code + (promoNow.voucher.text ? ' (' + promoNow.voucher.text + ')' : '') + '.';
     track('menu', 'Bagikan', url);
     if (navigator.share) {
-      navigator.share({ title: name, text: text, url: url }).catch(function () {});
+      // Link ditaruh di dalam teks: sebagian aplikasi (termasuk WhatsApp) membuang salah satu dari text/url.
+      navigator.share({ title: name, text: text + '\n' + url }).catch(function () {});
       return;
     }
     window.open('https://wa.me/?text=' + encodeURIComponent(text + ' ' + url), '_blank', 'noopener');

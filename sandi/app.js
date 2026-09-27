@@ -191,6 +191,18 @@ async function disableEncryption() {
   for (const acc of plain) await putAccount(acc);
 }
 
+/* ---------- Urutan & terakhir dipakai (hanya id + waktu, tanpa isi akun) ---------- */
+const LS_SORT = 'sandi_sort';
+const LS_LAST_USED = 'sandi_last_used';
+function lastUsedMap() {
+  try { return JSON.parse(localStorage.getItem(LS_LAST_USED) || '{}') || {}; } catch (e) { return {}; }
+}
+function markUsed(id) {
+  const m = lastUsedMap();
+  m[id] = Date.now();
+  try { localStorage.setItem(LS_LAST_USED, JSON.stringify(m)); } catch (e) {}
+}
+
 /* ---------- Helpers ---------- */
 function makeId() {
   return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
@@ -693,9 +705,14 @@ function getFilteredAccounts() {
       (a.notes || '').toLowerCase().includes(q)
     );
   }
+  const sort = localStorage.getItem(LS_SORT) || 'az';
+  const used = lastUsedMap();
+  const byName = (a, b) => (a.serviceName || '').localeCompare(b.serviceName || '', 'id');
   list.sort((a, b) => {
+    if (sort === 'recent') return (used[b.id] || 0) - (used[a.id] || 0) || byName(a, b);
+    if (sort === 'category') return (a.category || 'zz').localeCompare(b.category || 'zz', 'id') || byName(a, b);
     if (!!b.favorite !== !!a.favorite) return b.favorite ? 1 : -1;
-    return (a.serviceName || '').localeCompare(b.serviceName || '');
+    return byName(a, b);
   });
   return list;
 }
@@ -722,15 +739,21 @@ function accountCardHtml(acc) {
   const initial = (acc.icon || acc.serviceName || '?').slice(0, 2).toUpperCase();
   const star = acc.favorite ? '<span class="account-fav-star"><svg class="icon"><use href="#icon-star-filled"></use></svg></span>' : '';
   const maskedPw = acc.password ? '••••••••••' : '(kosong)';
+  const copyBtn = acc.username
+    ? `<button type="button" class="account-copy" data-copy-id="${escapeHtml(acc.id)}" aria-label="Salin username ${escapeHtml(acc.serviceName)}" title="Salin username"><svg class="icon"><use href="#icon-copy"></use></svg></button>`
+    : '';
   return `
-    <button class="account-card" data-id="${escapeHtml(acc.id)}">
-      <div class="account-icon" style="background:${serviceColor(acc.serviceName)}">${escapeHtml(initial)}</div>
-      <div class="account-info">
-        <div class="account-service">${escapeHtml(acc.serviceName)} ${star}</div>
-        <div class="account-username">${escapeHtml(acc.username || maskedPw)}</div>
-      </div>
-      <div class="account-chevron">›</div>
-    </button>
+    <div class="account-row">
+      <button class="account-card" data-id="${escapeHtml(acc.id)}">
+        <div class="account-icon" style="background:${serviceColor(acc.serviceName)}">${escapeHtml(initial)}</div>
+        <div class="account-info">
+          <div class="account-service">${escapeHtml(acc.serviceName)} ${star}</div>
+          <div class="account-username">${escapeHtml(acc.username || maskedPw)}</div>
+        </div>
+        ${copyBtn ? '' : '<div class="account-chevron">›</div>'}
+      </button>
+      ${copyBtn}
+    </div>
   `;
 }
 
@@ -757,8 +780,21 @@ function renderDashboard() {
   }
   noResultEl.hidden = true;
   listEl.innerHTML = filtered.map(accountCardHtml).join('');
+  bindAccountList(listEl);
+}
+
+function bindAccountList(listEl) {
   listEl.querySelectorAll('.account-card').forEach((card) => {
     card.addEventListener('click', () => openDetail(card.dataset.id));
+  });
+  listEl.querySelectorAll('.account-copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const acc = state.accounts.find((a) => a.id === btn.dataset.copyId);
+      if (!acc || !acc.username) return;
+      markUsed(acc.id);
+      const ok = await copyToClipboard(acc.username);
+      showToast(ok ? 'Username ' + acc.serviceName + ' disalin' : 'Tidak bisa menyalin otomatis.');
+    });
   });
 }
 
@@ -773,9 +809,7 @@ function renderFavoriteList() {
   }
   emptyEl.hidden = true;
   listEl.innerHTML = favs.map(accountCardHtml).join('');
-  listEl.querySelectorAll('.account-card').forEach((card) => {
-    card.addEventListener('click', () => openDetail(card.dataset.id));
-  });
+  bindAccountList(listEl);
 }
 
 function renderCategoryChips() {
@@ -892,6 +926,7 @@ on('account-form', 'submit', async (e) => {
 function openDetail(id) {
   const acc = state.accounts.find((a) => a.id === id);
   if (!acc) return;
+  markUsed(id);
   state.activeDetailId = id;
 
   document.getElementById('detail-service-name').textContent = acc.serviceName;
@@ -1130,6 +1165,150 @@ on('autolock-select', 'change', (e) => {
 });
 
 /* =========================================================
+   IMPORT EXCEL / CSV (tanpa pustaka luar: .xlsx dibaca langsung dari ZIP + XML)
+   ========================================================= */
+async function readXlsxRows(buf) {
+  const u8 = new Uint8Array(buf);
+  const dv = new DataView(buf);
+  let eocd = -1;
+  for (let i = u8.length - 22; i >= Math.max(0, u8.length - 65557); i--) {
+    if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error('File bukan Excel (.xlsx).');
+  const files = {};
+  let p = dv.getUint32(eocd + 16, true);
+  for (let n = dv.getUint16(eocd + 10, true); n > 0; n--) {
+    if (dv.getUint32(p, true) !== 0x02014b50) break;
+    const nlen = dv.getUint16(p + 28, true);
+    const name = new TextDecoder().decode(u8.subarray(p + 46, p + 46 + nlen));
+    files[name] = { method: dv.getUint16(p + 10, true), csize: dv.getUint32(p + 20, true), off: dv.getUint32(p + 42, true) };
+    p += 46 + nlen + dv.getUint16(p + 30, true) + dv.getUint16(p + 32, true);
+  }
+  const read = async (name) => {
+    const f = files[name];
+    if (!f) return null;
+    const start = f.off + 30 + dv.getUint16(f.off + 26, true) + dv.getUint16(f.off + 28, true);
+    const data = u8.subarray(start, start + f.csize);
+    if (f.method === 0) return new TextDecoder().decode(data);
+    if (f.method !== 8 || typeof DecompressionStream === 'undefined') throw new Error('Browser belum mendukung file ini. Simpan sebagai CSV lalu coba lagi.');
+    return new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();
+  };
+  const xml = (s) => new DOMParser().parseFromString(s || '<x/>', 'application/xml');
+  const all = (doc, tag) => Array.from(doc.getElementsByTagNameNS('*', tag));
+  let sheetPath = 'xl/worksheets/sheet1.xml';
+  const wb = xml(await read('xl/workbook.xml'));
+  const firstSheet = all(wb, 'sheet')[0];
+  if (firstSheet) {
+    const rid = firstSheet.getAttribute('r:id') || firstSheet.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id');
+    const rel = all(xml(await read('xl/_rels/workbook.xml.rels')), 'Relationship').find((r) => r.getAttribute('Id') === rid);
+    if (rel) sheetPath = 'xl/' + rel.getAttribute('Target').replace(/^\/?xl\//, '').replace(/^\//, '');
+  }
+  const shared = all(xml(await read('xl/sharedStrings.xml')), 'si').map((si) => all(si, 't').map((t) => t.textContent).join(''));
+  const sheet = xml(await read(sheetPath));
+  const colIndex = (ref) => {
+    let n = 0;
+    for (const ch of ref.replace(/[0-9]/g, '')) n = n * 26 + (ch.charCodeAt(0) - 64);
+    return n - 1;
+  };
+  return all(sheet, 'row').map((row) => {
+    const out = [];
+    all(row, 'c').forEach((c) => {
+      const t = c.getAttribute('t');
+      const v = all(c, 'v')[0];
+      let val = t === 'inlineStr' ? all(c, 't').map((x) => x.textContent).join('') : v ? v.textContent : '';
+      if (t === 's') val = shared[Number(val)] || '';
+      out[colIndex(c.getAttribute('r') || 'A1')] = String(val);
+    });
+    return Array.from(out, (x) => (x || '').trim());
+  });
+}
+function readCsvRows(text) {
+  const firstLine = text.split(/\r?\n/)[0] || '';
+  const sep = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ';' : ',';
+  const rows = [];
+  let row = [], cell = '', quoted = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (quoted) {
+      if (ch === '"' && text[i + 1] === '"') { cell += '"'; i++; }
+      else if (ch === '"') quoted = false;
+      else cell += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === sep) { row.push(cell.trim()); cell = ''; }
+    else if (ch === '\n' || ch === '\r') {
+      if (ch === '\r' && text[i + 1] === '\n') i++;
+      row.push(cell.trim()); rows.push(row); row = []; cell = '';
+    } else cell += ch;
+  }
+  if (cell || row.length) { row.push(cell.trim()); rows.push(row); }
+  return rows;
+}
+const IMPORT_COLUMNS = [
+  ['serviceName', /layanan|aplikasi|situs|website|service|^nama$|nama akun/i],
+  ['username', /user|email|e-mail|login|nip|nuptk|akun/i],
+  ['password', /pass|sandi|pin/i],
+  ['category', /kategori|category|jenis/i],
+  ['url', /link|url|alamat|web/i],
+  ['notes', /catatan|keterangan|note|info/i],
+];
+function mapImportRows(rows) {
+  rows = rows.filter((r) => r.some(Boolean));
+  let map = null, start = 0;
+  for (let i = 0; i < Math.min(rows.length, 5) && !map; i++) {
+    const m = {};
+    rows[i].forEach((h, col) => {
+      const hit = IMPORT_COLUMNS.find(([key, re]) => !(key in m) && re.test(h));
+      if (hit) m[hit[0]] = col;
+    });
+    if ('serviceName' in m && ('username' in m || 'password' in m)) { map = m; start = i + 1; }
+  }
+  if (!map) map = { serviceName: 0, username: 1, password: 2, category: 3, url: 4, notes: 5 };
+  const cats = new Map(DEFAULT_CATEGORIES.map((c) => [c.toLowerCase(), c]));
+  return rows.slice(start).map((r) => {
+    const get = (k) => (k in map ? String(r[map[k]] || '').trim() : '');
+    const serviceName = get('serviceName').slice(0, 80);
+    let url = get('url');
+    if (url && !/^https?:\/\//i.test(url)) url = /\./.test(url) ? 'https://' + url : '';
+    const catRaw = get('category');
+    return {
+      serviceName,
+      username: get('username').slice(0, 200),
+      password: get('password').slice(0, 500),
+      category: cats.get(catRaw.toLowerCase()) || (catRaw ? catRaw.slice(0, 30) : 'Lainnya'),
+      url: url.slice(0, 500),
+      notes: get('notes').slice(0, 1000),
+    };
+  }).filter((a) => a.serviceName);
+}
+on('btn-import-excel', 'click', () => document.getElementById('import-excel-input').click());
+on('import-excel-input', 'change', async (e) => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('File terlalu besar (maks 5 MB).'); return; }
+  try {
+    const isCsv = /\.csv$/i.test(file.name) || file.type === 'text/csv';
+    const rows = isCsv ? readCsvRows(await file.text()) : await readXlsxRows(await file.arrayBuffer());
+    const items = mapImportRows(rows);
+    const key = (a) => (a.serviceName + '|' + (a.username || '')).toLowerCase();
+    const existing = new Set(state.accounts.map(key));
+    const fresh = [];
+    items.forEach((a) => { if (!existing.has(key(a))) { existing.add(key(a)); fresh.push(a); } });
+    const skipped = items.length - fresh.length;
+    if (!fresh.length) { showToast(items.length ? 'Semua akun di file sudah ada.' : 'Tidak ada akun yang terbaca. Pakai template Excel.'); return; }
+    if (!confirm(fresh.length + ' akun siap ditambahkan' + (skipped ? ' (' + skipped + ' dilewati karena sudah ada)' : '') + '.\n\nContoh: ' + fresh.slice(0, 3).map((a) => a.serviceName).join(', ') + (fresh.length > 3 ? ', ...' : '') + '\n\nLanjutkan?')) return;
+    for (const a of fresh) {
+      await putAccount({ id: makeId(), ...a, icon: a.serviceName.slice(0, 1).toUpperCase(), favorite: false, createdAt: nowIso(), updatedAt: nowIso() });
+    }
+    await refreshAccounts();
+    switchView('dashboard');
+    showToast(fresh.length + ' akun berhasil diimpor. Hapus file Excel-nya dari HP ya, isinya berisi password.');
+  } catch (err) {
+    showToast('Gagal membaca file: ' + (err.message || 'format tidak dikenali'));
+  }
+});
+
+/* =========================================================
    SAMPLE DATA (first launch)
    ========================================================= */
 on('btn-skip-sample', 'click', () => {
@@ -1180,6 +1359,10 @@ function renderGreeting() {
   const el = document.getElementById('greeting');
   if (el) el.textContent = waktu + ', ' + (nick || 'Guru');
 }
+on('sort-select', 'change', (e) => {
+  localStorage.setItem(LS_SORT, e.target.value);
+  renderDashboard();
+});
 on('nick-input', 'input', (e) => {
   const v = e.target.value.trim().slice(0, 30);
   if (v) localStorage.setItem(LS_NICK, v); else localStorage.removeItem(LS_NICK);
@@ -1189,6 +1372,8 @@ on('nick-input', 'input', (e) => {
 async function boot() {
   const nickInput = document.getElementById('nick-input');
   if (nickInput) nickInput.value = localStorage.getItem(LS_NICK) || '';
+  const sortSel = document.getElementById('sort-select');
+  if (sortSel) sortSel.value = localStorage.getItem(LS_SORT) || 'az';
   renderGreeting();
   await refreshAccounts();
   renderDashboard();
