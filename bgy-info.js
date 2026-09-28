@@ -15,7 +15,7 @@
     { text: 'Bikin soal gak sampai 10 menit', url: 'https://www.bantuguruyuk.web.id/soal', path: '/soal' },
     { text: 'Bingung bikin prompt LKPD?', url: 'https://www.bantuguruyuk.web.id/lkpd', path: '/lkpd' },
     { text: 'Modul Ajar sat-set pakai AI', url: 'https://www.bantuguruyuk.web.id/modul-ajar', path: '/modul-ajar' },
-    { text: 'Bingung buat prompt game IFP?', url: 'https://bmedia.bantuguruyuk.web.id/buat' },
+    { text: 'Bingung buat prompt game IFP?', url: 'https://bmedia.bantuguruyuk.web.id/buat', path: '/buat' },
     { text: 'Presensi & rekap gak ribet', url: 'https://presiswa.bantuguruyuk.web.id' },
     { text: 'Katrol nilai otomatis', url: 'https://www.bantuguruyuk.web.id/katrol-nilai/', path: '/katrol-nilai' },
     { text: 'Modul Ajar Kokurikuler sat-set', url: 'https://www.bantuguruyuk.web.id/kokurikuler', path: '/kokurikuler' },
@@ -40,7 +40,7 @@
     { icon: ICONS.soal, title: 'Buat Soal', desc: 'Buat soal gak sampai 10 menit', url: 'https://www.bantuguruyuk.web.id/soal', path: '/soal' },
     { icon: ICONS.modul, title: 'Modul Ajar', desc: 'Sat-set, anti bingung', url: 'https://www.bantuguruyuk.web.id/modul-ajar', path: '/modul-ajar' },
     { icon: ICONS.lkpd, title: 'Prompt LKPD', desc: 'Praktis buat prompt LKPD', url: 'https://www.bantuguruyuk.web.id/lkpd', path: '/lkpd' },
-    { icon: ICONS.game, title: 'Prompt Game', desc: 'Sat-set buat prompt game IFP', url: 'https://bmedia.bantuguruyuk.web.id/buat' }
+    { icon: ICONS.game, title: 'Prompt Game', desc: 'Sat-set buat prompt game IFP', url: 'https://bmedia.bantuguruyuk.web.id/buat', path: '/buat' }
   ];
   var ALL_TOOLS_URL = 'https://www.bantuguruyuk.web.id';
   var ROTATE_MS = 6000;
