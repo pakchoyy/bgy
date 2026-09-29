@@ -887,7 +887,7 @@ a { text-decoration: none; color: inherit; }
 }
 @media (max-width: 520px) {
   .tools-grid { grid-template-columns: 1fr; }
-  .testimonial-grid { grid-template-columns: 1fr; }
+  .testi-card { width: 240px; }
   .hero { padding: 18px 16px; gap: 0; }
   .hero-right { display: none; }
   .hero-eyebrow { font-size: .75rem; margin-bottom: 10px; }
@@ -950,24 +950,33 @@ a { text-decoration: none; color: inherit; }
 .trust-divider { width: 1px; height: 36px; background: var(--border); flex-shrink: 0; }
 
 /* ─── TESTIMONIALS ─── */
-.testimonial-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-  flex-shrink: 0;
+.testi-track-wrap {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
 }
+.testi-track {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  animation: bgy-scroll 40s linear infinite;
+}
+.testi-track:hover { animation-play-state: paused; }
+@keyframes bgy-scroll { to { transform: translateX(-50%); } }
 .testi-card {
+  width: 260px;
+  flex-shrink: 0;
   background: var(--surface);
   border: 1.5px solid var(--border);
   border-radius: var(--r-md);
   padding: 18px;
   display: flex; flex-direction: column; gap: 12px;
   transition: var(--trans);
+  cursor: default;
 }
 .testi-card:hover {
   border-color: var(--teal, #0ea5a0);
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 .testi-stars { color: #f59e0b; font-size: .85rem; letter-spacing: 1px; }
 .testi-text {
@@ -1459,7 +1468,7 @@ a { text-decoration: none; color: inherit; }
       <span id="testiAvgTxt"></span>
       <button type="button" class="testi-write" onclick="window.bgyAskReview&&bgyAskReview({tool:'home',force:true,delay:0})">Tulis ulasan</button>
     </div>
-    <div class="testimonial-grid" id="testiGrid"></div>
+    <div class="testi-track-wrap"><div class="testi-track" id="testiGrid"></div></div>
   </div>
 
   <!-- ── KREATOR CARD ── -->
@@ -1664,7 +1673,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const stars=n=>'★'.repeat(n)+'<span class="off">'+'★'.repeat(5-n)+'</span>';
   Promise.all([
-    fetch(URL_+'/rest/v1/bgy_reviews?select=id,tool,rating,body,name,school&approved=eq.true&body=not.is.null&order=created_at.desc&limit=6',{headers:H}).then(r=>r.ok?r.json():[]),
+    fetch(URL_+'/rest/v1/bgy_reviews?select=id,tool,rating,body,name,school&approved=eq.true&body=not.is.null&order=created_at.desc&limit=12',{headers:H}).then(r=>r.ok?r.json():[]),
     fetch(URL_+'/rest/v1/rpc/bgy_review_stats',{method:'POST',headers:H,body:'{}'}).then(r=>r.ok?r.json():[])
   ]).then(([list,stats])=>{
     const st=Array.isArray(stats)&&stats[0];
@@ -1672,13 +1681,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const avg=Number(st.avg_rating);
     document.getElementById('testiAvgStars').innerHTML=stars(Math.round(avg));
     document.getElementById('testiAvgTxt').innerHTML='<b>'+avg.toFixed(1).replace('.',',')+'</b> dari '+st.total+' ulasan';
-    document.getElementById('testiGrid').innerHTML=list.map((r,i)=>{
+    const half=list.map((r,i)=>{
       const who=r.name||'Guru';
       const role=[r.school,TOOLS[r.tool]||r.tool].filter(Boolean).join(' · ');
       return `<div class="testi-card"><div class="testi-stars">${stars(r.rating)}</div><div class="testi-text">"${esc(r.body)}"</div>`+
         `<div class="testi-footer"><div class="testi-avatar" style="background:linear-gradient(135deg,${COLORS[i%COLORS.length]});">${esc(who.trim().charAt(0).toUpperCase()||'G')}</div>`+
         `<div><div class="testi-name">${esc(who)}</div><div class="testi-role">${esc(role)}</div></div></div></div>`;
     }).join('');
+    // Duplikat untuk infinite loop seamless
+    document.getElementById('testiGrid').innerHTML=half+half;
     document.getElementById('testiSection').hidden=false;
   }).catch(()=>{});
 })();
