@@ -1,5 +1,5 @@
 /* BGY Draft TP — Service Worker: HTML/JS network-first supaya update langsung sampai */
-const CACHE = 'bgy-draft-tp-v14';
+const CACHE = 'bgy-draft-tp-v15';
 const ASSETS = ['./', './index.html', './perangkat.js?v=1', './guru-cibisd2.png', './manifest.json'];
 
 self.addEventListener('install', e => {
