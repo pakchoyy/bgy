@@ -572,6 +572,15 @@
     return proofData;
   }
   var promoData = null, promoNow = null;
+  var _bgyLinks = null;
+  (function loadLisensi() {
+    fetch(SB_URL + '/rest/v1/bgy_settings?key=eq.lisensi&select=value', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (rows) {
+        var v = (Array.isArray(rows) && rows[0] && rows[0].value) || {};
+        if (Object.keys(v).length) { _bgyLinks = v; window._bgyLinks = v; }
+      }).catch(function () {});
+  })();
   function httpsUrl(u) { return /^https:\/\/[^\s"'<>]+$/i.test(String(u || '')) ? String(u) : ''; }
   function loadPromo() {
     if (promoData) return promoData;
@@ -696,6 +705,9 @@
   }
   function proNudge(opts) {
     opts = opts || {};
+    // Gunakan URL dari pengaturan admin (bgy_settings key 'lisensi') jika ada
+    var settingsUrl = _bgyLinks && httpsUrl((_bgyLinks[page] || {}).buy_url);
+    if (settingsUrl) opts = Object.assign({}, opts, { url: settingsUrl });
     if (!opts.url || document.querySelector('.bgyn')) return;
     var key = 'bgy_nudge_' + page, today = new Date().toDateString();
     if (lsGet(key) === today) return;
@@ -738,6 +750,11 @@
     }, opts.delay == null ? 2500 : opts.delay);
   }
   window.bgyProNudge = proNudge;
+  // bgyBuyUrl(tool?) → URL beli dari settings admin, atau null (tool pakai fallback hardcode)
+  window.bgyBuyUrl = function (tool) {
+    var t = tool || page;
+    return (_bgyLinks && httpsUrl((_bgyLinks[t] || {}).buy_url)) || null;
+  };
 
   /* ---- 8. Galeri contoh hasil ----
      <div data-bgy-contoh="/soal/contoh/hal-{n}.webp" data-bgy-count="5" data-bgy-title="Contoh hasil Buat Soal"></div>

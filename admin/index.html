@@ -136,6 +136,8 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
 <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
 <symbol id="i-ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
 <symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></symbol>
 </defs></svg>
 
 <div id="toast" role="status"></div>
@@ -176,6 +178,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
       <button class="tab" id="tab-promo" onclick="showTab('promo')"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo</button>
       <button class="tab" id="tab-docs" onclick="showTab('docs')"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Dokumen</button>
       <button class="tab" id="tab-stat" onclick="showTab('stat')"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg> Statistik</button>
+      <button class="tab" id="tab-users" onclick="showTab('users')"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Pengguna</button>
     </div>
 
     <div id="pane-links" class="card">
@@ -233,6 +236,38 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
       <div class="msg" id="statMsg"></div>
     </div>
 
+    <div id="pane-users" class="card" hidden>
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Pengguna Pro</div>
+      <div class="toolbar">
+        <select id="uAccess" onchange="loadUsers()">
+          <option value="">Semua tool</option>
+          <option value="soal">Buat Soal</option>
+          <option value="modul-ajar">Modul Ajar</option>
+          <option value="kokurikuler">Kokurikuler</option>
+          <option value="lkpd">Prompt LKPD</option>
+        </select>
+        <select id="uStatus" onchange="renderUsers()">
+          <option value="">Semua status</option>
+          <option value="aktif">Aktif</option>
+          <option value="kedaluwarsa">Kedaluwarsa</option>
+          <option value="gratis">Gratis (punya kode)</option>
+        </select>
+        <button class="btn" onclick="loadUsers()"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Muat ulang</button>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b id="uTotal">-</b><span>Pro aktif</span></div>
+        <div class="stat"><b id="uExpired">-</b><span>Kedaluwarsa</span></div>
+        <div class="stat"><b id="uAll">-</b><span>Total di tabel</span></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="stat-tbl">
+          <thead><tr><th>Email</th><th>Tool</th><th>Paket</th><th>Aktif sampai</th><th>Status</th></tr></thead>
+          <tbody id="userRows"></tbody>
+        </table>
+      </div>
+      <div class="msg" id="usersMsg"></div>
+    </div>
+
     <div id="pane-promo" class="card" hidden>
       <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo &amp; penawaran Pro</div>
       <p class="hint">Tampil di kartu tawaran Pro dan dekat tombol Beli di Buat Soal, Modul Ajar, Kokurikuler, dan Prompt LKPD. Kosongkan kolom yang tidak dipakai.</p>
@@ -254,6 +289,17 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
         <div class="fg"><label for="gText">Garansi</label><input id="gText" maxlength="80" placeholder="mis. Garansi uang kembali 3 hari"/></div>
         <button class="btn-primary" type="submit" id="btnPromo">Simpan</button>
         <div class="msg" id="promoMsg"></div>
+      </form>
+      <hr style="margin:20px 0;border:none;border-top:1px solid var(--border)">
+      <div class="card-title" style="margin-top:0"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Tautan Beli Pro per tool</div>
+      <p class="hint">Isi untuk mengganti link Lynk ke URL lain (mis. domain sendiri). Kosongkan = pakai link bawaan yang sudah disematkan di tool.</p>
+      <form id="lisensiForm">
+        <div class="fg"><label for="lUrl_soal">Buat Soal — link beli</label><input id="lUrl_soal" type="url" maxlength="300" placeholder="https://..."/></div>
+        <div class="fg"><label for="lUrl_modul-ajar">Modul Ajar — link beli</label><input id="lUrl_modul-ajar" type="url" maxlength="300" placeholder="https://..."/></div>
+        <div class="fg"><label for="lUrl_kokurikuler">Kokurikuler — link beli</label><input id="lUrl_kokurikuler" type="url" maxlength="300" placeholder="https://..."/></div>
+        <div class="fg"><label for="lUrl_lkpd">Prompt LKPD — link beli</label><input id="lUrl_lkpd" type="url" maxlength="300" placeholder="https://..."/></div>
+        <button class="btn-primary" type="submit" id="btnLisensi">Simpan Tautan</button>
+        <div class="msg" id="lisensiMsg"></div>
       </form>
     </div>
   </div>
@@ -313,7 +359,7 @@ async function boot(){
     show('notAdmin');return;
   }
   show('panel');
-  loadLinks();loadReviews();loadPromo();
+  loadLinks();loadReviews();loadPromo();loadLisensi();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -330,7 +376,8 @@ async function logout(){await sb.auth.signOut();show('loginCard');}
 function showTab(t){
   if(t==='stat')loadStats();
   if(t==='docs'&&!docsLoaded)loadDocs();
-  ['links','reviews','promo','docs','stat'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+  ['links','reviews','promo','docs','stat','users'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+  if(t==='users'&&!document.getElementById('userRows').textContent.trim())loadUsers();
 }
 
 /* ─── Dokumen Resmi ─── */
@@ -654,6 +701,57 @@ try{if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark'
 setIcon();
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 boot();
+
+/* ─── Pengguna Pro ─── */
+var _usersCache=null;
+async function loadUsers(){
+  const msg=document.getElementById('usersMsg');msg.className='msg';msg.textContent='Memuat…';
+  const access=document.getElementById('uAccess').value||null;
+  const {data,error}=await sb.rpc('bgy_list_users',{p_access:access,p_limit:200,p_offset:0});
+  if(error){msg.textContent=error.message.includes('not admin')?'Fungsi bgy_list_users belum ada: jalankan migrasi 20261001_lisensi.sql dulu.':error.message;return;}
+  msg.textContent='';
+  _usersCache=data||[];
+  renderUsers();
+}
+function renderUsers(){
+  if(!_usersCache)return;
+  const fStatus=document.getElementById('uStatus').value;
+  const rows=fStatus?_usersCache.filter(r=>r.status===fStatus):_usersCache;
+  const aktif=_usersCache.filter(r=>r.status==='aktif').length;
+  const exp=_usersCache.filter(r=>r.status==='kedaluwarsa').length;
+  document.getElementById('uTotal').textContent=fmtN(aktif);
+  document.getElementById('uExpired').textContent=fmtN(exp);
+  document.getElementById('uAll').textContent=fmtN(_usersCache.length);
+  const fmtDate=d=>d?new Date(d).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}):'—';
+  const SCLS={aktif:'teal',kedaluwarsa:'gray',gratis:'gray'};
+  const SLBL={aktif:'Aktif',kedaluwarsa:'Kedaluwarsa',gratis:'Gratis'};
+  document.getElementById('userRows').innerHTML=rows.length
+    ?rows.map(r=>`<tr><td style="word-break:break-all;max-width:160px">${esc(r.email)}</td><td>${esc(TOOL_NAMES[r.access]||r.access||'?')}</td><td>${esc(r.plan_type||'—')}</td><td style="white-space:nowrap">${fmtDate(r.active_until)}</td><td><span class="pill ${SCLS[r.status]||'gray'}">${SLBL[r.status]||r.status}</span></td></tr>`).join('')
+    :'<tr><td colspan="5" class="empty">Tidak ada pengguna.</td></tr>';
+}
+
+/* ─── Tautan Beli Pro ─── */
+const LISENSI_IDS=['soal','modul-ajar','kokurikuler','lkpd'];
+async function loadLisensi(){
+  const {data}=await sb.from('bgy_settings').select('value').eq('key','lisensi').maybeSingle();
+  const v=(data&&data.value)||{};
+  LISENSI_IDS.forEach(id=>{const el=document.getElementById('lUrl_'+id);if(el)el.value=(v[id]&&v[id].buy_url)||'';});
+}
+document.getElementById('lisensiForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const msg=document.getElementById('lisensiMsg');msg.className='msg';
+  const value={};
+  for(const id of LISENSI_IDS){
+    const url=(document.getElementById('lUrl_'+id).value||'').trim();
+    if(url&&!/^https:\/\//i.test(url)){msg.className='msg err';msg.textContent='Link harus diawali https://';return;}
+    if(url)value[id]={buy_url:url};
+  }
+  const btn=document.getElementById('btnLisensi');btn.disabled=true;
+  const {error}=await sb.from('bgy_settings').upsert({key:'lisensi',value,updated_at:new Date().toISOString()});
+  btn.disabled=false;
+  if(error)return fail(error);
+  msg.textContent='Tautan tersimpan. Berlaku dalam beberapa menit.';toast('Tautan tersimpan');
+});
 </script>
 </body>
 </html>
