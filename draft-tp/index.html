@@ -536,7 +536,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
   <div class="page-inner">
   <div class="page-card">
     <div class="page-card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Aplikasi</div>
-    <div class="page-ver">Bantu Guru Yuk — Draft TP · v26.9.0</div>
+    <div class="page-ver">Bantu Guru Yuk — Draft TP · v26.9.1</div>
     <p><strong>Aplikasi Draft TP</strong> hadir untuk membantu guru menyusun Tujuan Pembelajaran sesuai Kurikulum Merdeka secara cepat dan akurat.</p>
     <div class="feat-title">Fitur</div>
     <ul>
@@ -582,6 +582,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
           <label>Jenis CP</label>
           <select id="jenisCp" onchange="updateMapelList()">
             <option value="baru">CP Baru Umum – BSKAP 046/2025</option>
+            <option value="paud">CP PAUD – BSKAP 046/2025</option>
             <option value="agama2026">CP Agama – BKPDM 020/2026</option>
             <option value="lama">CP Lama – BSKAP 033/2022</option>
           </select>
@@ -591,6 +592,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
           <div class="form-group">
             <label>Kelas</label>
             <select id="kelas" onchange="updateMapelList()">
+              <option value="0">PAUD / TK</option>
               <option value="1">Kelas 1 (SD)</option>
               <option value="2" selected>Kelas 2 (SD)</option>
               <option value="3">Kelas 3 (SD)</option>
@@ -678,7 +680,7 @@ footer{background:var(--grad);padding:18px 20px;text-align:center;}
 
 <footer>
   <div class="footer-title">Draft Tujuan Pembelajaran</div>
-  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a class="footer-link" onclick="window.open('https://www.tiktok.com/@pak.choyy','_blank')">pak.choyy</a> · v26.9.0</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a class="footer-link" onclick="window.open('https://www.tiktok.com/@pak.choyy','_blank')">pak.choyy</a> · v26.9.1</div>
 </footer>
 
 <script>
@@ -1279,6 +1281,20 @@ const BANK = {
         "Pendidikan Agama Khonghucu dan Budi Pekerti": ["Merancang rencana hidup sesuai ajaran Khonghucu", "Menganalisis kontribusi umat Khonghucu bagi bangsa", "Menerapkan Wuchang dalam kehidupan berbangsa", "Merancang kegiatan pelayanan umat", "Berkontribusi aktif dalam persatuan bangsa"]
       }
     }
+  },
+  "paud": {
+    "0": {
+      "1": {
+        "Nilai Agama dan Budi Pekerti": ["Meyakini Tuhan YME sebagai pencipta diri, makhluk lain, dan alam","Mengenal ajaran pokok sesuai agama dan kepercayaannya","Mempraktikkan ibadah sederhana sesuai agama dan kepercayaannya","Menunjukkan rasa syukur kepada Tuhan YME atas karunia-Nya","Menjaga kebersihan dan kesehatan diri secara mandiri","Menerapkan kebiasaan menjaga keselamatan diri dalam keseharian","Menghargai perbedaan antarindividu di lingkungan sekitar","Mempraktikkan perilaku baik dan berakhlak mulia dalam keseharian","Menunjukkan sikap sayang terhadap hewan dan tumbuhan","Menjaga dan merawat lingkungan alam sekitar"],
+        "Jati Diri": ["Mengenali ciri fisik dan identitas diri sendiri","Menyebutkan minat, kebutuhan, agama, dan budaya dirinya","Mengenali kebiasaan baik di lingkungan keluarga","Mengenali aturan dan kebiasaan di satuan pendidikan dan masyarakat","Mengenali dan mengekspresikan emosi diri secara wajar","Mengelola emosi dan membangun hubungan sosial yang sehat","Mengenali perannya dalam keluarga dan satuan pendidikan","Menyesuaikan diri dengan aturan dan norma di lingkungannya","Mengenal Indonesia sebagai negaranya dan keberadaan negara lain","Melakukan gerak motorik kasar dengan koordinasi yang baik","Melakukan gerak motorik halus dan taktil untuk kegiatan sehari-hari","Merawat diri secara mandiri dalam kegiatan harian"],
+        "Dasar Literasi, Matematika, Sains, Teknologi, Rekayasa & Seni": ["Memahami informasi dan mengomunikasikan pikiran secara lisan","Mengekspresikan perasaan melalui tulisan atau berbagai media","Membangun percakapan dan berpartisipasi dalam kegiatan pramembaca","Menunjukkan kepekaan bilangan dalam aktivitas sehari-hari","Mengidentifikasi pola sederhana di lingkungan sekitar","Mengenali bentuk, posisi, dan ruang pada benda di sekitarnya","Membandingkan persamaan dan perbedaan karakteristik antarobjek","Melakukan pengukuran sederhana dengan satuan tidak baku","Menunjukkan kesadaran waktu dalam kegiatan harian","Mengamati dan menyebutkan alasan atas pilihan atau keputusannya","Memecahkan masalah sederhana dalam kehidupan sehari-hari","Mengetahui hubungan sebab akibat dari kondisi alam dan sosial","Menggunakan teknologi sederhana secara aman dan bertanggung jawab","Mencari informasi dan gagasan menggunakan teknologi sederhana","Mengeksplorasi dan mengekspresikan diri melalui kegiatan seni","Mengapresiasi karya seni di lingkungan sekitar"]
+      },
+      "2": {
+        "Nilai Agama dan Budi Pekerti": ["Meyakini Tuhan YME sebagai pencipta diri, makhluk lain, dan alam","Mengenal ajaran pokok sesuai agama dan kepercayaannya","Mempraktikkan ibadah sederhana sesuai agama dan kepercayaannya","Menunjukkan rasa syukur kepada Tuhan YME atas karunia-Nya","Menjaga kebersihan dan kesehatan diri secara mandiri","Menerapkan kebiasaan menjaga keselamatan diri dalam keseharian","Menghargai perbedaan antarindividu di lingkungan sekitar","Mempraktikkan perilaku baik dan berakhlak mulia dalam keseharian","Menunjukkan sikap sayang terhadap hewan dan tumbuhan","Menjaga dan merawat lingkungan alam sekitar"],
+        "Jati Diri": ["Mengenali ciri fisik dan identitas diri sendiri","Menyebutkan minat, kebutuhan, agama, dan budaya dirinya","Mengenali kebiasaan baik di lingkungan keluarga","Mengenali aturan dan kebiasaan di satuan pendidikan dan masyarakat","Mengenali dan mengekspresikan emosi diri secara wajar","Mengelola emosi dan membangun hubungan sosial yang sehat","Mengenali perannya dalam keluarga dan satuan pendidikan","Menyesuaikan diri dengan aturan dan norma di lingkungannya","Mengenal Indonesia sebagai negaranya dan keberadaan negara lain","Melakukan gerak motorik kasar dengan koordinasi yang baik","Melakukan gerak motorik halus dan taktil untuk kegiatan sehari-hari","Merawat diri secara mandiri dalam kegiatan harian"],
+        "Dasar Literasi, Matematika, Sains, Teknologi, Rekayasa & Seni": ["Memahami informasi dan mengomunikasikan pikiran secara lisan","Mengekspresikan perasaan melalui tulisan atau berbagai media","Membangun percakapan dan berpartisipasi dalam kegiatan pramembaca","Menunjukkan kepekaan bilangan dalam aktivitas sehari-hari","Mengidentifikasi pola sederhana di lingkungan sekitar","Mengenali bentuk, posisi, dan ruang pada benda di sekitarnya","Membandingkan persamaan dan perbedaan karakteristik antarobjek","Melakukan pengukuran sederhana dengan satuan tidak baku","Menunjukkan kesadaran waktu dalam kegiatan harian","Mengamati dan menyebutkan alasan atas pilihan atau keputusannya","Memecahkan masalah sederhana dalam kehidupan sehari-hari","Mengetahui hubungan sebab akibat dari kondisi alam dan sosial","Menggunakan teknologi sederhana secara aman dan bertanggung jawab","Mencari informasi dan gagasan menggunakan teknologi sederhana","Mengeksplorasi dan mengekspresikan diri melalui kegiatan seni","Mengapresiasi karya seni di lingkungan sekitar"]
+      }
+    }
   }
 };
 
@@ -1314,7 +1330,10 @@ function closeMenu(){
 ════════════════════════════ */
 function updateMapelList(){
   const cp = document.getElementById('jenisCp').value;
-  const kelas = document.getElementById('kelas').value;
+  const kelSel = document.getElementById('kelas');
+  if(cp === 'paud' && kelSel.value !== '0') kelSel.value = '0';
+  if(cp !== 'paud' && kelSel.value === '0') kelSel.value = '1';
+  const kelas = kelSel.value;
   const sem = document.getElementById('semester').value;
   const data = BANK[cp]?.[kelas]?.[sem] || {};
   const mapelArr = Object.keys(data);
