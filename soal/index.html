@@ -1285,6 +1285,8 @@ const DAILY_LIMIT=1;
 ════════════════════════════════════════════ */
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function stripHtml(s){return String(s||'').replace(/<[^>]+>/g,'');}
+/* Teks soal: escape HTML + ubah **kata** jadi tebal (AI sering memakai markdown) */
+function richHtml(s){return escHtml(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
 function stripRubrikHtml(html){
   const tmp=document.createElement('div');
   tmp.innerHTML=html;
@@ -2111,12 +2113,20 @@ function buildHalaman(data){
   halamanSoal=[];
   halamanMeta=[];
 
-  const PAGE_H=860;
-  const HEADER_H=140;
-  const SECTION_H=45;
-  const PG_H=75;
-  const ISIAN_H=52;
-  const URAIAN_H=95;
+  // Area konten PDF = 267mm ≈ 1262px (lebar 794px = 168mm). Sisakan margin aman.
+  const PAGE_H=1215;
+  // Ukur tinggi ASLI tiap soal (bukan tebakan) di kontainer tersembunyi
+  const meas=document.createElement('div');
+  meas.style.cssText="position:fixed;left:-9999px;top:0;width:794px;padding:1px 0;visibility:hidden;font-family:'Times New Roman',Times,serif;font-size:11pt;line-height:1.55;box-sizing:border-box;";
+  document.body.appendChild(meas);
+  function measure(html){meas.innerHTML='<style>.no-print{display:none!important}button{display:none!important}</style>'+html;return meas.offsetHeight;}
+  function blockHtml(b){
+    if(b.type==='section')return `<div class="doc-section-title">${b.label}</div><div class="doc-petunjuk">${b.petunjuk}</div>`;
+    return `<table class="doc-soal-table">${buildSoalRow(b)}</table>`;
+  }
+  const items=[];
+  function addBlock(b){items.push({b,h:measure(blockHtml(b))});}
+  const HEADER_H=measure(headerHtml);
 
   let currentH=HEADER_H;
   let currentBlocks=[];
@@ -2141,25 +2151,28 @@ function buildHalaman(data){
     currentBlocks=[];currentH=0;isFirstPage=false;
   }
 
-  function addBlock(b,h){
-    if(currentH+h>PAGE_H&&currentBlocks.length>0)closePage();
-    currentBlocks.push(b);currentH+=h;
-  }
-
   if(pg.length>0){
-    addBlock({type:'section',label:'I. Pilihan Ganda',petunjuk:'Berilah tanda silang (X) pada huruf jawaban yang paling benar!'},SECTION_H);
+    addBlock({type:'section',label:'I. Pilihan Ganda',petunjuk:'Berilah tanda silang (X) pada huruf jawaban yang paling benar!'});
     pg.forEach((item,i)=>{
-      addBlock({type:'pg',item,no:i+1,pgIdx:i},PG_H);
+      addBlock({type:'pg',item,no:i+1,pgIdx:i});
     });
   }
   if(isian.length>0){
-    addBlock({type:'section',label:'II. Isian Singkat',petunjuk:'Isilah titik-titik berikut dengan jawaban yang tepat!'},SECTION_H);
-    isian.forEach((item,i)=>addBlock({type:'isian',item,no:pg.length+i+1},ISIAN_H));
+    addBlock({type:'section',label:'II. Isian Singkat',petunjuk:'Isilah titik-titik berikut dengan jawaban yang tepat!'});
+    isian.forEach((item,i)=>addBlock({type:'isian',item,no:pg.length+i+1}));
   }
   if(uraian.length>0){
-    addBlock({type:'section',label:'III. Uraian',petunjuk:'Jawablah pertanyaan berikut dengan lengkap dan benar!'},SECTION_H);
-    uraian.forEach((item,i)=>addBlock({type:'uraian',item,no:pg.length+isian.length+i+1},URAIAN_H));
+    addBlock({type:'section',label:'III. Uraian',petunjuk:'Jawablah pertanyaan berikut dengan lengkap dan benar!'});
+    uraian.forEach((item,i)=>addBlock({type:'uraian',item,no:pg.length+isian.length+i+1}));
   }
+  // Susun halaman: isi sampai penuh; judul bagian tidak boleh sendirian di dasar halaman
+  items.forEach((it,idx)=>{
+    let need=it.h;
+    if(it.b.type==='section'&&items[idx+1])need+=items[idx+1].h;
+    if(currentH+need>PAGE_H&&currentBlocks.length>0)closePage();
+    currentBlocks.push(it.b);currentH+=it.h;
+  });
+  document.body.removeChild(meas);
   if(currentBlocks.length>0)closePage();
   if(!halamanSoal.length){halamanSoal.push(headerHtml+'<p style="padding:20px;color:#999;">Tidak ada soal.</p>');halamanMeta.push('soal');}
 
@@ -2644,6 +2657,10 @@ async function exportWord(options={rubrik:true}){
       children:Array.isArray(runs)?runs:[runs]
     });
   }
+  // TB: seperti T tapi **kata** menjadi huruf tebal (mengembalikan array run)
+  function TB(text,opts={}){
+    return String(text||'').split(/\*\*(.+?)\*\*/g).map((part,i)=>T(part,i%2===1?Object.assign({},opts,{bold:true}):opts)).filter((r,i,a)=>true);
+  }
   function T(text,opts={}){
     const run={text:String(text||''),font:TNR,size:opts.size||22};
     if(opts.bold)   run.bold=true;
@@ -2827,7 +2844,7 @@ async function exportWord(options={rubrik:true}){
           new D.TableCell({width:{size:noW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:0,right:0},
             children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((i+1)+'.',{bold:true,size:22})]})]}),
           new D.TableCell({width:{size:txtW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:80,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:30},children:[T(stripHtml(item.soal||''),{size:22})]})]}),
+            children:[new D.Paragraph({spacing:{before:80,after:30},children:TB(stripHtml(item.soal||''),{size:22})})]}),
         ]})]
       }));
       const opsi=item.opsi||[];
@@ -2843,13 +2860,13 @@ async function exportWord(options={rubrik:true}){
             width:{size:cL,type:'dxa'},
             borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
             margins:{top:30,bottom:30,left:400,right:80},
-            children:[new D.Paragraph({spacing:{before:0,after:30},children:[T(txt0,{size:22})]})]
+            children:[new D.Paragraph({spacing:{before:0,after:30},children:TB(txt0,{size:22})})]
           }),
           new D.TableCell({
             width:{size:cR,type:'dxa'},
             borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},
             margins:{top:30,bottom:30,left:80,right:80},
-            children:[new D.Paragraph({spacing:{before:0,after:30},children:[T(txt1,{size:22})]})]
+            children:[new D.Paragraph({spacing:{before:0,after:30},children:TB(txt1,{size:22})})]
           }),
         ]}));
       }
@@ -2878,7 +2895,7 @@ async function exportWord(options={rubrik:true}){
           new D.TableCell({width:{size:noW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:0,right:0},
             children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((pg.length+i+1)+'.',{bold:true,size:22})]})]}),
           new D.TableCell({width:{size:txtW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:80,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:10},children:[T(stripHtml(item.soal||''),{size:22})]})]}),
+            children:[new D.Paragraph({spacing:{before:80,after:10},children:TB(stripHtml(item.soal||''),{size:22})})]}),
         ]})]
       }));
       isP.push(P([T('Jawab : ___________________________________________')],{indent:460,after:80}));
@@ -2898,7 +2915,7 @@ async function exportWord(options={rubrik:true}){
           new D.TableCell({width:{size:noW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:0,right:0},
             children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((pg.length+isian.length+i+1)+'.',{bold:true,size:22})]})]}),
           new D.TableCell({width:{size:txtW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:80,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:10},children:[T(stripHtml(item.soal||''),{size:22})]})]}),
+            children:[new D.Paragraph({spacing:{before:80,after:10},children:TB(stripHtml(item.soal||''),{size:22})})]}),
         ]})]
       }));
       urP.push(P([T('Jawab :')],{indent:460,after:20}));
@@ -3177,14 +3194,14 @@ function buildSoalRow(b){
         return m?{h:m[1].trim(),t:m[2].trim()}:{h:s.substring(0,2),t:s.substring(2).trim()};
       }
       const o1=parseOpsi(opsiArr[x]);const o2=parseOpsi(opsiArr[x+1]);
-      opsiHtml+=`<tr><td class="opsi-label">${escHtml(o1.h)}</td><td class="opsi-teks">${escHtml(o1.t)}</td><td class="opsi-label">${escHtml(o2.h)}</td><td>${escHtml(o2.t)}</td></tr>`;
+      opsiHtml+=`<tr><td class="opsi-label">${escHtml(o1.h)}</td><td class="opsi-teks">${richHtml(o1.t)}</td><td class="opsi-label">${escHtml(o2.h)}</td><td>${richHtml(o2.t)}</td></tr>`;
     }
     opsiHtml+='</table>';
     // Gambar: dimatikan
     const pgIdx=b.pgIdx!==undefined?b.pgIdx:0;
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
-        <span class="soal-teks" data-type="pg" data-idx="${pgIdx}">${escHtml(b.item.soal)}</span>
+        <span class="soal-teks" data-type="pg" data-idx="${pgIdx}">${richHtml(b.item.soal)}</span>
         <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
           <button onclick="regenerateSoalItem('pg',${pgIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
           <button onclick="openEditModal('pg',${pgIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
@@ -3196,7 +3213,7 @@ function buildSoalRow(b){
     const isIdx=b.no-((soalData&&soalData.pilihanGanda?soalData.pilihanGanda.length:0))-1;
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
-        <span class="soal-teks" data-type="isian" data-idx="${isIdx}">${escHtml(b.item.soal)}</span>
+        <span class="soal-teks" data-type="isian" data-idx="${isIdx}">${richHtml(b.item.soal)}</span>
         <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
           <button onclick="regenerateSoalItem('isian',${isIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
           <button onclick="openEditModal('isian',${isIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
@@ -3210,7 +3227,7 @@ function buildSoalRow(b){
     const urIdx=b.no-pgLen-isLen-1;
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
-        <span class="soal-teks" data-type="uraian" data-idx="${urIdx}">${escHtml(b.item.soal)}</span>
+        <span class="soal-teks" data-type="uraian" data-idx="${urIdx}">${richHtml(b.item.soal)}</span>
         <span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;">
           <button onclick="regenerateSoalItem('uraian',${urIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Buat ulang soal">↻</button>
           <button onclick="openEditModal('uraian',${urIdx})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;" title="Edit soal">✏️</button>
@@ -3413,7 +3430,9 @@ function enableInlineEdit(){
       // Simpan perubahan kembali ke soalData
       const type=el.dataset.type;
       const idx=parseInt(el.dataset.idx);
-      const teks=el.innerText||el.textContent||'';
+      let teks;
+      if(el.querySelector('b,strong')){const c=el.cloneNode(true);c.querySelectorAll('b,strong').forEach(x=>x.replaceWith('**'+x.textContent+'**'));teks=c.textContent||'';}
+      else teks=el.innerText||el.textContent||'';
       if(!soalData||isNaN(idx))return;
       if(type==='pg'&&soalData.pilihanGanda&&soalData.pilihanGanda[idx])soalData.pilihanGanda[idx].soal=teks;
       if(type==='isian'&&soalData.isian&&soalData.isian[idx])soalData.isian[idx].soal=teks;
