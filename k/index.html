@@ -30,7 +30,7 @@ body.dark{--bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;--text-light:#94a3b8;--b
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
 .hero{background:var(--grad);color:#fff;padding:34px 16px 64px;text-align:center;position:relative;}
 body.dark .hero{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
-.theme-btn{position:absolute;top:12px;right:12px;height:32px;width:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.theme-btn{position:absolute;top:12px;right:12px;height:40px;width:40px;border-radius:8px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .avatar{width:92px;height:92px;border-radius:50%;background:#fff;border:3px solid rgba(255,255,255,.85);box-shadow:0 6px 20px rgba(0,0,0,.2);object-fit:cover;}
 .name{font-size:1.25rem;font-weight:800;margin-top:10px;}
 .handle{font-size:.82rem;opacity:.85;margin-top:2px;}
@@ -58,7 +58,7 @@ body.dark .lk.alt{background:linear-gradient(135deg,#0d4a47,#1a3a4a);border-colo
 .skeleton{height:64px;border-radius:14px;background:linear-gradient(90deg,var(--card-bg),var(--border),var(--card-bg));background-size:200% 100%;animation:sk 1.2s linear infinite;}
 @keyframes sk{from{background-position:200% 0}to{background-position:-200% 0}}
 .foot{text-align:center;font-size:.75rem;color:var(--text-light);padding:18px 16px 24px;}
-.foot a{color:var(--blue);font-weight:700;text-decoration:none;}
+.foot a{color:var(--blue);font-weight:700;text-decoration:none;display:inline-block;padding:13px 2px;}
 @media (prefers-reduced-motion:reduce){.skeleton{animation:none}.lk{transition:none}}
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">

@@ -1,5 +1,5 @@
 /* BGY Dokumen Resmi — Service Worker */
-const CACHE_NAME = 'bgy-dok-v1';
+const CACHE_NAME = 'bgy-dok-v2';
 const CACHE_URLS = [
   '/dokumen/',
   '/dokumen/index.html',
