@@ -1290,9 +1290,16 @@ function escHtml(value){
     .replace(/'/g,'&#039;');
 }
 
+// Baris sisa AI yang tidak boleh masuk dokumen: garis pemisah (---) dan kalimat penutup "Modul Ajar selesai disusun".
+function isNoiseLine(line){
+  const t=String(line||'').trim();
+  return /^([-*_])\1{2,}$/.test(t)||/^[^\w]*Modul Ajar selesai disusun/i.test(t);
+}
+
 function renderInlineMarkdown(text){
   return escHtml(text)
     .replace(/&lt;br\s*\/?&gt;/gi,'<br>')
+    .replace(/&lt;(\/?)u&gt;/gi,'<$1u>')
     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g,'<em>$1</em>');
 }
@@ -1318,7 +1325,7 @@ function renderModulMarkdown(md){
   function closeList(){if(listType){html+=`</${listType}>`;listType=null;}}
   for(let i=0;i<lines.length;i++){
     const line=lines[i];
-    if(!line.trim()){closeList();continue;}
+    if(!line.trim()||isNoiseLine(line)){closeList();continue;}
     if(line.trim()==='<!-- PAGE_BREAK -->'){closeList();html+='<div class="page-break" aria-hidden="true"></div>';continue;}
     if(/^\s*\|.*\|\s*$/.test(line)&&i+1<lines.length&&/^\s*\|?\s*:?-{3,}/.test(lines[i+1])){
       closeList();
@@ -1439,7 +1446,7 @@ INSTRUKSI MODE GENERATE BERTAHAP - TAHAP ${index+1} DARI ${total}:
 - Jangan menulis judul utama, identitas modul, atau mengulang data sekolah, penyusun, mapel, kelas, semester, tahun, waktu, dan topik.
 - Mulai setiap bagian dengan heading Markdown level 2 (##).
 - Isi harus lengkap dan langsung dapat digunakan, bukan petunjuk untuk guru.
-- Jangan memakai tag HTML, code fence, atau komentar tentang proses AI.
+- Jangan memakai tag HTML (termasuk <u>), code fence, garis pemisah ---, atau komentar tentang proses AI. Di sel tabel, pisahkan poin dengan titik koma, bukan <br>.
 - Jaga kesinambungan TP, KKTP/IPK, kegiatan, dan asesmen sesuai data pada prompt utama.
 - Beri kode konsisten TP-1, TP-2, dan seterusnya; gunakan kode yang sama pada KKTP/IPK, kegiatan, kisi-kisi, instrumen, dan rubrik.
 ${extra}
@@ -1667,18 +1674,30 @@ async function ensureDocxReady(btn){
 }
 
 function markdownTextRuns(D,text,opts={}){
-  const raw=String(text||'').replace(/\*\*/g,'**');
+  const raw=String(text||'');
   const runs=[];
-  const re=/(\*\*[^*]+\*\*|\*[^*]+\*)/g;
-  let last=0,m;
+  // <br> jadi baris baru, <u>...</u> jadi garis bawah; **tebal** dan *miring* seperti biasa.
+  const re=/(<br\s*\/?>|<\/?u>|\*\*[^*]+\*\*|\*[^*]+\*)/gi;
+  let last=0,m,under=false,brk=false;
+  const push=(t,bold,italics)=>{
+    if(!t)return;
+    runs.push(new D.TextRun({text:t,font:'Times New Roman',size:opts.size||22,bold,italics,underline:under?{}:undefined,break:brk?1:undefined}));
+    brk=false;
+  };
   while((m=re.exec(raw))){
-    if(m.index>last)runs.push(new D.TextRun({text:raw.slice(last,m.index),font:'Times New Roman',size:opts.size||22,bold:!!opts.bold}));
+    push(raw.slice(last,m.index),!!opts.bold,!!opts.italics);
     const token=m[0];
-    const isBold=token.startsWith('**');
-    runs.push(new D.TextRun({text:token.replace(/^\*+|\*+$/g,''),font:'Times New Roman',size:opts.size||22,bold:isBold||!!opts.bold,italics:!isBold||!!opts.italics}));
+    if(/^<br/i.test(token))brk=true;
+    else if(/^<u>/i.test(token))under=true;
+    else if(/^<\/u>/i.test(token))under=false;
+    else{
+      const isBold=token.startsWith('**');
+      push(token.replace(/^\*+|\*+$/g,''),isBold||!!opts.bold,!isBold||!!opts.italics);
+    }
     last=re.lastIndex;
   }
-  if(last<raw.length||!runs.length)runs.push(new D.TextRun({text:raw.slice(last)||'',font:'Times New Roman',size:opts.size||22,bold:!!opts.bold,italics:!!opts.italics}));
+  push(raw.slice(last),!!opts.bold,!!opts.italics);
+  if(!runs.length)runs.push(new D.TextRun({text:'',font:'Times New Roman',size:opts.size||22}));
   return runs;
 }
 
@@ -1719,6 +1738,7 @@ function modulMarkdownToDocxChildren(D,md){
   });
   for(let i=0;i<lines.length;i++){
     const line=lines[i];
+    if(isNoiseLine(line))continue;
     if(!line.trim()){children.push(para('',{after:40,size:4}));continue;}
     if(line.trim()==='<!-- PAGE_BREAK -->'){
       children.push(D.PageBreak?new D.Paragraph({children:[new D.PageBreak()]}):new D.Paragraph({pageBreakBefore:true}));
