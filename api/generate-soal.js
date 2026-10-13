@@ -1,4 +1,5 @@
 export const config = { api: { bodyParser: true } };
+import { aiGate } from './_gate.js';
 
 const buckets = globalThis.__bgySoalRateBuckets || new Map();
 globalThis.__bgySoalRateBuckets = buckets;
@@ -71,6 +72,11 @@ export default async function handler(req, res) {
     const prompt = body?.prompt;
     if (typeof prompt !== 'string' || !prompt.trim()) return res.status(400).json({ error: 'Prompt kosong' });
     if (prompt.length > 60000) return res.status(413).json({ error: 'Prompt terlalu panjang' });
+    const gate = await aiGate(req, 'soal', body?.email);
+    if (gate) {
+      if (gate.retryAfter) res.setHeader('Retry-After', String(gate.retryAfter));
+      return res.status(gate.status).json(gate.body);
+    }
 
     let lastError = null;
 

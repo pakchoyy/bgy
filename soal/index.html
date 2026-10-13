@@ -1865,7 +1865,7 @@ async function requestGenerateSoal(prompt){
     resp=await fetch('/api/generate-soal',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt}),
+      body:JSON.stringify({prompt,email:localStorage.getItem('pro_email')||undefined}),
       signal:ctrl.signal
     });
     clearTimeout(tid);

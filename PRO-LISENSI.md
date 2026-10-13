@@ -95,7 +95,13 @@ Lihat `DESIGN-BGY.md` bagian 14. Ringkasnya, di setiap tool berbayar:
 ## 7. Keterbatasan yang sudah diketahui (disengaja, dianggap cukup)
 
 - Halaman aktivasi hanya "tersembunyi" (tidak ditautkan dari aplikasi, `noindex`). Orang yang tahu alamatnya bisa meminta kode untuk email apa saja. Kalau suatu saat perlu lebih ketat: admin memasukkan email pembeli di `/admin`, dan kode hanya keluar untuk email itu.
-- Status Pro dan batas harian dicek di browser (localStorage). Endpoint AI hanya dibatasi per IP, belum memeriksa status Pro di server.
+- Batas harian di layar tetap dicek di browser (localStorage), tapi endpoint AI (`/api/generate-soal`, `/api/generate-modul-ajar`, `/api/generate-teks`) juga dijaga di server lewat `api/_gate.js` → RPC `bgy_ai_gate` (migrasi `20261013_ai_quota.sql`):
+  - rate limit per menit per IP (soal 6, modul ajar 12, teks 10), berlaku untuk semua instance Vercel;
+  - jatah gratis per IP per hari (soal 15, modul ajar 25, teks 20 panggilan API; satu modul ajar ±4–8 panggilan);
+  - Pro dikenali dari email langganan aktif yang dikirim halaman (`pro_email` / `bgy_pro_ma.email`) → tanpa jatah harian.
+  - Satu sekolah bisa berbagi satu IP (wifi sekolah); kalau ada keluhan "jatah habis", naikkan angka di fungsi `bgy_ai_gate`.
+  - Jika migrasi belum dijalankan / Supabase tidak terjangkau, gerbang terbuka (API tetap jalan dengan limiter memori).
+  - Email Pro bisa dipakai orang lain yang tahu emailnya (sama seperti fitur "Login Email").
 - Repo GitHub publik, jadi nama file halaman aktivasi bisa terlihat.
 
 ## 8. Memakai pola ini di web baru

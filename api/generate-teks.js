@@ -2,6 +2,7 @@
 // Belum dipakai halaman sampai AI_AKTIF = true di /teks-sekolah/index.html.
 // Isi GEMINI_TEKS_1 (opsional _2, _3) dan GEMINI_TEKS_MODEL di environment.
 export const config = { api: { bodyParser: true } };
+import { aiGate } from './_gate.js';
 
 const buckets = globalThis.__bgyTeksRateBuckets || new Map();
 globalThis.__bgyTeksRateBuckets = buckets;
@@ -60,6 +61,11 @@ export default async function handler(req, res) {
   if (typeof prompt !== 'string' || !prompt.trim()) return res.status(400).json({ error: 'Prompt kosong' });
   if (prompt.length > 8000) return res.status(413).json({ error: 'Prompt terlalu panjang' });
   if (!keys.length) return res.status(503).json({ error: 'Fitur AI Teks Sekolah belum diaktifkan' });
+  const gate = await aiGate(req, 'teks', body?.email);
+  if (gate) {
+    if (gate.retryAfter) res.setHeader('Retry-After', String(gate.retryAfter));
+    return res.status(gate.status).json(gate.body);
+  }
 
   const attempts = [];
   const deadline = Date.now() + 55000;

@@ -1,4 +1,5 @@
 export const config = { api: { bodyParser: true } };
+import { aiGate } from './_gate.js';
 
 const requestBuckets = globalThis.__bgyModulRateBuckets || new Map();
 globalThis.__bgyModulRateBuckets = requestBuckets;
@@ -80,6 +81,11 @@ export default async function handler(req, res) {
     }
     if (!keys.some(Boolean)) {
       return res.status(500).json({ error: 'API Gemini modul ajar belum diisi di environment' });
+    }
+    const gate = await aiGate(req, 'modul_ajar', body?.email);
+    if (gate) {
+      if (gate.retryAfter) res.setHeader('Retry-After', String(gate.retryAfter));
+      return res.status(gate.status).json(gate.body);
     }
 
     let lastError = null;

@@ -1533,7 +1533,7 @@ async function requestStageWithRetry(prompt,options,maxAttempts=3){
     try{return await requestGenerateModul(prompt,options);}
     catch(error){
       lastError=error;
-      if(_generationCancelled||/dibatalkan/i.test(error.message||''))throw error;
+      if(_generationCancelled||/dibatalkan|jatah gratis|terlalu banyak permintaan/i.test(error.message||''))throw error;
       if(attempt<maxAttempts){
         const overlayText=document.getElementById('goMsg');
         if(overlayText)overlayText.textContent=`Koneksi terputus. Mencoba lagi (${attempt+1}/${maxAttempts})...`;
@@ -2642,7 +2642,7 @@ CATATAN UNTUK MODE GENERATE LANGSUNG DI APLIKASI:
     const resp=await fetch('/api/generate-modul-ajar',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:directPrompt,model:options.model||'',stage:options.stage||null}),
+      body:JSON.stringify({prompt:directPrompt,model:options.model||'',stage:options.stage||null,email:(()=>{try{return JSON.parse(localStorage.getItem('bgy_pro_ma')||'{}').email||undefined;}catch(e){return undefined;}})()}),
       signal:ctrl.signal
     });
     let json;

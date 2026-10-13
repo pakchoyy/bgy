@@ -22,7 +22,7 @@ bgy/
 │   ├── generate-modul-ajar.js
 │   ├── generate-soal.js
 │   ├── generate-teks.js
-│   ├── generate-image.js
+│   ├── _gate.js            # rate limit & jatah gratis bersama (Supabase bgy_ai_gate)
 │   └── modul-access.js
 ├── bgy-info.js             # Shared navigation bar, dialog info, & sistem notifikasi
 ├── dokumen/                # Tool Dokumen Resmi & administrasi guru
