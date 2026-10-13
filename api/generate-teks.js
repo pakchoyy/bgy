@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (origin && !allowed.includes(origin)) return res.status(403).json({ error: 'Origin tidak diizinkan' });
+  if (!allowed.includes(origin)) return res.status(403).json({ error: 'Origin tidak diizinkan' });
   if (isRateLimited(req)) {
     res.setHeader('Retry-After', '60');
     return res.status(429).json({ error: 'Terlalu banyak permintaan. Tunggu satu menit lalu coba lagi.' });
@@ -94,5 +94,6 @@ export default async function handler(req, res) {
       }
     }
   }
-  return res.status(502).json({ error: 'Semua API gagal', detail: attempts.slice(-4) });
+  console.error('[generate-teks] semua API gagal', attempts.slice(-4));
+  return res.status(502).json({ error: 'Semua API gagal', detail: attempts.slice(-4).map(a => ({ model: a.model, status: a.status })) });
 }

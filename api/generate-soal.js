@@ -37,7 +37,7 @@ function guard(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') { res.status(200).end(); return false; }
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return false; }
-  if (origin && !allowed.includes(origin)) { res.status(403).json({ error: 'Origin tidak diizinkan' }); return false; }
+  if (!allowed.includes(origin)) { res.status(403).json({ error: 'Origin tidak diizinkan' }); return false; }
   if (isRateLimited(req)) {
     res.setHeader('Retry-After', '60');
     res.status(429).json({ error: 'Terlalu banyak permintaan. Tunggu satu menit lalu coba lagi.' });
@@ -123,12 +123,14 @@ export default async function handler(req, res) {
       }
     }
 
+    console.error('[generate-soal] semua API gagal', lastError);
     return res.status(500).json({
       error: 'Semua API gagal',
-      detail: lastError
+      detail: lastError ? { model: lastError.model, status: lastError.status } : null
     });
 
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error('[generate-soal] error', err);
+    return res.status(500).json({ error: 'Terjadi kesalahan server. Coba lagi.' });
   }
 }

@@ -38,7 +38,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (requestOrigin && !allowedOrigins.includes(requestOrigin)) {
+  if (!allowedOrigins.includes(requestOrigin)) {
     return res.status(403).json({ error: 'Origin tidak diizinkan' });
   }
   if (isRateLimited(req)) {
@@ -141,7 +141,8 @@ export default async function handler(req, res) {
               .map(part => part.text || '')
               .join('');
             if (!text) {
-              lastError = { error: 'Respons Gemini kosong', model, detail: data };
+              lastError = { model, message: 'Respons Gemini kosong' };
+              console.error('[generate-modul-ajar] respons kosong', model, JSON.stringify(data).slice(0, 500));
               continue;
             }
             return res.status(200).json({ text, model });
@@ -163,12 +164,15 @@ export default async function handler(req, res) {
       }
     }
 
+    console.error('[generate-modul-ajar] semua API gagal', attempts.slice(-6));
+    const brief = a => a && { model: a.model, status: a.status };
     return res.status(500).json({
       error: 'Semua API gagal',
-      detail: { last: lastError, attempts: attempts.slice(-6) }
+      detail: { last: brief(lastError), attempts: attempts.slice(-6).map(brief) }
     });
 
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error('[generate-modul-ajar] error', err);
+    return res.status(500).json({ error: 'Terjadi kesalahan server. Coba lagi.' });
   }
 }
