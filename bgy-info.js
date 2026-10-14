@@ -578,9 +578,26 @@
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (rows) {
         var v = (Array.isArray(rows) && rows[0] && rows[0].value) || {};
-        if (Object.keys(v).length) { _bgyLinks = v; window._bgyLinks = v; }
+        if (Object.keys(v).length) { _bgyLinks = v; window._bgyLinks = v; applyBuyLinks(); }
       }).catch(function () {});
   })();
+  // Semua tombol "Beli Pro" (link lynk.id/kreacy/... yang ditulis di halaman) ikut memakai link beli dari /admin.
+  var BUY_SEL = 'a[href*="lynk.id/kreacy/"]';
+  function buyUrlHere() { return _bgyLinks && httpsUrl((_bgyLinks[page] || {}).buy_url); }
+  function swapBuyLink(a) {
+    var u = buyUrlHere();
+    if (u && a.getAttribute('href') !== u) { a.setAttribute('href', u); a.setAttribute('data-bgy-buy', ''); }
+  }
+  function applyBuyLinks() {
+    if (!buyUrlHere()) return;
+    var run = function () { document.querySelectorAll(BUY_SEL).forEach(swapBuyLink); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run();
+  }
+  // Link yang dibuat belakangan oleh JS halaman: ganti tepat saat diklik.
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest(BUY_SEL);
+    if (a) swapBuyLink(a);
+  }, true);
   function httpsUrl(u) { return /^https:\/\/[^\s"'<>]+$/i.test(String(u || '')) ? String(u) : ''; }
   function loadPromo() {
     if (promoData) return promoData;
@@ -894,7 +911,7 @@
     var key = 'bgy_trk_open_' + page, today = new Date().toDateString();
     if (lsGet(key) !== today) { lsSet(key, today); usage('open'); }
     document.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a[href*="lynk.id"]');
+      var a = e.target.closest && e.target.closest('a[href*="lynk.id"],a[data-bgy-buy]');
       if (a) usage('pro');
     }, true);
   }
