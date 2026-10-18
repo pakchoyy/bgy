@@ -638,12 +638,18 @@ async function aktivasiPro(){
   btn.innerHTML  = '<span class="spinner-sm"></span> Memvalidasi...';
 
   try {
-    const res  = await fetch(WORKER_URL + "/validate", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ code: kode })
-    });
-    const data = await res.json();
+    // Lewat domain sendiri dulu (jaringan tertentu memblokir *.workers.dev); kalau gagal terhubung, coba worker langsung.
+    const kirim = async (url) => {
+      const res = await fetch(url, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ code: kode })
+      });
+      return await res.json();
+    };
+    let data;
+    try { data = await kirim("/api/lkpd-validate"); }
+    catch(e1) { data = await kirim(WORKER_URL + "/validate"); }
 
     if(data.valid){
       localStorage.setItem("bgy_pro_lkpd", "1");
