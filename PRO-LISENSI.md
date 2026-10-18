@@ -19,7 +19,7 @@ Acuan untuk semua tool berbayar BGY dan web baru yang ingin memakai pola yang sa
 | Buat Soal (`/soal/`) | `DAILY_LIMIT = 1`×/hari | Tanpa batas, PDF & Word | `https://lynk.id/kreacy/mplxqygkqj36` | `/aktvs-bs.html` | Supabase `soal` · localStorage `bgy_pro` |
 | Modul Ajar (`/modul-ajar/`) | `DAILY_LIMIT = 1`×/hari | Tanpa batas, salin & buka AI sekali klik | `https://lynk.id/kreacy/y8eol1jk91g6` | `/aktvs-ma.html` | Supabase `modul_ajar` · `bgy_pro_ma` |
 | Kokurikuler (`/kokurikuler/`) | `DAILY_LIMIT = 1`×/hari | Tanpa batas, salin prompt & buka AI | `https://lynk.id/kreacy/y8eol1jk91g6` | `/aktvs-kkrklr.html` | Supabase `kokurikuler` · `bgy_pro_modul` |
-| Prompt LKPD (`/lkpd/`) | `FREE_LIMIT = 2`×/hari, riwayat 5 | Tanpa batas, riwayat 50 | `https://lynk.id/kreacy/nq35v4y36gz8` | — (kode dari admin) | Cloudflare Worker · `bgy_pro_lkpd` |
+| Prompt LKPD (`/lkpd/`) | `FREE_LIMIT = 2`×/hari, riwayat 5 | Tanpa batas, riwayat 50 | `https://lynk.id/kreacy/nq35v4y36gz8` | `/aktvs-lkpd.html` (pembeli baru) | Supabase `lkpd` (langganan 1 tahun) · `bgy_pro_lkpd_sub`; pembeli lama: Cloudflare Worker (lifetime) · `bgy_pro_lkpd` |
 
 **Aturan:** teks batas di halaman/Beranda harus memakai konstanta (`DAILY_LIMIT`, `FREE_LIMIT`), jangan angka ketik manual. Kunci localStorage **harus unik per tool** (semua tool satu domain, jadi kunci yang sama akan saling menimpa).
 
@@ -44,8 +44,10 @@ Ganti HP / hapus data ──► tab "Login Email": RPC bgy_subscription_status(e
   where lower(email) = lower('guru@contoh.com') and access = 'soal';
   ```
 
-### LKPD (sistem lama)
-Kode Pro dibuat manual (format `BGY-XXXX-0000`) dan didaftarkan di env Cloudflare Worker `PRO_CODES` (dipisah koma). Tool memanggil `https://bgypro.pulsachoy.workers.dev/validate`. Kode di `lkpd/worker.js`.
+### LKPD (dua jalur)
+- **Pembeli baru** (sejak migrasi `20261018_lkpd_access.sql`): sama seperti Buat Soal / Modul Ajar. Halaman `/aktvs-lkpd.html` → kode `BGY-XXXXX` → di `/lkpd/` isi email + kode (`bgy_activate_pro`, `access='lkpd'`). **Langganan 1 tahun** (`plan_type='annual'`). Ganti perangkat: "Sudah beli? Masuk dengan email" (`bgy_subscription_status`). Status disimpan di `bgy_pro_lkpd_sub` dan disegarkan ke server tiap halaman dibuka.
+- **Pembeli lama:** kode 4 angka (`BGY-7392`) tetap divalidasi Cloudflare Worker (`PRO_CODES`, kode di `lkpd/worker.js`) lewat `/api/lkpd-validate` (proxy, cadangan langsung ke `bgypro.pulsachoy.workers.dev`). Hasilnya `bgy_pro_lkpd = "1"` = **lifetime**, tidak pernah kedaluwarsa dan tidak dicek ulang. Jangan hapus Worker / env `PRO_CODES` selama masih ada pembeli lama yang belum aktivasi.
+- Di Kreacy, atur "redirect setelah bayar" produk LKPD ke `https://www.bantuguruyuk.web.id/aktvs-lkpd.html`.
 
 ## 4. Database Supabase
 

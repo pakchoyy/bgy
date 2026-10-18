@@ -151,6 +151,9 @@ body.dark #limitCount{color:#5eead4;}
 #modalBox button{width:100%;padding:11px;border:none;border-radius:10px;color:#fff;font-weight:700;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
 #btnAktivasi{background:linear-gradient(135deg,#f59e0b,#d97706)!important;}
 #inputKodePro{text-align:center;font-size:1rem;letter-spacing:2px;font-weight:700;text-transform:uppercase;font-family:monospace;}
+#modalBox input[type=email]{width:100%;padding:11px 12px;border:1.5px solid var(--border,#e2e8f0);border-radius:10px;font-size:15px;font-family:inherit;background:var(--card-bg);color:var(--text);margin-bottom:8px;}
+#modalBox .modal-hint{font-size:.75rem;color:var(--text-light);margin-top:6px;line-height:1.5;}
+#modalBox .modal-link{background:none!important;color:#d97706!important;font-size:.8rem;min-height:40px;margin-top:4px;text-decoration:underline;}
 #modalError{display:none;color:#dc2626;font-size:.8rem;margin-top:8px;}
 #modalSuccess{display:none;color:#059669;font-size:.8rem;margin-top:8px;font-weight:700;}
 .spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px;}
@@ -205,11 +208,20 @@ footer .visitor a{color:#fff;text-decoration:none;}
   <div id="modalBox">
     <div style="color:#d97706;"><svg class="ic" style="width:36px;height:36px" aria-hidden="true"><use href="#i-gem"/></svg></div>
     <h3>Aktivasi BGY Pro</h3>
-    <p>Masukkan kode aktivasi yang kamu dapatkan dari Pak Choyy</p>
-    <input type="text" id="inputKodePro" placeholder="BGY-XXXX-0000" maxlength="20">
+    <div id="modeKode">
+      <p>Masukkan email pembelian dan kode aktivasi kamu</p>
+      <input type="email" id="inputEmailPro" placeholder="Email pembelian" autocomplete="email">
+      <input type="text" id="inputKodePro" placeholder="BGY-XXXXX" maxlength="20">
+      <div class="modal-hint">Punya kode lama (contoh BGY-1234)? Email boleh dikosongkan.</div>
+    </div>
+    <div id="modeEmail" style="display:none;">
+      <p>Sudah pernah beli? Masukkan email pembelian untuk masuk kembali.</p>
+      <input type="email" id="inputEmailLogin" placeholder="Email pembelian" autocomplete="email">
+    </div>
     <div id="modalError"></div>
     <div id="modalSuccess"></div>
     <button id="btnAktivasi" onclick="aktivasiPro()" style="margin-top:14px;">Aktivasi Sekarang</button>
+    <button id="btnGantiMode" class="modal-link" onclick="gantiModeAktivasi()">Sudah beli? Masuk dengan email</button>
     <button onclick="tutupModal()" style="background:var(--gray-100);color:var(--text);margin-top:8px;font-size:13px;">Tutup</button>
     <div style="margin-top:12px;font-size:12px;color:#aaa;">
       Belum punya kode? Hubungi via
@@ -487,8 +499,39 @@ try{
     localStorage.removeItem("bgy_pro_code");
   }
 }catch(e){}
+// Dua jenis Pro:
+//  - lifetime (pembeli lama, kode lewat Cloudflare Worker): bgy_pro_lkpd = "1"
+//  - langganan 1 tahun (pembeli baru, Supabase): bgy_pro_lkpd_sub = {email, plan_type, active_until}
+const SB_URL = "https://xtmpiqpmwirsrcsphsto.supabase.co";
+const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w";
+const KODE_BARU = /^BGY-[A-Z0-9]{5}$/;
+async function sbRpc(name, args){
+  const r = await fetch(SB_URL + "/rest/v1/rpc/" + name, {
+    method:"POST",
+    headers:{ apikey:SB_KEY, Authorization:"Bearer " + SB_KEY, "Content-Type":"application/json" },
+    body: JSON.stringify(args)
+  });
+  if(!r.ok) throw new Error("HTTP " + r.status);
+  const d = await r.json();
+  return Array.isArray(d) ? d[0] : d;
+}
+function subAktif(d){
+  return !!d && !!d.is_pro && (d.plan_type !== "annual" || (!!d.active_until && new Date(d.active_until).getTime() > Date.now()));
+}
+function getSub(){
+  try{
+    const x = JSON.parse(localStorage.getItem("bgy_pro_lkpd_sub") || "null");
+    return x && subAktif({is_pro:true, plan_type:x.plan_type, active_until:x.active_until}) ? x : null;
+  }catch(e){ return null; }
+}
+function saveSub(d, email){
+  localStorage.setItem("bgy_pro_lkpd_sub", JSON.stringify({email:email, plan_type:d.plan_type, active_until:d.active_until}));
+}
+function tglID(iso){
+  return new Date(iso).toLocaleDateString("id-ID", {day:"numeric", month:"long", year:"numeric"});
+}
 function isPro(){
-  return localStorage.getItem("bgy_pro_lkpd") === "1";
+  return localStorage.getItem("bgy_pro_lkpd") === "1" || !!getSub();
 }
 
 function updateUI(){
@@ -512,7 +555,8 @@ function updateUI(){
     bar.style.background = "";
     countEl.textContent  = "∞ Unlimited";
     countEl.className    = "pro-badge";
-    sub.innerHTML        = 'BGY Pro aktif';
+    const langganan = localStorage.getItem("bgy_pro_lkpd") === "1" ? null : getSub();
+    sub.textContent      = langganan && langganan.plan_type === "annual" ? "Pro aktif sampai " + tglID(langganan.active_until) : "BGY Pro aktif";
     // Sembunyikan badge upgrade
     const bu = document.getElementById("badgeUpgrade");
     if(bu) bu.style.display = "none";
@@ -610,7 +654,21 @@ function bukaModal(){
   document.getElementById("inputKodePro").value = "";
   document.getElementById("modalError").style.display   = "none";
   document.getElementById("modalSuccess").style.display = "none";
+  setModeAktivasi("kode");
   document.getElementById("inputKodePro").focus();
+}
+
+function setModeAktivasi(mode){
+  const kode = mode === "kode";
+  document.getElementById("modeKode").style.display  = kode ? "block" : "none";
+  document.getElementById("modeEmail").style.display = kode ? "none" : "block";
+  document.getElementById("btnAktivasi").textContent = kode ? "Aktivasi Sekarang" : "Cek Langganan";
+  document.getElementById("btnGantiMode").textContent = kode ? "Sudah beli? Masuk dengan email" : "Punya kode aktivasi? Masukkan kode";
+  document.getElementById("modalError").style.display   = "none";
+  document.getElementById("modalSuccess").style.display = "none";
+}
+function gantiModeAktivasi(){
+  setModeAktivasi(document.getElementById("modeKode").style.display === "none" ? "kode" : "email");
 }
 
 function tutupModal(e){
@@ -619,7 +677,42 @@ function tutupModal(e){
   }
 }
 
+function tampilPesan(ok, teks){
+  const errEl = document.getElementById("modalError"), okEl = document.getElementById("modalSuccess");
+  errEl.style.display = "none"; okEl.style.display = "none";
+  const el = ok ? okEl : errEl;
+  el.textContent = teks; el.style.display = "block";
+}
+
 async function aktivasiPro(){
+  const btn = document.getElementById("btnAktivasi");
+  const modeEmail = document.getElementById("modeEmail").style.display !== "none";
+  const kodeBaru = document.getElementById("inputKodePro").value.trim().toUpperCase();
+  if(!modeEmail && !KODE_BARU.test(kodeBaru)) return aktivasiKodeLama(); // kode lama (4 angka) -> Cloudflare Worker, lifetime
+
+  const email = (document.getElementById(modeEmail ? "inputEmailLogin" : "inputEmailPro").value || "").trim().toLowerCase();
+  if(!email){ tampilPesan(false, "Email pembelian wajib diisi."); return; }
+  const awal = btn.textContent;
+  btn.disabled = true; btn.innerHTML = '<span class="spinner-sm"></span> Memeriksa...';
+  try{
+    const d = modeEmail
+      ? await sbRpc("bgy_subscription_status", {p_email:email, p_access:"lkpd"})
+      : await sbRpc("bgy_activate_pro", {p_email:email, p_code:kodeBaru, p_access:"lkpd"});
+    if(!modeEmail && (!d || d.result === "invalid")){ tampilPesan(false, "Email atau kode tidak cocok."); return; }
+    if(!modeEmail && (d.result === "expired" || d.result === "inactive")){ tampilPesan(false, "Masa langganan sudah habis. Silakan perpanjang."); return; }
+    if(!subAktif(d)){ tampilPesan(false, modeEmail ? "Email belum terdaftar Pro atau langganan sudah habis." : "Akun belum aktif Pro."); return; }
+    saveSub(d, email);
+    tampilPesan(true, d.plan_type === "annual" ? "Berhasil! Pro aktif sampai " + tglID(d.active_until) : "Berhasil! BGY Pro aktif.");
+    updateUI();
+    setTimeout(()=> document.getElementById("modalOverlay").classList.remove("show"), 2000);
+  }catch(e){
+    tampilPesan(false, "Gagal terhubung ke server. Cek koneksi internet.");
+  }finally{
+    btn.disabled = false; btn.textContent = awal;
+  }
+}
+
+async function aktivasiKodeLama(){
   const kode = document.getElementById("inputKodePro").value.trim();
   const errEl = document.getElementById("modalError");
   const okEl  = document.getElementById("modalSuccess");
@@ -675,6 +768,7 @@ function logoutPro(){
   if(!confirm("Keluar dari mode Pro?")) return;
   localStorage.removeItem("bgy_pro_lkpd");
   localStorage.removeItem("bgy_pro_lkpd_code");
+  localStorage.removeItem("bgy_pro_lkpd_sub");
   updateUI();
 }
 
@@ -919,7 +1013,20 @@ document.addEventListener("DOMContentLoaded", function(){
   autoMapel();
   autoStyle();
   updateUI();
+  segarkanLangganan();
 });
+
+// Cocokkan langganan tersimpan dengan server (perpanjangan / langganan habis). Gagal terhubung = biarkan apa adanya.
+async function segarkanLangganan(){
+  let x;
+  try{ x = JSON.parse(localStorage.getItem("bgy_pro_lkpd_sub") || "null"); }catch(e){ return; }
+  if(!x || !x.email) return;
+  try{
+    const d = await sbRpc("bgy_subscription_status", {p_email:x.email, p_access:"lkpd"});
+    if(subAktif(d)) saveSub(d, x.email); else localStorage.removeItem("bgy_pro_lkpd_sub");
+    updateUI();
+  }catch(e){}
+}
 </script>
 
 <!-- AUTO-LOAD KODE DARI URL PARAMETER -->
@@ -936,6 +1043,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
       bukaModal();
       input.value = kode.toUpperCase();
+      const em = params.get("email"), emInput = document.getElementById("inputEmailPro");
+      if(em && emInput) emInput.value = em.slice(0, 120);
 
       const okEl = document.getElementById("modalSuccess");
       if(okEl){
