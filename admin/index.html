@@ -190,7 +190,18 @@ body.dark .alert-due{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,
 /* Bottom nav bar */
 .bnav{position:fixed;left:0;right:0;bottom:0;z-index:500;display:none;background:var(--card-bg);border-top:1px solid var(--border);box-shadow:0 -2px 14px rgba(0,0,0,.08);padding-bottom:env(safe-area-inset-bottom,0);}
 .bnav.show{display:flex;}
-.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 4px;min-height:56px;background:none;border:none;color:var(--text-light);font-size:.68rem;font-weight:700;cursor:pointer;font-family:inherit;transition:color .12s,background .12s;}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 2px;min-height:56px;background:none;border:none;color:var(--text-light);font-size:.65rem;font-weight:700;cursor:pointer;font-family:inherit;transition:color .12s,background .12s;}
+.portal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:4px;}
+@media(min-width:520px){.portal-grid{grid-template-columns:repeat(3,1fr);}}
+.portal-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;color:var(--text);text-decoration:none;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .1s;min-height:120px;text-align:center;}
+.portal-card:hover,.portal-card:focus-visible{border-color:var(--blue);box-shadow:0 2px 14px rgba(14,165,160,.14);}
+.portal-card:active{transform:scale(.97);}
+.portal-card .pc-ic{width:52px;height:52px;border-radius:14px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 4px 12px rgba(14,165,160,.25);}
+.portal-card .pc-ic .ic{width:26px;height:26px;}
+.portal-card.ext .pc-ic{background:rgba(14,165,160,.12);color:var(--blue);box-shadow:none;}
+.portal-card b{font-size:.82rem;line-height:1.3;word-break:break-word;}
+.portal-card small{font-size:.68rem;color:var(--text-light);display:block;word-break:break-all;}
+.portal-empty{grid-column:1/-1;text-align:center;padding:30px 10px;color:var(--text-light);font-size:.84rem;}
 .bnav-btn .ic{width:22px;height:22px;}
 .bnav-btn.on{color:var(--blue);background:rgba(14,165,160,.08);}
 body.dark .bnav-btn.on{background:rgba(94,234,212,.1);}
@@ -282,13 +293,23 @@ main{padding-bottom:90px!important;}
         <div class="stat"><b id="dsRevenue">-</b><span>/bulan</span></div>
       </div>
       <div id="adminShortcuts" hidden class="admin-shortcuts">
-        <div class="shortcut-head"><b>Admin Eksternal</b><small>Buka panel admin proyek</small></div>
+        <div class="shortcut-head"><b>Admin Eksternal</b><button type="button" onclick="showTab('portal')" style="background:none;border:none;color:var(--blue);font-size:.72rem;font-weight:700;cursor:pointer;padding:0;font-family:inherit;">Lihat semua →</button></div>
         <div class="shortcut-row" id="shortcutRow"></div>
       </div>
       <div id="dueAlert" hidden></div>
       <div class="quick-grid">
         <button class="quick-card" onclick="showTab('proyek');setTimeout(openJokian,100)"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg><span>Proyek Baru</span></button>
         <button class="quick-card" onclick="showTab('langganan');setTimeout(openLangganan,100)"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg><span>Langganan Baru</span></button>
+      </div>
+    </div>
+
+    <!-- PORTAL ADMIN -->
+    <div id="pane-portal" hidden>
+      <div class="pane-header"><h2>Portal Admin</h2></div>
+      <div class="card">
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-ext"/></svg> Buka admin proyek</div>
+        <p class="hint">Tap kartu untuk buka panel admin proyek di tab baru. Tambahkan URL admin via menu "Proyek" (edit tiap proyek, isi kolom "URL Admin").</p>
+        <div id="portalGrid" class="portal-grid"></div>
       </div>
     </div>
 
@@ -487,6 +508,7 @@ main{padding-bottom:90px!important;}
 
 <nav class="bnav" id="bnav">
   <button class="bnav-btn on" data-tab="dash" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg>Beranda</button>
+  <button class="bnav-btn" data-tab="portal" onclick="showTab('portal')"><svg class="ic" aria-hidden="true"><use href="#i-ext"/></svg>Portal</button>
   <button class="bnav-btn" data-tab="proyek" onclick="showTab('proyek')"><svg class="ic" aria-hidden="true"><use href="#i-briefcase"/></svg>Proyek</button>
   <button class="bnav-btn" data-tab="langganan" onclick="showTab('langganan')"><svg class="ic" aria-hidden="true"><use href="#i-wallet"/></svg>Langganan</button>
   <button class="bnav-btn" data-tab="bgy" onclick="showTab('bgy')"><svg class="ic" aria-hidden="true"><use href="#i-settings"/></svg>BGY</button>
@@ -560,12 +582,13 @@ document.getElementById('loginForm').addEventListener('submit',async e=>{
 });
 async function logout(){await sb.auth.signOut();show('loginCard');}
 
-const TABS=['dash','proyek','langganan','bgy','links','reviews','promo','docs','stat','users'];
-const BOTTOM_TABS={dash:'dash',proyek:'proyek',langganan:'langganan',bgy:'bgy'};
+const TABS=['dash','portal','proyek','langganan','bgy','links','reviews','promo','docs','stat','users'];
+const BOTTOM_TABS={dash:'dash',portal:'portal',proyek:'proyek',langganan:'langganan',bgy:'bgy'};
 const PARENT_MAP={links:'bgy',reviews:'bgy',promo:'bgy',docs:'bgy',stat:'bgy',users:'bgy'};
 function showTab(t){
   if(t==='stat')loadStats();
   if(t==='docs'&&!docsLoaded)loadDocs();
+  if(t==='portal')renderPortal();
   TABS.forEach(x=>{const el=document.getElementById('pane-'+x);if(el)el.hidden=x!==t;});
   if(t==='users'&&!document.getElementById('userRows').textContent.trim())loadUsers();
   const activeBottom=BOTTOM_TABS[t]||PARENT_MAP[t]||'dash';
@@ -599,7 +622,7 @@ async function loadJokian(){
   const saved=(data&&data.value&&Array.isArray(data.value))?data.value:null;
   jokianData=saved||[...SEED_JOKIAN];
   if(!saved) await saveJokian();
-  renderJokian();updateDashCounts();
+  renderJokian();updateDashCounts();renderPortal();
 }
 async function saveJokian(){
   await sb.from('bgy_settings').upsert({key:'admin_proyek_jokian',value:jokianData,updated_at:new Date().toISOString()});
@@ -705,7 +728,7 @@ async function loadSendiri(){
   const saved=(data&&data.value&&Array.isArray(data.value))?data.value:null;
   sendiriData=saved||[...SEED_SENDIRI];
   if(!saved) await saveSendiri();
-  renderSendiri();updateDashCounts();
+  renderSendiri();updateDashCounts();renderPortal();
 }
 async function saveSendiri(){
   await sb.from('bgy_settings').upsert({key:'admin_proyek_sendiri',value:sendiriData,updated_at:new Date().toISOString()});
@@ -942,6 +965,29 @@ function renderAdminShortcuts(){
     return `<a class="shortcut-item" href="${esc(p.admin_url)}" target="_blank" rel="noopener" title="${esc(p.name)}">
       <div class="si-ic">${use(p.src==='jokian'?'i-briefcase':'i-folder')}</div>
       <span class="si-label">${label}</span>
+    </a>`;
+  }).join('');
+}
+function renderPortal(){
+  const jk=(typeof jokianData!=='undefined'?jokianData:[]),sn=(typeof sendiriData!=='undefined'?sendiriData:[]);
+  const all=[...jk.map(p=>({...p,src:'jokian'})),...sn.map(p=>({...p,src:'sendiri'}))];
+  const withAdmin=all.filter(p=>p.admin_url&&/^https?:\/\//i.test(p.admin_url));
+  const grid=document.getElementById('portalGrid');
+  if(!grid)return;
+  const bgyCard=`<a class="portal-card" href="/admin/" onclick="event.preventDefault();showTab('dash')">
+    <div class="pc-ic">${use('i-layout-dashboard')}</div>
+    <b>BGY Admin</b><small>Panel ini</small>
+  </a>`;
+  if(!withAdmin.length){
+    grid.innerHTML=bgyCard+`<div class="portal-empty">Belum ada portal lain.<br>Buka tab <b>Proyek</b> → edit proyek → isi kolom <b>URL Admin</b> untuk menambahkan.</div>`;
+    return;
+  }
+  grid.innerHTML=bgyCard+withAdmin.map(p=>{
+    const host=(()=>{try{return new URL(p.admin_url).hostname.replace(/^www\./,'');}catch(e){return '';}})();
+    return `<a class="portal-card ext" href="${esc(p.admin_url)}" target="_blank" rel="noopener">
+      <div class="pc-ic">${use(p.src==='jokian'?'i-briefcase':'i-folder')}</div>
+      <b>${esc(p.name)}</b>
+      <small>${esc(host)}</small>
     </a>`;
   }).join('');
 }
