@@ -815,7 +815,7 @@ function renderProjects(){
     const target=isSelf?'':'target="_blank" rel="noopener"';
     const click=isSelf?'onclick="toast(\'Kamu sudah di halaman ini.\')"':'';
     return `<a class="proj-card" href="${href}" ${target} ${click}>
-      <div class="proj-ic"><svg class="ic" aria-hidden="true"><use href="#${esc(p.icon||'i-globe')}"/></svg></div>
+      <div class="proj-ic ${isSelf?'bgy':'ext'}"><svg class="ic" aria-hidden="true"><use href="#${esc(p.icon||'i-globe')}"/></svg></div>
       <div class="proj-body"><b>${esc(p.name)}</b><small>${esc(p.desc||p.url)}</small></div>
       ${p.builtin?'':`<div class="proj-actions">
         <button class="btn icon" onclick="event.preventDefault();openProj('${esc(p.id)}')" aria-label="Edit">${use('i-pen')}</button>
@@ -864,14 +864,14 @@ window.addEventListener('beforeinstallprompt',e=>{
 function installApp(){
   if(!_deferredPrompt)return;
   _deferredPrompt.prompt();
-  _deferredPrompt.userChoice.then(r=>{document.getElementById('installBanner').hidden=true;if(r.outcome==='accepted')toast('Terpasang!');});
+  _deferredPrompt.userChoice.then(r=>{document.getElementById('installBanner').classList.remove('show');if(r.outcome==='accepted')toast('Terpasang!');});
   _deferredPrompt=null;
 }
 function dismissInstall(){
-  document.getElementById('installBanner').hidden=true;
+  document.getElementById('installBanner').classList.remove('show');
   try{sessionStorage.setItem('bgy_admin_dismiss','1');}catch(e){}
 }
-if('serviceWorker' in navigator){navigator.serviceWorker.register('/admin/sw.js').catch(()=>{});}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/admin/sw.js',{scope:'/admin/'}).catch(()=>{});}
 </script>
 </body>
 </html>
