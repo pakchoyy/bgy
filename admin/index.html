@@ -71,11 +71,16 @@ body.dark .bar:hover i,body.dark .bar.on i{background:#5eead4;}
 .hint{font-size:.78rem;color:var(--text-light);line-height:1.5;margin:-4px 0 12px;}
 .chk{display:flex!important;align-items:center;gap:8px;font-size:.86rem;font-weight:700;text-transform:none;letter-spacing:0;cursor:pointer;}
 .chk input{width:18px;height:18px;accent-color:var(--blue);}
-.tabs{display:flex;gap:6px;margin-bottom:12px;}
-@media(max-width:520px){.tabs{display:grid;grid-template-columns:1fr 1fr;}}
-.tab{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);font-weight:700;font-size:.84rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;}
-.tab.active{border-color:var(--blue);background:rgba(14,165,160,.1);color:var(--teal-dark);}
-body.dark .tab.active{color:#5eead4;}
+.nav-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.nav-card{display:flex;align-items:center;gap:10px;padding:14px 12px;border:1.5px solid var(--border);border-radius:12px;background:var(--card-bg);color:var(--text);font-weight:700;font-size:.84rem;cursor:pointer;font-family:inherit;text-align:left;transition:border-color .15s,box-shadow .15s;}
+.nav-card:hover,.nav-card:focus-visible{border-color:var(--blue);box-shadow:0 2px 12px rgba(14,165,160,.13);}
+.nav-card .ic{width:20px;height:20px;color:var(--blue);flex:none;}
+.nav-card .nav-count{font-size:.7rem;font-weight:600;color:var(--text-light);margin-top:1px;}
+.pane-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.pane-header h2{font-size:.95rem;font-weight:800;flex:1;}
+.btn-back{display:flex;align-items:center;gap:4px;padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-back:hover{border-color:var(--blue);color:var(--blue);}
+.btn-back .ic{width:16px;height:16px;}
 .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
 .toolbar select{width:auto;flex:1;min-width:120px;}
 .item{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);}
@@ -164,6 +169,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
 <symbol id="i-layout-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
 <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
 <symbol id="i-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol>
 </defs></svg>
 
 <div id="toast" role="status"></div>
@@ -198,36 +204,38 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
 
   <!-- PANEL -->
   <div id="panel" hidden>
-    <div class="tabs">
-      <button class="tab active" id="tab-dash" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-layout-dashboard"/></svg> Dashboard</button>
-      <button class="tab" id="tab-links" onclick="showTab('links')"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Link Bio</button>
-      <button class="tab" id="tab-reviews" onclick="showTab('reviews')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Ulasan</button>
-      <button class="tab" id="tab-promo" onclick="showTab('promo')"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo</button>
-      <button class="tab" id="tab-docs" onclick="showTab('docs')"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Dokumen</button>
-      <button class="tab" id="tab-stat" onclick="showTab('stat')"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg> Statistik</button>
-      <button class="tab" id="tab-users" onclick="showTab('users')"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Pengguna</button>
-    </div>
-
     <div id="pane-dash">
       <div id="installBanner">
         <svg class="ib-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-        <p><b>Pasang BGY Admin di HP</b>Buka langsung dari layar utama, tanpa browser.</p>
+        <p><b>Pasang BGY Admin di HP</b> Buka langsung dari layar utama, tanpa browser.</p>
         <button class="ib-yes" onclick="installApp()">Pasang</button>
         <button class="ib-no" onclick="dismissInstall()">Nanti</button>
       </div>
       <div class="proj-grid" id="projGrid"></div>
+      <div class="nav-grid" id="navGrid">
+        <button class="nav-card" onclick="showTab('links')"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg><div>Link Bio<div class="nav-count">Kelola /k</div></div></button>
+        <button class="nav-card" onclick="showTab('reviews')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg><div>Ulasan<div class="nav-count">Review guru</div></div></button>
+        <button class="nav-card" onclick="showTab('promo')"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg><div>Promo<div class="nav-count">Penawaran Pro</div></div></button>
+        <button class="nav-card" onclick="showTab('docs')"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg><div>Dokumen<div class="nav-count">Dokumen resmi</div></div></button>
+        <button class="nav-card" onclick="showTab('stat')"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg><div>Statistik<div class="nav-count">Pemakaian tool</div></div></button>
+        <button class="nav-card" onclick="showTab('users')"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg><div>Pengguna<div class="nav-count">Daftar Pro</div></div></button>
+      </div>
     </div>
 
-    <div id="pane-links" class="card" hidden>
+    <div id="pane-links" hidden>
+      <div class="pane-header"><button class="btn-back" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> Kembali</button><h2>Link Bio /k</h2></div>
+      <div class="card">
       <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Link di bantuguruyuk.web.id/k</div>
       <div class="toolbar">
         <button class="btn" onclick="openLink()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah link</button>
         <a class="btn" href="/k/" target="_blank"><svg class="ic" aria-hidden="true"><use href="#i-ext"/></svg> Lihat halaman</a>
       </div>
       <div id="linkList"></div>
-    </div>
+    </div></div>
 
-    <div id="pane-reviews" class="card" hidden>
+    <div id="pane-reviews" hidden>
+      <div class="pane-header"><button class="btn-back" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> Kembali</button><h2>Ulasan</h2></div>
+      <div class="card">
       <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Ulasan pengguna</div>
       <div class="stat-row">
         <div class="stat"><b id="stAvg">-</b><span>Rata-rata</span></div>
@@ -240,19 +248,23 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
         <button class="btn" onclick="loadReviews()"><svg class="ic" aria-hidden="true"><use href="#i-reset"/></svg> Muat ulang</button>
       </div>
       <div id="reviewList"></div>
-    </div>
+    </div></div>
 
-    <div id="pane-docs" class="card" hidden>
-      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Dokumen Resmi (bantuguruyuk.web.id/dokumen)</div>
+    <div id="pane-docs" hidden>
+      <div class="pane-header"><button class="btn-back" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> Kembali</button><h2>Dokumen Resmi</h2></div>
+      <div class="card">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Dokumen (bantuguruyuk.web.id/dokumen)</div>
       <div class="toolbar">
         <button class="btn" onclick="openDoc()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah dokumen</button>
         <a class="btn" href="/dokumen/" target="_blank"><svg class="ic" aria-hidden="true"><use href="#i-ext"/></svg> Lihat halaman</a>
       </div>
       <input type="search" id="docQ" placeholder="Cari dokumen..." oninput="renderDocs()" style="margin-bottom:6px"/>
       <div id="docList"></div>
-    </div>
+    </div></div>
 
-    <div id="pane-stat" class="card" hidden>
+    <div id="pane-stat" hidden>
+      <div class="pane-header"><button class="btn-back" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> Kembali</button><h2>Statistik</h2></div>
+      <div class="card">
       <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg> Guru yang memakai BGY</div>
       <div class="toolbar">
         <select id="statDays" onchange="loadStats()" aria-label="Rentang waktu"><option value="7">7 hari terakhir</option><option value="30" selected>30 hari terakhir</option><option value="90">90 hari terakhir</option></select>
@@ -271,9 +283,11 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
       <div class="tbl-wrap"><table class="stat-tbl"><thead><tr><th>Tool</th><th>Guru</th><th>Buka</th><th>Hasil</th><th>Klik Pro</th><th>Install</th><th>Bagikan</th></tr></thead><tbody id="toolRows"></tbody></table></div>
       <p class="hint" style="margin-top:10px">Guru = browser unik (ID acak anonim, tanpa nama/email). Buka dihitung maks 1x sehari per tool. Hasil = berhasil membuat/menyalin/mengunduh. Klik Pro = klik link Lynk.</p>
       <div class="msg" id="statMsg"></div>
-    </div>
+    </div></div>
 
-    <div id="pane-users" class="card" hidden>
+    <div id="pane-users" hidden>
+      <div class="pane-header"><button class="btn-back" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> Kembali</button><h2>Pengguna Pro</h2></div>
+      <div class="card">
       <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Pengguna Pro</div>
       <div class="toolbar">
         <select id="uAccess" onchange="loadUsers()">
@@ -303,9 +317,11 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
         </table>
       </div>
       <div class="msg" id="usersMsg"></div>
-    </div>
+    </div></div>
 
-    <div id="pane-promo" class="card" hidden>
+    <div id="pane-promo" hidden>
+      <div class="pane-header"><button class="btn-back" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> Kembali</button><h2>Promo</h2></div>
+      <div class="card">
       <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo &amp; penawaran Pro</div>
       <p class="hint">Tampil di kartu tawaran Pro dan dekat tombol Beli di Buat Soal, Modul Ajar, Kokurikuler, dan Prompt LKPD. Kosongkan kolom yang tidak dipakai.</p>
       <form id="promoForm">
@@ -338,7 +354,7 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
         <button class="btn-primary" type="submit" id="btnLisensi">Simpan Tautan</button>
         <div class="msg" id="lisensiMsg"></div>
       </form>
-    </div>
+    </div></div>
   </div>
 </main>
 
@@ -413,8 +429,9 @@ async function logout(){await sb.auth.signOut();show('loginCard');}
 function showTab(t){
   if(t==='stat')loadStats();
   if(t==='docs'&&!docsLoaded)loadDocs();
-  ['dash','links','reviews','promo','docs','stat','users'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+  ['dash','links','reviews','promo','docs','stat','users'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;});
   if(t==='users'&&!document.getElementById('userRows').textContent.trim())loadUsers();
+  window.scrollTo(0,0);
 }
 
 /* ─── Dokumen Resmi ─── */
