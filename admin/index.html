@@ -191,17 +191,87 @@ body.dark .alert-due{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,
 .bnav{position:fixed;left:0;right:0;bottom:0;z-index:500;display:none;background:var(--card-bg);border-top:1px solid var(--border);box-shadow:0 -2px 14px rgba(0,0,0,.08);padding-bottom:env(safe-area-inset-bottom,0);}
 .bnav.show{display:flex;}
 .bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 2px;min-height:56px;background:none;border:none;color:var(--text-light);font-size:.65rem;font-weight:700;cursor:pointer;font-family:inherit;transition:color .12s,background .12s;}
-.portal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:4px;}
+.btn-wide{min-height:44px;padding:10px 14px;font-size:.84rem;}
+.portal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:4px;}
 @media(min-width:520px){.portal-grid{grid-template-columns:repeat(3,1fr);}}
-.portal-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;color:var(--text);text-decoration:none;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .1s;min-height:120px;text-align:center;}
-.portal-card:hover,.portal-card:focus-visible{border-color:var(--blue);box-shadow:0 2px 14px rgba(14,165,160,.14);}
-.portal-card:active{transform:scale(.97);}
-.portal-card .pc-ic{width:52px;height:52px;border-radius:14px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 4px 12px rgba(14,165,160,.25);}
-.portal-card .pc-ic .ic{width:26px;height:26px;}
-.portal-card.ext .pc-ic{background:rgba(14,165,160,.12);color:var(--blue);box-shadow:none;}
-.portal-card b{font-size:.82rem;line-height:1.3;word-break:break-word;}
-.portal-card small{font-size:.68rem;color:var(--text-light);display:block;word-break:break-all;}
+.portal-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 10px 0;background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;color:var(--text);text-align:center;min-height:160px;transition:border-color .15s,box-shadow .15s;overflow:hidden;}
+.portal-card:hover{border-color:var(--blue);box-shadow:0 2px 14px rgba(14,165,160,.14);}
+.portal-card .pc-ic{width:56px;height:56px;border-radius:14px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 4px 14px rgba(14,165,160,.25);margin-top:6px;}
+.portal-card .pc-ic .ic{width:28px;height:28px;}
+.portal-card b{font-size:.86rem;line-height:1.3;word-break:break-word;}
+.portal-card small{font-size:.68rem;color:var(--text-light);word-break:break-all;display:block;line-height:1.3;padding:0 4px;}
+.portal-open{display:flex;align-items:center;justify-content:center;gap:5px;width:calc(100% + 20px);margin:auto -10px 0;min-height:44px;padding:10px;background:rgba(14,165,160,.1);border:none;color:var(--blue);font-weight:700;font-size:.78rem;cursor:pointer;font-family:inherit;text-decoration:none;}
+.portal-open:hover{background:rgba(14,165,160,.18);}
+.portal-open .ic{width:16px;height:16px;}
+.portal-actions{position:absolute;top:6px;right:6px;display:flex;gap:4px;z-index:2;}
+.portal-actions button{width:28px;height:28px;padding:0;background:var(--card-bg);border:1px solid var(--border);border-radius:7px;color:var(--text-light);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.portal-actions button:hover{color:var(--blue);border-color:var(--blue);}
+.portal-actions button .ic{width:14px;height:14px;}
+.portal-reorder{position:absolute;top:6px;left:6px;display:flex;flex-direction:column;gap:2px;z-index:2;}
+.portal-reorder button{width:24px;height:24px;padding:0;background:var(--card-bg);border:1px solid var(--border);border-radius:6px;color:var(--text-light);cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;}
+.portal-reorder button:disabled{opacity:.3;cursor:not-allowed;}
+.portal-reorder button .ic{width:14px;height:14px;}
 .portal-empty{grid-column:1/-1;text-align:center;padding:30px 10px;color:var(--text-light);font-size:.84rem;}
+/* Langganan collapsible */
+.lg-item{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;background:var(--card-bg);overflow:hidden;}
+.lg-row{display:flex;align-items:center;gap:10px;padding:12px;cursor:pointer;min-height:60px;}
+.lg-row:hover{background:var(--input-bg);}
+.lg-ic{width:40px;height:40px;border-radius:10px;background:rgba(14,165,160,.1);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none;}
+.lg-ic .ic{width:20px;height:20px;}
+.lg-main{flex:1;min-width:0;}
+.lg-main-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.lg-name{font-size:.9rem;font-weight:700;}
+.lg-price{font-size:.76rem;color:var(--teal-dark);font-weight:700;}
+body.dark .lg-price{color:#5eead4;}
+.lg-sub{font-size:.72rem;color:var(--text-light);margin-top:2px;}
+.lg-chev{color:var(--text-light);transition:transform .2s;flex:none;}
+.lg-chev.on{transform:rotate(180deg);}
+.lg-chev .ic{width:18px;height:18px;}
+.lg-detail{padding:0 12px 12px;border-top:1px solid var(--border);display:none;background:var(--input-bg);}
+.lg-detail.on{display:block;}
+.lg-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:10px;}
+.lg-detail-item{font-size:.76rem;}
+.lg-detail-item b{display:block;color:var(--text-light);font-size:.66rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;font-weight:700;}
+.lg-detail-item span{color:var(--text);word-break:break-all;}
+.lg-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.lg-actions .btn-action{min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:1.5px solid var(--border);background:var(--card-bg);border-radius:10px;font-weight:700;font-size:.8rem;cursor:pointer;font-family:inherit;color:var(--text);text-decoration:none;}
+.lg-actions .btn-action:hover{border-color:var(--blue);color:var(--blue);}
+.lg-actions .btn-action.primary{background:var(--grad);color:#fff;border-color:transparent;}
+.lg-actions .btn-action.primary:hover{color:#fff;opacity:.9;}
+.lg-actions .btn-action.danger{color:#dc2626;}
+.lg-actions .btn-action.danger:hover{border-color:#dc2626;background:#fee2e2;}
+.lg-actions .btn-action .ic{width:16px;height:16px;}
+.lg-actions .btn-wa{color:#25d366;}
+.lg-actions .btn-wa:hover{border-color:#25d366;background:rgba(37,211,102,.1);}
+.lg-group-head{font-size:.72rem;font-weight:800;color:var(--teal-dark);letter-spacing:.5px;text-transform:uppercase;margin:16px 0 8px;padding:0 4px;}
+body.dark .lg-group-head{color:#5eead4;}
+.lg-group-head:first-child{margin-top:4px;}
+/* Proyek Jokian/Sendiri card */
+.pj-item{border:1px solid var(--border);border-radius:12px;margin-bottom:10px;padding:12px;background:var(--card-bg);}
+.pj-top{display:flex;gap:10px;align-items:flex-start;}
+.pj-ic{width:40px;height:40px;border-radius:10px;background:rgba(14,165,160,.1);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none;}
+.pj-ic .ic{width:20px;height:20px;}
+.pj-body{flex:1;min-width:0;}
+.pj-title{font-size:.9rem;font-weight:700;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.pj-url{font-size:.72rem;color:var(--text-light);margin-top:3px;word-break:break-all;}
+.pj-meta{font-size:.72rem;color:var(--text-light);margin-top:3px;}
+.pj-actions{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-top:12px;}
+.pj-actions .btn-action{min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:1.5px solid var(--border);background:var(--card-bg);border-radius:10px;font-weight:700;font-size:.8rem;cursor:pointer;font-family:inherit;color:var(--text);text-decoration:none;}
+.pj-actions .btn-action:hover{border-color:var(--blue);color:var(--blue);}
+.pj-actions .btn-action.primary{background:var(--grad);color:#fff;border-color:transparent;}
+.pj-actions .btn-action.primary:hover{color:#fff;opacity:.9;}
+.pj-actions .btn-action.danger{color:#dc2626;}
+.pj-actions .btn-action.danger:hover{border-color:#dc2626;background:#fee2e2;}
+.pj-actions .btn-action .ic{width:16px;height:16px;}
+.pj-expand{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:none;}
+.pj-expand.on{display:block;}
+.pj-expand-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pj-expand-item{font-size:.76rem;}
+.pj-expand-item b{display:block;color:var(--text-light);font-size:.66rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;font-weight:700;}
+.pj-expand-item span{color:var(--text);word-break:break-all;}
+.pj-expand-toggle{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--blue);font-size:.74rem;font-weight:700;margin-top:8px;padding:4px 0;cursor:pointer;font-family:inherit;}
+.pj-expand-toggle .ic{width:14px;height:14px;transition:transform .2s;}
+.pj-expand-toggle.on .ic{transform:rotate(180deg);}
 .bnav-btn .ic{width:22px;height:22px;}
 .bnav-btn.on{color:var(--blue);background:rgba(14,165,160,.08);}
 body.dark .bnav-btn.on{background:rgba(94,234,212,.1);}
@@ -242,6 +312,9 @@ main{padding-bottom:90px!important;}
 <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
 <symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
 <symbol id="i-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="i-school" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M18 5v16"/><path d="m4 6 7.106-3.79a2 2 0 0 1 1.788 0L20 6"/><path d="m6 11-3.52 2.147a1 1 0 0 0-.48.854V19a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a1 1 0 0 0-.48-.853L18 11"/><path d="M6 5v16"/><circle cx="12" cy="9" r="2"/></symbol>
+<symbol id="i-game" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></symbol>
+<symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/></symbol>
 </defs></svg>
 
 <div id="toast" role="status"></div>
@@ -307,8 +380,10 @@ main{padding-bottom:90px!important;}
     <div id="pane-portal" hidden>
       <div class="pane-header"><h2>Portal Admin</h2></div>
       <div class="card">
-        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-ext"/></svg> Buka admin proyek</div>
-        <p class="hint">Tap kartu untuk buka panel admin proyek di tab baru. Tambahkan URL admin via menu "Proyek" (edit tiap proyek, isi kolom "URL Admin").</p>
+        <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-ext"/></svg> Portal Admin</div>
+        <div class="toolbar">
+          <button class="btn btn-wide" onclick="openPortal()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah Portal</button>
+        </div>
         <div id="portalGrid" class="portal-grid"></div>
       </div>
     </div>
@@ -324,7 +399,7 @@ main{padding-bottom:90px!important;}
         <div class="card">
           <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-briefcase"/></svg> Proyek klien</div>
           <div class="toolbar">
-            <button class="btn" onclick="openJokian()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah proyek</button>
+            <button class="btn btn-wide" onclick="openJokian()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah proyek</button>
           </div>
           <div id="jokianList"></div>
         </div>
@@ -333,7 +408,7 @@ main{padding-bottom:90px!important;}
         <div class="card">
           <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg> Proyek pribadi</div>
           <div class="toolbar">
-            <button class="btn" onclick="openSendiri()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah proyek</button>
+            <button class="btn btn-wide" onclick="openSendiri()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah proyek</button>
           </div>
           <div id="sendiriList"></div>
         </div>
@@ -351,7 +426,7 @@ main{padding-bottom:90px!important;}
           <div class="stat"><b id="lgSegera">-</b><span>Segera bayar</span></div>
         </div>
         <div class="toolbar">
-          <button class="btn" onclick="openLangganan()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah</button>
+          <button class="btn btn-wide" onclick="openLangganan()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah</button>
         </div>
         <div id="langgananListEl"></div>
       </div>
@@ -568,7 +643,7 @@ async function boot(){
     show('notAdmin');return;
   }
   show('panel');
-  loadJokian();loadSendiri();loadLangganan();loadLinks();loadReviews();loadPromo();loadLisensi();
+  loadJokian();loadSendiri();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadLisensi();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -622,7 +697,7 @@ async function loadJokian(){
   const saved=(data&&data.value&&Array.isArray(data.value))?data.value:null;
   jokianData=saved||[...SEED_JOKIAN];
   if(!saved) await saveJokian();
-  renderJokian();updateDashCounts();renderPortal();
+  renderJokian();updateDashCounts();
 }
 async function saveJokian(){
   await sb.from('bgy_settings').upsert({key:'admin_proyek_jokian',value:jokianData,updated_at:new Date().toISOString()});
@@ -639,26 +714,67 @@ function toggleSandi(elId,val){
   const btn=el.nextElementSibling;
   if(btn)btn.innerHTML=use(hidden?'i-eye-off':'i-eye');
 }
+function renderProyekItem(p,kind){
+  const ic=kind==='jokian'?'i-briefcase':'i-folder';
+  const hasAdmin=p.admin_url&&/^https?:\/\//i.test(p.admin_url);
+  const url=p.url&&!/^https?:\/\//i.test(p.url)?'https://'+p.url:p.url;
+  const openBtn=hasAdmin
+    ? `<a class="btn-action primary" href="${esc(p.admin_url)}" target="_blank" rel="noopener">${use('i-ext')} Buka Admin</a>`
+    : url?`<a class="btn-action primary" href="${esc(url)}" target="_blank" rel="noopener">${use('i-ext')} Buka Web</a>`:`<div class="btn-action" style="opacity:.4;cursor:not-allowed;">Tanpa URL</div>`;
+  const pills=[];
+  if(p.langganan)pills.push(`<span class="pill teal">${esc(p.langganan)}</span>`);
+  if(p.keterangan)pills.push(`<span class="pill gray">${esc(p.keterangan)}</span>`);
+  const expandId='exp-'+kind+'-'+p.id;
+  const toggleId='tog-'+kind+'-'+p.id;
+  const details=[
+    p.user?{k:'User',v:esc(p.user)}:null,
+    p.hp?{k:'HP',v:esc(p.hp)}:null,
+    p.login?{k:'Login',v:esc(p.login)}:null,
+    p.sandi?{k:'Sandi',v:`<span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(p.sandi)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span>`}:null,
+    p.supabase?{k:'Supabase',v:esc(p.supabase)}:null,
+    p.supabase_pass?{k:'Sandi Supabase',v:`<span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(p.supabase_pass)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span>`}:null,
+    p.repo?{k:'Repo',v:esc(p.repo)}:null,
+    p.tanggal?{k:'Tanggal',v:esc(p.tanggal)}:null
+  ].filter(Boolean);
+  const openFn=kind==='jokian'?'openJokian':'openSendiri';
+  const delFn=kind==='jokian'?'deleteJokian':'deleteSendiri';
+  return `<div class="pj-item">
+    <div class="pj-top">
+      <div class="pj-ic">${use(ic)}</div>
+      <div class="pj-body">
+        <div class="pj-title">${esc(p.name)} ${pills.join(' ')}</div>
+        ${url?`<div class="pj-url">${esc(url.replace(/^https?:\/\//,''))}</div>`:''}
+        ${p.user||p.hp?`<div class="pj-meta">${[p.user,p.hp].filter(Boolean).map(esc).join(' · ')}</div>`:''}
+      </div>
+    </div>
+    <div class="pj-actions">
+      ${openBtn}
+      <button class="btn-action" onclick="${openFn}('${esc(p.id)}')">${use('i-pen')} Edit</button>
+      <button class="btn-action danger" onclick="${delFn}('${esc(p.id)}')">${use('i-trash')} Hapus</button>
+    </div>
+    ${details.length?`<button class="pj-expand-toggle" id="${toggleId}" onclick="togglePjExpand('${expandId}','${toggleId}')">${use('i-down')} Selengkapnya</button>
+    <div class="pj-expand" id="${expandId}">
+      <div class="pj-expand-grid">
+        ${details.map(d=>`<div class="pj-expand-item"><b>${d.k}</b><span>${d.v}</span></div>`).join('')}
+      </div>
+    </div>`:''}
+  </div>`;
+}
+function togglePjExpand(expandId,toggleId){
+  const e=document.getElementById(expandId);const t=document.getElementById(toggleId);
+  if(!e||!t)return;
+  const on=e.classList.toggle('on');t.classList.toggle('on',on);
+}
+function togglePjSandi(btn){
+  const span=btn.previousElementSibling;
+  const actual=span.getAttribute('data-sandi');
+  if(span.textContent==='••••••'){span.textContent=actual;btn.innerHTML=use('i-eye-off');}
+  else{span.textContent='••••••';btn.innerHTML=use('i-eye');}
+}
 function renderJokian(){
   const box=document.getElementById('jokianList');
-  if(!jokianData.length){box.innerHTML='<div class="empty">Belum ada proyek. Tekan "Tambah proyek".</div>';return;}
-  box.innerHTML=jokianData.map((p,i)=>`<div class="item">
-    <div class="li-ic">${use('i-briefcase')}</div>
-    <div class="item-body">
-      <div class="item-title">${esc(p.name)} ${p.langganan?'<span class="pill teal">'+esc(p.langganan)+'/thn</span>':''} ${p.keterangan?'<span class="pill gray">'+esc(p.keterangan)+'</span>':''}</div>
-      <div class="item-sub">${p.url?esc(p.url):''}</div>
-      ${p.user?'<div class="item-sub">'+esc(p.user)+(p.hp?' · '+esc(p.hp):'')+'</div>':''}
-      ${p.login?'<div class="item-sub">Login: '+esc(p.login)+' · Sandi: '+sandiHtml(p.sandi,'j'+i)+'</div>':''}
-      ${p.supabase?'<div class="item-sub">Supabase: '+esc(p.supabase)+(p.supabase_pass?' · '+sandiHtml(p.supabase_pass,'js'+i):'')+'</div>':''}
-      ${p.repo?'<div class="item-sub">Repo: '+esc(p.repo)+'</div>':''}
-      ${p.tanggal?'<div class="item-sub">Perpanjang: '+esc(p.tanggal)+'</div>':''}
-      <div class="item-actions">
-        ${p.url?'<a class="btn" href="'+(p.url.startsWith('http')?esc(p.url):'https://'+esc(p.url))+'" target="_blank" rel="noopener">'+use('i-ext')+' Buka</a>':''}
-        ${p.admin_url?'<a class="btn" href="'+esc(p.admin_url)+'" target="_blank" rel="noopener">'+use('i-ext')+' Admin</a>':''}
-        <button class="btn" onclick="openJokian('${esc(p.id)}')">${use('i-pen')}<span class="bl"> Edit</span></button>
-        <button class="btn danger" onclick="deleteJokian('${esc(p.id)}')">${use('i-trash')}<span class="bl"> Hapus</span></button>
-      </div>
-    </div></div>`).join('');
+  if(!jokianData.length){box.innerHTML='<div class="empty">Belum ada proyek. Tap <b>+ Tambah proyek</b>.</div>';return;}
+  box.innerHTML=jokianData.map(p=>renderProyekItem(p,'jokian')).join('');
 }
 function openJokian(id){
   const p=id?jokianData.find(x=>x.id===id):{name:'',url:'',admin_url:'',hp:'',user:'',login:'',sandi:'',supabase:'',supabase_pass:'',repo:'',langganan:'',tanggal:'',keterangan:''};
@@ -728,28 +844,15 @@ async function loadSendiri(){
   const saved=(data&&data.value&&Array.isArray(data.value))?data.value:null;
   sendiriData=saved||[...SEED_SENDIRI];
   if(!saved) await saveSendiri();
-  renderSendiri();updateDashCounts();renderPortal();
+  renderSendiri();updateDashCounts();
 }
 async function saveSendiri(){
   await sb.from('bgy_settings').upsert({key:'admin_proyek_sendiri',value:sendiriData,updated_at:new Date().toISOString()});
 }
 function renderSendiri(){
   const box=document.getElementById('sendiriList');
-  if(!sendiriData.length){box.innerHTML='<div class="empty">Belum ada proyek. Tekan "Tambah proyek".</div>';return;}
-  box.innerHTML=sendiriData.map((p,i)=>`<div class="item">
-    <div class="li-ic">${use('i-folder')}</div>
-    <div class="item-body">
-      <div class="item-title">${esc(p.name)} ${p.keterangan?'<span class="pill gray">'+esc(p.keterangan)+'</span>':''}</div>
-      ${p.url?'<div class="item-sub">'+esc(p.url)+'</div>':''}
-      ${p.login?'<div class="item-sub">Login: '+esc(p.login)+' · Sandi: '+sandiHtml(p.sandi,'s'+i)+'</div>':''}
-      ${p.supabase?'<div class="item-sub">Supabase: '+esc(p.supabase)+'</div>':''}
-      <div class="item-actions">
-        ${p.url?'<a class="btn" href="'+(p.url.startsWith('http')?esc(p.url):'https://'+esc(p.url))+'" target="_blank" rel="noopener">'+use('i-ext')+' Buka</a>':''}
-        ${p.admin_url?'<a class="btn" href="'+esc(p.admin_url)+'" target="_blank" rel="noopener">'+use('i-ext')+' Admin</a>':''}
-        <button class="btn" onclick="openSendiri('${esc(p.id)}')">${use('i-pen')}<span class="bl"> Edit</span></button>
-        <button class="btn danger" onclick="deleteSendiri('${esc(p.id)}')">${use('i-trash')}<span class="bl"> Hapus</span></button>
-      </div>
-    </div></div>`).join('');
+  if(!sendiriData.length){box.innerHTML='<div class="empty">Belum ada proyek. Tap <b>+ Tambah proyek</b>.</div>';return;}
+  box.innerHTML=sendiriData.map(p=>renderProyekItem(p,'sendiri')).join('');
 }
 function openSendiri(id){
   const p=id?sendiriData.find(x=>x.id===id):{name:'',url:'',admin_url:'',login:'',sandi:'',supabase:'',keterangan:''};
@@ -863,35 +966,57 @@ function renderLangganan(){
   const box=document.getElementById('langgananListEl');
   const bulanan=langgananData.reduce((a,l)=>{const h=Number(l.harga||0);return a+(l.periode==='tahunan'?h/12:l.periode==='semester'?h/6:l.periode==='triwulan'?h/3:l.periode==='lifetime'?0:h);},0);
   document.getElementById('lgTotal').textContent=langgananData.length;
-  document.getElementById('lgBulanan').textContent=fmtRp(Math.round(bulanan));
+  document.getElementById('lgBulanan').textContent=fmtRp(Math.round(bulanan))||'Rp 0';
   document.getElementById('lgSegera').textContent=countDueSoon();
-  if(!langgananData.length){box.innerHTML='<div class="empty">Belum ada langganan. Tekan "Tambah".</div>';return;}
+  if(!langgananData.length){box.innerHTML='<div class="empty">Belum ada langganan. Tap <b>+ Tambah</b> untuk menambahkan.</div>';return;}
   const groups={};
-  langgananData.forEach(l=>{const k=l.jenis||'Lainnya';if(!groups[k])groups[k]=[];groups[k].push(l);});
+  langgananData.forEach(l=>{const k=l.jenis||'Lainnya';(groups[k]=groups[k]||[]).push(l);});
   let html='';
   for(const [jenis,items] of Object.entries(groups)){
-    html+=`<div class="langganan-group"><div class="langganan-group-title">${esc(jenis)}</div>`;
-    html+=items.map(l=>{
-      const nd=getNextDate(l);
-      const waUrl=l.hp?`https://wa.me/${encodeURIComponent(normalizeHp(l.hp))}?text=${encodeURIComponent('Halo '+l.customer+', mengingatkan langganan '+l.jenis+(nd?' jatuh tempo '+tgl(nd):''))}`:'';
-      return `<div class="item">
-      <div class="li-ic">${use('i-wallet')}</div>
-      <div class="item-body">
-        <div class="item-title">${esc(l.customer)} <span class="pill teal">${fmtRp(l.harga)}</span> <span class="pill gray">${esc(l.periode||'—')}</span> ${duePill(nd)}</div>
-        ${l.hp?'<div class="item-sub">HP: '+esc(l.hp)+'</div>':''}
-        ${nd?'<div class="item-sub">Berikutnya: '+tgl(nd)+'</div>':''}
-        ${l.keterangan?'<div class="item-sub">'+esc(l.keterangan)+'</div>':''}
-        <div class="item-actions">
-          ${waUrl?'<a class="btn" href="'+waUrl+'" target="_blank" rel="noopener">'+use('i-smartphone')+'<span class="bl"> WA</span></a>':''}
-          ${l.periode&&l.periode!=='lifetime'?'<button class="btn" onclick="perpanjangLangganan(\''+esc(l.id)+'\')" title="Perpanjang 1 periode">'+use('i-reset')+'<span class="bl"> Perpanjang</span></button>':''}
-          <button class="btn" onclick="openLangganan('${esc(l.id)}')">${use('i-pen')}<span class="bl"> Edit</span></button>
-          <button class="btn danger" onclick="deleteLangganan('${esc(l.id)}')">${use('i-trash')}<span class="bl"> Hapus</span></button>
+    html+=`<div class="lg-group-head">${esc(jenis)}</div>`;
+    items.forEach(l=>{
+      const next=getNextDate(l);
+      const hp=normalizeHp(l.hp);
+      const isLifetime=l.periode==='lifetime';
+      html+=`<div class="lg-item">
+        <div class="lg-row" onclick="toggleLgDetail('${esc(l.id)}')">
+          <div class="lg-ic">${use('i-wallet')}</div>
+          <div class="lg-main">
+            <div class="lg-main-top">
+              <span class="lg-name">${esc(l.customer)}</span>
+              <span class="lg-price">${fmtRp(l.harga)}</span>
+              ${duePill(next)}
+            </div>
+            <div class="lg-sub">${isLifetime?'Lifetime':next?'Jatuh tempo: '+tgl(next):'Belum ada tanggal'}</div>
+          </div>
+          <div class="lg-chev" id="chev-${esc(l.id)}">${use('i-down')}</div>
         </div>
-      </div></div>`;
-    }).join('');
-    html+='</div>';
+        <div class="lg-detail" id="det-${esc(l.id)}">
+          <div class="lg-detail-grid">
+            ${l.hp?`<div class="lg-detail-item"><b>HP</b><span>${esc(l.hp)}</span></div>`:''}
+            ${l.periode?`<div class="lg-detail-item"><b>Periode</b><span>${esc(l.periode)}</span></div>`:''}
+            ${l.tanggal_mulai?`<div class="lg-detail-item"><b>Mulai</b><span>${tgl(l.tanggal_mulai)}</span></div>`:''}
+            ${next?`<div class="lg-detail-item"><b>Berikutnya</b><span>${tgl(next)}</span></div>`:''}
+            ${l.keterangan?`<div class="lg-detail-item" style="grid-column:1/-1"><b>Catatan</b><span>${esc(l.keterangan)}</span></div>`:''}
+          </div>
+          <div class="lg-actions">
+            ${!isLifetime?`<button class="btn-action primary" onclick="perpanjangLangganan('${esc(l.id)}')">${use('i-reset')} Perpanjang</button>`:'<div></div>'}
+            ${hp?`<a class="btn-action btn-wa" href="https://wa.me/${encodeURIComponent(hp)}?text=${encodeURIComponent('Halo '+l.customer+', mengingatkan langganan '+l.jenis+(next?' jatuh tempo '+tgl(next):''))}" target="_blank" rel="noopener">${use('i-smartphone')} WhatsApp</a>`:'<div></div>'}
+            <button class="btn-action" onclick="openLangganan('${esc(l.id)}')">${use('i-pen')} Edit</button>
+            <button class="btn-action danger" onclick="deleteLangganan('${esc(l.id)}')">${use('i-trash')} Hapus</button>
+          </div>
+        </div>
+      </div>`;
+    });
   }
   box.innerHTML=html;
+}
+function toggleLgDetail(id){
+  const det=document.getElementById('det-'+id);
+  const chev=document.getElementById('chev-'+id);
+  if(!det||!chev)return;
+  const on=det.classList.toggle('on');
+  chev.classList.toggle('on',on);
 }
 async function perpanjangLangganan(id){
   const l=langgananData.find(x=>x.id===id);
@@ -950,44 +1075,114 @@ async function deleteLangganan(id){
   await saveLangganan();renderLangganan();updateDashCounts();toast('Langganan dihapus.');
 }
 
+/* ─── Portal Admin (sumber data sendiri) ─── */
+const SEED_PORTAL=[
+  {id:'pt1',name:'BGY Admin',url:'/admin/',icon:'i-layout-dashboard',sort:1},
+  {id:'pt2',name:'Kreacy',url:'https://kreacy.my.id/admin',icon:'i-briefcase',sort:2},
+  {id:'pt3',name:'WKelas',url:'https://wkelas.web.id/admin',icon:'i-school',sort:3},
+  {id:'pt4',name:'BMedia',url:'https://bmedia.bantuguruyuk.web.id/admin',icon:'i-game',sort:4},
+  {id:'pt5',name:'BGY Store',url:'https://bgy-store.vercel.app/admin',icon:'i-bag',sort:5}
+];
+const PORTAL_ICONS=['i-globe','i-layout-dashboard','i-briefcase','i-folder','i-school','i-game','i-bag','i-wallet','i-link','i-file'];
+let portalData=[];
+async function loadPortal(){
+  const {data}=await sb.from('bgy_settings').select('value').eq('key','admin_portal').maybeSingle();
+  const saved=(data&&data.value&&Array.isArray(data.value))?data.value:null;
+  portalData=saved||[...SEED_PORTAL];
+  portalData.sort((a,b)=>(a.sort||0)-(b.sort||0));
+  if(!saved) await savePortal();
+  renderPortal();renderAdminShortcuts();
+}
+async function savePortal(){
+  await sb.from('bgy_settings').upsert({key:'admin_portal',value:portalData,updated_at:new Date().toISOString()});
+}
+function renderPortal(){
+  const grid=document.getElementById('portalGrid');
+  if(!grid)return;
+  if(!portalData.length){
+    grid.innerHTML='<div class="portal-empty">Belum ada portal.<br>Tap <b>+ Tambah Portal</b> di atas.</div>';
+    return;
+  }
+  grid.innerHTML=portalData.map((p,i)=>{
+    const host=(()=>{try{if(p.url.startsWith('/'))return 'panel ini';return new URL(p.url).hostname.replace(/^www\./,'');}catch(e){return esc(p.url);}})();
+    const isSelf=p.url==='/admin/'||p.url==='/admin';
+    const openBtn=isSelf
+      ? `<button class="portal-open" onclick="showTab('dash')">${use('i-ext')} Panel ini</button>`
+      : `<a class="portal-open" href="${esc(p.url)}" target="_blank" rel="noopener">${use('i-ext')} Buka</a>`;
+    return `<div class="portal-card">
+      <div class="portal-reorder">
+        <button onclick="movePortal('${esc(p.id)}',-1)" ${i===0?'disabled':''} aria-label="Naik">${use('i-up')}</button>
+        <button onclick="movePortal('${esc(p.id)}',1)" ${i===portalData.length-1?'disabled':''} aria-label="Turun">${use('i-down')}</button>
+      </div>
+      <div class="portal-actions">
+        <button onclick="openPortal('${esc(p.id)}')" aria-label="Edit">${use('i-pen')}</button>
+        <button onclick="deletePortal('${esc(p.id)}')" aria-label="Hapus" style="color:#dc2626;">${use('i-trash')}</button>
+      </div>
+      <div class="pc-ic">${use(p.icon||'i-globe')}</div>
+      <b>${esc(p.name)}</b>
+      <small>${esc(host)}</small>
+      ${openBtn}
+    </div>`;
+  }).join('');
+}
+async function movePortal(id,dir){
+  const i=portalData.findIndex(x=>x.id===id);
+  const j=i+dir;
+  if(i<0||j<0||j>=portalData.length)return;
+  [portalData[i],portalData[j]]=[portalData[j],portalData[i]];
+  portalData.forEach((p,k)=>p.sort=(k+1)*10);
+  await savePortal();renderPortal();renderAdminShortcuts();
+}
+function openPortal(id){
+  const p=id?portalData.find(x=>x.id===id):{name:'',url:'https://',icon:'i-globe'};
+  if(!p)return;
+  const curIcon=p.icon||'i-globe';
+  document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit Portal':'Tambah Portal'}</h3>
+    <div class="fg"><label for="ptName">Nama *</label><input id="ptName" maxlength="30" value="${esc(p.name||'')}" placeholder="mis. WKelas Admin"/></div>
+    <div class="fg"><label for="ptUrl">URL *</label><input id="ptUrl" maxlength="300" value="${esc(p.url||'https://')}" inputmode="url" placeholder="https://wkelas.web.id/admin"/></div>
+    <div class="fg"><label>Ikon</label><div class="icon-pick" id="ptIconPick">${PORTAL_ICONS.map(k=>`<button type="button" data-k="${k}" class="${k===curIcon?'on':''}" aria-label="${k}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#${k}"/></svg></button>`).join('')}</div></div>
+    <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn btn-wide" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="savePortalItem('${esc(id||'')}')">Simpan</button></div>`;
+  document.getElementById('ptIconPick').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    document.querySelectorAll('#ptIconPick button').forEach(x=>x.classList.toggle('on',x===b));
+  });
+  document.getElementById('modal').hidden=false;
+}
+async function savePortalItem(id){
+  const name=document.getElementById('ptName').value.trim();
+  const url=document.getElementById('ptUrl').value.trim();
+  if(!name)return toast('Nama wajib diisi.');
+  if(!url||url==='https://')return toast('URL wajib diisi.');
+  const icon=document.querySelector('#ptIconPick button.on')?.dataset.k||'i-globe';
+  if(id){
+    const idx=portalData.findIndex(x=>x.id===id);
+    if(idx>=0)portalData[idx]={...portalData[idx],name,url,icon};
+  }else{
+    const maxSort=portalData.length?Math.max(...portalData.map(p=>p.sort||0)):0;
+    portalData.push({id:'pt'+Date.now().toString(36),name,url,icon,sort:maxSort+10});
+  }
+  await savePortal();closeModal();renderPortal();renderAdminShortcuts();toast('Portal tersimpan.');
+}
+async function deletePortal(id){
+  const p=portalData.find(x=>x.id===id);
+  if(!p||!confirm('Hapus portal "'+p.name+'"?'))return;
+  portalData=portalData.filter(x=>x.id!==id);
+  await savePortal();renderPortal();renderAdminShortcuts();toast('Portal dihapus.');
+}
+
 /* ─── Dashboard counts ─── */
 function renderAdminShortcuts(){
-  const jk=(typeof jokianData!=='undefined'?jokianData:[]),sn=(typeof sendiriData!=='undefined'?sendiriData:[]);
-  const all=[...jk.map(p=>({...p,src:'jokian'})),...sn.map(p=>({...p,src:'sendiri'}))];
-  const withAdmin=all.filter(p=>p.admin_url&&/^https?:\/\//i.test(p.admin_url));
+  const list=(portalData||[]).filter(p=>p.url&&!(p.url==='/admin/'||p.url==='/admin')&&/^https?:\/\//i.test(p.url));
   const sec=document.getElementById('adminShortcuts');
   const row=document.getElementById('shortcutRow');
   if(!sec||!row)return;
-  if(!withAdmin.length){sec.hidden=true;return;}
+  if(!list.length){sec.hidden=true;return;}
   sec.hidden=false;
-  row.innerHTML=withAdmin.map(p=>{
+  row.innerHTML=list.map(p=>{
     const label=esc((p.name||'').slice(0,14));
-    return `<a class="shortcut-item" href="${esc(p.admin_url)}" target="_blank" rel="noopener" title="${esc(p.name)}">
-      <div class="si-ic">${use(p.src==='jokian'?'i-briefcase':'i-folder')}</div>
+    return `<a class="shortcut-item" href="${esc(p.url)}" target="_blank" rel="noopener" title="${esc(p.name)}">
+      <div class="si-ic">${use(p.icon||'i-globe')}</div>
       <span class="si-label">${label}</span>
-    </a>`;
-  }).join('');
-}
-function renderPortal(){
-  const jk=(typeof jokianData!=='undefined'?jokianData:[]),sn=(typeof sendiriData!=='undefined'?sendiriData:[]);
-  const all=[...jk.map(p=>({...p,src:'jokian'})),...sn.map(p=>({...p,src:'sendiri'}))];
-  const withAdmin=all.filter(p=>p.admin_url&&/^https?:\/\//i.test(p.admin_url));
-  const grid=document.getElementById('portalGrid');
-  if(!grid)return;
-  const bgyCard=`<a class="portal-card" href="/admin/" onclick="event.preventDefault();showTab('dash')">
-    <div class="pc-ic">${use('i-layout-dashboard')}</div>
-    <b>BGY Admin</b><small>Panel ini</small>
-  </a>`;
-  if(!withAdmin.length){
-    grid.innerHTML=bgyCard+`<div class="portal-empty">Belum ada portal lain.<br>Buka tab <b>Proyek</b> → edit proyek → isi kolom <b>URL Admin</b> untuk menambahkan.</div>`;
-    return;
-  }
-  grid.innerHTML=bgyCard+withAdmin.map(p=>{
-    const host=(()=>{try{return new URL(p.admin_url).hostname.replace(/^www\./,'');}catch(e){return '';}})();
-    return `<a class="portal-card ext" href="${esc(p.admin_url)}" target="_blank" rel="noopener">
-      <div class="pc-ic">${use(p.src==='jokian'?'i-briefcase':'i-folder')}</div>
-      <b>${esc(p.name)}</b>
-      <small>${esc(host)}</small>
     </a>`;
   }).join('');
 }
@@ -1005,7 +1200,6 @@ function updateDashCounts(){
     if(due7.length){alert.hidden=false;alert.innerHTML=`<div class="alert-due" onclick="showTab('langganan')"><svg class="ic" aria-hidden="true"><use href="#i-wallet"/></svg><div><b>${due7.length} langganan jatuh tempo</b><small>Dalam 7 hari ke depan — ketuk untuk lihat</small></div></div>`;}
     else alert.hidden=true;
   }
-  renderAdminShortcuts();
 }
 
 /* ─── Dokumen Resmi ─── */
