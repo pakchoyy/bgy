@@ -808,59 +808,77 @@ document.getElementById('lisensiForm').addEventListener('submit',async e=>{
 });
 
 /* ─── Dashboard / Proyek ─── */
-const DEFAULT_PROJECTS=[
-  {id:'_bgy',name:'BGY Admin',url:'/admin/',desc:'Panel admin utama',icon:'i-layout-dashboard',builtin:true},
-  {id:'_bmedia',name:'BMedia Admin',url:'https://bmedia.bantuguruyuk.web.id/admin',desc:'Admin BMedia',icon:'i-globe',builtin:true},
-  {id:'_wkelas',name:'WKelas Admin',url:'https://wkelas.web.id/admin',desc:'Admin WKelas',icon:'i-globe',builtin:true}
+const SEED_PROJECTS=[
+  {id:'_bgy',name:'BGY Admin',url:'/admin/',desc:'Panel admin utama',icon:'i-layout-dashboard'},
+  {id:'_bmedia',name:'BMedia Admin',url:'https://bmedia.bantuguruyuk.web.id/admin',desc:'Admin BMedia',icon:'i-globe'},
+  {id:'_wkelas',name:'WKelas Admin',url:'https://wkelas.web.id/admin',desc:'Admin WKelas',icon:'i-globe'}
 ];
 let projects=[];
 async function loadProjects(){
   const {data}=await sb.from('bgy_settings').select('value').eq('key','admin_projects').maybeSingle();
-  const custom=(data&&data.value&&Array.isArray(data.value))?data.value:[];
-  projects=[...DEFAULT_PROJECTS,...custom.filter(p=>p&&p.id&&!p.id.startsWith('_'))];
+  const saved=(data&&data.value&&Array.isArray(data.value))?data.value:null;
+  projects=saved||[...SEED_PROJECTS];
+  if(!saved) await saveProjects();
   renderProjects();
 }
 async function saveProjects(){
-  const custom=projects.filter(p=>!p.builtin);
-  await sb.from('bgy_settings').upsert({key:'admin_projects',value:custom,updated_at:new Date().toISOString()});
+  await sb.from('bgy_settings').upsert({key:'admin_projects',value:projects,updated_at:new Date().toISOString()});
 }
 function renderProjects(){
   const grid=document.getElementById('projGrid');
   grid.innerHTML=projects.map(p=>{
-    const isSelf=p.id==='_bgy';
+    const isSelf=(p.url==='/admin/'||p.url==='/admin');
     const href=isSelf?'javascript:void(0)':esc(p.url);
     const target=isSelf?'':'target="_blank" rel="noopener"';
     const click=isSelf?'onclick="toast(\'Kamu sudah di halaman ini.\')"':'';
     return `<a class="proj-card" href="${href}" ${target} ${click}>
       <div class="proj-ic ${isSelf?'bgy':'ext'}"><svg class="ic" aria-hidden="true"><use href="#${esc(p.icon||'i-globe')}"/></svg></div>
       <div class="proj-body"><b>${esc(p.name)}</b><small>${esc(p.desc||p.url)}</small></div>
-      ${p.builtin?'':`<div class="proj-actions">
+      <div class="proj-actions">
         <button class="btn icon" onclick="event.preventDefault();openProj('${esc(p.id)}')" aria-label="Edit">${use('i-pen')}</button>
         <button class="btn icon danger" onclick="event.preventDefault();deleteProj('${esc(p.id)}')" aria-label="Hapus">${use('i-trash')}</button>
-      </div>`}
+      </div>
     </a>`;
   }).join('')+`<button class="add-proj" onclick="openProj()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah proyek</button>`;
 }
 function openProj(id){
-  const p=id?projects.find(x=>x.id===id):{name:'',url:'https://',desc:''};
+  const p=id?projects.find(x=>x.id===id):{name:'',url:'https://',desc:'',hp:'',user:'',login:'',sandi:'',supabase:'',repo:'',langganan:'',tgl_langganan:'',keterangan:''};
+  if(!p)return;
   document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit proyek':'Tambah proyek'}</h3>
-    <div class="fg"><label for="pjName">Nama</label><input id="pjName" maxlength="60" value="${esc(p.name)}" placeholder="mis. Admin Toko Saya"/></div>
-    <div class="fg"><label for="pjUrl">URL admin</label><input id="pjUrl" maxlength="500" value="${esc(p.url)}" inputmode="url"/></div>
+    <div class="fg"><label for="pjName">Nama proyek *</label><input id="pjName" maxlength="60" value="${esc(p.name)}" placeholder="mis. Admin Toko Saya"/></div>
+    <div class="fg"><label for="pjUrl">URL</label><input id="pjUrl" maxlength="500" value="${esc(p.url)}" inputmode="url"/></div>
     <div class="fg"><label for="pjDesc">Keterangan singkat</label><input id="pjDesc" maxlength="100" value="${esc(p.desc||'')}" placeholder="mis. Panel langganan premium"/></div>
+    <div class="row2">
+      <div class="fg"><label for="pjHp">No HP user</label><input id="pjHp" maxlength="20" value="${esc(p.hp||'')}" inputmode="tel"/></div>
+      <div class="fg"><label for="pjUser">Nama user/customer</label><input id="pjUser" maxlength="60" value="${esc(p.user||'')}"/></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label for="pjLogin">Admin login</label><input id="pjLogin" maxlength="100" value="${esc(p.login||'')}" placeholder="email@contoh.com"/></div>
+      <div class="fg"><label for="pjSandi">Sandi</label><input id="pjSandi" maxlength="60" value="${esc(p.sandi||'')}"/></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label for="pjSupabase">Akun Supabase</label><input id="pjSupabase" maxlength="100" value="${esc(p.supabase||'')}"/></div>
+      <div class="fg"><label for="pjRepo">Repo GitHub</label><input id="pjRepo" maxlength="100" value="${esc(p.repo||'')}"/></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label for="pjLangganan">Langganan (harga/thn)</label><input id="pjLangganan" maxlength="30" value="${esc(p.langganan||'')}" placeholder="mis. 150rb"/></div>
+      <div class="fg"><label for="pjTgl">Tanggal</label><input id="pjTgl" maxlength="30" value="${esc(p.tgl_langganan||'')}" placeholder="mis. 6 Juni"/></div>
+    </div>
+    <div class="fg"><label for="pjKet">Keterangan</label><input id="pjKet" maxlength="200" value="${esc(p.keterangan||'')}"/></div>
     <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveProj('${esc(id||'')}')">Simpan</button></div>`;
   document.getElementById('modal').hidden=false;
 }
 async function saveProj(id){
-  const name=document.getElementById('pjName').value.trim();
-  const url=document.getElementById('pjUrl').value.trim();
-  const desc=document.getElementById('pjDesc').value.trim();
+  const val=k=>document.getElementById(k).value.trim();
+  const name=val('pjName');
   if(!name)return toast('Nama wajib diisi.');
-  if(!/^https?:\/\/[^\s.]+\.[^\s]+/i.test(url))return toast('URL harus diawali https://');
+  const row={name,url:val('pjUrl'),desc:val('pjDesc'),hp:val('pjHp'),user:val('pjUser'),login:val('pjLogin'),sandi:val('pjSandi'),supabase:val('pjSupabase'),repo:val('pjRepo'),langganan:val('pjLangganan'),tgl_langganan:val('pjTgl'),keterangan:val('pjKet'),icon:'i-globe'};
   if(id){
-    const p=projects.find(x=>x.id===id);
-    if(p){p.name=name;p.url=url;p.desc=desc;}
+    const idx=projects.findIndex(x=>x.id===id);
+    if(idx>=0){row.id=id;row.icon=projects[idx].icon||'i-globe';projects[idx]=row;}
   }else{
-    projects.push({id:'p'+Date.now().toString(36),name,url,desc,icon:'i-globe'});
+    row.id='p'+Date.now().toString(36);
+    projects.push(row);
   }
   await saveProjects();closeModal();renderProjects();toast('Proyek tersimpan.');
 }
