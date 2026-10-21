@@ -161,6 +161,18 @@ body.dark .alert-due{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,
 .alert-due .ic{width:22px;height:22px;flex:none;}
 .alert-due b{display:block;font-size:.86rem;}
 .alert-due small{font-size:.72rem;opacity:.85;}
+.admin-shortcuts{margin-bottom:14px;}
+.shortcut-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;padding:0 2px;}
+.shortcut-head b{font-size:.86rem;}
+.shortcut-head small{font-size:.7rem;color:var(--text-light);}
+.shortcut-row{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin;}
+.shortcut-row::-webkit-scrollbar{height:4px;}
+.shortcut-row::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.shortcut-item{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 8px;min-width:72px;max-width:72px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;color:var(--text);text-decoration:none;font-size:.68rem;font-weight:700;text-align:center;line-height:1.2;cursor:pointer;}
+.shortcut-item:hover{border-color:var(--blue);color:var(--blue);}
+.shortcut-item .si-ic{width:34px;height:34px;border-radius:9px;background:rgba(14,165,160,.12);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none;}
+.shortcut-item .si-ic .ic{width:18px;height:18px;}
+.shortcut-item .si-label{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
 /* Segmented control */
 .segment{display:flex;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;margin-bottom:12px;}
 .segment button{flex:1;padding:8px;background:none;border:none;font-weight:700;font-size:.82rem;color:var(--text-light);border-radius:7px;cursor:pointer;font-family:inherit;}
@@ -268,6 +280,10 @@ main{padding-bottom:90px!important;}
         <div class="stat"><b id="dsProyek">-</b><span>Proyek</span></div>
         <div class="stat"><b id="dsLang">-</b><span>Langganan</span></div>
         <div class="stat"><b id="dsRevenue">-</b><span>/bulan</span></div>
+      </div>
+      <div id="adminShortcuts" hidden class="admin-shortcuts">
+        <div class="shortcut-head"><b>Admin Eksternal</b><small>Buka panel admin proyek</small></div>
+        <div class="shortcut-row" id="shortcutRow"></div>
       </div>
       <div id="dueAlert" hidden></div>
       <div class="quick-grid">
@@ -615,17 +631,19 @@ function renderJokian(){
       ${p.tanggal?'<div class="item-sub">Perpanjang: '+esc(p.tanggal)+'</div>':''}
       <div class="item-actions">
         ${p.url?'<a class="btn" href="'+(p.url.startsWith('http')?esc(p.url):'https://'+esc(p.url))+'" target="_blank" rel="noopener">'+use('i-ext')+' Buka</a>':''}
+        ${p.admin_url?'<a class="btn" href="'+esc(p.admin_url)+'" target="_blank" rel="noopener">'+use('i-ext')+' Admin</a>':''}
         <button class="btn" onclick="openJokian('${esc(p.id)}')">${use('i-pen')}<span class="bl"> Edit</span></button>
         <button class="btn danger" onclick="deleteJokian('${esc(p.id)}')">${use('i-trash')}<span class="bl"> Hapus</span></button>
       </div>
     </div></div>`).join('');
 }
 function openJokian(id){
-  const p=id?jokianData.find(x=>x.id===id):{name:'',url:'',hp:'',user:'',login:'',sandi:'',supabase:'',supabase_pass:'',repo:'',langganan:'',tanggal:'',keterangan:''};
+  const p=id?jokianData.find(x=>x.id===id):{name:'',url:'',admin_url:'',hp:'',user:'',login:'',sandi:'',supabase:'',supabase_pass:'',repo:'',langganan:'',tanggal:'',keterangan:''};
   if(!p)return;
   document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit Proyek Jokian':'Tambah Proyek Jokian'}</h3>
     <div class="fg"><label for="jName">Judul web *</label><input id="jName" maxlength="60" value="${esc(p.name)}"/></div>
     <div class="fg"><label for="jUrl">URL web</label><input id="jUrl" maxlength="500" value="${esc(p.url||'')}" inputmode="url"/></div>
+    <div class="fg"><label for="jAdminUrl">URL Admin (opsional)</label><input id="jAdminUrl" maxlength="500" value="${esc(p.admin_url||'')}" inputmode="url" placeholder="https://wkelas.web.id/admin"/></div>
     <div class="row2">
       <div class="fg"><label for="jHp">No HP user</label><input id="jHp" maxlength="20" value="${esc(p.hp||'')}" inputmode="tel"/></div>
       <div class="fg"><label for="jUser">User/customer</label><input id="jUser" maxlength="60" value="${esc(p.user||'')}"/></div>
@@ -653,7 +671,7 @@ async function saveJokianItem(id){
   const val=k=>document.getElementById(k).value.trim();
   const name=val('jName');
   if(!name)return toast('Judul wajib diisi.');
-  const row={name,url:val('jUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),langganan:val('jLangganan'),tanggal:val('jTanggal'),keterangan:val('jKet')};
+  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),langganan:val('jLangganan'),tanggal:val('jTanggal'),keterangan:val('jKet')};
   if(id){
     const idx=jokianData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;jokianData[idx]=row;}
@@ -674,10 +692,10 @@ async function deleteJokian(id){
 const SEED_SENDIRI=[
   {id:'s1',name:'Presensi Siswa',url:'presiswabantuguruyuk.web.id'},
   {id:'s2',name:'Bantu Guru Yuk Pro',url:'bantuguruyuk.web.id'},
-  {id:'s3',name:'BGY Store',url:'bgy-store.vercel.app'},
-  {id:'s4',name:'Wali Kelas',url:'wkelas.web.id'},
+  {id:'s3',name:'BGY Store',url:'bgy-store.vercel.app',admin_url:'https://bgy-store.vercel.app/admin'},
+  {id:'s4',name:'Wali Kelas',url:'wkelas.web.id',admin_url:'https://wkelas.web.id/admin'},
   {id:'s5',name:'Web Kelulusan SD',url:''},
-  {id:'s6',name:'Media Game',url:'bmedia.bantuguruyuk.web.id',keterangan:'neon db'},
+  {id:'s6',name:'Media Game',url:'bmedia.bantuguruyuk.web.id',keterangan:'neon db',admin_url:'https://bmedia.bantuguruyuk.web.id/admin'},
   {id:'s7',name:'Kas Kelas',url:'kaskelas-two.vercel.app',keterangan:'neon db'},
   {id:'s8',name:'SPMB Custom',url:'spmbz.web.id'}
 ];
@@ -704,17 +722,19 @@ function renderSendiri(){
       ${p.supabase?'<div class="item-sub">Supabase: '+esc(p.supabase)+'</div>':''}
       <div class="item-actions">
         ${p.url?'<a class="btn" href="'+(p.url.startsWith('http')?esc(p.url):'https://'+esc(p.url))+'" target="_blank" rel="noopener">'+use('i-ext')+' Buka</a>':''}
+        ${p.admin_url?'<a class="btn" href="'+esc(p.admin_url)+'" target="_blank" rel="noopener">'+use('i-ext')+' Admin</a>':''}
         <button class="btn" onclick="openSendiri('${esc(p.id)}')">${use('i-pen')}<span class="bl"> Edit</span></button>
         <button class="btn danger" onclick="deleteSendiri('${esc(p.id)}')">${use('i-trash')}<span class="bl"> Hapus</span></button>
       </div>
     </div></div>`).join('');
 }
 function openSendiri(id){
-  const p=id?sendiriData.find(x=>x.id===id):{name:'',url:'',login:'',sandi:'',supabase:'',keterangan:''};
+  const p=id?sendiriData.find(x=>x.id===id):{name:'',url:'',admin_url:'',login:'',sandi:'',supabase:'',keterangan:''};
   if(!p)return;
   document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit Proyek Sendiri':'Tambah Proyek Sendiri'}</h3>
     <div class="fg"><label for="sName">Judul web *</label><input id="sName" maxlength="60" value="${esc(p.name)}"/></div>
     <div class="fg"><label for="sUrl">URL web</label><input id="sUrl" maxlength="500" value="${esc(p.url||'')}" inputmode="url"/></div>
+    <div class="fg"><label for="sAdminUrl">URL Admin (opsional)</label><input id="sAdminUrl" maxlength="500" value="${esc(p.admin_url||'')}" inputmode="url" placeholder="https://wkelas.web.id/admin"/></div>
     <div class="row2">
       <div class="fg"><label for="sLogin">Admin login</label><input id="sLogin" maxlength="100" value="${esc(p.login||'')}"/></div>
       <div class="fg"><label for="sSandi">Sandi</label><input id="sSandi" maxlength="60" value="${esc(p.sandi||'')}"/></div>
@@ -728,7 +748,7 @@ async function saveSendiriItem(id){
   const val=k=>document.getElementById(k).value.trim();
   const name=val('sName');
   if(!name)return toast('Judul wajib diisi.');
-  const row={name,url:val('sUrl'),login:val('sLogin'),sandi:val('sSandi'),supabase:val('sSupabase'),keterangan:val('sKet')};
+  const row={name,url:val('sUrl'),admin_url:val('sAdminUrl'),login:val('sLogin'),sandi:val('sSandi'),supabase:val('sSupabase'),keterangan:val('sKet')};
   if(id){
     const idx=sendiriData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;sendiriData[idx]=row;}
@@ -747,13 +767,13 @@ async function deleteSendiri(id){
 
 /* ─── Langganan ─── */
 const SEED_LANGGANAN=[
-  {id:'l1',jenis:'Hosting media',customer:'Cs Bu Ainun',hp:'895391639683',keterangan:'Vercel',harga:120000,tanggal_berikutnya:'2026-10-14'},
-  {id:'l2',jenis:'Claude tim',customer:'Cl Maravela',hp:'87714047641',keterangan:'bulanan',harga:100000,tanggal_berikutnya:'2026-10-14'},
-  {id:'l3',jenis:'Claude tim',customer:'Cl Jeks',hp:'82117081871',keterangan:'bulanan',harga:100000,tanggal_berikutnya:'2026-10-14'},
-  {id:'l4',jenis:'Claude tim',customer:'Cl Nida',hp:'88218109176',keterangan:'bulanan',harga:100000,tanggal_berikutnya:'2026-10-14'},
-  {id:'l5',jenis:'Claude tim',customer:'Gr Muhammad Ba',hp:'89666081097',keterangan:'bulanan',harga:110000,tanggal_berikutnya:'2026-10-16'},
-  {id:'l6',jenis:'Claude tim',customer:'Cl Rudy Susanto',hp:'',keterangan:'bulanan',harga:100000,tanggal_berikutnya:'2026-10-16'},
-  {id:'l7',jenis:'Canva edu',customer:'Cv Ai Agent Torque',hp:'81399029643',keterangan:'tahunan',harga:350000,tanggal_berikutnya:'2026-10-18'}
+  {id:'l1',jenis:'Hosting media',customer:'Cs Bu Ainun',hp:'895391639683',keterangan:'Vercel',harga:120000,periode:'tahunan',tanggal_mulai:'2025-10-14',tanggal_berikutnya:'2026-10-14'},
+  {id:'l2',jenis:'Claude tim',customer:'Cl Maravela',hp:'87714047641',keterangan:'',harga:100000,periode:'bulanan',tanggal_mulai:'2026-09-14',tanggal_berikutnya:'2026-10-14'},
+  {id:'l3',jenis:'Claude tim',customer:'Cl Jeks',hp:'82117081871',keterangan:'',harga:100000,periode:'bulanan',tanggal_mulai:'2026-09-14',tanggal_berikutnya:'2026-10-14'},
+  {id:'l4',jenis:'Claude tim',customer:'Cl Nida',hp:'88218109176',keterangan:'',harga:100000,periode:'bulanan',tanggal_mulai:'2026-09-14',tanggal_berikutnya:'2026-10-14'},
+  {id:'l5',jenis:'Claude tim',customer:'Gr Muhammad Ba',hp:'89666081097',keterangan:'',harga:110000,periode:'bulanan',tanggal_mulai:'2026-09-16',tanggal_berikutnya:'2026-10-16'},
+  {id:'l6',jenis:'Claude tim',customer:'Cl Rudy Susanto',hp:'',keterangan:'',harga:100000,periode:'bulanan',tanggal_mulai:'2026-09-16',tanggal_berikutnya:'2026-10-16'},
+  {id:'l7',jenis:'Canva edu',customer:'Cv Ai Agent Torque',hp:'81399029643',keterangan:'',harga:350000,periode:'tahunan',tanggal_mulai:'2025-10-18',tanggal_berikutnya:'2026-10-18'}
 ];
 let langgananData=[];
 async function loadLangganan(){
@@ -765,6 +785,37 @@ async function loadLangganan(){
 }
 async function saveLangganan(){
   await sb.from('bgy_settings').upsert({key:'admin_langganan',value:langgananData,updated_at:new Date().toISOString()});
+}
+function addPeriod(iso,periode){
+  if(!iso)return '';
+  const d=new Date(iso+'T00:00:00');
+  if(isNaN(d))return iso;
+  switch(periode){
+    case 'bulanan': d.setMonth(d.getMonth()+1); break;
+    case 'triwulan': d.setMonth(d.getMonth()+3); break;
+    case 'semester': d.setMonth(d.getMonth()+6); break;
+    case 'tahunan': d.setFullYear(d.getFullYear()+1); break;
+    case 'lifetime': return '';
+    default: return iso;
+  }
+  return d.toISOString().slice(0,10);
+}
+function getNextDate(l){
+  if(l.tanggal_mulai&&l.periode&&l.periode!=='lifetime')return addPeriod(l.tanggal_mulai,l.periode);
+  return l.tanggal_berikutnya||'';
+}
+function normalizeHp(hp){
+  const d=String(hp||'').replace(/\D/g,'');
+  if(!d)return '';
+  if(d.startsWith('62'))return d;
+  if(d.startsWith('0'))return '62'+d.slice(1);
+  return '62'+d;
+}
+function updateNextPreview(){
+  const mulai=document.getElementById('lgMulai').value;
+  const periode=document.getElementById('lgPeriode').value;
+  const next=addPeriod(mulai,periode);
+  document.getElementById('lgNextPreview').textContent=periode==='lifetime'?'Lifetime (tidak diperpanjang)':(next?tgl(next):'—');
 }
 function duePill(dateStr){
   if(!dateStr)return '';
@@ -779,17 +830,17 @@ function duePill(dateStr){
 function countDueSoon(){
   const now=new Date();now.setHours(0,0,0,0);
   return langgananData.filter(l=>{
-    if(!l.tanggal_berikutnya)return false;
-    const due=new Date(l.tanggal_berikutnya+'T00:00:00');
+    const nd=getNextDate(l);
+    if(!nd)return false;
+    const due=new Date(nd+'T00:00:00');
     return Math.round((due-now)/86400000)<=7;
   }).length;
 }
 function renderLangganan(){
   const box=document.getElementById('langgananListEl');
-  const totalHarga=langgananData.reduce((a,l)=>a+(l.harga||0),0);
-  const bulanan=langgananData.filter(l=>l.keterangan==='bulanan').reduce((a,l)=>a+(l.harga||0),0);
+  const bulanan=langgananData.reduce((a,l)=>{const h=Number(l.harga||0);return a+(l.periode==='tahunan'?h/12:l.periode==='semester'?h/6:l.periode==='triwulan'?h/3:l.periode==='lifetime'?0:h);},0);
   document.getElementById('lgTotal').textContent=langgananData.length;
-  document.getElementById('lgBulanan').textContent=fmtRp(bulanan);
+  document.getElementById('lgBulanan').textContent=fmtRp(Math.round(bulanan));
   document.getElementById('lgSegera').textContent=countDueSoon();
   if(!langgananData.length){box.innerHTML='<div class="empty">Belum ada langganan. Tekan "Tambah".</div>';return;}
   const groups={};
@@ -797,43 +848,69 @@ function renderLangganan(){
   let html='';
   for(const [jenis,items] of Object.entries(groups)){
     html+=`<div class="langganan-group"><div class="langganan-group-title">${esc(jenis)}</div>`;
-    html+=items.map(l=>`<div class="item">
+    html+=items.map(l=>{
+      const nd=getNextDate(l);
+      const waUrl=l.hp?`https://wa.me/${encodeURIComponent(normalizeHp(l.hp))}?text=${encodeURIComponent('Halo '+l.customer+', mengingatkan langganan '+l.jenis+(nd?' jatuh tempo '+tgl(nd):''))}`:'';
+      return `<div class="item">
       <div class="li-ic">${use('i-wallet')}</div>
       <div class="item-body">
-        <div class="item-title">${esc(l.customer)} <span class="pill teal">${fmtRp(l.harga)}</span> ${l.keterangan?'<span class="pill gray">'+esc(l.keterangan)+'</span>':''} ${duePill(l.tanggal_berikutnya)}</div>
+        <div class="item-title">${esc(l.customer)} <span class="pill teal">${fmtRp(l.harga)}</span> <span class="pill gray">${esc(l.periode||'—')}</span> ${duePill(nd)}</div>
         ${l.hp?'<div class="item-sub">HP: '+esc(l.hp)+'</div>':''}
-        ${l.tanggal_berikutnya?'<div class="item-sub">Berikutnya: '+tgl(l.tanggal_berikutnya)+'</div>':''}
+        ${nd?'<div class="item-sub">Berikutnya: '+tgl(nd)+'</div>':''}
+        ${l.keterangan?'<div class="item-sub">'+esc(l.keterangan)+'</div>':''}
         <div class="item-actions">
+          ${waUrl?'<a class="btn" href="'+waUrl+'" target="_blank" rel="noopener">'+use('i-smartphone')+'<span class="bl"> WA</span></a>':''}
+          ${l.periode&&l.periode!=='lifetime'?'<button class="btn" onclick="perpanjangLangganan(\''+esc(l.id)+'\')" title="Perpanjang 1 periode">'+use('i-reset')+'<span class="bl"> Perpanjang</span></button>':''}
           <button class="btn" onclick="openLangganan('${esc(l.id)}')">${use('i-pen')}<span class="bl"> Edit</span></button>
           <button class="btn danger" onclick="deleteLangganan('${esc(l.id)}')">${use('i-trash')}<span class="bl"> Hapus</span></button>
         </div>
-      </div></div>`).join('');
+      </div></div>`;
+    }).join('');
     html+='</div>';
   }
   box.innerHTML=html;
 }
-function openLangganan(id){
-  const l=id?langgananData.find(x=>x.id===id):{jenis:'',customer:'',hp:'',keterangan:'bulanan',harga:'',tanggal_berikutnya:''};
+async function perpanjangLangganan(id){
+  const l=langgananData.find(x=>x.id===id);
   if(!l)return;
+  if(l.periode==='lifetime')return toast('Lifetime tidak perlu diperpanjang.');
+  const curNext=getNextDate(l);
+  if(!curNext)return toast('Isi tanggal mulai dulu.');
+  const nextAfter=addPeriod(curNext,l.periode);
+  if(!confirm('Perpanjang "'+l.customer+'" ('+l.jenis+')?\nTanggal mulai: '+tgl(curNext)+'\nTanggal berikutnya: '+(nextAfter?tgl(nextAfter):'—')))return;
+  l.tanggal_mulai=curNext;
+  l.tanggal_berikutnya=nextAfter;
+  await saveLangganan();renderLangganan();updateDashCounts();toast('Diperpanjang 1 periode.');
+}
+function openLangganan(id){
+  const today=new Date().toISOString().slice(0,10);
+  const l=id?langgananData.find(x=>x.id===id):{jenis:'',customer:'',hp:'',periode:'bulanan',harga:'',tanggal_mulai:today,keterangan:''};
+  if(!l)return;
+  const periode=l.periode||'bulanan';
+  const opt=(v,lbl)=>'<option value="'+v+'"'+(periode===v?' selected':'')+'>'+lbl+'</option>';
   document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit Langganan':'Tambah Langganan'}</h3>
-    <div class="fg"><label for="lgJenis">Jenis langganan *</label><input id="lgJenis" maxlength="60" value="${esc(l.jenis||'')}" placeholder="mis. Claude tim" list="lgJenisList"/><datalist id="lgJenisList"><option value="Claude tim"><option value="Hosting media"><option value="Canva edu"><option value="Domain"><option value="Lainnya"></datalist></div>
+    <div class="fg"><label for="lgJenis">Jenis langganan *</label><input id="lgJenis" maxlength="60" value="${esc(l.jenis||'')}" placeholder="mis. Claude tim, Hosting, Canva edu" list="lgJenisList"/><datalist id="lgJenisList"><option value="Claude tim"><option value="Hosting media"><option value="Canva edu"><option value="Domain"><option value="Lainnya"></datalist></div>
     <div class="fg"><label for="lgCust">Customer *</label><input id="lgCust" maxlength="60" value="${esc(l.customer||'')}"/></div>
     <div class="row2">
       <div class="fg"><label for="lgHp">No HP</label><input id="lgHp" maxlength="20" value="${esc(l.hp||'')}" inputmode="tel"/></div>
-      <div class="fg"><label for="lgKet">Keterangan</label><input id="lgKet" maxlength="60" value="${esc(l.keterangan||'')}" list="lgKetList" placeholder="bulanan/tahunan"/><datalist id="lgKetList"><option value="bulanan"><option value="tahunan"><option value="Vercel"></datalist></div>
+      <div class="fg"><label for="lgHarga">Harga (Rp)</label><input id="lgHarga" type="number" min="0" value="${l.harga||''}"/></div>
     </div>
     <div class="row2">
-      <div class="fg"><label for="lgHarga">Harga (Rp)</label><input id="lgHarga" type="number" min="0" value="${l.harga||''}"/></div>
-      <div class="fg"><label for="lgTgl">Tanggal berikutnya</label><input id="lgTgl" type="date" value="${esc(l.tanggal_berikutnya||'')}"/></div>
+      <div class="fg"><label for="lgPeriode">Periode</label><select id="lgPeriode" onchange="updateNextPreview()">${opt('bulanan','Bulanan (+1 bulan)')}${opt('triwulan','Triwulan (+3 bulan)')}${opt('semester','Semester (+6 bulan)')}${opt('tahunan','Tahunan (+1 tahun)')}${opt('lifetime','Lifetime (tidak diperpanjang)')}</select></div>
+      <div class="fg"><label for="lgMulai">Tanggal mulai periode</label><input id="lgMulai" type="date" value="${esc(l.tanggal_mulai||'')}" onchange="updateNextPreview()"/></div>
     </div>
+    <div class="fg"><label>Tanggal berikutnya (otomatis)</label><div style="padding:9px 10px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;font-size:.86rem;color:var(--text-light)" id="lgNextPreview">—</div></div>
+    <div class="fg"><label for="lgKet">Catatan (opsional)</label><input id="lgKet" maxlength="80" value="${esc(l.keterangan||'')}" placeholder="mis. Dibayar via BRI, Vercel, dll"/></div>
     <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveLanggananItem('${esc(id||'')}')">Simpan</button></div>`;
   document.getElementById('modal').hidden=false;
+  updateNextPreview();
 }
 async function saveLanggananItem(id){
   const val=k=>document.getElementById(k).value.trim();
   const jenis=val('lgJenis'),customer=val('lgCust');
   if(!jenis||!customer)return toast('Jenis dan customer wajib diisi.');
-  const row={jenis,customer,hp:val('lgHp'),keterangan:val('lgKet'),harga:Number(val('lgHarga'))||0,tanggal_berikutnya:val('lgTgl')};
+  const tanggal_mulai=val('lgMulai'),periode=val('lgPeriode');
+  const row={jenis,customer,hp:val('lgHp'),harga:Number(val('lgHarga'))||0,periode,tanggal_mulai,tanggal_berikutnya:addPeriod(tanggal_mulai,periode),keterangan:val('lgKet')};
   if(id){
     const idx=langgananData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;langgananData[idx]=row;}
@@ -851,20 +928,38 @@ async function deleteLangganan(id){
 }
 
 /* ─── Dashboard counts ─── */
+function renderAdminShortcuts(){
+  const jk=(typeof jokianData!=='undefined'?jokianData:[]),sn=(typeof sendiriData!=='undefined'?sendiriData:[]);
+  const all=[...jk.map(p=>({...p,src:'jokian'})),...sn.map(p=>({...p,src:'sendiri'}))];
+  const withAdmin=all.filter(p=>p.admin_url&&/^https?:\/\//i.test(p.admin_url));
+  const sec=document.getElementById('adminShortcuts');
+  const row=document.getElementById('shortcutRow');
+  if(!sec||!row)return;
+  if(!withAdmin.length){sec.hidden=true;return;}
+  sec.hidden=false;
+  row.innerHTML=withAdmin.map(p=>{
+    const label=esc((p.name||'').slice(0,14));
+    return `<a class="shortcut-item" href="${esc(p.admin_url)}" target="_blank" rel="noopener" title="${esc(p.name)}">
+      <div class="si-ic">${use(p.src==='jokian'?'i-briefcase':'i-folder')}</div>
+      <span class="si-label">${label}</span>
+    </a>`;
+  }).join('');
+}
 function updateDashCounts(){
   renderWelcome();
   const jk=(typeof jokianData!=='undefined'?jokianData:[]), sn=(typeof sendiriData!=='undefined'?sendiriData:[]), lg=(typeof langgananData!=='undefined'?langgananData:[]);
   const dsProyek=document.getElementById('dsProyek');if(dsProyek)dsProyek.textContent=jk.length+sn.length;
   const dsLang=document.getElementById('dsLang');if(dsLang)dsLang.textContent=lg.length;
-  const monthly=lg.reduce((s,x)=>{const h=Number(x.harga||0);return s+(x.keterangan==='tahunan'?h/12:h);},0);
+  const monthly=lg.reduce((s,x)=>{const h=Number(x.harga||0);const p=x.periode||'';return s+(p==='tahunan'?h/12:p==='semester'?h/6:p==='triwulan'?h/3:p==='lifetime'?0:h);},0);
   const dsRevenue=document.getElementById('dsRevenue');if(dsRevenue)dsRevenue.textContent=fmtRp(Math.round(monthly))||'Rp 0';
-  const now=new Date();
-  const due7=lg.filter(x=>{if(!x.tanggal_berikutnya)return false;const t=new Date(x.tanggal_berikutnya);const diff=(t-now)/(1000*60*60*24);return diff<=7;});
+  const now=new Date();now.setHours(0,0,0,0);
+  const due7=lg.filter(x=>{const nd=getNextDate(x);if(!nd)return false;const t=new Date(nd+'T00:00:00');const diff=(t-now)/(1000*60*60*24);return diff<=7;});
   const alert=document.getElementById('dueAlert');
   if(alert){
     if(due7.length){alert.hidden=false;alert.innerHTML=`<div class="alert-due" onclick="showTab('langganan')"><svg class="ic" aria-hidden="true"><use href="#i-wallet"/></svg><div><b>${due7.length} langganan jatuh tempo</b><small>Dalam 7 hari ke depan — ketuk untuk lihat</small></div></div>`;}
     else alert.hidden=true;
   }
+  renderAdminShortcuts();
 }
 
 /* ─── Dokumen Resmi ─── */
