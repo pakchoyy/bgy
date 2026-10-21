@@ -8,6 +8,7 @@
 <meta name="robots" content="noindex,nofollow"/>
 <meta name="theme-color" content="#0ea5a0"/>
 <link rel="icon" href="/guru-cibisd2.png" type="image/png"/>
+<link rel="manifest" href="/admin/manifest.json"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -113,6 +114,28 @@ body.dark .stat b{color:#5eead4;}
 #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#1f2937;color:#fff;padding:10px 22px;border-radius:99px;font-size:.81rem;font-weight:600;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;max-width:90vw;text-align:center;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;font-size:.7rem;}
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:12px;}
+@media(max-width:520px){.proj-grid{grid-template-columns:1fr;}}
+.proj-card{display:flex;gap:10px;align-items:center;padding:12px;border:1.5px solid var(--border);border-radius:12px;background:var(--card-bg);text-decoration:none;color:var(--text);transition:border-color .15s,box-shadow .15s;cursor:pointer;min-height:68px;}
+.proj-card:hover,.proj-card:focus-visible{border-color:var(--blue);box-shadow:0 2px 12px rgba(14,165,160,.13);}
+.proj-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;}
+.proj-ic .ic{width:20px;height:20px;}
+.proj-ic.bgy{background:var(--grad);color:#fff;}
+.proj-ic.ext{background:rgba(14,165,160,.1);color:var(--blue);}
+.proj-body{flex:1;min-width:0;}
+.proj-body b{display:block;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.proj-body small{font-size:.72rem;color:var(--text-light);display:block;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.proj-actions{display:flex;gap:4px;}
+.add-proj{border:1.5px dashed var(--border);background:none;color:var(--text-light);display:flex;align-items:center;justify-content:center;gap:6px;font-size:.82rem;font-weight:700;border-radius:12px;padding:12px;cursor:pointer;min-height:68px;font-family:inherit;width:100%;}
+.add-proj:hover{border-color:var(--blue);color:var(--blue);}
+#installBanner{display:none;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--blue);border-radius:12px;background:rgba(14,165,160,.06);margin-bottom:12px;}
+#installBanner.show{display:flex;}
+#installBanner .ib-ic{width:22px;height:22px;color:var(--blue);flex:none;}
+#installBanner p{flex:1;font-size:.82rem;line-height:1.4;}
+#installBanner p b{display:block;font-size:.86rem;}
+#installBanner button{padding:8px 14px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;}
+#installBanner .ib-yes{background:var(--grad);color:#fff;}
+#installBanner .ib-no{background:var(--input-bg);color:var(--text-light);border:1px solid var(--border);}
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 </head>
@@ -138,6 +161,9 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
 <symbol id="i-reset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
 <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
 <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></symbol>
+<symbol id="i-layout-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+<symbol id="i-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></symbol>
 </defs></svg>
 
 <div id="toast" role="status"></div>
@@ -173,7 +199,8 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
   <!-- PANEL -->
   <div id="panel" hidden>
     <div class="tabs">
-      <button class="tab active" id="tab-links" onclick="showTab('links')"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Link Bio</button>
+      <button class="tab active" id="tab-dash" onclick="showTab('dash')"><svg class="ic" aria-hidden="true"><use href="#i-layout-dashboard"/></svg> Dashboard</button>
+      <button class="tab" id="tab-links" onclick="showTab('links')"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Link Bio</button>
       <button class="tab" id="tab-reviews" onclick="showTab('reviews')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Ulasan</button>
       <button class="tab" id="tab-promo" onclick="showTab('promo')"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Promo</button>
       <button class="tab" id="tab-docs" onclick="showTab('docs')"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Dokumen</button>
@@ -181,7 +208,17 @@ footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;fon
       <button class="tab" id="tab-users" onclick="showTab('users')"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Pengguna</button>
     </div>
 
-    <div id="pane-links" class="card">
+    <div id="pane-dash">
+      <div id="installBanner">
+        <svg class="ib-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        <p><b>Pasang BGY Admin di HP</b>Buka langsung dari layar utama, tanpa browser.</p>
+        <button class="ib-yes" onclick="installApp()">Pasang</button>
+        <button class="ib-no" onclick="dismissInstall()">Nanti</button>
+      </div>
+      <div class="proj-grid" id="projGrid"></div>
+    </div>
+
+    <div id="pane-links" class="card" hidden>
       <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-link"/></svg> Link di bantuguruyuk.web.id/k</div>
       <div class="toolbar">
         <button class="btn" onclick="openLink()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah link</button>
@@ -359,7 +396,7 @@ async function boot(){
     show('notAdmin');return;
   }
   show('panel');
-  loadLinks();loadReviews();loadPromo();loadLisensi();
+  loadProjects();loadLinks();loadReviews();loadPromo();loadLisensi();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -376,7 +413,7 @@ async function logout(){await sb.auth.signOut();show('loginCard');}
 function showTab(t){
   if(t==='stat')loadStats();
   if(t==='docs'&&!docsLoaded)loadDocs();
-  ['links','reviews','promo','docs','stat','users'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
+  ['dash','links','reviews','promo','docs','stat','users'].forEach(x=>{document.getElementById('pane-'+x).hidden=x!==t;document.getElementById('tab-'+x).classList.toggle('active',x===t);});
   if(t==='users'&&!document.getElementById('userRows').textContent.trim())loadUsers();
 }
 
@@ -752,6 +789,89 @@ document.getElementById('lisensiForm').addEventListener('submit',async e=>{
   if(error)return fail(error);
   msg.textContent='Tautan tersimpan. Berlaku dalam beberapa menit.';toast('Tautan tersimpan');
 });
+
+/* ─── Dashboard / Proyek ─── */
+const DEFAULT_PROJECTS=[
+  {id:'_bgy',name:'BGY Admin',url:'/admin/',desc:'Panel admin utama',icon:'i-layout-dashboard',builtin:true},
+  {id:'_bmedia',name:'BMedia Admin',url:'https://bmedia.bantuguruyuk.web.id/admin',desc:'Admin BMedia',icon:'i-globe',builtin:true},
+  {id:'_wkelas',name:'WKelas Admin',url:'https://wkelas.web.id/admin',desc:'Admin WKelas',icon:'i-globe',builtin:true}
+];
+let projects=[];
+async function loadProjects(){
+  const {data}=await sb.from('bgy_settings').select('value').eq('key','admin_projects').maybeSingle();
+  const custom=(data&&data.value&&Array.isArray(data.value))?data.value:[];
+  projects=[...DEFAULT_PROJECTS,...custom.filter(p=>p&&p.id&&!p.id.startsWith('_'))];
+  renderProjects();
+}
+async function saveProjects(){
+  const custom=projects.filter(p=>!p.builtin);
+  await sb.from('bgy_settings').upsert({key:'admin_projects',value:custom,updated_at:new Date().toISOString()});
+}
+function renderProjects(){
+  const grid=document.getElementById('projGrid');
+  grid.innerHTML=projects.map(p=>{
+    const isSelf=p.id==='_bgy';
+    const href=isSelf?'javascript:void(0)':esc(p.url);
+    const target=isSelf?'':'target="_blank" rel="noopener"';
+    const click=isSelf?'onclick="toast(\'Kamu sudah di halaman ini.\')"':'';
+    return `<a class="proj-card" href="${href}" ${target} ${click}>
+      <div class="proj-ic ${isSelf?'bgy':'ext'}"><svg class="ic" aria-hidden="true"><use href="#${esc(p.icon||'i-globe')}"/></svg></div>
+      <div class="proj-body"><b>${esc(p.name)}</b><small>${esc(p.desc||p.url)}</small></div>
+      ${p.builtin?'':`<div class="proj-actions">
+        <button class="btn icon" onclick="event.preventDefault();openProj('${esc(p.id)}')" aria-label="Edit">${use('i-pen')}</button>
+        <button class="btn icon danger" onclick="event.preventDefault();deleteProj('${esc(p.id)}')" aria-label="Hapus">${use('i-trash')}</button>
+      </div>`}
+    </a>`;
+  }).join('')+`<button class="add-proj" onclick="openProj()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah proyek</button>`;
+}
+function openProj(id){
+  const p=id?projects.find(x=>x.id===id):{name:'',url:'https://',desc:''};
+  document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit proyek':'Tambah proyek'}</h3>
+    <div class="fg"><label for="pjName">Nama</label><input id="pjName" maxlength="60" value="${esc(p.name)}" placeholder="mis. Admin Toko Saya"/></div>
+    <div class="fg"><label for="pjUrl">URL admin</label><input id="pjUrl" maxlength="500" value="${esc(p.url)}" inputmode="url"/></div>
+    <div class="fg"><label for="pjDesc">Keterangan singkat</label><input id="pjDesc" maxlength="100" value="${esc(p.desc||'')}" placeholder="mis. Panel langganan premium"/></div>
+    <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveProj('${esc(id||'')}')">Simpan</button></div>`;
+  document.getElementById('modal').hidden=false;
+}
+async function saveProj(id){
+  const name=document.getElementById('pjName').value.trim();
+  const url=document.getElementById('pjUrl').value.trim();
+  const desc=document.getElementById('pjDesc').value.trim();
+  if(!name)return toast('Nama wajib diisi.');
+  if(!/^https?:\/\/[^\s.]+\.[^\s]+/i.test(url))return toast('URL harus diawali https://');
+  if(id){
+    const p=projects.find(x=>x.id===id);
+    if(p){p.name=name;p.url=url;p.desc=desc;}
+  }else{
+    projects.push({id:'p'+Date.now().toString(36),name,url,desc,icon:'i-globe'});
+  }
+  await saveProjects();closeModal();renderProjects();toast('Proyek tersimpan.');
+}
+async function deleteProj(id){
+  const p=projects.find(x=>x.id===id);
+  if(!p||!confirm('Hapus "'+p.name+'"?'))return;
+  projects=projects.filter(x=>x.id!==id);
+  await saveProjects();renderProjects();toast('Proyek dihapus.');
+}
+
+/* ─── PWA Install ─── */
+let _deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();_deferredPrompt=e;
+  try{if(sessionStorage.getItem('bgy_admin_dismiss'))return;}catch(e){}
+  document.getElementById('installBanner').classList.add('show');
+});
+function installApp(){
+  if(!_deferredPrompt)return;
+  _deferredPrompt.prompt();
+  _deferredPrompt.userChoice.then(r=>{document.getElementById('installBanner').classList.remove('show');if(r.outcome==='accepted')toast('Terpasang!');});
+  _deferredPrompt=null;
+}
+function dismissInstall(){
+  document.getElementById('installBanner').classList.remove('show');
+  try{sessionStorage.setItem('bgy_admin_dismiss','1');}catch(e){}
+}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/admin/sw.js',{scope:'/admin/'}).catch(()=>{});}
 </script>
 </body>
 </html>
