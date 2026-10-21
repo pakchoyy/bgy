@@ -1,0 +1,13 @@
+{
+  "name": "Bantu Guru Yuk | Admin",
+  "short_name": "BGY Admin",
+  "start_url": "/admin/",
+  "scope": "/admin/",
+  "display": "standalone",
+  "theme_color": "#0ea5a0",
+  "background_color": "#f0f4f8",
+  "icons": [
+    {"src": "/guru-cibisd2.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/guru-cibisd2.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
