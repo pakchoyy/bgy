@@ -288,6 +288,9 @@ body.dark .lg-group-head{color:#5eead4;}
 .pj-url{font-size:.72rem;color:var(--text-light);margin-top:3px;word-break:break-all;}
 .pj-meta{font-size:.72rem;color:var(--text-light);margin-top:3px;}
 .pj-actions{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-top:12px;}
+.pj-actions.has-wa{grid-template-columns:1.6fr 44px 1fr 1fr;}
+.pj-actions .btn-wa{color:#25d366;}
+.pj-actions .btn-wa:hover{border-color:#25d366;background:rgba(37,211,102,.1);}
 .pj-actions .btn-action{min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:1.5px solid var(--border);background:var(--card-bg);border-radius:10px;font-weight:700;font-size:.8rem;cursor:pointer;font-family:inherit;color:var(--text);text-decoration:none;}
 .pj-actions .btn-action:hover{border-color:var(--blue);color:var(--blue);}
 .pj-actions .btn-action.primary{background:var(--grad);color:#fff;border-color:transparent;}
@@ -395,7 +398,7 @@ main{padding-bottom:90px!important;}
       <div class="stat-row dash-stats">
         <button type="button" class="stat stat-clickable" onclick="showTab('proyek')"><b id="dsProyek">-</b><span>Proyek</span></button>
         <button type="button" class="stat stat-clickable" onclick="showTab('langganan')"><b id="dsLang">-</b><span>Langganan</span></button>
-        <button type="button" class="stat stat-clickable" onclick="showTab('langganan')"><b id="dsRevenue">-</b><span>/bulan</span></button>
+        <button type="button" class="stat stat-clickable" onclick="showTab('langganan')"><b id="dsRevenue">-</b><span>/tahun</span></button>
       </div>
       <div id="adminShortcuts" hidden class="admin-shortcuts">
         <div class="shortcut-head"><b>Admin Eksternal</b><button type="button" onclick="showTab('portal')" style="background:none;border:none;color:var(--blue);font-size:.72rem;font-weight:700;cursor:pointer;padding:0;font-family:inherit;">Lihat semua →</button></div>
@@ -404,7 +407,7 @@ main{padding-bottom:90px!important;}
       <div id="dueAlert" hidden></div>
       <div class="dash-charts">
         <div class="card dash-chart-card" id="chartRevenue">
-          <div class="dash-chart-head"><b>Pendapatan per Jenis</b><span>Perkiraan /bulan</span></div>
+          <div class="dash-chart-head"><b>Pendapatan per Jenis</b><span>Total /tahun</span></div>
           <div class="chart-h" id="chartRevBars"></div>
         </div>
         <div class="card dash-chart-card" id="chartDueTimeline">
@@ -415,6 +418,16 @@ main{padding-bottom:90px!important;}
       <div class="quick-grid">
         <button class="quick-card" onclick="showTab('proyek');setTimeout(openJokian,100)"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg><span>Proyek Baru</span></button>
         <button class="quick-card" onclick="showTab('langganan');setTimeout(openLangganan,100)"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg><span>Langganan Baru</span></button>
+      </div>
+      <div class="card dash-usage-card" style="margin-top:14px;">
+        <div class="dash-chart-head"><b>Statistik Pengguna BGY</b><span>30 hari terakhir</span></div>
+        <div class="stat-row">
+          <div class="stat"><b id="duToday">-</b><span>Hari ini</span></div>
+          <div class="stat"><b id="du7">-</b><span>7 hari</span></div>
+          <div class="stat"><b id="du30">-</b><span>30 hari</span></div>
+        </div>
+        <div class="chart" id="duChart" role="img" aria-label="Grafik guru BGY per hari" style="height:100px"></div>
+        <button class="btn btn-wide" style="margin-top:10px;width:100%;" onclick="showTab('stat')"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg> Lihat Detail</button>
       </div>
     </div>
 
@@ -465,7 +478,7 @@ main{padding-bottom:90px!important;}
         <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-wallet"/></svg> Langganan aktif</div>
         <div class="stat-row" id="langgananStats">
           <div class="stat"><b id="lgTotal">-</b><span>Pelanggan</span></div>
-          <div class="stat"><b id="lgBulanan">-</b><span>Rp/bulan</span></div>
+          <div class="stat"><b id="lgBulanan">-</b><span>Rp/tahun</span></div>
           <div class="stat"><b id="lgSegera">-</b><span>Segera bayar</span></div>
         </div>
         <div class="toolbar">
@@ -687,6 +700,7 @@ async function boot(){
   }
   show('panel');
   loadJokian();loadSendiri();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadLisensi();
+  maybeLoadDashUsage();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -717,6 +731,7 @@ function showTab(t){
   if(t==='stat')loadStats();
   if(t==='docs'&&!docsLoaded)loadDocs();
   if(t==='portal')renderPortal();
+  if(t==='dash')maybeLoadDashUsage();
   if(t!=='portal'&&editMode){
     editMode=false;
     document.getElementById('portalGrid')?.classList.remove('edit-mode');
@@ -761,7 +776,9 @@ async function loadJokian(){
   renderJokian();updateDashCounts();
 }
 async function saveJokian(){
-  await sb.from('bgy_settings').upsert({key:'admin_proyek_jokian',value:jokianData,updated_at:new Date().toISOString()});
+  const {error}=await sb.from('bgy_settings').upsert({key:'admin_proyek_jokian',value:jokianData,updated_at:new Date().toISOString()});
+  if(error){toast('Gagal simpan: '+error.message);return false;}
+  return true;
 }
 function sandiHtml(val,uid){
   if(!val)return '<span style="color:var(--text-light)">-</span>';
@@ -795,10 +812,13 @@ function renderProyekItem(p,kind){
     p.supabase?{k:'Supabase',v:esc(p.supabase)}:null,
     p.supabase_pass?{k:'Sandi Supabase',v:`<span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(p.supabase_pass)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span>`}:null,
     p.repo?{k:'Repo',v:esc(p.repo)}:null,
-    p.tanggal?{k:'Tanggal',v:esc(p.tanggal)}:null
+    p.tanggal?{k:'Tanggal',v:esc(p.tanggal)}:null,
+    p.tanggal_perpanjangan?{k:'Perpanjangan',v:tgl(p.tanggal_perpanjangan)}:null
   ].filter(Boolean);
   const openFn=kind==='jokian'?'openJokian':'openSendiri';
   const delFn=kind==='jokian'?'deleteJokian':'deleteSendiri';
+  const hp=kind==='jokian'?normalizeHp(p.hp):'';
+  const waBtn=hp?`<a class="btn-action btn-wa" href="https://wa.me/${encodeURIComponent(hp)}?text=${encodeURIComponent('Halo '+(p.user||p.name||'')+', ini terkait proyek '+(p.name||''))}" target="_blank" rel="noopener" title="WhatsApp" aria-label="WhatsApp">${use('i-smartphone')}</a>`:'';
   return `<div class="pj-item">
     <div class="pj-top">
       <div class="pj-ic">${use(ic)}</div>
@@ -808,8 +828,9 @@ function renderProyekItem(p,kind){
         ${p.user||p.hp?`<div class="pj-meta">${[p.user,p.hp].filter(Boolean).map(esc).join(' · ')}</div>`:''}
       </div>
     </div>
-    <div class="pj-actions">
+    <div class="pj-actions${waBtn?' has-wa':''}">
       ${openBtn}
+      ${waBtn}
       <button class="btn-action" onclick="${openFn}('${esc(p.id)}')">${use('i-pen')} Edit</button>
       <button class="btn-action danger" onclick="${delFn}('${esc(p.id)}')">${use('i-trash')} Hapus</button>
     </div>
@@ -838,7 +859,7 @@ function renderJokian(){
   box.innerHTML=jokianData.map(p=>renderProyekItem(p,'jokian')).join('');
 }
 function openJokian(id){
-  const p=id?jokianData.find(x=>x.id===id):{name:'',url:'',admin_url:'',hp:'',user:'',login:'',sandi:'',supabase:'',supabase_pass:'',repo:'',langganan:'',tanggal:'',keterangan:''};
+  const p=id?jokianData.find(x=>x.id===id):{name:'',url:'',admin_url:'',hp:'',user:'',login:'',sandi:'',supabase:'',supabase_pass:'',repo:'',langganan:'',tanggal:'',tanggal_perpanjangan:'',keterangan:''};
   if(!p)return;
   document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit Proyek Jokian':'Tambah Proyek Jokian'}</h3>
     <div class="fg"><label for="jName">Judul web *</label><input id="jName" maxlength="60" value="${esc(p.name)}"/></div>
@@ -861,9 +882,10 @@ function openJokian(id){
       <div class="fg"><label for="jLangganan">Langganan/thn</label><input id="jLangganan" maxlength="30" value="${esc(p.langganan||'')}" placeholder="mis. 150rb"/></div>
     </div>
     <div class="row2">
-      <div class="fg"><label for="jTanggal">Tanggal</label><input id="jTanggal" maxlength="30" value="${esc(p.tanggal||'')}" placeholder="mis. 6 Juni"/></div>
-      <div class="fg"><label for="jKet">Keterangan</label><input id="jKet" maxlength="200" value="${esc(p.keterangan||'')}"/></div>
+      <div class="fg"><label for="jTanggal">Tanggal (teks bebas)</label><input id="jTanggal" maxlength="30" value="${esc(p.tanggal||'')}" placeholder="mis. 6 Juni"/></div>
+      <div class="fg"><label for="jTglPerpanjangan">Tanggal perpanjangan (next)</label><input id="jTglPerpanjangan" type="date" value="${esc(p.tanggal_perpanjangan||'')}"/></div>
     </div>
+    <div class="fg"><label for="jKet">Keterangan</label><input id="jKet" maxlength="200" value="${esc(p.keterangan||'')}"/></div>
     <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveJokianItem('${esc(id||'')}')">Simpan</button></div>`;
   document.getElementById('modal').hidden=false;
 }
@@ -871,7 +893,7 @@ async function saveJokianItem(id){
   const val=k=>document.getElementById(k).value.trim();
   const name=val('jName');
   if(!name)return toast('Judul wajib diisi.');
-  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),langganan:val('jLangganan'),tanggal:val('jTanggal'),keterangan:val('jKet')};
+  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),langganan:val('jLangganan'),tanggal:val('jTanggal'),tanggal_perpanjangan:val('jTglPerpanjangan'),keterangan:val('jKet')};
   if(id){
     const idx=jokianData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;jokianData[idx]=row;}
@@ -879,13 +901,15 @@ async function saveJokianItem(id){
     row.id='j'+Date.now().toString(36);
     jokianData.push(row);
   }
-  await saveJokian();closeModal();renderJokian();updateDashCounts();toast('Proyek tersimpan.');
+  if(await saveJokian()){closeModal();renderJokian();updateDashCounts();toast('Proyek tersimpan.');}
 }
 async function deleteJokian(id){
   const p=jokianData.find(x=>x.id===id);
   if(!p||!confirm('Hapus "'+p.name+'"?'))return;
+  const bak=jokianData.slice();
   jokianData=jokianData.filter(x=>x.id!==id);
-  await saveJokian();renderJokian();updateDashCounts();toast('Proyek dihapus.');
+  if(await saveJokian()){renderJokian();updateDashCounts();toast('Proyek dihapus.');}
+  else{jokianData=bak;}
 }
 
 /* ─── Proyek Sendiri ─── */
@@ -908,7 +932,9 @@ async function loadSendiri(){
   renderSendiri();updateDashCounts();
 }
 async function saveSendiri(){
-  await sb.from('bgy_settings').upsert({key:'admin_proyek_sendiri',value:sendiriData,updated_at:new Date().toISOString()});
+  const {error}=await sb.from('bgy_settings').upsert({key:'admin_proyek_sendiri',value:sendiriData,updated_at:new Date().toISOString()});
+  if(error){toast('Gagal simpan: '+error.message);return false;}
+  return true;
 }
 function renderSendiri(){
   const box=document.getElementById('sendiriList');
@@ -943,13 +969,15 @@ async function saveSendiriItem(id){
     row.id='s'+Date.now().toString(36);
     sendiriData.push(row);
   }
-  await saveSendiri();closeModal();renderSendiri();updateDashCounts();toast('Proyek tersimpan.');
+  if(await saveSendiri()){closeModal();renderSendiri();updateDashCounts();toast('Proyek tersimpan.');}
 }
 async function deleteSendiri(id){
   const p=sendiriData.find(x=>x.id===id);
   if(!p||!confirm('Hapus "'+p.name+'"?'))return;
+  const bak=sendiriData.slice();
   sendiriData=sendiriData.filter(x=>x.id!==id);
-  await saveSendiri();renderSendiri();updateDashCounts();toast('Proyek dihapus.');
+  if(await saveSendiri()){renderSendiri();updateDashCounts();toast('Proyek dihapus.');}
+  else{sendiriData=bak;}
 }
 
 /* ─── Langganan ─── */
@@ -971,7 +999,9 @@ async function loadLangganan(){
   renderLangganan();updateDashCounts();
 }
 async function saveLangganan(){
-  await sb.from('bgy_settings').upsert({key:'admin_langganan',value:langgananData,updated_at:new Date().toISOString()});
+  const {error}=await sb.from('bgy_settings').upsert({key:'admin_langganan',value:langgananData,updated_at:new Date().toISOString()});
+  if(error){toast('Gagal simpan: '+error.message);return false;}
+  return true;
 }
 function addPeriod(iso,periode){
   if(!iso)return '';
@@ -1025,9 +1055,9 @@ function countDueSoon(){
 }
 function renderLangganan(){
   const box=document.getElementById('langgananListEl');
-  const bulanan=langgananData.reduce((a,l)=>{const h=Number(l.harga||0);return a+(l.periode==='tahunan'?h/12:l.periode==='semester'?h/6:l.periode==='triwulan'?h/3:l.periode==='lifetime'?0:h);},0);
+  const yearly=langgananData.reduce((a,l)=>{const h=Number(l.harga||0);return a+(l.periode==='bulanan'?h*12:l.periode==='triwulan'?h*4:l.periode==='semester'?h*2:l.periode==='tahunan'?h:0);},0);
   document.getElementById('lgTotal').textContent=langgananData.length;
-  document.getElementById('lgBulanan').textContent=fmtRp(Math.round(bulanan))||'Rp 0';
+  document.getElementById('lgBulanan').textContent=fmtRp(Math.round(yearly))||'Rp 0';
   document.getElementById('lgSegera').textContent=countDueSoon();
   if(!langgananData.length){box.innerHTML='<div class="empty">Belum ada langganan. Tap <b>+ Tambah</b> untuk menambahkan.</div>';return;}
   const groups={};
@@ -1087,9 +1117,11 @@ async function perpanjangLangganan(id){
   if(!curNext)return toast('Isi tanggal mulai dulu.');
   const nextAfter=addPeriod(curNext,l.periode);
   if(!confirm('Perpanjang "'+l.customer+'" ('+l.jenis+')?\nTanggal mulai: '+tgl(curNext)+'\nTanggal berikutnya: '+(nextAfter?tgl(nextAfter):'—')))return;
+  const oldMulai=l.tanggal_mulai,oldNext=l.tanggal_berikutnya;
   l.tanggal_mulai=curNext;
   l.tanggal_berikutnya=nextAfter;
-  await saveLangganan();renderLangganan();updateDashCounts();toast('Diperpanjang 1 periode.');
+  if(await saveLangganan()){renderLangganan();updateDashCounts();toast('Diperpanjang 1 periode.');}
+  else{l.tanggal_mulai=oldMulai;l.tanggal_berikutnya=oldNext;}
 }
 function openLangganan(id){
   const today=new Date().toISOString().slice(0,10);
@@ -1127,13 +1159,15 @@ async function saveLanggananItem(id){
     row.id='l'+Date.now().toString(36);
     langgananData.push(row);
   }
-  await saveLangganan();closeModal();renderLangganan();updateDashCounts();toast('Langganan tersimpan.');
+  if(await saveLangganan()){closeModal();renderLangganan();updateDashCounts();toast('Langganan tersimpan.');}
 }
 async function deleteLangganan(id){
   const l=langgananData.find(x=>x.id===id);
   if(!l||!confirm('Hapus langganan "'+l.customer+'"?'))return;
+  const bak=langgananData.slice();
   langgananData=langgananData.filter(x=>x.id!==id);
-  await saveLangganan();renderLangganan();updateDashCounts();toast('Langganan dihapus.');
+  if(await saveLangganan()){renderLangganan();updateDashCounts();toast('Langganan dihapus.');}
+  else{langgananData=bak;}
 }
 
 /* ─── Portal Admin (sumber data sendiri) ─── */
@@ -1155,7 +1189,9 @@ async function loadPortal(){
   renderPortal();renderAdminShortcuts();
 }
 async function savePortal(){
-  await sb.from('bgy_settings').upsert({key:'admin_portal',value:portalData,updated_at:new Date().toISOString()});
+  const {error}=await sb.from('bgy_settings').upsert({key:'admin_portal',value:portalData,updated_at:new Date().toISOString()});
+  if(error){toast('Gagal simpan: '+error.message);return false;}
+  return true;
 }
 function renderPortal(){
   const grid=document.getElementById('portalGrid');
@@ -1190,9 +1226,11 @@ async function movePortal(id,dir){
   const i=portalData.findIndex(x=>x.id===id);
   const j=i+dir;
   if(i<0||j<0||j>=portalData.length)return;
+  const bak=portalData.map(p=>({...p}));
   [portalData[i],portalData[j]]=[portalData[j],portalData[i]];
   portalData.forEach((p,k)=>p.sort=(k+1)*10);
-  await savePortal();renderPortal();renderAdminShortcuts();
+  if(await savePortal()){renderPortal();renderAdminShortcuts();}
+  else{portalData=bak;renderPortal();}
 }
 function openPortal(id){
   const p=id?portalData.find(x=>x.id===id):{name:'',url:'https://',icon:'i-globe'};
@@ -1222,13 +1260,15 @@ async function savePortalItem(id){
     const maxSort=portalData.length?Math.max(...portalData.map(p=>p.sort||0)):0;
     portalData.push({id:'pt'+Date.now().toString(36),name,url,icon,sort:maxSort+10});
   }
-  await savePortal();closeModal();renderPortal();renderAdminShortcuts();toast('Portal tersimpan.');
+  if(await savePortal()){closeModal();renderPortal();renderAdminShortcuts();toast('Portal tersimpan.');}
 }
 async function deletePortal(id){
   const p=portalData.find(x=>x.id===id);
   if(!p||!confirm('Hapus portal "'+p.name+'"?'))return;
+  const bak=portalData.slice();
   portalData=portalData.filter(x=>x.id!==id);
-  await savePortal();renderPortal();renderAdminShortcuts();toast('Portal dihapus.');
+  if(await savePortal()){renderPortal();renderAdminShortcuts();toast('Portal dihapus.');}
+  else{portalData=bak;}
 }
 
 /* ─── Dashboard counts ─── */
@@ -1252,13 +1292,31 @@ function updateDashCounts(){
   const jk=(typeof jokianData!=='undefined'?jokianData:[]), sn=(typeof sendiriData!=='undefined'?sendiriData:[]), lg=(typeof langgananData!=='undefined'?langgananData:[]);
   const dsProyek=document.getElementById('dsProyek');if(dsProyek)dsProyek.textContent=jk.length+sn.length;
   const dsLang=document.getElementById('dsLang');if(dsLang)dsLang.textContent=lg.length;
-  const monthly=lg.reduce((s,x)=>{const h=Number(x.harga||0);const p=x.periode||'';return s+(p==='tahunan'?h/12:p==='semester'?h/6:p==='triwulan'?h/3:p==='lifetime'?0:h);},0);
-  const dsRevenue=document.getElementById('dsRevenue');if(dsRevenue)dsRevenue.textContent=fmtRp(Math.round(monthly))||'Rp 0';
+  const yearly=lg.reduce((s,x)=>{const h=Number(x.harga||0);const p=x.periode||'';return s+(p==='bulanan'?h*12:p==='triwulan'?h*4:p==='semester'?h*2:p==='tahunan'?h:0);},0);
+  const dsRevenue=document.getElementById('dsRevenue');if(dsRevenue)dsRevenue.textContent=fmtRp(Math.round(yearly))||'Rp 0';
   const now=new Date();now.setHours(0,0,0,0);
-  const due7=lg.filter(x=>{const nd=getNextDate(x);if(!nd)return false;const t=new Date(nd+'T00:00:00');const diff=(t-now)/(1000*60*60*24);return diff<=7;});
+  const dueItems=[];
+  lg.forEach(l=>{
+    if(l.periode==='lifetime')return;
+    const nd=getNextDate(l);if(!nd)return;
+    const d=new Date(nd+'T00:00:00');
+    const diff=Math.floor((d-now)/(86400000));
+    if(diff<=7)dueItems.push({kind:'lang',customer:l.customer||'',jenis:l.jenis||'',diff,next:nd});
+  });
+  jk.forEach(p=>{
+    if(!p.tanggal_perpanjangan)return;
+    const d=new Date(p.tanggal_perpanjangan+'T00:00:00');
+    const diff=Math.floor((d-now)/(86400000));
+    if(diff<=7)dueItems.push({kind:'proy',customer:p.user||p.name||'',jenis:p.name||'',diff,next:p.tanggal_perpanjangan});
+  });
+  dueItems.sort((a,b)=>a.diff-b.diff);
   const alert=document.getElementById('dueAlert');
   if(alert){
-    if(due7.length){alert.hidden=false;alert.innerHTML=`<div class="alert-due" onclick="showTab('langganan')"><svg class="ic" aria-hidden="true"><use href="#i-wallet"/></svg><div><b>${due7.length} langganan jatuh tempo</b><small>Dalam 7 hari ke depan — ketuk untuk lihat</small></div></div>`;}
+    if(dueItems.length){
+      const preview=dueItems.slice(0,3).map(i=>esc(i.customer)+' ('+(i.diff<0?'lewat':'H+'+i.diff)+')').join(', ');
+      alert.hidden=false;
+      alert.innerHTML=`<div class="alert-due" onclick="showTab('langganan')"><svg class="ic" aria-hidden="true"><use href="#i-wallet"/></svg><div><b>${dueItems.length} item jatuh tempo &le;7 hari</b><small>${preview}${dueItems.length>3?' …':''}</small></div></div>`;
+    }
     else alert.hidden=true;
   }
   renderDashCharts();
@@ -1270,9 +1328,9 @@ function renderDashCharts(){
     if(l.periode==='lifetime')return;
     const h=Number(l.harga||0);
     const p=l.periode||'';
-    const monthly=p==='tahunan'?h/12:p==='semester'?h/6:p==='triwulan'?h/3:h;
+    const yr=p==='bulanan'?h*12:p==='triwulan'?h*4:p==='semester'?h*2:p==='tahunan'?h:0;
     const k=l.jenis||'Lainnya';
-    groups[k]=(groups[k]||0)+monthly;
+    groups[k]=(groups[k]||0)+yr;
   });
   const entries=Object.entries(groups).sort((a,b)=>b[1]-a[1]);
   const max=Math.max(1,...entries.map(([,v])=>v));
@@ -1304,6 +1362,30 @@ function renderDashCharts(){
       return `<div class="tl-row ${cls}" onclick="showTab('langganan')" style="cursor:pointer"><span class="tl-day">${dayLabel}</span><span class="tl-body">${esc(l.customer)} · ${esc(l.jenis)}</span><span class="tl-amount">${fmtRp(l.harga)}</span></div>`;
     }).join('');}
   }
+}
+
+/* ─── Statistik BGY ringkas di Beranda ─── */
+let _dashUsageLoadedAt=0;
+async function loadDashUsage(){
+  const {data,error}=await sb.rpc('bgy_usage_stats',{p_days:30});
+  if(error||!data)return;
+  const t=document.getElementById('duToday'),s7=document.getElementById('du7'),s30=document.getElementById('du30');
+  if(t)t.textContent=fmtN(data.today);
+  if(s7)s7.textContent=fmtN(data.last7);
+  if(s30)s30.textContent=fmtN(data.last30);
+  const daily=data.daily||[];
+  const max=Math.max(1,...daily.map(d=>d.guru));
+  const chart=document.getElementById('duChart');
+  if(chart){
+    chart.innerHTML='<div class="chart-grid"><span>'+fmtN(max)+'</span></div>'+daily.map(d=>
+      `<div class="bar" aria-label="${esc(fmtDay(d.day))}: ${d.guru} guru"><i style="height:${d.guru?Math.max(3,Math.round(d.guru/max*100)):0}%"></i></div>`).join('');
+    chart.style.setProperty('--n',daily.length);
+  }
+}
+function maybeLoadDashUsage(){
+  if(Date.now()-_dashUsageLoadedAt<300000)return;
+  _dashUsageLoadedAt=Date.now();
+  loadDashUsage();
 }
 
 /* ─── Dokumen Resmi ─── */
