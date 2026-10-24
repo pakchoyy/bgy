@@ -356,6 +356,27 @@
     }
   }
 
+  /* ---- 4b. Akses admin cepat: ketuk judul header 5x ---- */
+  function mountAdminTap() {
+    if (page === 'admin') return;
+    var target = document.querySelector('header h1, .app-header h1') ||
+      document.querySelector('header, .app-header') ||
+      document.querySelector('h1.hero-title, h1');
+    if (!target) return;
+    target.style.cursor = target.style.cursor || 'pointer';
+    var count = 0, timer = null;
+    target.addEventListener('click', function () {
+      count++;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(function () { count = 0; }, 1200);
+      if (count >= 5) {
+        count = 0;
+        if (timer) clearTimeout(timer);
+        location.href = '/admin/';
+      }
+    });
+  }
+
   /* ---- 5. Animasi muncul saat digulir ---- */
   function revealOnScroll() {
     if (!('IntersectionObserver' in window)) return;
@@ -921,6 +942,7 @@
     mountTouch();
     mountUsage();
     adaptHeader();
+    mountAdminTap();
     revealOnScroll();
     mountMenu();
     mountProof();
