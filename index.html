@@ -1562,7 +1562,8 @@ a { text-decoration: none; color: inherit; }
 
   </div>
 
-  <footer class="site-footer"><a href="#" onclick="openGuide();return false;">Panduan</a> · <a href="/privasi.html">Kebijakan Privasi</a> · <a href="https://wa.me/6289530713597?text=Halo%20Pak%20Choyy%2C%20saya%20punya%20saran%20untuk%20BGY." target="_blank" rel="noopener noreferrer">Saran &amp; Lapor Masalah</a><br>Hasil dari AI perlu ditinjau dan disesuaikan oleh guru sebelum digunakan di kelas.</footer>
+  <footer class="site-footer" id="siteFooter"><a href="#" onclick="openGuide();return false;">Panduan</a> · <a href="/privasi.html">Kebijakan Privasi</a> · <a href="https://wa.me/6289530713597?text=Halo%20Pak%20Choyy%2C%20saya%20punya%20saran%20untuk%20BGY." target="_blank" rel="noopener noreferrer">Saran &amp; Lapor Masalah</a><br>Hasil dari AI perlu ditinjau dan disesuaikan oleh guru sebelum digunakan di kelas.</footer>
+  <script>(function(){var f=document.getElementById('siteFooter');if(!f)return;var t=0,last=0;f.addEventListener('click',function(e){if(e.target.closest('a'))return;var n=Date.now();if(n-last>800)t=0;last=n;t++;if(t>=3){t=0;location.href='/admin/';}});})();</script>
 
 </main>
 
