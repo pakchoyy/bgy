@@ -78,8 +78,8 @@ body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
 body.dark .hint-bar span{color:#5eead4;}
 
 /* ══ MAIN ══ */
-main{display:grid;grid-template-columns:375px 1fr;gap:22px;padding:22px;max-width:1440px;margin:0 auto;align-items:start;flex:1;width:100%;}
-@media(max-width:960px){main{grid-template-columns:1fr;padding:12px;gap:14px;}}
+main{box-sizing:border-box;display:grid;grid-template-columns:375px 1fr;gap:22px;padding:22px;max-width:1440px;margin:0 auto;align-items:start;flex:1;width:100%;}
+@media(max-width:960px){main{grid-template-columns:minmax(0,1fr);padding:12px;gap:14px;}}
 
 /* ══ CARD ══ */
 .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border:1px solid var(--border);transition:background .3s;}
@@ -252,7 +252,7 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .kisi-bentuk{text-align:center;width:55px;}
 .kisi-nomor{text-align:center;width:38px;}
 
-.badge-free{font-size:.55rem;font-weight:800;background:rgba(255,255,255,.25);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:5px;padding:1px 6px;letter-spacing:.5px;vertical-align:middle;}
+.badge-free{font-size:.75rem;font-weight:800;background:rgba(255,255,255,.25);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:5px;padding:1px 6px;letter-spacing:.5px;vertical-align:middle;}
 .badge-pro{font-size:.55rem;font-weight:800;background:#f59e0b;color:#fff;border-radius:5px;padding:1px 6px;letter-spacing:.5px;vertical-align:middle;}
 footer a{color:#fff;text-decoration:none;}
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:300px;text-align:center;color:var(--text-light);padding:40px 20px;}
@@ -266,7 +266,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
 
 /* Responsive */
 @media(max-width:960px){
-  main{grid-template-columns:1fr;padding:12px;gap:13px;}
+  main{grid-template-columns:minmax(0,1fr);padding:12px;gap:13px;}
   #previewBox{padding:8mm 8mm 8mm 10mm;font-size:10.5pt;width:794px;box-sizing:border-box;}
   .btn{padding:9px 12px;font-size:.82rem;min-height:40px;}
   .doc-school-name{font-size:12pt;}.doc-ujian-title{font-size:10pt;}
