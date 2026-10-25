@@ -17,6 +17,9 @@ Urutan penting: 1 → 2 → 3, baru 4.
    - `bgy_activate_pro` / `bgy_subscription_status` ikut mengembalikan `tier` (soal `savePro` sudah menyimpan `data.tier`).
    - Semua fungsi DB: anggap paket kedaluwarsa bila `active_until` lewat, apa pun `plan_type` (sekarang hanya `annual` yang dicek → paket baru akan dianggap seumur hidup di server).
    - Server: `api/generate-soal` cek kuota harian & maks soal per tier (sekarang hanya di browser); `bgy_ai_gate` jangan beri tanpa batas ke PLUS/PRO.
-   - Kreacy: produk PLUS & PRO (draft dulu) → link `aktvs-bs.html?paket=plus|pro&order={order}&sig={sig}`; paket WAJIB ikut ditandatangani (lihat no. 6) agar PLUS tidak bisa diklaim jadi PRO.
+   - Kreacy: produk sudah dibuat sebagai DRAFT, link file sudah `aktvs-bs.html?paket=plus|pro&order={order}&sig={sig}`:
+     PLUS `96f78f8f-9810-442f-9546-e347e40de306` → https://kreacy.my.id/produk/q2r3wwlv (Rp15.000)
+     PRO `7ff6c17c-36fa-476d-86f0-a37af24afb74` → https://kreacy.my.id/produk/o3ye3a23 (Rp27.000)
+     `aktvs-bs.html` belum meneruskan `paket` ke RPC. Paket WAJIB ikut ditandatangani (lihat no. 6) agar PLUS tidak bisa diklaim jadi PRO.
    - Terakhir: isi link beli di admin → nyalakan "Paket aktif".
 8. Pak Choy: ganti sandi yang pernah tersimpan di Proyek Sendiri/Jokian (sempat bisa dibaca publik sebelum langkah 1).
