@@ -46,7 +46,7 @@ Ganti HP / hapus data ──► tab "Login Email": RPC bgy_subscription_status(e
   ```
 
 ### Buat Soal: paket FREE / PLUS / PRO
-- Angka diatur di `/admin` → Promo → "Paket Buat Soal" (`bgy_settings` key `paket_soal`): generate/hari, maks soal per lembar, masa aktif (bulan), harga, link beli. Bawaan: FREE 1x · 6 soal; PLUS 4x · 20 soal · 3 bulan · Rp15.000; PRO 10x · 50 soal · 6 bulan · Rp27.000; komisi affiliate Rp3.000.
+- Angka diatur di `/admin` → Promo → "Paket Buat Soal" (`bgy_settings` key `paket_soal`): generate/hari, maks soal per lembar, masa aktif (bulan), harga, link beli. Bawaan: FREE 1x · 6 soal; PLUS 4x · 20 soal · 3 bulan · Rp15.000; PRO 10x · 50 soal · 6 bulan · Rp27.000; affiliate: komisi Rp3.000, cair tiap tanggal 1 lewat DANA, saldo minimal Rp20.000 (semua bisa diubah di admin).
 - Saklar "Paket aktif" mati = aturan lama (gratis 1x, Pro tanpa batas). Pembeli Pro sebelum paket (`tier` kosong) tetap tanpa batas sampai `active_until`.
 - Di `soal/index.html`: `tier()` (free/plus/pro/lama), `batas()`, kartu paket `renderPaketBox()`. Menu hamburger (muncul saat paket aktif): tab **Upgrade Paket** (`renderUpgradeTab`, tabel perbandingan + cara aktivasi + tanya jawab) dan **Program Affiliate** (`renderAffiliateTab`, khusus PRO/pembeli Pro lama; daftar lewat WhatsApp, kode dibagikan manual sebagai voucher Kreacy). Batas masih dicek di browser; aktivasi tier menunggu `supabase/PENDING.md` no. 7.
 

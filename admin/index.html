@@ -649,6 +649,10 @@ main{padding-bottom:90px!important;}
         </div>
         <div class="fg"><label for="pk_pro_url">PRO: link beli</label><input id="pk_pro_url" maxlength="300" placeholder="https://kreacy.my.id/..."/></div>
         <div class="fg"><label for="pk_affiliate_komisi">Komisi affiliate per penjualan (Rp, khusus member PRO)</label><input id="pk_affiliate_komisi" type="number" min="0" step="500" required/></div>
+        <div class="row2">
+          <div class="fg"><label for="pk_affiliate_min_cair">Affiliate: saldo minimal cair (Rp)</label><input id="pk_affiliate_min_cair" type="number" min="0" step="1000" required/></div>
+          <div class="fg"><label for="pk_affiliate_jadwal">Affiliate: jadwal &amp; cara cair</label><input id="pk_affiliate_jadwal" maxlength="60" required/></div>
+        </div>
         <button class="btn-primary" type="submit" id="btnPaket">Simpan paket</button>
         <div class="msg" id="paketMsg"></div>
       </form>
@@ -1600,8 +1604,8 @@ document.getElementById('promoForm').addEventListener('submit',async e=>{
 });
 
 /* ─── Paket Buat Soal ─── */
-const PAKET_DEF={aktif:false,free:{harian:1,max_soal:6},plus:{harian:4,max_soal:20,bulan:3,harga:15000,url:''},pro:{harian:10,max_soal:50,bulan:6,harga:27000,url:''},affiliate:{komisi:3000}};
-const PAKET_KEYS={free:['harian','max_soal'],plus:['harian','max_soal','bulan','harga','url'],pro:['harian','max_soal','bulan','harga','url'],affiliate:['komisi']};
+const PAKET_DEF={aktif:false,free:{harian:1,max_soal:6},plus:{harian:4,max_soal:20,bulan:3,harga:15000,url:''},pro:{harian:10,max_soal:50,bulan:6,harga:27000,url:''},affiliate:{komisi:3000,min_cair:20000,jadwal:'tiap tanggal 1 lewat DANA'}};
+const PAKET_KEYS={free:['harian','max_soal'],plus:['harian','max_soal','bulan','harga','url'],pro:['harian','max_soal','bulan','harga','url'],affiliate:['komisi','min_cair','jadwal']};
 async function loadPaket(){
   const {data,error}=await sb.from('bgy_settings').select('value').eq('key','paket_soal').maybeSingle();
   if(error)return fail(error);
@@ -1618,6 +1622,7 @@ document.getElementById('paketForm').addEventListener('submit',async e=>{
     for(const k of ks){
       const raw=document.getElementById('pk_'+t+'_'+k).value.trim();
       if(k==='url'){if(raw&&!/^https:\/\/[^\s"'<>]+$/i.test(raw)){msg.className='msg err';msg.textContent='Link harus diawali https://';return;}value[t][k]=raw;}
+      else if(k==='jadwal')value[t][k]=raw;
       else value[t][k]=Number(raw);
     }
   }
