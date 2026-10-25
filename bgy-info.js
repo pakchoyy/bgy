@@ -360,7 +360,7 @@
   function mountAdminTap() {
     if (page === 'admin') return;
     // Ketuk di mana saja pada bar header (atau judul besar beranda) 5x.
-    var target = document.querySelector('header, .app-header') ||
+    var target = document.querySelector('header, .app-header, .topbar') ||
       document.querySelector('header h1, .app-header h1') ||
       document.querySelector('h1.hero-title, h1');
     if (!target) return;
@@ -373,10 +373,7 @@
       if (count >= 5) {
         count = 0;
         if (timer) clearTimeout(timer);
-        toast('Membuka Admin...');
         location.href = '/admin/';
-      } else if (count >= 2) {
-        toast('Ketuk ' + (5 - count) + 'x lagi untuk Admin');
       }
     }, true);
   }
