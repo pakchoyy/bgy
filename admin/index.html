@@ -631,23 +631,24 @@ main{padding-bottom:90px!important;}
       <form id="paketForm">
         <div class="fg"><label class="chk"><input type="checkbox" id="pkAktif"/> Paket aktif</label></div>
         <div class="row2">
-          <div class="fg"><label for="pk_free_harian">FREE — generate/hari</label><input id="pk_free_harian" type="number" min="0" max="100" required/></div>
-          <div class="fg"><label for="pk_free_max_soal">FREE — maks soal/lembar</label><input id="pk_free_max_soal" type="number" min="1" max="70" required/></div>
+          <div class="fg"><label for="pk_free_harian">FREE: generate/hari</label><input id="pk_free_harian" type="number" min="0" max="100" required/></div>
+          <div class="fg"><label for="pk_free_max_soal">FREE: maks soal/lembar</label><input id="pk_free_max_soal" type="number" min="1" max="70" required/></div>
         </div>
         <div class="row2">
-          <div class="fg"><label for="pk_plus_harian">PLUS — generate/hari</label><input id="pk_plus_harian" type="number" min="1" max="100" required/></div>
-          <div class="fg"><label for="pk_plus_max_soal">PLUS — maks soal/lembar</label><input id="pk_plus_max_soal" type="number" min="1" max="70" required/></div>
-          <div class="fg"><label for="pk_plus_bulan">PLUS — masa aktif (bulan)</label><input id="pk_plus_bulan" type="number" min="1" max="24" required/></div>
-          <div class="fg"><label for="pk_plus_harga">PLUS — harga (Rp)</label><input id="pk_plus_harga" type="number" min="0" step="1000" required/></div>
+          <div class="fg"><label for="pk_plus_harian">PLUS: generate/hari</label><input id="pk_plus_harian" type="number" min="1" max="100" required/></div>
+          <div class="fg"><label for="pk_plus_max_soal">PLUS: maks soal/lembar</label><input id="pk_plus_max_soal" type="number" min="1" max="70" required/></div>
+          <div class="fg"><label for="pk_plus_bulan">PLUS: masa aktif (bulan)</label><input id="pk_plus_bulan" type="number" min="1" max="24" required/></div>
+          <div class="fg"><label for="pk_plus_harga">PLUS: harga (Rp)</label><input id="pk_plus_harga" type="number" min="0" step="1000" required/></div>
         </div>
-        <div class="fg"><label for="pk_plus_url">PLUS — link beli</label><input id="pk_plus_url" maxlength="300" placeholder="https://kreacy.my.id/..."/></div>
+        <div class="fg"><label for="pk_plus_url">PLUS: link beli</label><input id="pk_plus_url" maxlength="300" placeholder="https://kreacy.my.id/..."/></div>
         <div class="row2">
-          <div class="fg"><label for="pk_pro_harian">PRO — generate/hari</label><input id="pk_pro_harian" type="number" min="1" max="100" required/></div>
-          <div class="fg"><label for="pk_pro_max_soal">PRO — maks soal/lembar</label><input id="pk_pro_max_soal" type="number" min="1" max="70" required/></div>
-          <div class="fg"><label for="pk_pro_bulan">PRO — masa aktif (bulan)</label><input id="pk_pro_bulan" type="number" min="1" max="24" required/></div>
-          <div class="fg"><label for="pk_pro_harga">PRO — harga (Rp)</label><input id="pk_pro_harga" type="number" min="0" step="1000" required/></div>
+          <div class="fg"><label for="pk_pro_harian">PRO: generate/hari</label><input id="pk_pro_harian" type="number" min="1" max="100" required/></div>
+          <div class="fg"><label for="pk_pro_max_soal">PRO: maks soal/lembar</label><input id="pk_pro_max_soal" type="number" min="1" max="70" required/></div>
+          <div class="fg"><label for="pk_pro_bulan">PRO: masa aktif (bulan)</label><input id="pk_pro_bulan" type="number" min="1" max="24" required/></div>
+          <div class="fg"><label for="pk_pro_harga">PRO: harga (Rp)</label><input id="pk_pro_harga" type="number" min="0" step="1000" required/></div>
         </div>
-        <div class="fg"><label for="pk_pro_url">PRO — link beli</label><input id="pk_pro_url" maxlength="300" placeholder="https://kreacy.my.id/..."/></div>
+        <div class="fg"><label for="pk_pro_url">PRO: link beli</label><input id="pk_pro_url" maxlength="300" placeholder="https://kreacy.my.id/..."/></div>
+        <div class="fg"><label for="pk_affiliate_komisi">Komisi affiliate per penjualan (Rp, khusus member PRO)</label><input id="pk_affiliate_komisi" type="number" min="0" step="500" required/></div>
         <button class="btn-primary" type="submit" id="btnPaket">Simpan paket</button>
         <div class="msg" id="paketMsg"></div>
       </form>
@@ -1599,8 +1600,8 @@ document.getElementById('promoForm').addEventListener('submit',async e=>{
 });
 
 /* ─── Paket Buat Soal ─── */
-const PAKET_DEF={aktif:false,free:{harian:1,max_soal:10},plus:{harian:4,max_soal:20,bulan:3,harga:15000,url:''},pro:{harian:10,max_soal:50,bulan:6,harga:29000,url:''}};
-const PAKET_KEYS={free:['harian','max_soal'],plus:['harian','max_soal','bulan','harga','url'],pro:['harian','max_soal','bulan','harga','url']};
+const PAKET_DEF={aktif:false,free:{harian:1,max_soal:6},plus:{harian:4,max_soal:20,bulan:3,harga:15000,url:''},pro:{harian:10,max_soal:50,bulan:6,harga:27000,url:''},affiliate:{komisi:3000}};
+const PAKET_KEYS={free:['harian','max_soal'],plus:['harian','max_soal','bulan','harga','url'],pro:['harian','max_soal','bulan','harga','url'],affiliate:['komisi']};
 async function loadPaket(){
   const {data,error}=await sb.from('bgy_settings').select('value').eq('key','paket_soal').maybeSingle();
   if(error)return fail(error);
