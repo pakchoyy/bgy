@@ -4,6 +4,8 @@ begin;
 
 alter table public.users drop constraint if exists users_plan_type_check;
 alter table public.users add constraint users_plan_type_check check (plan_type is null or plan_type in ('lifetime', 'annual', 'paket'));
+alter table public.users drop constraint if exists users_subscription_dates_check;
+alter table public.users add constraint users_subscription_dates_check check (plan_type is null or plan_type = 'lifetime' or (plan_type in ('annual', 'paket') and active_until is not null));
 alter table public.users add column if not exists paket_calls int not null default 0;
 
 create or replace function public.bgy_claim_order(p_order text, p_sig text, p_email text, p_access text, p_paket text, p_sig2 text)
