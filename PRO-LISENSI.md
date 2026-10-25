@@ -45,6 +45,11 @@ Ganti HP / hapus data ──► tab "Login Email": RPC bgy_subscription_status(e
   where lower(email) = lower('guru@contoh.com') and access = 'soal';
   ```
 
+### Buat Soal: paket FREE / PLUS / PRO
+- Angka diatur di `/admin` → Promo → "Paket Buat Soal" (`bgy_settings` key `paket_soal`): generate/hari, maks soal per lembar, masa aktif (bulan), harga, link beli. Bawaan: FREE 1x · 10 soal; PLUS 4x · 20 soal · 3 bulan · Rp15.000; PRO 10x · 50 soal · 6 bulan · Rp29.000.
+- Saklar "Paket aktif" mati = aturan lama (gratis 1x, Pro tanpa batas). Pembeli Pro sebelum paket (`tier` kosong) tetap tanpa batas sampai `active_until`.
+- Di `soal/index.html`: `tier()` (free/plus/pro/lama), `batas()`, kartu paket `renderPaketBox()`. Batas masih dicek di browser; aktivasi tier menunggu `supabase/PENDING.md` no. 7.
+
 ### LKPD (dua jalur)
 - **Pembeli baru** (sejak migrasi `20261018_lkpd_access.sql`): sama seperti Buat Soal / Modul Ajar. Halaman `/aktvs-lkpd.html` → kode `BGY-XXXXX` → di `/lkpd/` isi email + kode (`bgy_activate_pro`, `access='lkpd'`). **Langganan 1 tahun** (`plan_type='annual'`). Ganti perangkat: "Sudah beli? Masuk dengan email" (`bgy_subscription_status`). Status disimpan di `bgy_pro_lkpd_sub` dan disegarkan ke server tiap halaman dibuka.
 - **Pembeli lama:** kode 4 angka (`BGY-7392`) tetap divalidasi Cloudflare Worker (`PRO_CODES`, kode di `lkpd/worker.js`) lewat `/api/lkpd-validate` (proxy, cadangan langsung ke `bgypro.pulsachoy.workers.dev`). Hasilnya `bgy_pro_lkpd = "1"` = **lifetime**, tidak pernah kedaluwarsa dan tidak dicek ulang. Jangan hapus Worker / env `PRO_CODES` selama masih ada pembeli lama yang belum aktivasi.

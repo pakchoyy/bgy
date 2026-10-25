@@ -626,6 +626,32 @@ main{padding-bottom:90px!important;}
         <div class="msg" id="promoMsg"></div>
       </form>
       <hr style="margin:20px 0;border:none;border-top:1px solid var(--border)">
+      <div class="card-title" style="margin-top:0"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Paket Buat Soal (FREE / PLUS / PRO)</div>
+      <p class="hint">Selama "Paket aktif" mati, Buat Soal memakai aturan lama. Nyalakan setelah produk PLUS/PRO siap di Kreacy dan aktivasinya sudah jalan.</p>
+      <form id="paketForm">
+        <div class="fg"><label class="chk"><input type="checkbox" id="pkAktif"/> Paket aktif</label></div>
+        <div class="row2">
+          <div class="fg"><label for="pk_free_harian">FREE — generate/hari</label><input id="pk_free_harian" type="number" min="0" max="100" required/></div>
+          <div class="fg"><label for="pk_free_max_soal">FREE — maks soal/lembar</label><input id="pk_free_max_soal" type="number" min="1" max="70" required/></div>
+        </div>
+        <div class="row2">
+          <div class="fg"><label for="pk_plus_harian">PLUS — generate/hari</label><input id="pk_plus_harian" type="number" min="1" max="100" required/></div>
+          <div class="fg"><label for="pk_plus_max_soal">PLUS — maks soal/lembar</label><input id="pk_plus_max_soal" type="number" min="1" max="70" required/></div>
+          <div class="fg"><label for="pk_plus_bulan">PLUS — masa aktif (bulan)</label><input id="pk_plus_bulan" type="number" min="1" max="24" required/></div>
+          <div class="fg"><label for="pk_plus_harga">PLUS — harga (Rp)</label><input id="pk_plus_harga" type="number" min="0" step="1000" required/></div>
+        </div>
+        <div class="fg"><label for="pk_plus_url">PLUS — link beli</label><input id="pk_plus_url" maxlength="300" placeholder="https://kreacy.my.id/..."/></div>
+        <div class="row2">
+          <div class="fg"><label for="pk_pro_harian">PRO — generate/hari</label><input id="pk_pro_harian" type="number" min="1" max="100" required/></div>
+          <div class="fg"><label for="pk_pro_max_soal">PRO — maks soal/lembar</label><input id="pk_pro_max_soal" type="number" min="1" max="70" required/></div>
+          <div class="fg"><label for="pk_pro_bulan">PRO — masa aktif (bulan)</label><input id="pk_pro_bulan" type="number" min="1" max="24" required/></div>
+          <div class="fg"><label for="pk_pro_harga">PRO — harga (Rp)</label><input id="pk_pro_harga" type="number" min="0" step="1000" required/></div>
+        </div>
+        <div class="fg"><label for="pk_pro_url">PRO — link beli</label><input id="pk_pro_url" maxlength="300" placeholder="https://kreacy.my.id/..."/></div>
+        <button class="btn-primary" type="submit" id="btnPaket">Simpan paket</button>
+        <div class="msg" id="paketMsg"></div>
+      </form>
+      <hr style="margin:20px 0;border:none;border-top:1px solid var(--border)">
       <div class="card-title" style="margin-top:0"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Tautan Beli Pro per tool</div>
       <p class="hint">Isi untuk mengganti link Lynk ke URL lain (mis. domain sendiri). Kosongkan = pakai link bawaan yang sudah disematkan di tool.</p>
       <form id="lisensiForm">
@@ -702,7 +728,7 @@ async function boot(){
     show('notAdmin');return;
   }
   show('panel');
-  loadJokian();loadSendiri();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadLisensi();
+  loadJokian();loadSendiri();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadLisensi();loadPaket();
   maybeLoadDashUsage();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
@@ -1570,6 +1596,36 @@ document.getElementById('promoForm').addEventListener('submit',async e=>{
   if(error)return fail(error);
   promoOld=value;
   msg.textContent='Tersimpan. Tampil di tool dalam beberapa menit.';toast('Promo tersimpan');
+});
+
+/* ─── Paket Buat Soal ─── */
+const PAKET_DEF={aktif:false,free:{harian:1,max_soal:10},plus:{harian:4,max_soal:20,bulan:3,harga:15000,url:''},pro:{harian:10,max_soal:50,bulan:6,harga:29000,url:''}};
+const PAKET_KEYS={free:['harian','max_soal'],plus:['harian','max_soal','bulan','harga','url'],pro:['harian','max_soal','bulan','harga','url']};
+async function loadPaket(){
+  const {data,error}=await sb.from('bgy_settings').select('value').eq('key','paket_soal').maybeSingle();
+  if(error)return fail(error);
+  const v=(data&&data.value)||{};
+  document.getElementById('pkAktif').checked=!!v.aktif;
+  for(const [t,ks] of Object.entries(PAKET_KEYS))for(const k of ks){const val=(v[t]||{})[k];document.getElementById('pk_'+t+'_'+k).value=val??PAKET_DEF[t][k];}
+}
+document.getElementById('paketForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const msg=document.getElementById('paketMsg');msg.className='msg';
+  const value={aktif:document.getElementById('pkAktif').checked};
+  for(const [t,ks] of Object.entries(PAKET_KEYS)){
+    value[t]={};
+    for(const k of ks){
+      const raw=document.getElementById('pk_'+t+'_'+k).value.trim();
+      if(k==='url'){if(raw&&!/^https:\/\/[^\s"'<>]+$/i.test(raw)){msg.className='msg err';msg.textContent='Link harus diawali https://';return;}value[t][k]=raw;}
+      else value[t][k]=Number(raw);
+    }
+  }
+  if(value.aktif&&(!value.plus.url||!value.pro.url)){msg.className='msg err';msg.textContent='Isi link beli PLUS dan PRO sebelum mengaktifkan paket.';return;}
+  const btn=document.getElementById('btnPaket');btn.disabled=true;
+  const {error}=await sb.from('bgy_settings').upsert({key:'paket_soal',value,updated_at:new Date().toISOString()});
+  btn.disabled=false;
+  if(error)return fail(error);
+  msg.textContent='Tersimpan. Berlaku di Buat Soal saat halaman dibuka ulang.';toast('Paket tersimpan');
 });
 
 /* ─── Link Bio ─── */

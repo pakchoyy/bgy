@@ -714,10 +714,10 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
     <!-- Header kotak -->
     <div style="background:linear-gradient(135deg,#f59e0b,#d97706);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
       <div style="font-size:.8rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;">
-        <svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> <span>Aktivasi Pro</span>
-        <span style="background:rgba(255,255,255,.25);font-size:.75rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
+        <svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> <span id="aktivJudul">Aktivasi Pro</span>
+        <span id="aktivBadge" style="background:rgba(255,255,255,.25);font-size:.75rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
       </div>
-      <a href="https://lynk.id/kreacy/mplxqygkqj36" target="_blank"
+      <a id="aktivBeli" href="https://lynk.id/kreacy/mplxqygkqj36" target="_blank"
         style="font-size:.75rem;font-weight:700;color:#fff;background:rgba(255,255,255,.2);padding:0 14px;min-height:40px;display:inline-flex;align-items:center;border-radius:99px;text-decoration:none;border:1px solid rgba(255,255,255,.4);">
         Beli Pro →
       </a>
@@ -725,6 +725,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
 
     <!-- Body -->
     <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(14,165,160,.04));">
+      <div id="paketBox" hidden></div>
       <div data-bgy-proof="soal" style="margin:-6px 0 10px;"></div>
 
       <!-- MODE 1: Input kode (dari redirect aktvs-bs) -->
@@ -740,7 +741,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
           <div style="display:flex;gap:6px;">
             <input type="text" id="inputKodeAktivasi"
               placeholder="BGY-XXXXX"
-              style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.85rem;font-weight:700;font-family:monospace;letter-spacing:2px;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;transition:border-color .2s;"
+              style="flex:1;min-width:0;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.85rem;font-weight:700;font-family:monospace;letter-spacing:2px;background:var(--input-bg);color:var(--text);outline:none;text-transform:uppercase;transition:border-color .2s;"
               onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='var(--border)'"/>
             <button onclick="verifikasiKode()"
               style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;border-radius:9px;padding:8px 15px;font-size:.82rem;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(245,158,11,.35);">
@@ -761,7 +762,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
         <div style="display:flex;gap:6px;">
           <input type="email" id="inputEmailPro"
             placeholder="Email pembelian..."
-            style="flex:1;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;transition:border-color .2s;"
+            style="flex:1;min-width:0;padding:8px 11px;border:2px solid var(--border);border-radius:9px;font-size:.82rem;background:var(--input-bg);color:var(--text);outline:none;transition:border-color .2s;"
             onfocus="this.style.borderColor='#0ea5a0'" onblur="this.style.borderColor='var(--border)'"/>
           <button onclick="cekAksesPro()"
             style="background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;border:none;border-radius:9px;padding:8px 14px;font-size:.82rem;font-weight:800;cursor:pointer;box-shadow:0 2px 8px rgba(14,165,160,.3);">
@@ -1323,6 +1324,7 @@ function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null
     restoreAutoSave();
     updateSmartHints();
     updateLimitDisplay();
+    renderPaketBox();
     updateHistoriBadge(getHistoriList().length);
     window.addEventListener('beforeinstallprompt',e=>{
       e.preventDefault();deferredInstallPrompt=e;
@@ -1914,9 +1916,13 @@ async function handleGenerate(){
   const opsiPG=opsiConfig.label;
   const opsiJsonTemplate=opsiConfig.template;
 
-  const limitCheck=checkLimit();
+  const limitCheck=checkLimit(),bt=batas();
   if(!limitCheck.ok){
-    showError('Batas generate harian ('+DAILY_LIMIT+'x) sudah habis. Aktivasi Pro untuk unlimited, atau coba lagi besok.');
+    showError('Batas generate harian ('+bt.harian+'x) sudah habis. '+(tier()==='pro'?'Coba lagi besok.':'Upgrade paket untuk kuota lebih banyak, atau coba lagi besok.'));
+    return;
+  }
+  if(jmlPG+jmlIsian+jmlUraian>bt.max_soal){
+    showError('Paket '+NAMA_TIER[tier()]+' maksimal '+bt.max_soal+' soal per lembar. Kurangi jumlah soal'+(tier()==='pro'?'.':' atau upgrade paket.'));
     return;
   }
   hideError();setLoading(true);showGenerateFeedback('AI sedang membuat soal...',0);
@@ -2019,7 +2025,7 @@ ${rawText}`;
     }
 
     soalData=data;
-    if(!isPro())incrementDaily();
+    if(batas().harian!==Infinity)incrementDaily();
     saveToBank(kelas,mapel,materi,data);
     gaEvent('generate_soal',{jenjang:jenjang,kelas:'Kelas '+kelas,mata_pelajaran:mapel,jumlah_pg:jmlPG,jumlah_isian:jmlIsian,jumlah_uraian:jmlUraian,tipe_user:isPro()?'pro':'free'});
 
@@ -3477,31 +3483,69 @@ function validateForm(){
 function isPro(){
   try{
     const d=JSON.parse(localStorage.getItem('bgy_pro')||'{}');
-    if(d.aktif===true && (d.plan_type!=='annual'||(d.active_until&&new Date(d.active_until).getTime()>Date.now()))) return true;
+    if(d.aktif===true && (!d.active_until||new Date(d.active_until).getTime()>Date.now())) return true;
   }catch{}
   return false;
 }
-function subscriptionIsActive(data){return !!data?.is_pro&&(data.plan_type!=='annual'||(data.active_until&&new Date(data.active_until).getTime()>Date.now()));}
-function savePro(data){localStorage.setItem('bgy_pro',JSON.stringify({aktif:true,tgl:getTodayStr(),plan_type:data.plan_type,active_until:data.active_until}));}
+// Lifetime lama: active_until kosong. Paket lain (annual/PLUS/PRO) habis sesuai tanggal.
+function subscriptionIsActive(data){return !!data?.is_pro&&(!data.active_until||new Date(data.active_until).getTime()>Date.now());}
+function savePro(data){localStorage.setItem('bgy_pro',JSON.stringify({aktif:true,tgl:getTodayStr(),plan_type:data.plan_type,active_until:data.active_until,tier:data.tier||null}));}
+/* Paket FREE/PLUS/PRO: angka diatur di /admin (bgy_settings key 'paket_soal'). Saat paket.aktif=false, perilaku lama berlaku. */
+const PAKET_DEFAULT={aktif:false,free:{harian:1,max_soal:10},plus:{harian:4,max_soal:20,bulan:3,harga:15000,url:''},pro:{harian:10,max_soal:50,bulan:6,harga:29000,url:''}};
+let PAKET=(()=>{try{return Object.assign({},PAKET_DEFAULT,JSON.parse(localStorage.getItem('bgy_paket_soal')||'{}'));}catch{return PAKET_DEFAULT;}})();
+fetch('https://xtmpiqpmwirsrcsphsto.supabase.co/rest/v1/bgy_settings?key=eq.paket_soal&select=value',{headers:{apikey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w',Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w'}})
+  .then(r=>r.ok?r.json():[]).then(rows=>{const v=rows&&rows[0]&&rows[0].value;if(!v)return;PAKET=Object.assign({},PAKET_DEFAULT,v);try{localStorage.setItem('bgy_paket_soal',JSON.stringify(v));}catch{}updateLimitDisplay();renderPaketBox();}).catch(()=>{});
+// free | plus | pro | lama (pembeli Pro sebelum paket: tanpa batas sampai masa aktif habis)
+function tier(){if(!isPro())return'free';try{const t=JSON.parse(localStorage.getItem('bgy_pro')||'{}').tier;return t==='plus'||t==='pro'?t:'lama';}catch{return'lama';}}
+function batas(){
+  const t=tier();
+  if(!PAKET.aktif)return t==='free'?{harian:DAILY_LIMIT,max_soal:70}:{harian:Infinity,max_soal:70};
+  if(t==='lama')return{harian:Infinity,max_soal:70};
+  const p=PAKET[t]||PAKET_DEFAULT[t];
+  return{harian:Number(p.harian)||1,max_soal:Number(p.max_soal)||10};
+}
+const NAMA_TIER={free:'FREE',plus:'PLUS',pro:'PRO',lama:'PRO'};
+function renderPaketBox(){
+  const box=document.getElementById('paketBox');if(!box)return;
+  const on=!!PAKET.aktif;box.hidden=!on;
+  ['aktivBadge','aktivBeli'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=on?'none':'';});
+  const j=document.getElementById('aktivJudul');if(j)j.textContent=on?'Upgrade Paket':'Aktivasi Pro';
+  if(!on)return;
+  const rp=n=>'Rp'+Number(n||0).toLocaleString('id-ID'),t=tier();
+  box.innerHTML=['plus','pro'].filter(k=>!(t==='plus'&&k==='plus')).map(k=>{
+    const p=Object.assign({},PAKET_DEFAULT[k],PAKET[k]);
+    const url=/^https:\/\/[^\s"'<>]+$/.test(p.url||'')?p.url:'';
+    const pro=k==='pro';
+    return `<div style="border:1.5px solid ${pro?'#f59e0b':'var(--border)'};border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px;background:var(--card-bg);">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:800;font-size:.88rem;color:var(--text);">${pro?'PRO':'PLUS'} · ${rp(p.harga)} <span style="font-weight:600;font-size:.75rem;color:var(--text-light);">/ ${Number(p.bulan)||0} bulan</span></div>
+        <div style="font-size:.75rem;color:var(--text-light);">${Number(p.harian)||0}x generate/hari · maks ${Number(p.max_soal)||0} soal per lembar</div>
+      </div>
+      ${url?`<a href="${url}" target="_blank" rel="noopener" style="min-height:40px;display:inline-flex;align-items:center;padding:0 16px;border-radius:10px;background:${pro?'linear-gradient(135deg,#f59e0b,#d97706)':'linear-gradient(135deg,#0ea5a0,#0d7a8a)'};color:#fff;font-weight:800;font-size:.8rem;text-decoration:none;white-space:nowrap;">Beli</a>`:'<span style="font-size:.75rem;color:var(--text-light);">Segera</span>'}
+    </div>`;}).join('');
+}
 function getTodayStr(){return new Date().toISOString().slice(0,10);}
 function getDailyUsage(){try{const r=localStorage.getItem('bgy_daily_usage');return r?JSON.parse(r):{date:'',count:0};}catch{return{date:'',count:0};}}
 function incrementDaily(){const today=getTodayStr();let u=getDailyUsage();if(u.date!==today)u={date:today,count:0};u.count++;localStorage.setItem('bgy_daily_usage',JSON.stringify(u));return u.count;}
-function checkLimit(){if(isPro())return{ok:true,remaining:999};const today=getTodayStr();const u=getDailyUsage();if(u.date!==today)return{ok:true,remaining:DAILY_LIMIT};const rem=DAILY_LIMIT-u.count;return{ok:rem>0,remaining:Math.max(0,rem)};}
+function checkLimit(){const h=batas().harian;if(h===Infinity)return{ok:true,remaining:999};const u=getDailyUsage();const used=u.date===getTodayStr()?u.count:0;const rem=h-used;return{ok:rem>0,remaining:Math.max(0,rem)};}
 function updateLimitDisplay(){
   const el=document.getElementById('limitInfo');if(!el)return;
   const lr=document.getElementById('limitReset');
-  if(isPro()){
+  const t=tier(),bt=batas();
+  const b=document.getElementById('hBadge');if(b){b.textContent=NAMA_TIER[t];b.className=t==='free'?'badge-free':'badge-pro';}
+  if(bt.harian===Infinity){
     el.textContent='Pro Aktif — Generate Unlimited';el.style.color='#059669';
     document.getElementById('aktivasiBox').style.display='none';
     document.getElementById('btnLabel').textContent='Generate Soal';
     if(lr)lr.style.display='none';
-    const b=document.getElementById('hBadge');if(b){b.textContent='PRO';b.className='badge-pro';}
     return;
   }
+  // PRO tetap dibatasi harian tapi tidak perlu ditawari upgrade.
+  document.getElementById('aktivasiBox').style.display=t==='pro'?'none':'';
   if(lr)lr.style.display='';
-  const b=document.getElementById('hBadge');if(b){b.textContent='FREE';b.className='badge-free';}
   const{ok,remaining}=checkLimit();
-  el.textContent=ok?`Sisa generate hari ini: ${remaining}x`:'Batas harian habis. Aktivasi Pro atau coba besok.';
+  const maks=PAKET.aktif?` · maks ${bt.max_soal} soal`:'';
+  el.textContent=ok?`${t==='free'?'':NAMA_TIER[t]+' · '}Sisa generate hari ini: ${remaining}x${maks}`:(t==='pro'?'Batas harian habis. Coba lagi besok.':'Batas harian habis. Upgrade paket atau coba besok.');
   el.style.color=remaining<=1?'#dc2626':'#64748b';
   const btnLbl=document.getElementById('btnLabel');
   if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1)btnLbl.textContent=ok?`Generate Soal (${remaining}x)`:'Limit Habis';
