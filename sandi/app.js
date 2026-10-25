@@ -658,8 +658,9 @@ on('btn-install-close', 'click', () => {
   document.getElementById('install-banner').hidden = true;
   localStorage.setItem('sandi_install_dismissed', '1');
 });
+// Tanpa beforeinstallprompt di Chrome berarti sudah terpasang, jadi banner cadangan hanya untuk iPhone.
 setTimeout(() => {
-  if (!deferredInstallPrompt && !isStandalone() && !localStorage.getItem('sandi_install_dismissed')) {
+  if (isIos() && !deferredInstallPrompt && !isStandalone() && !localStorage.getItem('sandi_install_dismissed')) {
     const banner = document.getElementById('install-banner');
     if (banner) banner.hidden = false;
   }

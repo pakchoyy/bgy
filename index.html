@@ -1759,17 +1759,20 @@ function showInstallBanner() {
   banner.classList.remove('hidden');
 }
 
-// Tampil setiap buka browser sampai terinstal; tidak menunggu beforeinstallprompt
-// karena Chrome sering tidak mengirimnya (habis uninstall/ditolak) dan iOS tidak punya.
-if (!isStandalone()) {
+function showInstallOffer() {
   const tb = document.getElementById('installTopbarBtn');
   if (tb) tb.style.display = 'flex';
   setTimeout(showInstallBanner, 1200);
 }
+// Chrome/Android hanya mengirim beforeinstallprompt bila aplikasi BELUM terpasang, jadi tawaran
+// menunggu event itu. iPhone tidak punya event ini: tampilkan langkah manual tiap kunjungan di Safari.
+const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (!isStandalone() && isIos) showInstallOffer();
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
+  if (!isStandalone()) showInstallOffer();
 });
 
 function dismissBanner() {
