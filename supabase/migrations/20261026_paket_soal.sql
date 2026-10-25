@@ -7,6 +7,8 @@ begin;
 alter table public.users add column if not exists tier text;
 alter table public.users drop constraint if exists users_tier_check;
 alter table public.users add constraint users_tier_check check (tier is null or tier in ('plus', 'pro'));
+alter table public.users drop constraint if exists users_plan_type_check;
+alter table public.users add constraint users_plan_type_check check (plan_type is null or plan_type in ('lifetime', 'annual', 'paket'));
 
 -- ═══ Klaim pesanan paket (overload 6 argumen) ═══
 create or replace function public.bgy_claim_order(p_order text, p_sig text, p_email text, p_access text, p_paket text, p_sig2 text)
