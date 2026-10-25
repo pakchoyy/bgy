@@ -369,9 +369,10 @@ main{padding-bottom:90px!important;}
   <div class="card" id="loginCard" hidden style="max-width:420px;margin:30px auto;">
     <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg> Masuk Admin</div>
     <form id="loginForm">
-      <div class="fg"><label for="email">Email</label><input type="email" id="email" autocomplete="username" required/></div>
-      <div class="fg"><label for="pass">Sandi</label><input type="password" id="pass" autocomplete="current-password" required/></div>
-      <button class="btn-primary" type="submit" id="btnLogin">Masuk</button>
+      <div class="fg"><label for="email">Email admin</label><input type="email" id="email" autocomplete="username" required/></div>
+      <div class="fg" id="otpWrap" hidden><label for="otp">Kode dari email</label><input id="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="10" pattern="[0-9]*"/></div>
+      <button class="btn-primary" type="submit" id="btnLogin">Kirim kode ke email</button>
+      <div class="msg" id="loginInfo"></div>
       <div class="msg err" id="loginMsg"></div>
     </form>
   </div>
@@ -619,6 +620,8 @@ main{padding-bottom:90px!important;}
           <div class="fg"><label for="bUrl">Link paket bundling</label><input id="bUrl" maxlength="300" placeholder="https://lynk.id/..."/></div>
         </div>
         <div class="fg"><label for="gText">Garansi</label><input id="gText" maxlength="80" placeholder="mis. Garansi uang kembali 3 hari"/></div>
+        <div class="fg"><label for="aText">Pengumuman ke semua pengguna</label><textarea id="aText" maxlength="300" rows="3" placeholder="Kosongkan bila tidak ada. Tiap pengumuman tampil sekali per pengguna."></textarea></div>
+        <div class="fg"><label for="aLevel">Jenis pengumuman</label><select id="aLevel"><option value="info">Info (bisa ditutup)</option><option value="penting">Penting (harus klik "Saya mengerti")</option></select></div>
         <button class="btn-primary" type="submit" id="btnPromo">Simpan</button>
         <div class="msg" id="promoMsg"></div>
       </form>
@@ -704,15 +707,27 @@ async function boot(){
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();
-  const btn=document.getElementById('btnLogin'),msg=document.getElementById('loginMsg');
+  const btn=document.getElementById('btnLogin'),msg=document.getElementById('loginMsg'),info=document.getElementById('loginInfo');
+  const email=document.getElementById('email').value.trim(),otpWrap=document.getElementById('otpWrap'),otp=document.getElementById('otp');
   btn.disabled=true;msg.textContent='';
-  const {error}=await sb.auth.signInWithPassword({email:document.getElementById('email').value.trim(),password:document.getElementById('pass').value});
+  if(otpWrap.hidden){
+    // shouldCreateUser:false → email yang belum punya akun tidak bisa minta kode / mendaftar.
+    const {error}=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:location.origin+'/admin/'}});
+    btn.disabled=false;
+    if(error){msg.textContent=/signups not allowed|not found/i.test(error.message)?'Email ini bukan akun admin.':/rate|seconds/i.test(error.message)?'Tunggu sebentar sebelum minta kode lagi.':error.message;return;}
+    otpWrap.hidden=false;otp.required=true;otp.focus();
+    btn.textContent='Masuk';
+    info.textContent='Kode dikirim ke '+email+'. Cek juga folder Spam. Bisa juga klik link di email itu.';
+    return;
+  }
+  const {error}=await sb.auth.verifyOtp({email,token:otp.value.trim(),type:'email'});
   btn.disabled=false;
-  if(error){msg.textContent=/invalid/i.test(error.message)?'Email atau sandi salah.':error.message;return;}
-  document.getElementById('pass').value='';
-  boot();
+  if(error){msg.textContent=/expired|invalid/i.test(error.message)?'Kode salah atau sudah kedaluwarsa.':error.message;return;}
+  otp.value='';
 });
-async function logout(){await sb.auth.signOut();show('loginCard');}
+// Masuk lewat kode maupun lewat link di email sama-sama memicu SIGNED_IN.
+sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_IN')setTimeout(boot,0);});
+async function logout(){await sb.auth.signOut();document.getElementById('otpWrap').hidden=true;document.getElementById('otp').required=false;document.getElementById('btnLogin').textContent='Kirim kode ke email';document.getElementById('loginInfo').textContent='';show('loginCard');}
 
 const TABS=['dash','portal','proyek','langganan','bgy','links','reviews','promo','docs','stat','users'];
 const BOTTOM_TABS={dash:'dash',portal:'portal',proyek:'proyek',langganan:'langganan',bgy:'bgy'};
@@ -1528,13 +1543,14 @@ async function loadStats(){
 }
 
 /* ─── Promo ─── */
-const PROMO_FIELDS={pText:'promo_text',pUntil:'promo_until',pUrl:'promo_url',vCode:'voucher_code',vText:'voucher_text',bText:'bundle_text',bUrl:'bundle_url',gText:'garansi_text'};
+const PROMO_FIELDS={pText:'promo_text',pUntil:'promo_until',pUrl:'promo_url',vCode:'voucher_code',vText:'voucher_text',bText:'bundle_text',bUrl:'bundle_url',gText:'garansi_text',aText:'ann_text',aLevel:'ann_level'};
+let promoOld={};
 async function loadPromo(){
   const {data,error}=await sb.from('bgy_settings').select('value').eq('key','promo').maybeSingle();
   if(error){document.getElementById('promoMsg').textContent='Tabel pengaturan belum ada: jalankan migrasi 20260928_settings_promo.sql.';return;}
-  const v=(data&&data.value)||{};
+  const v=(data&&data.value)||{};promoOld=v;
   document.getElementById('pActive').checked=!!v.promo_active;
-  Object.entries(PROMO_FIELDS).forEach(([id,k])=>{document.getElementById(id).value=v[k]||'';});
+  Object.entries(PROMO_FIELDS).forEach(([id,k])=>{document.getElementById(id).value=v[k]||(k==='ann_level'?'info':'');});
 }
 document.getElementById('promoForm').addEventListener('submit',async e=>{
   e.preventDefault();
@@ -1546,10 +1562,13 @@ document.getElementById('promoForm').addEventListener('submit',async e=>{
     if(val)value[k]=k==='voucher_code'?val.toUpperCase():val;
   }
   if(value.promo_active&&!value.promo_text){msg.className='msg err';msg.textContent='Isi teks promo dulu, atau matikan promo.';return;}
+  // Pengumuman yang diubah dapat id baru supaya tampil lagi ke semua pengguna.
+  if(value.ann_text)value.ann_id=(promoOld.ann_text===value.ann_text&&promoOld.ann_level===value.ann_level&&promoOld.ann_id)||String(Date.now());
   const btn=document.getElementById('btnPromo');btn.disabled=true;
   const {error}=await sb.from('bgy_settings').upsert({key:'promo',value,updated_at:new Date().toISOString()});
   btn.disabled=false;
   if(error)return fail(error);
+  promoOld=value;
   msg.textContent='Tersimpan. Tampil di tool dalam beberapa menit.';toast('Promo tersimpan');
 });
 

@@ -1,6 +1,8 @@
 // Aktivasi Prompt LKPD lewat domain sendiri. Halaman memanggil /api/lkpd-validate, server meneruskan ke
 // Cloudflare Worker (kode Pro tetap disimpan di env Worker). Dengan begitu pengguna yang jaringannya
 // tidak bisa membuka *.workers.dev tetap bisa aktivasi.
+import { aiGate } from './_gate.js';
+
 export const config = { api: { bodyParser: true } };
 
 const WORKER_URL = process.env.LKPD_WORKER_URL || 'https://bgypro.pulsachoy.workers.dev';
@@ -44,6 +46,12 @@ export default async function handler(req, res) {
   if (isRateLimited(req)) {
     res.setHeader('Retry-After', '60');
     return res.status(429).json({ valid: false, message: 'Terlalu banyak percobaan. Tunggu satu menit lalu coba lagi.' });
+  }
+  // Batas bersama semua instance (5/menit, 20/hari per IP) di Supabase; limiter memori di atas tetap jadi cadangan.
+  const gate = await aiGate(req, 'lkpd_code');
+  if (gate && gate.status === 429) {
+    res.setHeader('Retry-After', String(gate.retryAfter || 60));
+    return res.status(429).json({ valid: false, message: 'Terlalu banyak percobaan kode. Coba lagi nanti atau hubungi admin.' });
   }
 
   let body = req.body;

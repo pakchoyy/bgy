@@ -1059,18 +1059,17 @@ a { text-decoration: none; color: inherit; }
 
 /* ─── INSTALL BANNER ─── */
 .install-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
+  position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 100001;
+  width: calc(100% - 32px); max-width: 360px; box-sizing: border-box;
+  display: flex; flex-direction: column; align-items: stretch; gap: 16px;
   background: var(--surface);
   border: 1.5px solid rgba(14,165,160,.25);
-  border-left: 4px solid var(--teal,#0ea5a0);
-  border-radius: var(--r-md);
-  padding: 14px 18px;
-  flex-shrink: 0;
-  animation: fadeUp .4s ease both;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 0 0 100vmax rgba(15,23,42,.5), 0 20px 50px rgba(15,23,42,.3);
 }
+.install-banner .install-banner-btns > button { flex: 1; min-height: 42px; }
+.install-banner-sub { font-size: .8rem !important; line-height: 1.5; }
 .install-banner.hidden { display: none !important; }
 .install-banner-left { display: flex; align-items: center; gap: 12px; }
 .install-banner-icon {
@@ -1491,7 +1490,7 @@ a { text-decoration: none; color: inherit; }
   <!-- Install App Banner — muncul kalau belum install -->
   <div id="installBanner" class="install-banner hidden">
     <div class="install-banner-left">
-      <div class="install-banner-icon"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg></div>
+      <div class="install-banner-icon"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg></div>
       <div>
         <div class="install-banner-title">Install Bantu Guru Yuk!</div>
         <div class="install-banner-sub">Akses lebih cepat langsung dari home screen</div>
@@ -1499,7 +1498,7 @@ a { text-decoration: none; color: inherit; }
     </div>
     <div class="install-banner-btns">
       <button onclick="doInstall()" class="install-banner-btn-yes">Install</button>
-      <button onclick="dismissBanner()" class="install-banner-btn-no">Nanti</button>
+      <button onclick="dismissBanner()" class="install-banner-btn-no">Nanti saja</button>
     </div>
   </div>
 
@@ -1750,7 +1749,14 @@ function showInstallBanner() {
   try { dismissed = !!sessionStorage.getItem('install-dismissed'); } catch (e) {}
   if (dismissed) return;
   const banner = document.getElementById('installBanner');
-  if (banner) banner.classList.remove('hidden');
+  if (!banner) return;
+  // iPhone/iPad tidak punya tombol install otomatis: tampilkan langkah manual.
+  if (/iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+    banner.querySelector('.install-banner-sub').textContent = 'Di Safari: tekan tombol Bagikan (kotak panah ke atas), lalu pilih "Tambahkan ke Layar Utama".';
+    banner.querySelector('.install-banner-btn-yes').hidden = true;
+    banner.querySelector('.install-banner-btn-no').textContent = 'Mengerti';
+  }
+  banner.classList.remove('hidden');
 }
 
 // Tampil setiap buka browser sampai terinstal; tidak menunggu beforeinstallprompt

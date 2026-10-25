@@ -26,18 +26,19 @@ Acuan untuk semua tool berbayar BGY dan web baru yang ingin memakai pola yang sa
 ## 3. Alur aktivasi (Soal, Modul Ajar, Kokurikuler)
 
 ```
-Beli di Lynk ──► Lynk mengarahkan ke /aktvs-xx.html
-                 └─ isi email pembelian → RPC bgy_request_activation_code(email, access)
-                    → keluar kode BGY-XXXXX (baris baru: is_pro=false, plan_type=null)
+Beli di Kreacy ──► link produk: /aktvs-xx.html?order={order}&sig={sig}
+                   (toko mengganti {order} + {sig} = HMAC-SHA256(KLAIM_HMAC_SECRET, order))
+                 └─ isi email → RPC bgy_claim_order(order, sig, email, access)
+                    → cek tanda tangan; satu pesanan = satu email (tabel bgy_order_claims)
+                    → is_pro=true, annual, active_until = max(sekarang, sisa lama) + 1 tahun
+                    → keluar kode BGY-XXXXX (link dibuka lagi dgn email sama = kode sama)
 Buka tool ──► tab "Kode Aktivasi": email + kode → RPC bgy_activate_pro(email, code, access)
-              → baris jadi is_pro=true, plan_type='annual', active_until = sekarang + 1 tahun
               → status disimpan di localStorage tool
 Ganti HP / hapus data ──► tab "Login Email": RPC bgy_subscription_status(email, access)
 ```
 
 - Status Pro dianggap aktif bila `is_pro = true` **dan** (`plan_type` bukan `annual` **atau** `active_until` masih di masa depan).
-- Kode yang sama tidak bisa memperpanjang paket yang sudah kedaluwarsa.
-- **Perpanjangan** dilakukan admin lewat SQL setelah pembayaran terverifikasi:
+- **Perpanjangan** otomatis: beli lagi di Kreacy → klaim dengan email yang sama → +1 tahun. Manual lewat SQL bila perlu:
   ```sql
   update public.users
   set active_until = greatest(active_until, now()) + interval '1 year'
@@ -47,7 +48,8 @@ Ganti HP / hapus data ──► tab "Login Email": RPC bgy_subscription_status(e
 ### LKPD (dua jalur)
 - **Pembeli baru** (sejak migrasi `20261018_lkpd_access.sql`): sama seperti Buat Soal / Modul Ajar. Halaman `/aktvs-lkpd.html` → kode `BGY-XXXXX` → di `/lkpd/` isi email + kode (`bgy_activate_pro`, `access='lkpd'`). **Langganan 1 tahun** (`plan_type='annual'`). Ganti perangkat: "Sudah beli? Masuk dengan email" (`bgy_subscription_status`). Status disimpan di `bgy_pro_lkpd_sub` dan disegarkan ke server tiap halaman dibuka.
 - **Pembeli lama:** kode 4 angka (`BGY-7392`) tetap divalidasi Cloudflare Worker (`PRO_CODES`, kode di `lkpd/worker.js`) lewat `/api/lkpd-validate` (proxy, cadangan langsung ke `bgypro.pulsachoy.workers.dev`). Hasilnya `bgy_pro_lkpd = "1"` = **lifetime**, tidak pernah kedaluwarsa dan tidak dicek ulang. Jangan hapus Worker / env `PRO_CODES` selama masih ada pembeli lama yang belum aktivasi.
-- Di Kreacy, atur "redirect setelah bayar" produk LKPD ke `https://www.bantuguruyuk.web.id/aktvs-lkpd.html`.
+- Di Kreacy, link file produk LKPD: `https://www.bantuguruyuk.web.id/aktvs-lkpd.html?order={order}&sig={sig}`.
+- Percobaan kode lama dibatasi di server: `bgy_ai_gate('lkpd_code')` 5/menit, 20/hari per IP.
 
 ## 4. Database Supabase
 
@@ -56,13 +58,17 @@ Proyek: `xtmpiqpmwirsrcsphsto.supabase.co` (anon key boleh di browser, service r
 | Tabel / fungsi | Isi | Akses |
 |---|---|---|
 | `users` | `email, code, access, is_pro, plan_type, active_until, purchased_at` | RLS aktif, anon **tidak bisa** baca/tulis langsung |
-| `bgy_request_activation_code(p_email, p_access)` | buat/ambil kode pending | anon (RPC) |
+| `bgy_claim_order(p_order, p_sig, p_email, p_access)` | klaim pesanan Kreacy → Pro 1 tahun + kode | anon (RPC) |
+| `bgy_order_claims` | pesanan yang sudah diklaim (order_id unik) | baca hanya admin |
+| `bgy_private` (key `klaim_hmac_secret`) | rahasia HMAC, sama dengan env toko `KLAIM_HMAC_SECRET` | tidak bisa dibaca dari luar |
+| `bgy_request_activation_code` | **ditutup** (migrasi `20261025_keamanan_klaim.sql`) | tidak ada |
 | `bgy_activate_pro(p_email, p_code, p_access)` | aktifkan annual sekali | anon (RPC) |
 | `bgy_subscription_status(p_email, p_access)` | cek status untuk login email | anon (RPC) |
 | `bgy_admins` + `bgy_is_admin()` | daftar email admin (harus email terverifikasi) | hanya lewat fungsi |
 | `bgy_reviews` + `bgy_submit_review()` + `bgy_review_stats()` | ulasan pengguna | baca publik (yang disetujui), tulis lewat RPC |
 | `bgy_bio_links` + `bgy_bio_click()` | link di `/k` | baca publik, tulis admin |
-| `bgy_settings` (key `promo`) | promo, voucher, bundling, garansi | baca publik, tulis admin |
+| `bgy_settings` (key `promo`, `lisensi`) | promo, voucher, bundling, garansi, pengumuman | baca publik, tulis admin |
+| `bgy_settings` (key `admin_*`) | data dashboard admin (proyek, sandi, langganan) | **hanya admin** |
 | `bgy_docs` + `bgy_doc_download()` + Storage bucket `dokumen` | Dokumen Resmi (`/dokumen`): judul, nomor, tahun, kategori, sumber, ringkasan, file (maks 50 MB) atau link | baca publik (yang aktif), tulis & unggah admin |
 | `bgy_events` + `bgy_track()` + `bgy_usage_stats()` | statistik pemakaian anonim (ID acak per browser): open, hasil, pro, install, share | tulis lewat RPC (maks 300/hari per browser), ringkasan hanya admin |
 
@@ -70,7 +76,7 @@ File migrasi di `supabase/migrations/` — jalankan berurutan di Supabase → SQ
 
 ## 5. Admin (`/admin`)
 
-Login email + sandi Supabase Auth. Email harus ada di `bgy_admins`:
+Login pakai **kode dari email** (Supabase Auth OTP, `shouldCreateUser:false`), atau klik link di email itu. Bisa juga dibuka dengan ketuk judul header 5× di halaman mana saja (hanya jalan pintas; pengamannya tetap `bgy_is_admin()` di server). Email harus ada di `bgy_admins`:
 ```sql
 insert into public.bgy_admins (email) values ('email-kamu@contoh.com') on conflict do nothing;
 ```
@@ -85,6 +91,7 @@ Tab: **Link Bio** (`/k`), **Ulasan** (tampil/sembunyikan/edit/hapus), **Promo**,
 | Kode voucher + keterangan | `TEMANGURU` · `diskon 10%` | juga ikut di pesan "Bagikan ke teman guru" |
 | Paket bundling | `Paket Guru Pro (semua tool)` + link | |
 | Garansi | `Garansi uang kembali 3 hari` | tulis hanya bila benar-benar diberikan |
+| Pengumuman + jenis | `Server maintenance Sabtu malam` · info/penting | tampil sekali per pengguna di semua halaman; diubah = tampil lagi |
 
 ## 6. Penawaran di dalam tool
 
@@ -96,7 +103,7 @@ Lihat `DESIGN-BGY.md` bagian 14. Ringkasnya, di setiap tool berbayar:
 
 ## 7. Keterbatasan yang sudah diketahui (disengaja, dianggap cukup)
 
-- Halaman aktivasi hanya "tersembunyi" (tidak ditautkan dari aplikasi, `noindex`). Orang yang tahu alamatnya bisa meminta kode untuk email apa saja. Kalau suatu saat perlu lebih ketat: admin memasukkan email pembeli di `/admin`, dan kode hanya keluar untuk email itu.
+- Tanda tangan pesanan hanya mengikat nomor pesanan, bukan produknya: pesanan produk murah bisa diklaim di halaman aktivasi produk lain. Aman selama harga produk Pro setara; kalau beda jauh, tambahkan nama produk ke data yang ditandatangani di toko.
 - Batas harian di layar tetap dicek di browser (localStorage), tapi endpoint AI (`/api/generate-soal`, `/api/generate-modul-ajar`, `/api/generate-teks`) juga dijaga di server lewat `api/_gate.js` → RPC `bgy_ai_gate` (migrasi `20261013_ai_quota.sql`):
   - rate limit per menit per IP (soal 6, modul ajar 12, teks 10), berlaku untuk semua instance Vercel;
   - jatah gratis per IP per hari (soal 15, modul ajar 25, teks 20 panggilan API; satu modul ajar ±4–8 panggilan);
@@ -108,7 +115,7 @@ Lihat `DESIGN-BGY.md` bagian 14. Ringkasnya, di setiap tool berbayar:
 
 ## 8. Memakai pola ini di web baru
 
-1. Buat produk di Lynk; setel "redirect setelah bayar" ke halaman aktivasi web baru.
+1. Buat produk di Kreacy; link file produk = halaman aktivasi web baru + `?order={order}&sig={sig}`.
 2. Tambah nilai `access` baru (mis. `'nama_tool'`) di daftar yang diizinkan pada ketiga fungsi RPC (`normalized_access not in (...)`), lalu jalankan ulang migrasi.
 3. Salin halaman aktivasi (`aktvs-ma.html`) → ganti `p_access`, judul, dan link WA.
 4. Di tool: `isPro()` membaca localStorage dengan **kunci unik**, fungsi aktivasi kode (`bgy_activate_pro`) & login email (`bgy_subscription_status`), konstanta `DAILY_LIMIT`.

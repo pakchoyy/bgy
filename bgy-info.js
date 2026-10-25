@@ -364,12 +364,14 @@
       document.querySelector('header h1, .app-header h1') ||
       document.querySelector('h1.hero-title, h1');
     if (!target) return;
+    // Tanpa ini HP menganggap ketukan cepat sebagai zoom ketuk-dua dan klik tidak sampai.
+    target.style.touchAction = 'manipulation';
     var count = 0, timer = null;
     // capture=true: tetap terhitung walau tombol di dalam header menahan event.
     target.addEventListener('click', function () {
       count++;
       if (timer) clearTimeout(timer);
-      timer = setTimeout(function () { count = 0; }, 2500);
+      timer = setTimeout(function () { count = 0; }, 4000);
       if (count >= 5) {
         count = 0;
         if (timer) clearTimeout(timer);
@@ -634,6 +636,7 @@
         if (v.voucher_code) out.voucher = { code: String(v.voucher_code), text: v.voucher_text || '' };
         if (v.bundle_url && httpsUrl(v.bundle_url)) out.bundle = { text: v.bundle_text || 'Paket hemat semua tool Pro', url: httpsUrl(v.bundle_url) };
         if (v.garansi_text) out.garansi = v.garansi_text;
+        if (v.ann_text) out.ann = { text: String(v.ann_text).slice(0, 300), penting: v.ann_level === 'penting', id: String(v.ann_id || v.ann_text) };
         promoNow = Object.keys(out).length ? out : null;
         return promoNow;
       })
@@ -789,6 +792,34 @@
     }, opts.delay == null ? 2500 : opts.delay);
   }
   window.bgyProNudge = proNudge;
+  // Pengumuman dari /admin (Promo): tampil sekali per pengumuman; "penting" hanya bisa ditutup lewat "Saya mengerti".
+  function mountAnn() {
+    if (page === 'admin') return;
+    loadPromo().then(function (p) {
+      var a = p && p.ann;
+      if (!a || lsGet('bgy_ann_seen') === a.id || document.querySelector('.bgyn')) return;
+      ensureProofCss();
+      var card = document.createElement('div');
+      card.className = 'bgyn';
+      card.setAttribute('role', a.penting ? 'alertdialog' : 'dialog');
+      card.setAttribute('aria-label', 'Pengumuman');
+      card.innerHTML = (a.penting ? '' : '<button type="button" class="bgyn-x" aria-label="Tutup">&times;</button>') +
+        '<div class="bgyn-t"></div><p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;white-space:pre-line;"></p>' +
+        '<div class="bgyn-btns"><button type="button" class="bgyn-go">' + (a.penting ? 'Saya mengerti' : 'Tutup') + '</button></div>';
+      card.querySelector('.bgyn-t').textContent = a.penting ? 'Pengumuman penting' : 'Pengumuman';
+      card.querySelector('p').textContent = a.text;
+      function close() {
+        lsSet('bgy_ann_seen', a.id);
+        card.classList.remove('show');
+        setTimeout(function () { card.remove(); }, 250);
+      }
+      card.querySelector('.bgyn-go').addEventListener('click', close);
+      var x = card.querySelector('.bgyn-x');
+      if (x) x.addEventListener('click', close);
+      document.body.appendChild(card);
+      requestAnimationFrame(function () { card.classList.add('show'); });
+    });
+  }
   // bgyBuyUrl(tool?) → URL beli dari settings admin, atau null (tool pakai fallback hardcode)
   window.bgyBuyUrl = function (tool) {
     var t = tool || page;
@@ -944,6 +975,7 @@
     mountUsage();
     adaptHeader();
     mountAdminTap();
+    mountAnn();
     revealOnScroll();
     mountMenu();
     mountProof();

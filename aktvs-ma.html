@@ -167,16 +167,19 @@
     hasil.innerText = "Memproses...";
 
     try {
-      const { data, error } = await sbClient.rpc('bgy_request_activation_code', {
-        p_email: email.toLowerCase(), p_access: 'modul_ajar'
+      const q = new URLSearchParams(location.search);
+      if (!q.get('order') || !q.get('sig')) throw new Error('Buka halaman ini dari link produk di Kreacy setelah pembayaran.');
+      const { data, error } = await sbClient.rpc('bgy_claim_order', {
+        p_order: q.get('order'), p_sig: q.get('sig'), p_email: email.toLowerCase(), p_access: 'modul_ajar'
       }).single();
       if (error) throw error;
-      if (!data || data.result === 'invalid') throw new Error('Email tidak valid.');
-      if (data.result === 'already_pro') {
-        hasil.innerHTML = '<div style="margin:16px 0 0;padding:12px 14px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;text-align:left;"><div style="font-size:12px;font-weight:700;color:#0d7a8a;margin-bottom:4px;">Email ini sudah aktif PRO.</div><div style="font-size:11px;color:#0d7a8a;">Buka halaman Modul Ajar dan masukkan email ini untuk login.</div></div>';
-        return;
-      }
-      if (!data.activation_code) throw new Error('Kode tidak tersedia. Hubungi admin.');
+      const pesan = {
+        invalid: 'Email atau link pesanan tidak valid.',
+        bad_sig: 'Link pesanan tidak valid. Buka ulang dari Kreacy.',
+        claimed: 'Pesanan ini sudah diklaim dengan email lain.',
+        not_ready: 'Aktivasi sedang disiapkan. Hubungi admin.'
+      };
+      if (!data || !data.activation_code) throw new Error(pesan[data && data.result] || 'Kode tidak tersedia. Hubungi admin.');
       tampilKode(data.activation_code, email);
 
     } catch (err) {
