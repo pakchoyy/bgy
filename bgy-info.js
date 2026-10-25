@@ -359,22 +359,23 @@
   /* ---- 4b. Akses admin cepat: ketuk judul header 5x ---- */
   function mountAdminTap() {
     if (page === 'admin') return;
-    var target = document.querySelector('header h1, .app-header h1') ||
-      document.querySelector('header, .app-header') ||
+    // Ketuk di mana saja pada bar header (atau judul besar beranda) 5x.
+    var target = document.querySelector('header, .app-header') ||
+      document.querySelector('header h1, .app-header h1') ||
       document.querySelector('h1.hero-title, h1');
     if (!target) return;
-    target.style.cursor = target.style.cursor || 'pointer';
     var count = 0, timer = null;
+    // capture=true: tetap terhitung walau tombol di dalam header menahan event.
     target.addEventListener('click', function () {
       count++;
       if (timer) clearTimeout(timer);
-      timer = setTimeout(function () { count = 0; }, 1200);
+      timer = setTimeout(function () { count = 0; }, 1500);
       if (count >= 5) {
         count = 0;
         if (timer) clearTimeout(timer);
         location.href = '/admin/';
       }
-    });
+    }, true);
   }
 
   /* ---- 5. Animasi muncul saat digulir ---- */
