@@ -40,6 +40,9 @@ export async function aiGate(req, tool, email) {
     console.warn('[ai-gate] jatah gratis habis', tool);
     return { status: 429, retryAfter: 3600, body: { error: 'Jatah gratis hari ini sudah habis. Coba lagi besok atau aktifkan Pro.', code: 'quota' } };
   }
+  if (result === 'paket') {
+    return { status: 429, body: { error: 'Kuota paket kamu sudah habis. Perpanjang paket di menu Upgrade.', code: 'paket' } };
+  }
   if (result === 'invalid') return { status: 400, body: { error: 'Permintaan tidak valid' } };
   return null;
 }

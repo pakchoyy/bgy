@@ -1948,6 +1948,7 @@ async function handleGenerate(){
 
   const limitCheck=checkLimit(),bt=batas();
   if(!limitCheck.ok){
+    if(bt.kuota&&sisaKuota()<=0){showError('Kuota paket '+NAMA_TIER[tier()]+' ('+bt.kuota+'x generate) sudah habis. Perpanjang paket di menu Upgrade.');return;}
     showError('Batas generate harian ('+bt.harian+'x) sudah habis. '+(tier()==='pro'?'Coba lagi besok.':'Upgrade paket untuk kuota lebih banyak, atau coba lagi besok.'));
     return;
   }
@@ -3521,7 +3522,7 @@ function isPro(){
 function subscriptionIsActive(data){return !!data?.is_pro&&(!data.active_until||new Date(data.active_until).getTime()>Date.now());}
 function savePro(data){localStorage.setItem('bgy_pro',JSON.stringify({aktif:true,tgl:getTodayStr(),plan_type:data.plan_type,active_until:data.active_until,tier:data.tier||null}));}
 /* Paket FREE/PLUS/PRO: angka diatur di /admin (bgy_settings key 'paket_soal'). Saat paket.aktif=false, perilaku lama berlaku. */
-const PAKET_DEFAULT={aktif:false,free:{harian:1,max_soal:6},plus:{harian:4,max_soal:20,bulan:3,harga:15000,url:''},pro:{harian:10,max_soal:50,bulan:6,harga:27000,url:''},affiliate:{komisi:3000,min_cair:20000,jadwal:'tiap tanggal 1 lewat DANA'}};
+const PAKET_DEFAULT={aktif:false,free:{harian:1,max_soal:6},plus:{harian:4,kuota:20,bulan:3,harga:15000,url:''},pro:{harian:10,kuota:50,bulan:6,harga:27000,url:''},affiliate:{komisi:3000,min_cair:20000,jadwal:'tiap tanggal 1 lewat DANA'}};
 let PAKET=(()=>{try{return Object.assign({},PAKET_DEFAULT,JSON.parse(localStorage.getItem('bgy_paket_soal')||'{}'));}catch{return PAKET_DEFAULT;}})();
 fetch('https://xtmpiqpmwirsrcsphsto.supabase.co/rest/v1/bgy_settings?key=eq.paket_soal&select=value',{headers:{apikey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w',Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w'}})
   .then(r=>r.ok?r.json():[]).then(rows=>{const v=rows&&rows[0]&&rows[0].value;if(!v)return;PAKET=Object.assign({},PAKET_DEFAULT,v);try{localStorage.setItem('bgy_paket_soal',JSON.stringify(v));}catch{}updateLimitDisplay();renderPaketBox();}).catch(()=>{});
@@ -3532,8 +3533,14 @@ function batas(){
   if(!PAKET.aktif)return t==='free'?{harian:DAILY_LIMIT,max_soal:70}:{harian:Infinity,max_soal:70};
   if(t==='lama')return{harian:Infinity,max_soal:70};
   const p=PAKET[t]||PAKET_DEFAULT[t];
-  return{harian:Number(p.harian)||1,max_soal:Number(p.max_soal)||6};
+  if(t==='free')return{harian:Number(p.harian)||1,max_soal:Number(p.max_soal)||6};
+  return{harian:Number(p.harian)||1,max_soal:70,kuota:Number(p.kuota)||(t==='plus'?20:50)};
 }
+// Kuota PLUS/PRO dihitung selama masa aktif; reset saat masa aktif berganti (beli/perpanjang).
+function paketKey(){try{return JSON.parse(localStorage.getItem('bgy_pro')||'{}').active_until||'';}catch{return'';}}
+function getPaketUsed(){try{const u=JSON.parse(localStorage.getItem('bgy_paket_used')||'{}');return u.k===paketKey()?Number(u.n)||0:0;}catch{return 0;}}
+function incrementPaket(){try{localStorage.setItem('bgy_paket_used',JSON.stringify({k:paketKey(),n:getPaketUsed()+1}));}catch{}}
+function sisaKuota(){const k=batas().kuota;return k?Math.max(0,k-getPaketUsed()):Infinity;}
 const NAMA_TIER={free:'FREE',plus:'PLUS',pro:'PRO',lama:'PRO'};
 const rupiah=n=>'Rp'+Number(n||0).toLocaleString('id-ID');
 const amanUrl=u=>/^https:\/\/[^\s"'<>]+$/.test(u||'')?u:'';
@@ -3546,14 +3553,15 @@ function renderUpgradeTab(){
   const beli=(k,p)=>{const u=amanUrl(p.url);return u?`<a class="pk-beli ${k}" href="${u}" target="_blank" rel="noopener">Beli ${k.toUpperCase()} ${rupiah(p.harga)}</a>`:'';};
   el.innerHTML=`
   <h3><svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> Paket Buat Soal</h3>
-  <p class="ti-lead">Paket kamu sekarang: <b>${NAMA_TIER[t]}</b>. Semua paket bisa membuat soal PG, isian, dan uraian, lengkap dengan kunci jawaban, kisi-kisi, PDF, dan Word. Bedanya ada di jumlah generate per hari dan jumlah soal per lembar.</p>
+  <p class="ti-lead">Paket kamu sekarang: <b>${NAMA_TIER[t]}</b>. Semua paket bisa membuat soal PG, isian, dan uraian, lengkap dengan kunci jawaban, kisi-kisi, PDF, dan Word. Bedanya ada di jumlah generate.</p>
   <div class="pk-tabel-wrap"><table class="pk-tabel">
     <thead><tr><th></th><th>FREE</th><th>PLUS</th><th>PRO</th></tr></thead>
     <tbody>
       ${baris('Harga','Gratis',rupiah(pl.harga),rupiah(pr.harga))}
       ${baris('Masa aktif','Selamanya',pl.bulan+' bulan',pr.bulan+' bulan')}
-      ${baris('Generate per hari',f.harian+'x',pl.harian+'x',pr.harian+'x')}
-      ${baris('Soal per lembar','maks '+f.max_soal,'maks '+pl.max_soal,'maks '+pr.max_soal)}
+      ${baris('Kuota generate','-',pl.kuota+'x',pr.kuota+'x')}
+      ${baris('Generate per hari',f.harian+'x','maks '+pl.harian+'x','maks '+pr.harian+'x')}
+      ${baris('Soal per lembar','maks '+f.max_soal,'bebas','bebas')}
       ${baris('Program affiliate','-','-','Bisa ikut')}
     </tbody></table></div>
   <p class="ti-note">PRO ${rupiah(pr.harga)} untuk ${pr.bulan} bulan, kira-kira ${perBulan(pr)} per bulan.</p>
@@ -3605,15 +3613,15 @@ function renderPaketBox(){
     return `<div style="border:1.5px solid ${pro?'#f59e0b':'var(--border)'};border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px;background:var(--card-bg);">
       <div style="flex:1;min-width:0;">
         <div style="font-weight:800;font-size:.88rem;color:var(--text);">${pro?'PRO':'PLUS'} · ${rp(p.harga)} <span style="font-weight:600;font-size:.75rem;color:var(--text-light);">/ ${Number(p.bulan)||0} bulan</span></div>
-        <div style="font-size:.75rem;color:var(--text-light);">${Number(p.harian)||0}x generate/hari · maks ${Number(p.max_soal)||0} soal per lembar</div>
+        <div style="font-size:.75rem;color:var(--text-light);">${Number(p.kuota)||0}x generate · maks ${Number(p.harian)||0}x/hari</div>
       </div>
       ${url?`<a href="${url}" target="_blank" rel="noopener" style="min-height:40px;display:inline-flex;align-items:center;padding:0 16px;border-radius:10px;background:${pro?'linear-gradient(135deg,#f59e0b,#d97706)':'linear-gradient(135deg,#0ea5a0,#0d7a8a)'};color:#fff;font-weight:800;font-size:.8rem;text-decoration:none;white-space:nowrap;">Beli</a>`:'<span style="font-size:.75rem;color:var(--text-light);">Segera</span>'}
     </div>`;}).join('');
 }
 function getTodayStr(){return new Date().toISOString().slice(0,10);}
 function getDailyUsage(){try{const r=localStorage.getItem('bgy_daily_usage');return r?JSON.parse(r):{date:'',count:0};}catch{return{date:'',count:0};}}
-function incrementDaily(){const today=getTodayStr();let u=getDailyUsage();if(u.date!==today)u={date:today,count:0};u.count++;localStorage.setItem('bgy_daily_usage',JSON.stringify(u));return u.count;}
-function checkLimit(){const h=batas().harian;if(h===Infinity)return{ok:true,remaining:999};const u=getDailyUsage();const used=u.date===getTodayStr()?u.count:0;const rem=h-used;return{ok:rem>0,remaining:Math.max(0,rem)};}
+function incrementDaily(){if(batas().kuota)incrementPaket();const today=getTodayStr();let u=getDailyUsage();if(u.date!==today)u={date:today,count:0};u.count++;localStorage.setItem('bgy_daily_usage',JSON.stringify(u));return u.count;}
+function checkLimit(){const h=batas().harian;if(h===Infinity)return{ok:true,remaining:999};const u=getDailyUsage();const used=u.date===getTodayStr()?u.count:0;const rem=Math.min(h-used,sisaKuota());return{ok:rem>0,remaining:Math.max(0,rem)};}
 function updateLimitDisplay(){
   const el=document.getElementById('limitInfo');if(!el)return;
   const lr=document.getElementById('limitReset');
@@ -3630,8 +3638,10 @@ function updateLimitDisplay(){
   document.getElementById('aktivasiBox').style.display=t==='pro'?'none':'';
   if(lr)lr.style.display='';
   const{ok,remaining}=checkLimit();
-  const maks=PAKET.aktif?` · maks ${bt.max_soal} soal`:'';
-  el.textContent=ok?`${t==='free'?'':NAMA_TIER[t]+' · '}Sisa generate hari ini: ${remaining}x${maks}`:(t==='pro'?'Batas harian habis. Coba lagi besok.':'Batas harian habis. Upgrade paket atau coba besok.');
+  const maks=PAKET.aktif&&t==='free'?` · maks ${bt.max_soal} soal`:'';
+  const kuota=bt.kuota?` · sisa kuota paket ${sisaKuota()}x`:'';
+  const habisPaket=bt.kuota&&sisaKuota()<=0;
+  el.textContent=ok?`${t==='free'?'':NAMA_TIER[t]+' · '}Sisa generate hari ini: ${remaining}x${maks}${kuota}`:habisPaket?'Kuota paket habis. Perpanjang paket untuk lanjut.':(t==='pro'?'Batas harian habis. Coba lagi besok.':'Batas harian habis. Upgrade paket atau coba besok.');
   el.style.color=remaining<=1?'#dc2626':'#64748b';
   const btnLbl=document.getElementById('btnLabel');
   if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1)btnLbl.textContent=ok?`Generate Soal (${remaining}x)`:'Limit Habis';
