@@ -369,11 +369,14 @@
     target.addEventListener('click', function () {
       count++;
       if (timer) clearTimeout(timer);
-      timer = setTimeout(function () { count = 0; }, 1500);
+      timer = setTimeout(function () { count = 0; }, 2500);
       if (count >= 5) {
         count = 0;
         if (timer) clearTimeout(timer);
+        toast('Membuka Admin...');
         location.href = '/admin/';
+      } else if (count >= 2) {
+        toast('Ketuk ' + (5 - count) + 'x lagi untuk Admin');
       }
     }, true);
   }
