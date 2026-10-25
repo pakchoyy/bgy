@@ -840,16 +840,28 @@ function toggleSandi(elId,val){
   if(btn)btn.innerHTML=use(hidden?'i-eye-off':'i-eye');
 }
 const BLN=['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
-// Jatuh tempo proyek: tanggal perpanjangan, atau tanggal teks "6 Juni" (berulang tiap tahun).
+// Jatuh tempo proyek: tanggal perpanjangan, atau tanggal teks "6 Juni"; berulang tiap bulan/tahun sesuai periode.
 function projDue(p){
-  if(p.tanggal_perpanjangan)return p.tanggal_perpanjangan;
-  const m=String(p.tanggal||'').trim().toLowerCase().match(/^(\d{1,2})\s+([a-z]+)/);
-  if(!m)return '';
-  const bi=BLN.findIndex(b=>b.startsWith(m[2].slice(0,3)));
-  if(bi<0)return '';
+  const bulanan=p.periode==='bulanan';
+  if(p.tanggal_perpanjangan&&!bulanan)return p.tanggal_perpanjangan;
   const now=new Date();now.setHours(0,0,0,0);
-  let d=new Date(now.getFullYear(),bi,+m[1]);
-  if(d<now)d=new Date(now.getFullYear()+1,bi,+m[1]);
+  let day,bi;
+  if(p.tanggal_perpanjangan){const x=new Date(p.tanggal_perpanjangan+'T00:00:00');day=x.getDate();bi=x.getMonth();}
+  else{
+    const m=String(p.tanggal||'').trim().toLowerCase().match(/^(\d{1,2})(?:\s+([a-z]+))?/);
+    if(!m)return '';
+    day=+m[1];bi=m[2]?BLN.findIndex(b=>b.startsWith(m[2].slice(0,3))):now.getMonth();
+    if(bi<0)return '';
+  }
+  let d;
+  if(bulanan){
+    const mk=(y,mo)=>new Date(y,mo,Math.min(day,new Date(y,mo+1,0).getDate()));
+    d=mk(now.getFullYear(),now.getMonth());
+    if(d<now)d=mk(now.getFullYear(),now.getMonth()+1);
+  }else{
+    d=new Date(now.getFullYear(),bi,day);
+    if(d<now)d=new Date(now.getFullYear()+1,bi,day);
+  }
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 function dueLabel(iso){
@@ -945,8 +957,9 @@ function openJokian(id){
     </div>
     <div class="row2">
       <div class="fg"><label for="jRepo">Repo GitHub</label><input id="jRepo" maxlength="100" value="${esc(p.repo||'')}"/></div>
-      <div class="fg"><label for="jLangganan">Langganan/thn</label><input id="jLangganan" maxlength="30" value="${esc(p.langganan||'')}" placeholder="mis. 150rb"/></div>
+      <div class="fg"><label for="jLangganan">Biaya langganan</label><input id="jLangganan" maxlength="30" value="${esc(p.langganan||'')}" placeholder="mis. 150rb"/></div>
     </div>
+    <div class="fg"><label for="jPeriode">Periode langganan</label><select id="jPeriode"><option value="tahunan"${p.periode!=='bulanan'?' selected':''}>Tahunan</option><option value="bulanan"${p.periode==='bulanan'?' selected':''}>Bulanan</option></select></div>
     <div class="row2">
       <div class="fg"><label for="jTanggal">Tanggal (teks bebas)</label><input id="jTanggal" maxlength="30" value="${esc(p.tanggal||'')}" placeholder="mis. 6 Juni"/></div>
       <div class="fg"><label for="jTglPerpanjangan">Tanggal perpanjangan (next)</label><input id="jTglPerpanjangan" type="date" value="${esc(p.tanggal_perpanjangan||'')}"/></div>
@@ -959,7 +972,7 @@ async function saveJokianItem(id){
   const val=k=>document.getElementById(k).value.trim();
   const name=val('jName');
   if(!name)return toast('Judul wajib diisi.');
-  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),langganan:val('jLangganan'),tanggal:val('jTanggal'),tanggal_perpanjangan:val('jTglPerpanjangan'),keterangan:val('jKet')};
+  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),langganan:val('jLangganan'),tanggal:val('jTanggal'),tanggal_perpanjangan:val('jTglPerpanjangan'),periode:val('jPeriode'),keterangan:val('jKet')};
   if(id){
     const idx=jokianData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;jokianData[idx]=row;}
