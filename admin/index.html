@@ -359,7 +359,7 @@ main{padding-bottom:90px!important;}
     <div class="header-brand"><img src="/guru-cibisd2.png" alt="Logo"/><h1>BGY | Admin</h1></div>
     <div class="header-right">
       <button class="hdr-btn" onclick="toggleDark()" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
-      <button class="hdr-btn" id="btnLogout" onclick="logout()" hidden><svg class="ic" aria-hidden="true"><use href="#i-logout"/></svg> Keluar</button>
+      <a class="hdr-btn" id="btnLogout" href="/" hidden style="text-decoration:none"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg> Aplikasi</a>
     </div>
   </div>
 </header>
@@ -499,6 +499,7 @@ main{padding-bottom:90px!important;}
         <button class="menu-row" onclick="showTab('docs')"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></div><div class="mr-body"><b>Dokumen Resmi</b><small>Peraturan &amp; dokumen pendidikan</small></div><div class="mr-chev"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></div></button>
         <button class="menu-row" onclick="showTab('stat')"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg></div><div class="mr-body"><b>Statistik</b><small>Pemakaian tool oleh guru</small></div><div class="mr-chev"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></div></button>
         <button class="menu-row" onclick="showTab('users')" style="margin-bottom:0;"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg></div><div class="mr-body"><b>Pengguna Pro</b><small>Daftar pelanggan Pro</small></div><div class="mr-chev"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></div></button>
+        <button class="menu-row" onclick="logout()" style="margin:12px 0 0;"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-logout"/></svg></div><div class="mr-body"><b>Keluar akun</b><small>Perlu kode email lagi untuk masuk</small></div></button>
       </div>
     </div>
 
@@ -838,6 +839,24 @@ function toggleSandi(elId,val){
   const btn=el.nextElementSibling;
   if(btn)btn.innerHTML=use(hidden?'i-eye-off':'i-eye');
 }
+const BLN=['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
+// Jatuh tempo proyek: tanggal perpanjangan, atau tanggal teks "6 Juni" (berulang tiap tahun).
+function projDue(p){
+  if(p.tanggal_perpanjangan)return p.tanggal_perpanjangan;
+  const m=String(p.tanggal||'').trim().toLowerCase().match(/^(\d{1,2})\s+([a-z]+)/);
+  if(!m)return '';
+  const bi=BLN.findIndex(b=>b.startsWith(m[2].slice(0,3)));
+  if(bi<0)return '';
+  const now=new Date();now.setHours(0,0,0,0);
+  let d=new Date(now.getFullYear(),bi,+m[1]);
+  if(d<now)d=new Date(now.getFullYear()+1,bi,+m[1]);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function dueLabel(iso){
+  const now=new Date();now.setHours(0,0,0,0);
+  const diff=Math.floor((new Date(iso+'T00:00:00')-now)/86400000);
+  return diff<0?'Lewat '+(-diff)+' hari':diff===0?'Hari ini':'H-'+diff;
+}
 function renderProyekItem(p,kind){
   const ic=kind==='jokian'?'i-briefcase':'i-folder';
   const hasAdmin=p.admin_url&&/^https?:\/\//i.test(p.admin_url);
@@ -872,6 +891,7 @@ function renderProyekItem(p,kind){
         <div class="pj-title">${esc(p.name)} ${pills.join(' ')}</div>
         ${url?`<div class="pj-url">${esc(url.replace(/^https?:\/\//,''))}</div>`:''}
         ${p.user||p.hp?`<div class="pj-meta">${[p.user,p.hp].filter(Boolean).map(esc).join(' · ')}</div>`:''}
+        ${kind==='jokian'&&projDue(p)?`<div class="pj-meta">Jatuh tempo: ${tgl(projDue(p))} · <b>${dueLabel(projDue(p))}</b></div>`:''}
       </div>
     </div>
     <div class="pj-actions${waBtn?' has-wa':''}">
@@ -1350,16 +1370,16 @@ function updateDashCounts(){
     if(diff<=7)dueItems.push({kind:'lang',customer:l.customer||'',jenis:l.jenis||'',diff,next:nd});
   });
   jk.forEach(p=>{
-    if(!p.tanggal_perpanjangan)return;
-    const d=new Date(p.tanggal_perpanjangan+'T00:00:00');
+    const due=projDue(p);if(!due)return;
+    const d=new Date(due+'T00:00:00');
     const diff=Math.floor((d-now)/(86400000));
-    if(diff<=7)dueItems.push({kind:'proy',customer:p.user||p.name||'',jenis:p.name||'',diff,next:p.tanggal_perpanjangan});
+    if(diff<=7)dueItems.push({kind:'proy',customer:p.user||p.name||'',jenis:p.name||'',diff,next:due});
   });
   dueItems.sort((a,b)=>a.diff-b.diff);
   const alert=document.getElementById('dueAlert');
   if(alert){
     if(dueItems.length){
-      const preview=dueItems.slice(0,3).map(i=>esc(i.customer)+' ('+(i.diff<0?'lewat':'H+'+i.diff)+')').join(', ');
+      const preview=dueItems.slice(0,3).map(i=>esc(i.customer)+' ('+(i.diff<0?'lewat':'H-'+i.diff)+')').join(', ');
       alert.hidden=false;
       alert.innerHTML=`<div class="alert-due" onclick="showTab('langganan')"><svg class="ic" aria-hidden="true"><use href="#i-wallet"/></svg><div><b>${dueItems.length} item jatuh tempo &le;7 hari</b><small>${preview}${dueItems.length>3?' …':''}</small></div></div>`;
     }
@@ -1404,7 +1424,7 @@ function renderDashCharts(){
     if(!upcoming.length){dueList.innerHTML='<div class="chart-empty">Tidak ada yang jatuh tempo 30 hari ke depan</div>';}
     else{dueList.innerHTML=upcoming.slice(0,10).map(l=>{
       const cls=l.diff<0?'danger':l.diff<=7?'warn':'';
-      const dayLabel=l.diff<0?'Lewat':l.diff===0?'Hari ini':`H+${l.diff}`;
+      const dayLabel=l.diff<0?'Lewat':l.diff===0?'Hari ini':`H-${l.diff}`;
       return `<div class="tl-row ${cls}" onclick="showTab('langganan')" style="cursor:pointer"><span class="tl-day">${dayLabel}</span><span class="tl-body">${esc(l.customer)} · ${esc(l.jenis)}</span><span class="tl-amount">${fmtRp(l.harga)}</span></div>`;
     }).join('');}
   }
