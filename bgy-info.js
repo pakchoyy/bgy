@@ -1107,6 +1107,7 @@
     'body.dark .bgnv-head button,[data-theme="dark"] .bgnv-head button{background:#334155;color:#f1f5f9;}',
     'body.dark .bgnv-grid a,[data-theme="dark"] .bgnv-grid a{background:#0f172a;border-color:#334155;color:#f1f5f9;}',
     'html.bgnv-on .bgyn{bottom:calc(116px + env(safe-area-inset-bottom))!important;}',
+    'html.bgnv-on #mobMenu{display:none!important;}',
     '@media print{.bgnv,.bgnv-sheet{display:none!important;}}'
   ].join('');
   function svgIcon(d) {
@@ -1148,7 +1149,12 @@
       if (it.key === 'tools') {
         el = document.createElement('button');
         el.type = 'button';
-        el.addEventListener('click', function () { sheet.classList.add('open'); track('nav', 'Tools', ''); });
+        el.addEventListener('click', function () {
+          track('nav', 'Tools', '');
+          // Beranda punya menu samping sendiri: tombol Tools membukanya, tombol hamburger disembunyikan.
+          if (document.getElementById('sidebar') && typeof window.openSidebar === 'function') window.openSidebar();
+          else sheet.classList.add('open');
+        });
       } else {
         el = document.createElement('a');
         el.href = it.path === '/' ? '/' : it.path + '/';
