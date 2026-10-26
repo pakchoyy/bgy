@@ -262,8 +262,8 @@ body.dark .lg-price{color:#5eead4;}
 .lg-detail{padding:0 12px 12px;border-top:1px solid var(--border);display:none;background:var(--input-bg);}
 .lg-detail.on{display:block;}
 .lg-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:10px;}
-.lg-detail-item{font-size:.76rem;}
-.lg-detail-item b{display:block;color:var(--text-light);font-size:.66rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;font-weight:700;}
+.lg-detail-item{font-size:.8rem;}
+.lg-detail-item b{display:block;color:var(--text-light);font-size:.75rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;font-weight:700;}
 .lg-detail-item span{color:var(--text);word-break:break-all;}
 .lg-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
 .lg-actions .btn-action{min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border:1.5px solid var(--border);background:var(--card-bg);border-radius:10px;font-weight:700;font-size:.8rem;cursor:pointer;font-family:inherit;color:var(--text);text-decoration:none;}
@@ -302,7 +302,7 @@ body.dark .lg-group-head{color:#5eead4;}
 .pj-expand.on{display:block;}
 .pj-expand-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .pj-expand-item{font-size:.76rem;}
-.pj-expand-item b{display:block;color:var(--text-light);font-size:.66rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;font-weight:700;}
+.pj-expand-item b{display:block;color:var(--text-light);font-size:.75rem;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;font-weight:700;}
 .pj-expand-item span{color:var(--text);word-break:break-all;}
 .pj-expand-toggle{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--blue);font-size:.74rem;font-weight:700;margin-top:8px;padding:4px 0;cursor:pointer;font-family:inherit;}
 .pj-expand-toggle .ic{width:14px;height:14px;transition:transform .2s;}
@@ -1164,6 +1164,8 @@ function renderLangganan(){
         <div class="lg-detail" id="det-${esc(l.id)}">
           <div class="lg-detail-grid">
             ${l.hp?`<div class="lg-detail-item"><b>HP</b><span>${esc(l.hp)}</span></div>`:''}
+            ${l.akun?`<div class="lg-detail-item"><b>Akun</b><span>${esc(l.akun)}</span></div>`:''}
+            ${l.sandi?`<div class="lg-detail-item"><b>Sandi</b><span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(l.sandi)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span></div>`:''}
             ${l.periode?`<div class="lg-detail-item"><b>Periode</b><span>${esc(l.periode)}</span></div>`:''}
             ${l.tanggal_mulai?`<div class="lg-detail-item"><b>Mulai</b><span>${tgl(l.tanggal_mulai)}</span></div>`:''}
             ${next?`<div class="lg-detail-item"><b>Berikutnya</b><span>${tgl(next)}</span></div>`:''}
@@ -1220,6 +1222,10 @@ function openLangganan(id){
       <div class="fg"><label for="lgMulai">Tanggal mulai periode</label><input id="lgMulai" type="date" value="${esc(l.tanggal_mulai||'')}" onchange="updateNextPreview()"/></div>
     </div>
     <div class="fg"><label>Tanggal berikutnya (otomatis)</label><div style="padding:9px 10px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;font-size:.86rem;color:var(--text-light)" id="lgNextPreview">—</div></div>
+    <div class="row2">
+      <div class="fg"><label for="lgAkun">Akun / email login</label><input id="lgAkun" maxlength="100" value="${esc(l.akun||'')}" autocomplete="off"/></div>
+      <div class="fg"><label for="lgSandi">Sandi</label><input id="lgSandi" maxlength="100" value="${esc(l.sandi||'')}" autocomplete="off"/></div>
+    </div>
     <div class="fg"><label for="lgKet">Catatan (opsional)</label><input id="lgKet" maxlength="80" value="${esc(l.keterangan||'')}" placeholder="mis. Dibayar via BRI, Vercel, dll"/></div>
     <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveLanggananItem('${esc(id||'')}')">Simpan</button></div>`;
   document.getElementById('modal').hidden=false;
@@ -1230,7 +1236,7 @@ async function saveLanggananItem(id){
   const jenis=val('lgJenis'),customer=val('lgCust');
   if(!jenis||!customer)return toast('Jenis dan customer wajib diisi.');
   const tanggal_mulai=val('lgMulai'),periode=val('lgPeriode');
-  const row={jenis,customer,hp:val('lgHp'),harga:Number(val('lgHarga'))||0,periode,tanggal_mulai,tanggal_berikutnya:addPeriod(tanggal_mulai,periode),keterangan:val('lgKet')};
+  const row={jenis,customer,hp:val('lgHp'),harga:Number(val('lgHarga'))||0,periode,tanggal_mulai,tanggal_berikutnya:addPeriod(tanggal_mulai,periode),akun:val('lgAkun'),sandi:val('lgSandi'),keterangan:val('lgKet')};
   if(id){
     const idx=langgananData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;langgananData[idx]=row;}
