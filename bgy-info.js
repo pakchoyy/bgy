@@ -1039,6 +1039,109 @@
     }, ROTATE_MS);
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
-  else mount();
+
+  /* ---- 5. Navbar bawah: Tools · Soal · Beranda · Modul · LKPD ---- */
+  var NAV_SKIP = /^\/(admin|k|sandi)(\/|$)/;
+  var NAV_ICONS = {
+    tools: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+    home: '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
+  };
+  var NAV_ITEMS = [
+    { key: 'tools', label: 'Tools' },
+    { key: 'soal', label: 'Soal', path: '/soal', icon: ICONS.soal },
+    { key: 'home', label: 'Beranda', path: '/', icon: NAV_ICONS.home },
+    { key: 'modul', label: 'Modul', path: '/modul-ajar', icon: ICONS.modul },
+    { key: 'lkpd', label: 'LKPD', path: '/lkpd', icon: ICONS.lkpd }
+  ];
+  var ALL_TOOLS = [
+    ['Buat Soal', '/soal/'], ['Modul Ajar', '/modul-ajar/'], ['Prompt LKPD', '/lkpd/'],
+    ['Kokurikuler', '/kokurikuler/'], ['Draft TP', '/draft-tp/'], ['Katrol Nilai', '/katrol-nilai/'],
+    ['Teks Sekolah', '/teks-sekolah/'], ['Dokumen Resmi', '/dokumen/'], ['Simpan Sandi', '/sandi/'],
+    ['Presensi Yuk', 'https://presiswa.bantuguruyuk.web.id'], ['Prompt Game', 'https://bmedia.bantuguruyuk.web.id/buat']
+  ];
+  var navCss = [
+    '.bgnv{position:fixed!important;left:0;right:0;bottom:0;top:auto;z-index:950;display:flex!important;box-sizing:content-box;height:58px;margin:0;width:auto;transform:none;zoom:1;background:#fff;border-top:1px solid #e2e8f0;',
+    'box-shadow:0 -4px 16px rgba(0,0,0,.06);padding-bottom:env(safe-area-inset-bottom);font-family:inherit;}',
+    '.bgnv a,.bgnv button{flex:1;min-width:0;height:58px;min-height:0;margin:0;padding:0;border-radius:0;box-shadow:none;letter-spacing:0;text-transform:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;',
+    'font-family:inherit;font-size:12px;font-weight:600;line-height:1.2;color:#64748b;text-decoration:none;background:none;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent;}',
+    '.bgnv svg{width:22px;height:22px;padding:3px 12px;box-sizing:content-box;border-radius:12px;}',
+    '.bgnv .on{color:#0d7a8a;}.bgnv .on svg{background:#e6f6f5;}',
+    'html.bgnv-on body{padding-bottom:calc(58px + env(safe-area-inset-bottom))!important;}',
+    'html.bgnv-on.bgyi-docked body{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important;}',
+    'html.bgnv-on.bgyi-docked .bgyi-wrap{bottom:calc(58px + env(safe-area-inset-bottom))!important;height:46px!important;padding-bottom:0!important;}',
+    'html.bgnv-on #toast,html.bgnv-on .toast,html.bgnv-on .bgym-toast{bottom:calc(120px + env(safe-area-inset-bottom))!important;}',
+    '.bgnv-sheet{position:fixed;inset:0;z-index:960;background:rgba(15,23,42,.45);display:none;align-items:flex-end;}',
+    '.bgnv-sheet.open{display:flex;}',
+    '.bgnv-panel{width:100%;max-width:560px;margin:0 auto;background:#fff;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:80vh;overflow:auto;}',
+    '.bgnv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-weight:800;font-size:16px;color:#0f172a;}',
+    '.bgnv-head button{width:40px;height:40px;border:0;background:#f1f5f9;border-radius:10px;color:#334155;cursor:pointer;display:flex;align-items:center;justify-content:center;}',
+    '.bgnv-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}',
+    '.bgnv-grid a{min-height:48px;display:flex;align-items:center;padding:0 14px;border:1px solid #e2e8f0;border-radius:12px;',
+    'color:#0f172a;font-weight:700;font-size:14px;text-decoration:none;background:#f8fafc;}',
+    '.bgnv-grid a.on{border-color:#0d7a8a;color:#0d7a8a;background:#e6f6f5;}',
+    'body.dark .bgnv,[data-theme="dark"] .bgnv{background:#0f172a;border-color:#1e293b;}',
+    'body.dark .bgnv a,body.dark .bgnv button,[data-theme="dark"] .bgnv a,[data-theme="dark"] .bgnv button{color:#94a3b8;}',
+    'body.dark .bgnv .on,[data-theme="dark"] .bgnv .on{color:#2dd4bf;}body.dark .bgnv .on svg,[data-theme="dark"] .bgnv .on svg{background:#134e4a;}',
+    'body.dark .bgnv-panel,[data-theme="dark"] .bgnv-panel{background:#1e293b;}',
+    'body.dark .bgnv-head,[data-theme="dark"] .bgnv-head{color:#f1f5f9;}',
+    'body.dark .bgnv-head button,[data-theme="dark"] .bgnv-head button{background:#334155;color:#f1f5f9;}',
+    'body.dark .bgnv-grid a,[data-theme="dark"] .bgnv-grid a{background:#0f172a;border-color:#334155;color:#f1f5f9;}',
+    'html.bgnv-on .bgyn{bottom:calc(116px + env(safe-area-inset-bottom))!important;}',
+    '@media print{.bgnv,.bgnv-sheet{display:none!important;}}'
+  ].join('');
+  function svgIcon(d) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+  }
+  function isHere(path) {
+    return path === '/' ? here === '/' : (here === path || here.indexOf(path + '/') === 0);
+  }
+  function mountNav() {
+    if (NAV_SKIP.test(here) || document.querySelector('.bgnv')) return;
+    var st = document.createElement('style');
+    st.textContent = navCss;
+    document.head.appendChild(st);
+    var sheet = document.createElement('div');
+    sheet.className = 'bgnv-sheet';
+    sheet.innerHTML = '<div class="bgnv-panel" role="dialog" aria-label="Semua tools"><div class="bgnv-head">Semua Tools<button type="button" aria-label="Tutup">' +
+      svgIcon(NAV_ICONS.x) + '</button></div><div class="bgnv-grid"></div></div>';
+    var grid = sheet.querySelector('.bgnv-grid');
+    ALL_TOOLS.forEach(function (t) {
+      var a = document.createElement('a');
+      a.href = t[1];
+      a.textContent = t[0];
+      if (t[1].charAt(0) === '/' && isHere(t[1].replace(/\/$/, ''))) a.className = 'on';
+      a.addEventListener('click', function () { track('nav', t[0], t[1]); });
+      grid.appendChild(a);
+    });
+    function close() { sheet.classList.remove('open'); }
+    sheet.addEventListener('click', function (e) { if (e.target === sheet) close(); });
+    sheet.querySelector('.bgnv-head button').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    var nav = document.createElement('div');
+    nav.setAttribute('role', 'navigation');
+    nav.className = 'bgnv';
+    nav.setAttribute('aria-label', 'Navigasi utama');
+    NAV_ITEMS.forEach(function (it) {
+      var el;
+      if (it.key === 'tools') {
+        el = document.createElement('button');
+        el.type = 'button';
+        el.addEventListener('click', function () { sheet.classList.add('open'); track('nav', 'Tools', ''); });
+      } else {
+        el = document.createElement('a');
+        el.href = it.path === '/' ? '/' : it.path + '/';
+        if (isHere(it.path)) { el.className = 'on'; el.setAttribute('aria-current', 'page'); }
+        el.addEventListener('click', function () { track('nav', it.label, it.path); });
+      }
+      el.innerHTML = svgIcon(it.icon || NAV_ICONS[it.key]) + '<span>' + it.label + '</span>';
+      nav.appendChild(el);
+    });
+    document.body.appendChild(nav);
+    document.body.appendChild(sheet);
+    document.documentElement.classList.add('bgnv-on');
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { mount(); mountNav(); });
+  else { mount(); mountNav(); }
 })();
