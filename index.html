@@ -380,6 +380,7 @@ a { text-decoration: none; color: inherit; }
   flex-shrink: 0;
   padding: 4px 0 8px;
 }
+.topbar-logo{width:36px;height:36px;border-radius:10px;object-fit:contain;flex:none;}
 .mob-toggle {
   display: none;
   width: 40px; height: 40px;
@@ -394,7 +395,7 @@ a { text-decoration: none; color: inherit; }
   transition: var(--trans);
 }
 .mob-toggle:hover { border-color: var(--teal,#0ea5a0); color: var(--teal,#0ea5a0); }
-.topbar-left { display: flex; align-items: center; }
+.topbar-left { display: flex; align-items: center; gap: 10px; }
 
 .topbar-wordmark {
   font-family:var(--bgy-font);
@@ -1185,7 +1186,7 @@ a { text-decoration: none; color: inherit; }
   <div class="topbar">
     <div class="topbar-left">
       <button class="mob-toggle" id="mobMenu" onclick="openSidebar()" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button>
-      <div class="topbar-wordmark">Bantu Guru <em>Yuk!</em></div>
+      <img src="/guru-cibisd2.png" alt="" class="topbar-logo" width="36" height="36"/><div class="topbar-wordmark">Bantu Guru <em>Yuk!</em></div>
     </div>
     <div class="topbar-right">
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Ganti tema" aria-label="Ganti tema"><svg class="ic" aria-hidden="true"><use id="themeIcon" href="#i-moon"/></svg></button>

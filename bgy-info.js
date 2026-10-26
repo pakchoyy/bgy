@@ -1058,15 +1058,15 @@
     { key: 'lkpd', label: 'LKPD', path: '/lkpd', icon: ICONS.lkpd }
   ];
   var ALL_TOOLS = [
-    ['Presensi Digital', 'Absensi siswa & rekap otomatis', 'https://presiswa.bantuguruyuk.web.id', '<rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" />'],
-    ['Draft TP', 'Tujuan Pembelajaran siap e-Rapor', '/draft-tp/', '<path d="M13 5h8" /><path d="M13 12h8" /><path d="M13 19h8" /><path d="m3 17 2 2 4-4" /><path d="m3 7 2 2 4-4" />'],
-    ['Modul Kokurikuler', 'Sesuai Panduan Kokurikuler 2025', '/kokurikuler/', '<path d="m11 17 2 2a1 1 0 1 0 3-3" /><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" /><path d="m21 3 1 11h-2" /><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" /><path d="M3 4h8" />'],
-    ['Prompt Game', 'Game edukatif untuk IFP', 'https://bmedia.bantuguruyuk.web.id/buat', '<line x1="6" x2="10" y1="11" y2="11" /><line x1="8" x2="8" y1="9" y2="13" /><line x1="15" x2="15.01" y1="12" y2="12" /><line x1="18" x2="18.01" y1="10" y2="10" /><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z" />'],
-    ['Katrol Nilai', 'Hitung & katrol nilai otomatis', '/katrol-nilai/', '<path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" />'],
-    ['Teks Sekolah', 'Undangan rapor & surat, sekali klik', '/teks-sekolah/', '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" />'],
-    ['Buat Jadwal', 'Jadwal pelajaran tanpa bentrok', 'https://bjadwal.bantuguruyuk.web.id', '<path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /><path d="M8 13h.01" /><path d="M12 13h.01" /><path d="M16 13h.01" /><path d="M8 17h.01" /><path d="M12 17h.01" /><path d="M16 17h.01" />'],
-    ['Dokumen Resmi', 'Peraturan & panduan kementerian', '/dokumen/', '<path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>'],
-    ['Simpan Sandi', 'Akun digital guru, aman & offline', '/sandi/', '<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />']
+    ['Presensi Digital', 'Absensi siswa & rekap otomatis', 'https://presiswa.bantuguruyuk.web.id', '<rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" />', 'Persiapan Mengajar'],
+    ['Draft TP', 'Tujuan Pembelajaran siap e-Rapor', '/draft-tp/', '<path d="M13 5h8" /><path d="M13 12h8" /><path d="M13 19h8" /><path d="m3 17 2 2 4-4" /><path d="m3 7 2 2 4-4" />', 'Persiapan Mengajar'],
+    ['Prompt Game', 'Game edukatif untuk IFP', 'https://bmedia.bantuguruyuk.web.id/buat', '<line x1="6" x2="10" y1="11" y2="11" /><line x1="8" x2="8" y1="9" y2="13" /><line x1="15" x2="15.01" y1="12" y2="12" /><line x1="18" x2="18.01" y1="10" y2="10" /><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z" />', 'Pembelajaran'],
+    ['Modul Kokurikuler', 'Sesuai Panduan Kokurikuler 2025', '/kokurikuler/', '<path d="m11 17 2 2a1 1 0 1 0 3-3" /><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" /><path d="m21 3 1 11h-2" /><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" /><path d="M3 4h8" />', 'Pembelajaran'],
+    ['Katrol Nilai', 'Hitung & katrol nilai otomatis', '/katrol-nilai/', '<path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" />', 'Administrasi'],
+    ['Teks Sekolah', 'Undangan rapor & surat, sekali klik', '/teks-sekolah/', '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" />', 'Administrasi'],
+    ['Simpan Sandi', 'Akun digital guru, aman & offline', '/sandi/', '<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />', 'Administrasi'],
+    ['Dokumen Resmi', 'Peraturan & panduan kementerian', '/dokumen/', '<path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>', 'Administrasi'],
+    ['Buat Jadwal', 'Jadwal pelajaran tanpa bentrok', 'https://bjadwal.bantuguruyuk.web.id', '<path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /><path d="M8 13h.01" /><path d="M12 13h.01" /><path d="M16 13h.01" /><path d="M8 17h.01" /><path d="M12 17h.01" /><path d="M16 17h.01" />', 'Administrasi']
   ];
   var navCss = [
     '.bgnv{position:fixed!important;left:0;right:0;bottom:0;top:auto;z-index:950;display:flex!important;box-sizing:content-box;height:58px;margin:0;width:auto;transform:none;zoom:1;background:#fff;border-top:1px solid #e2e8f0;',
@@ -1079,33 +1079,29 @@
     'html.bgnv-on.bgyi-docked body{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important;}',
     'html.bgnv-on.bgyi-docked .bgyi-wrap{bottom:calc(58px + env(safe-area-inset-bottom))!important;height:46px!important;padding-bottom:0!important;}',
     'html.bgnv-on #toast,html.bgnv-on .toast,html.bgnv-on .bgym-toast{bottom:calc(120px + env(safe-area-inset-bottom))!important;}',
-    '.bgnv-sheet{position:fixed;inset:0;z-index:960;background:rgba(15,23,42,.45);display:none;align-items:flex-end;}',
-    '.bgnv-sheet.open{display:flex;}',
-    '.bgnv-panel{width:100%;max-width:640px;margin:0 auto;background:#f8fafc;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:80vh;overflow:auto;}',
-    '.bgnv-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font-weight:800;font-size:16px;color:#0f172a;}',
-    '.bgnv-head button{width:40px;height:40px;border:0;background:#f1f5f9;border-radius:10px;color:#334155;cursor:pointer;display:flex;align-items:center;justify-content:center;}',
-    '.bgnv-grid{display:grid;grid-template-columns:1fr;gap:8px;}',
-    '@media (min-width:520px){.bgnv-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}',
-    '.bgnv-grid a{min-height:64px;display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:14px;',
-    'color:#0f172a;text-decoration:none;background:#fff;min-width:0;}',
-    '.bgnv-grid a:active{background:#f0fdfa;}',
-    '.bgnv-ic{flex:none;width:42px;height:42px;border-radius:12px;background:#e6f6f5;color:#0d7a8a;display:flex;align-items:center;justify-content:center;}',
-    '.bgnv-ic svg{width:22px;height:22px;}',
-    '.bgnv-t{display:block;font-weight:700;font-size:14px;line-height:1.3;}',
-    '.bgnv-d{display:block;font-size:12px;color:#64748b;line-height:1.35;margin-top:2px;}',
-    'body.dark .bgnv-ic,[data-theme="dark"] .bgnv-ic{background:#134e4a;color:#5eead4;}',
-    'body.dark .bgnv-d,[data-theme="dark"] .bgnv-d{color:#94a3b8;}',
-    'body.dark .bgnv-panel,[data-theme="dark"] .bgnv-panel{background:#0f172a!important;}',
-    'body.dark .bgnv-grid a,[data-theme="dark"] .bgnv-grid a{background:#1e293b!important;}',
+    '.bgnv-sheet{position:fixed;inset:0;z-index:960;background:rgba(15,23,42,.5);display:none;}',
+    '.bgnv-sheet.open{display:block;}',
+    '.bgnv-panel{position:absolute;left:0;top:0;bottom:0;width:min(300px,82vw);background:#0d2b3e;overflow-y:auto;overscroll-behavior:contain;',
+    'padding-bottom:calc(76px + env(safe-area-inset-bottom));box-shadow:4px 0 24px rgba(0,0,0,.3);animation:bgnvIn .2s ease;}',
+    '@keyframes bgnvIn{from{transform:translateX(-100%);}to{transform:none;}}',
+    '.bgnv-head{display:flex;align-items:center;gap:12px;padding:20px 16px 16px 20px;border-bottom:1px solid rgba(14,165,160,.25);}',
+    '.bgnv-logo{width:44px;height:44px;flex:none;border-radius:12px;background:rgba(14,165,160,.15);border:1.5px solid rgba(14,165,160,.3);overflow:hidden;}',
+    '.bgnv-logo img{width:100%;height:100%;object-fit:contain;display:block;}',
+    '.bgnv-name{flex:1;min-width:0;font-weight:700;font-size:15px;color:#f5f0e8;line-height:1.2;}',
+    '.bgnv-name small{display:block;margin-top:3px;font-size:12px;font-weight:500;letter-spacing:.4px;text-transform:uppercase;color:rgba(14,165,160,.75);}',
+    '.bgnv-head button{width:40px;height:40px;flex:none;border:0;background:rgba(255,255,255,.08);border-radius:10px;color:#e0f2fe;cursor:pointer;display:flex;align-items:center;justify-content:center;}',
+    '.bgnv-sec{display:flex;align-items:center;gap:8px;padding:18px 20px 6px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(14,165,160,.8);}',
+    '.bgnv-sec::after{content:"";flex:1;height:1px;background:rgba(14,165,160,.2);}',
+    '.bgnv-grid a{display:flex;align-items:center;gap:12px;margin:2px 12px;padding:8px 12px;min-height:44px;border-radius:10px;',
+    'color:rgba(224,242,254,.85);font-size:15px;font-weight:500;text-decoration:none;}',
+    '.bgnv-grid a:active,.bgnv-grid a:hover{background:rgba(14,165,160,.14);color:#fff;}',
+    '.bgnv-ic{flex:none;width:34px;height:34px;border-radius:9px;background:rgba(14,165,160,.12);color:#5eead4;display:flex;align-items:center;justify-content:center;}',
+    '.bgnv-ic svg{width:18px;height:18px;}',
     'html.bgnv-on footer{display:none!important;}',
-    '.bgnv-grid a.on{border-color:#0d7a8a;color:#0d7a8a;background:#e6f6f5;}',
+    'html.bgnv-on footer{display:none!important;}',
     'body.dark .bgnv,[data-theme="dark"] .bgnv{background:#0f172a;border-color:#1e293b;}',
     'body.dark .bgnv a,body.dark .bgnv button,[data-theme="dark"] .bgnv a,[data-theme="dark"] .bgnv button{color:#94a3b8;}',
     'body.dark .bgnv .on,[data-theme="dark"] .bgnv .on{color:#2dd4bf;}body.dark .bgnv .on svg,[data-theme="dark"] .bgnv .on svg{background:#134e4a;}',
-    'body.dark .bgnv-panel,[data-theme="dark"] .bgnv-panel{background:#1e293b;}',
-    'body.dark .bgnv-head,[data-theme="dark"] .bgnv-head{color:#f1f5f9;}',
-    'body.dark .bgnv-head button,[data-theme="dark"] .bgnv-head button{background:#334155;color:#f1f5f9;}',
-    'body.dark .bgnv-grid a,[data-theme="dark"] .bgnv-grid a{background:#0f172a;border-color:#334155;color:#f1f5f9;}',
     'html.bgnv-on .bgyn{bottom:calc(116px + env(safe-area-inset-bottom))!important;}',
     'html.bgnv-on #mobMenu{display:none!important;}',
     '@media print{.bgnv,.bgnv-sheet{display:none!important;}}'
@@ -1123,16 +1119,23 @@
     document.head.appendChild(st);
     var sheet = document.createElement('div');
     sheet.className = 'bgnv-sheet';
-    sheet.innerHTML = '<div class="bgnv-panel" role="dialog" aria-label="Semua tools"><div class="bgnv-head">Tools lainnya<button type="button" aria-label="Tutup">' +
+    sheet.innerHTML = '<div class="bgnv-panel" role="dialog" aria-label="Tools"><div class="bgnv-head"><span class="bgnv-logo"><img src="/guru-cibisd2.png" alt=""></span>' +
+      '<span class="bgnv-name">Bantu Guru Yuk<small>AI Tools untuk semua guru</small></span><button type="button" aria-label="Tutup">' +
       svgIcon(NAV_ICONS.x) + '</button></div><div class="bgnv-grid"></div></div>';
-    var grid = sheet.querySelector('.bgnv-grid');
+    var grid = sheet.querySelector('.bgnv-grid'), lastGroup = '';
     ALL_TOOLS.forEach(function (t) {
       if (t[2].charAt(0) === '/' && isHere(t[2].replace(/\/$/, ''))) return;
+      if (t[4] !== lastGroup) {
+        lastGroup = t[4];
+        var sec = document.createElement('div');
+        sec.className = 'bgnv-sec';
+        sec.textContent = t[4];
+        grid.appendChild(sec);
+      }
       var a = document.createElement('a');
       a.href = t[2];
-      a.innerHTML = '<span class="bgnv-ic">' + svgIcon(t[3]) + '</span><span style="min-width:0"><span class="bgnv-t"></span><span class="bgnv-d"></span></span>';
-      a.querySelector('.bgnv-t').textContent = t[0];
-      a.querySelector('.bgnv-d').textContent = t[1];
+      a.innerHTML = '<span class="bgnv-ic">' + svgIcon(t[3]) + '</span><span></span>';
+      a.lastChild.textContent = t[0];
       a.addEventListener('click', function () { track('nav', t[0], t[2]); });
       grid.appendChild(a);
     });

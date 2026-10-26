@@ -1,4 +1,4 @@
-const CACHE_NAME = "bantu-guru-v16";
+const CACHE_NAME = "bantu-guru-v17";
 
 // FILE WAJIB CACHE
 const CORE_ASSETS = [
