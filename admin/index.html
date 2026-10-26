@@ -925,9 +925,32 @@ function togglePjExpand(expandId,toggleId){
   if(!e||!t)return;
   const on=e.classList.toggle('on');t.classList.toggle('on',on);
 }
-function togglePjSandi(btn){
+// Lihat sandi perlu PIN (hanya hash yang disimpan di kode). Sekali benar, terbuka 5 menit.
+const PIN_HASH='d896af65d5b6b01300e22d3778efe9dc777fcde29ff9a6f2dd04242a7b0367ac';
+async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+function pinOpen(){try{return Number(sessionStorage.getItem('bgy_pin_ok')||0)>Date.now();}catch{return false;}}
+function askPin(){
+  return new Promise(res=>{
+    const w=document.createElement('div');
+    w.style.cssText='position:fixed;inset:0;z-index:2000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;';
+    w.innerHTML='<form style="width:100%;max-width:300px;background:var(--card-bg,#fff);color:var(--text);border-radius:16px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.25)">'+
+      '<b style="display:block;font-size:1rem;margin-bottom:10px">Masukkan PIN</b>'+
+      '<input type="password" inputmode="numeric" autocomplete="off" maxlength="8" style="width:100%;min-height:44px;font-size:1.2rem;letter-spacing:6px;text-align:center;border:1.5px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text)"/>'+
+      '<div class="pin-err" style="color:#dc2626;font-size:.8rem;min-height:18px;margin-top:6px"></div>'+
+      '<div style="display:flex;gap:8px;margin-top:6px"><button type="button" class="btn" style="flex:1">Batal</button><button type="submit" class="btn-primary" style="flex:1">Buka</button></div></form>';
+    document.body.appendChild(w);
+    const f=w.querySelector('form'),inp=w.querySelector('input');setTimeout(()=>inp.focus(),50);
+    const done=v=>{w.remove();res(v);};
+    w.querySelector('button[type=button]').onclick=()=>done(false);
+    f.onsubmit=async e=>{e.preventDefault();
+      if(await sha256(inp.value.trim())===PIN_HASH){try{sessionStorage.setItem('bgy_pin_ok',String(Date.now()+5*60000));}catch{}done(true);}
+      else{w.querySelector('.pin-err').textContent='PIN salah.';inp.value='';inp.focus();}};
+  });
+}
+async function togglePjSandi(btn){
   const span=btn.previousElementSibling;
   const actual=span.getAttribute('data-sandi');
+  if(span.textContent==='••••••'&&!pinOpen()&&!(await askPin()))return;
   if(span.textContent==='••••••'){span.textContent=actual;btn.innerHTML=use('i-eye-off');}
   else{span.textContent='••••••';btn.innerHTML=use('i-eye');}
 }
@@ -949,11 +972,11 @@ function openJokian(id){
     </div>
     <div class="row2">
       <div class="fg"><label for="jLogin">Admin login</label><input id="jLogin" maxlength="100" value="${esc(p.login||'')}"/></div>
-      <div class="fg"><label for="jSandi">Sandi</label><input id="jSandi" maxlength="60" value="${esc(p.sandi||'')}"/></div>
+      <div class="fg"><label for="jSandi">Sandi</label><input id="jSandi" type="password" maxlength="60" value="${esc(p.sandi||'')}"/></div>
     </div>
     <div class="row2">
       <div class="fg"><label for="jSupabase">Akun Supabase</label><input id="jSupabase" maxlength="100" value="${esc(p.supabase||'')}"/></div>
-      <div class="fg"><label for="jSupabasePass">Sandi Supabase</label><input id="jSupabasePass" maxlength="60" value="${esc(p.supabase_pass||'')}"/></div>
+      <div class="fg"><label for="jSupabasePass">Sandi Supabase</label><input id="jSupabasePass" type="password" maxlength="60" value="${esc(p.supabase_pass||'')}"/></div>
     </div>
     <div class="row2">
       <div class="fg"><label for="jRepo">Repo GitHub</label><input id="jRepo" maxlength="100" value="${esc(p.repo||'')}"/></div>
@@ -1029,7 +1052,7 @@ function openSendiri(id){
     <div class="fg"><label for="sAdminUrl">URL Admin (opsional)</label><input id="sAdminUrl" maxlength="500" value="${esc(p.admin_url||'')}" inputmode="url" placeholder="https://wkelas.web.id/admin"/></div>
     <div class="row2">
       <div class="fg"><label for="sLogin">Admin login</label><input id="sLogin" maxlength="100" value="${esc(p.login||'')}"/></div>
-      <div class="fg"><label for="sSandi">Sandi</label><input id="sSandi" maxlength="60" value="${esc(p.sandi||'')}"/></div>
+      <div class="fg"><label for="sSandi">Sandi</label><input id="sSandi" type="password" maxlength="60" value="${esc(p.sandi||'')}"/></div>
     </div>
     <div class="fg"><label for="sSupabase">Akun Supabase</label><input id="sSupabase" maxlength="100" value="${esc(p.supabase||'')}"/></div>
     <div class="fg"><label for="sKet">Keterangan</label><input id="sKet" maxlength="200" value="${esc(p.keterangan||'')}"/></div>
@@ -1224,7 +1247,7 @@ function openLangganan(id){
     <div class="fg"><label>Tanggal berikutnya (otomatis)</label><div style="padding:9px 10px;background:var(--input-bg);border:1.5px solid var(--border);border-radius:8px;font-size:.86rem;color:var(--text-light)" id="lgNextPreview">—</div></div>
     <div class="row2">
       <div class="fg"><label for="lgAkun">Akun / email login</label><input id="lgAkun" maxlength="100" value="${esc(l.akun||'')}" autocomplete="off"/></div>
-      <div class="fg"><label for="lgSandi">Sandi</label><input id="lgSandi" maxlength="100" value="${esc(l.sandi||'')}" autocomplete="off"/></div>
+      <div class="fg"><label for="lgSandi">Sandi</label><input id="lgSandi" type="password" maxlength="100" value="${esc(l.sandi||'')}" autocomplete="off"/></div>
     </div>
     <div class="fg"><label for="lgKet">Catatan (opsional)</label><input id="lgKet" maxlength="80" value="${esc(l.keterangan||'')}" placeholder="mis. Dibayar via BRI, Vercel, dll"/></div>
     <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveLanggananItem('${esc(id||'')}')">Simpan</button></div>`;
