@@ -1,5 +1,5 @@
 /* BGY Teks Sekolah — Service Worker */
-const CACHE_NAME = 'bgy-teks-v7';
+const CACHE_NAME = 'bgy-teks-v8';
 const CACHE_URLS = [
   '/teks-sekolah/',
   '/teks-sekolah/index.html',
