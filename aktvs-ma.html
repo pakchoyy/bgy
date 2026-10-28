@@ -170,9 +170,10 @@
     try {
       const q = new URLSearchParams(location.search);
       if (!q.get('order') || !q.get('sig')) throw new Error('Buka halaman ini dari link produk di Kreacy setelah pembayaran.');
-      const { data, error } = await sbClient.rpc('bgy_claim_order', {
-        p_order: q.get('order'), p_sig: q.get('sig'), p_email: email.toLowerCase(), p_access: 'modul_ajar'
-      }).single();
+      const args = { p_order: q.get('order'), p_sig: q.get('sig'), p_email: email.toLowerCase(), p_access: 'modul_ajar' };
+      // Produk paket PLUS/PRO: toko menambah ?t= dan sig2 yang mengikat paket ke pesanan.
+      if (q.get('t')) { args.p_paket = q.get('t'); args.p_sig2 = q.get('sig2') || ''; }
+      const { data, error } = await sbClient.rpc('bgy_claim_order', args).single();
       if (error) throw error;
       const pesan = {
         invalid: 'Email atau link pesanan tidak valid.',

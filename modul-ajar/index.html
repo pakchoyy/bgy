@@ -255,6 +255,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
 footer a{color:inherit;text-decoration:underline;}
 #menuOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:250;}
 #menuOverlay.open{display:block;}
+#aktivasiMsg:empty{display:none;}
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 <script src="/bgy-info.js"></script>
@@ -580,15 +581,16 @@ footer a{color:inherit;text-decoration:underline;}
       <div id="aktivasiBox" style="margin-top:12px;border:2px solid #f59e0b;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(245,158,11,.15);">
         <div style="background:linear-gradient(135deg,#f59e0b,#d97706);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
           <div style="font-size:.8rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px;">
-            <svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> <span>Aktivasi Pro</span>
-            <span style="background:rgba(255,255,255,.25);font-size:.75rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
+            <svg class="ic" aria-hidden="true"><use href="#i-unlock"/></svg> <span id="aktivJudul">Aktivasi Pro</span>
+            <span id="aktivBadge" style="background:rgba(255,255,255,.25);font-size:.75rem;padding:1px 7px;border-radius:99px;font-weight:700;letter-spacing:.5px;">UNLIMITED</span>
           </div>
-          <a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank" rel="noopener"
+          <a id="aktivBeli" href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank" rel="noopener"
             style="font-size:.75rem;font-weight:700;color:#fff;background:rgba(255,255,255,.2);padding:0 14px;min-height:40px;display:inline-flex;align-items:center;border-radius:99px;text-decoration:none;border:1px solid rgba(255,255,255,.4);">
             Beli Pro →
           </a>
         </div>
         <div style="padding:12px 14px;background:linear-gradient(135deg,rgba(245,158,11,.04),rgba(14,165,160,.04));">
+          <div id="paketBox" hidden></div>
           <!-- MODE 1: Input kode -->
           <div id="modeKode" style="display:none;">
             <div style="font-size:.75rem;color:var(--text-light);margin-bottom:8px;font-weight:600;"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Masukkan email + kode aktivasi kamu:</div>
@@ -626,7 +628,7 @@ footer a{color:inherit;text-decoration:underline;}
               Punya kode aktivasi? <a href="#" onclick="tampilModeKode();return false;" style="color:#d97706;font-weight:700;display:inline-block;padding:13px 4px;">Masukkan kode</a>
             </div>
           </div>
-          <div id="aktivasiMsg" style="font-size:.75rem;margin-top:8px;min-height:14px;font-weight:600;"></div>
+          <div id="aktivasiMsg" style="font-size:.75rem;margin-top:8px;font-weight:600;"></div>
         </div>
       </div>
 
@@ -695,7 +697,7 @@ footer a{color:inherit;text-decoration:underline;}
       Pro menyediakan pembuatan tanpa batas, salin satu kali pilih, serta akses cepat ke AI.
     </div>
     <div data-bgy-proof="modul-ajar" style="text-align:left;margin:-10px 0 14px;"></div>
-    <a href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank"
+    <a id="upgradeCta" href="https://lynk.id/kreacy/y8eol1jk91g6" target="_blank" onclick="return upgradeCtaClick()"
       style="display:block;background:linear-gradient(135deg,#d97706,#b45309);color:#fff;border-radius:10px;padding:11px 0;font-weight:800;font-size:.92rem;text-align:center;width:100%;margin-bottom:10px;text-decoration:none;">
       Lihat pilihan Pro
     </a>
@@ -719,6 +721,44 @@ const _activeGenerationControllers=new Set();
 let _generationCancelled=false;
 let _currentOutputText='';
 let _isPro = false;
+/* Paket FREE/PLUS/PRO Modul Ajar: angka diatur di /admin (bgy_settings key 'paket_ma'). Saat paket.aktif=false, perilaku lama berlaku. */
+const PAKET_MA_DEFAULT={aktif:false,free:{harian:1},plus:{harian:4,kuota:15,bulan:3,harga:12000,url:''},pro:{harian:10,kuota:40,bulan:6,harga:22000,url:''}};
+let PAKET_MA=(()=>{try{return Object.assign({},PAKET_MA_DEFAULT,JSON.parse(localStorage.getItem('bgy_paket_ma')||'{}'));}catch(e){return PAKET_MA_DEFAULT;}})();
+fetch('https://xtmpiqpmwirsrcsphsto.supabase.co/rest/v1/bgy_settings?key=eq.paket_ma&select=value',{headers:{apikey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w',Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w'}})
+  .then(r=>r.ok?r.json():[]).then(rows=>{const v=rows&&rows[0]&&rows[0].value;if(!v)return;PAKET_MA=Object.assign({},PAKET_MA_DEFAULT,v);try{localStorage.setItem('bgy_paket_ma',JSON.stringify(v));}catch(e){}renderPaketBox();updateLimitDisplay();}).catch(()=>{});
+const NAMA_TIER={free:'FREE',plus:'PLUS',pro:'PRO',lama:'PRO'};
+function proData(){try{return JSON.parse(localStorage.getItem('bgy_pro_ma')||'{}');}catch(e){return{};}}
+// free | plus | pro | lama (pembeli Pro sebelum paket: tanpa batas sampai masa aktif habis)
+function tier(){if(!_isPro)return'free';const t=proData().tier;return t==='plus'||t==='pro'?t:'lama';}
+function paketMa(k){return Object.assign({},PAKET_MA_DEFAULT[k],PAKET_MA[k]);}
+// Batas PLUS/PRO hanya berlaku saat paket aktif; pembeli lama tetap tanpa batas.
+function batasMa(){const t=tier();if(!PAKET_MA.aktif||t==='free'||t==='lama')return{limited:false};const p=paketMa(t);return{limited:true,harian:Number(p.harian)||1,kuota:Number(p.kuota)||(t==='plus'?15:40)};}
+function getPaketUsed(){try{const u=JSON.parse(localStorage.getItem('bgy_ma_paket_used')||'{}');return u.k===(proData().active_until||'')?Number(u.n)||0:0;}catch(e){return 0;}}
+function incrementPaket(){try{localStorage.setItem('bgy_ma_paket_used',JSON.stringify({k:proData().active_until||'',n:getPaketUsed()+1}));}catch(e){}}
+function renderPaketBox(){
+  const box=document.getElementById('paketBox');if(!box)return;
+  const on=!!PAKET_MA.aktif;box.hidden=!on;
+  ['aktivBadge','aktivBeli'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=on?'none':'';});
+  const j=document.getElementById('aktivJudul');if(j)j.textContent=on?'Upgrade Paket':'Aktivasi Pro';
+  if(!on)return;
+  const rp=n=>'Rp'+Number(n||0).toLocaleString('id-ID'),t=tier();
+  box.innerHTML=['plus','pro'].filter(k=>!(t==='plus'&&k==='plus')).map(k=>{
+    const p=paketMa(k),url=/^https:\/\/[^\s"'<>]+$/.test(p.url||'')?p.url:'',pro=k==='pro';
+    return `<div style="border:1.5px solid ${pro?'#f59e0b':'var(--border)'};border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px;background:var(--card-bg);">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:800;font-size:.88rem;color:var(--text);">${pro?'PRO':'PLUS'} · ${rp(p.harga)} <span style="font-weight:600;font-size:.75rem;color:var(--text-light);">/ ${Number(p.bulan)||0} bulan</span></div>
+        <div style="font-size:.75rem;color:var(--text-light);">${Number(p.kuota)||0}x buat modul · maks ${Number(p.harian)||0}x/hari</div>
+      </div>
+      ${url?`<a href="${url}" target="_blank" rel="noopener" style="min-height:40px;display:inline-flex;align-items:center;padding:0 16px;border-radius:10px;background:${pro?'linear-gradient(135deg,#f59e0b,#d97706)':'linear-gradient(135deg,#0ea5a0,#0d7a8a)'};color:#fff;font-weight:800;font-size:.8rem;text-decoration:none;white-space:nowrap;">Beli</a>`:'<span style="font-size:.75rem;color:var(--text-light);">Segera</span>'}
+    </div>`;}).join('');
+}
+// Tombol di popup: saat paket aktif, tampilkan pilihan PLUS/PRO di kotak Upgrade.
+function upgradeCtaClick(){
+  if(!PAKET_MA.aktif)return true;
+  closeUpgradePopup();
+  const b=document.getElementById('aktivasiBox');if(b){b.style.display='';b.scrollIntoView({behavior:'smooth',block:'center'});}
+  return false;
+}
 
 const sbClient = window.supabase && window.supabase.createClient(
   "https://xtmpiqpmwirsrcsphsto.supabase.co",
@@ -903,7 +943,7 @@ function onJenjangChange(){
   const aloEl=document.getElementById('alokasiWaktu');
   if(!aloEl.dataset.edited)aloEl.value=data.defaultAlokasi;
   // Update header title
-  document.querySelector('h1').innerHTML=`BGY | Modul Ajar <span id="hBadge" class="${_isPro?'badge-pro':'badge-free'}">${_isPro?'PRO':'FREE'}</span>`;
+  document.querySelector('h1').innerHTML=`BGY | Modul Ajar <span id="hBadge" class="${_isPro?'badge-pro':'badge-free'}">${NAMA_TIER[tier()]}</span>`;
 }
 
 function updateMapelOptions(faseKey){
@@ -1044,9 +1084,9 @@ function checkProStatus(){
   if(proData){
     try{
       const d=JSON.parse(proData);
-      if(d.is_pro && (d.plan_type!=='annual' || new Date(d.active_until).getTime()>Date.now())){
+      if(subscriptionIsActive(d)){
         _isPro=true;
-        document.getElementById('hBadge').textContent='PRO';
+        document.getElementById('hBadge').textContent=NAMA_TIER[tier()];
         document.getElementById('hBadge').className='badge-pro';
         document.getElementById('aktivasiBox').style.display='none';
       }
@@ -1054,15 +1094,25 @@ function checkProStatus(){
   }
 }
 function isPro(){return _isPro;}
+// Lifetime lama: active_until kosong. Paket lain (annual/PLUS/PRO) habis sesuai tanggal.
 function subscriptionIsActive(data){
-  return !!data?.is_pro && (data.plan_type!=='annual' || (data.active_until && new Date(data.active_until).getTime()>Date.now()));
+  return !!data?.is_pro && (!data.active_until || new Date(data.active_until).getTime()>Date.now());
 }
 function subscriptionLabel(data){
-  return data.plan_type==='annual' ? `Pro aktif sampai ${new Date(data.active_until).toLocaleDateString('id-ID')}` : 'Pro Lifetime aktif — Generate Unlimited';
+  return data.active_until ? `Pro aktif sampai ${new Date(data.active_until).toLocaleDateString('id-ID')}` : 'Pro Lifetime aktif — Generate Unlimited';
 }
 
+
 function checkLimit(){
-  if(_isPro)return{ok:true,used:0,remaining:999};
+  const bm=batasMa();
+  if(_isPro&&!bm.limited)return{ok:true,used:0,remaining:999};
+  if(bm.limited){
+    const today=new Date().toDateString();
+    let d=JSON.parse(localStorage.getItem(STORAGE_KEY_LIMIT)||'{}');
+    if(d.date!==today)d={date:today,used:0};
+    const rem=Math.min(bm.harian-(d.used||0),bm.kuota-getPaketUsed());
+    return{ok:rem>0,used:d.used||0,remaining:rem,kuotaHabis:bm.kuota-getPaketUsed()<=0};
+  }
   const today=new Date().toDateString();
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY_LIMIT)||'{}');
   if(data.date!==today)data={date:today,used:0};
@@ -1070,6 +1120,7 @@ function checkLimit(){
   return{ok:used<DAILY_LIMIT,used,remaining:DAILY_LIMIT-used};
 }
 function incrementDaily(){
+  if(batasMa().limited)incrementPaket();
   const today=new Date().toDateString();
   let data=JSON.parse(localStorage.getItem(STORAGE_KEY_LIMIT)||'{}');
   if(data.date!==today)data={date:today,used:0};
@@ -1081,6 +1132,17 @@ function updateLimitDisplay(){
   const lr=document.getElementById('limitReset');
   const btnLbl=document.getElementById('btnLabel');
   const btn=document.getElementById('btnGenerate');
+  const bm=batasMa();
+  if(_isPro&&bm.limited){
+    const lc=checkLimit(),t=tier();
+    if(el){el.textContent=lc.ok?`${NAMA_TIER[t]} · Sisa hari ini: ${Math.max(0,lc.remaining)}x · sisa kuota paket ${Math.max(0,bm.kuota-getPaketUsed())}x`:lc.kuotaHabis?'Kuota paket habis. Perpanjang paket untuk lanjut.':'Batas harian habis. Coba lagi besok.';el.style.color=lc.ok?'#059669':'#dc2626';}
+    document.getElementById('aktivasiBox').style.display=t==='plus'?'':'none';
+    renderPaketBox();updateOutputModeUI();
+    if(btn)btn.disabled=false;
+    if(lr)lr.style.display='';
+    const b=document.getElementById('hBadge');if(b){b.textContent=NAMA_TIER[t];b.className='badge-pro';}
+    return;
+  }
   if(_isPro){
     if(el){const d=JSON.parse(localStorage.getItem('bgy_pro_ma')||'{}');el.textContent=subscriptionLabel(d);el.style.color='#059669';}
     document.getElementById('aktivasiBox').style.display='none';
@@ -1090,6 +1152,7 @@ function updateLimitDisplay(){
     const b=document.getElementById('hBadge');if(b){b.textContent='PRO';b.className='badge-pro';}
     return;
   }
+  renderPaketBox();
   if(lr)lr.style.display='';
   const b=document.getElementById('hBadge');if(b){b.textContent='FREE';b.className='badge-free';}
   const lc=checkLimit();
@@ -1218,7 +1281,7 @@ async function verifikasiKode(){
     if(!data||data.result==='invalid'){msgEl.style.color='#dc2626';msgEl.textContent='Email atau kode tidak cocok.';return;}
     if(data.result==='expired'||data.result==='inactive'){msgEl.style.color='#dc2626';msgEl.textContent='Masa langganan telah habis.';return;}
     if(!subscriptionIsActive(data)){msgEl.style.color='#dc2626';msgEl.textContent='Akun belum aktif PRO.';return;}
-    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email,plan_type:data.plan_type,active_until:data.active_until}));
+    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email,plan_type:data.plan_type,active_until:data.active_until,tier:data.tier||null}));
     _setProAktif(true);msgEl.style.color='#15803d';msgEl.textContent='Aktivasi PRO berhasil.';gaEvent('aktivasi_pro_ma',{kode});
   }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='Gagal menghubungi server.';}
 }
@@ -1231,7 +1294,7 @@ async function cekAksesPro(){
     const{data:rows,error}=await sbClient.rpc('bgy_subscription_status',{p_email:email,p_access:'modul_ajar'});
     if(error)throw error;const data=Array.isArray(rows)?rows[0]:rows;
     if(!subscriptionIsActive(data)){msgEl.style.color='#dc2626';msgEl.textContent='Email belum aktif atau langganan habis.';return;}
-    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email,plan_type:data.plan_type,active_until:data.active_until}));
+    localStorage.setItem('bgy_pro_ma',JSON.stringify({is_pro:true,email,plan_type:data.plan_type,active_until:data.active_until,tier:data.tier||null}));
     _setProAktif(true);msgEl.style.color='#15803d';msgEl.textContent='Login PRO berhasil.';
   }catch(e){msgEl.style.color='#dc2626';msgEl.textContent='Gagal menghubungi server.';}
 }
@@ -1533,7 +1596,7 @@ async function requestStageWithRetry(prompt,options,maxAttempts=3){
     try{return await requestGenerateModul(prompt,options);}
     catch(error){
       lastError=error;
-      if(_generationCancelled||/dibatalkan|jatah gratis|terlalu banyak permintaan/i.test(error.message||''))throw error;
+      if(_generationCancelled||/dibatalkan|jatah gratis|kuota paket|terlalu banyak permintaan/i.test(error.message||''))throw error;
       if(attempt<maxAttempts){
         const overlayText=document.getElementById('goMsg');
         if(overlayText)overlayText.textContent=`Koneksi terputus. Mencoba lagi (${attempt+1}/${maxAttempts})...`;
@@ -2711,7 +2774,7 @@ async function generatePrompt(options={}){
   if(!topik){showFormError(`Isi ${kurikulum==='K13'?'materi pokok':'topik atau materi pokok'} untuk melanjutkan.`,'topikMateri');return;}
   if(kurikulum==='MERDEKA'&&!p5){showFormError('Pilih minimal satu Dimensi Profil Lulusan.','.cb-p5');return;}
   const lc=checkLimit();
-  if(!options.retry&&!lc.ok){showUpgradePopup();return;}
+  if(!options.retry&&!lc.ok){if(batasMa().limited){showFormError(lc.kuotaHabis?'Kuota paket habis. Perpanjang paket di kotak Upgrade Paket.':'Batas harian paket habis. Coba lagi besok.');return;}showUpgradePopup();return;}
 
   setLoading(true);
   _generationCancelled=false;
@@ -2730,7 +2793,7 @@ async function generatePrompt(options={}){
     document.getElementById('promptPlaceholder').style.display='none';
     document.getElementById('promptContent').style.display='block';
 
-    if(!options.retry&&!isPro()) incrementDaily();
+    if(!options.retry&&(!isPro()||batasMa().limited)) incrementDaily();
     simpanHistori(output,mapel,fase,topik,outputMode,meta);
     setLoading(false);
     updateLimitDisplay();
