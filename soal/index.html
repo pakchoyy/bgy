@@ -176,7 +176,7 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 /* Preview */
 .preview-wrap{position:relative;}
 .page-nav{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;}
-.page-nav button{background:var(--card-bg);border:2px solid var(--border);color:var(--text);width:33px;height:33px;border-radius:50%;font-size:.95rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.page-nav button{background:var(--card-bg);border:2px solid var(--border);color:var(--text);width:44px;height:44px;border-radius:50%;font-size:.95rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;}
 .page-nav button:hover:not(:disabled){border-color:var(--blue);color:var(--blue);}
 .page-nav button:disabled{opacity:.3;cursor:not-allowed;}
 .page-info{font-size:.78rem;color:var(--text-light);font-weight:600;min-width:72px;text-align:center;}
@@ -815,19 +815,15 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
         <div style="position:relative;display:inline-block;">
           <button class="btn btn-secondary" id="btnPDF" onclick="togglePDFMenu()" style="position:relative;"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> Download PDF ▾</button>
           <div id="pdfMenu" style="display:none;position:absolute;top:110%;left:0;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:999;min-width:180px;overflow:hidden;">
-            <button class="menu-action" type="button" onclick="exportPDF('all');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Semua (+ Prompt Gambar)</button>
-            <button class="menu-action" type="button" onclick="exportPDF('soal');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-soal"/></svg> Soal Saja</button>
+            <button class="menu-action" type="button" onclick="exportPDF('all');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Semua (soal, kunci, kisi-kisi, prompt)</button>
             <button class="menu-action" type="button" onclick="exportPDF('kunci');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Soal + Kunci</button>
-            <button class="menu-action" type="button" onclick="exportPDF('kunci-tanpa-rubrik');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Kunci tanpa rubrik</button>
-            <button class="menu-action" type="button" onclick="exportPDF('kisi');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-table"/></svg> Kisi-kisi Saja</button>
-            <button class="menu-action" type="button" onclick="exportPDF('prompt');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> Prompt Gambar Saja</button>
           </div>
         </div>
         <div style="position:relative;display:inline-block;">
           <button class="btn btn-secondary" id="btnWord" onclick="toggleWordMenu()" style="position:relative;"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Download Word ▾</button>
           <div id="wordMenu" style="display:none;position:absolute;top:110%;left:0;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:999;min-width:180px;overflow:hidden;">
-            <button class="menu-action" type="button" onclick="exportWord({rubrik:true});closeWordMenu()">Lengkap dengan rubrik</button>
-            <button class="menu-action" type="button" onclick="exportWord({rubrik:false});closeWordMenu()">Tanpa rubrik</button>
+            <button class="menu-action" type="button" onclick="exportWord({rubrik:true});closeWordMenu()"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Semua (soal, kunci, kisi-kisi, prompt)</button>
+            <button class="menu-action" type="button" onclick="exportWord({rubrik:true,ringkas:true});closeWordMenu()"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Soal + Kunci</button>
           </div>
         </div>
         <span title="Disarankan Download PDF untuk hasil terbaik!" style="display:inline-flex;align-items:center;justify-content:center;background:#fef9c3;border:1.5px solid #fde047;border-radius:8px;padding:4px 10px;font-size:.75rem;color:#854d0e;font-weight:700;cursor:default;gap:4px;white-space:nowrap;"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> PDF lebih rapi</span>
@@ -3068,9 +3064,8 @@ async function exportWord(options={rubrik:true}){
         ...urP,
         PB(),
         ...kP,
-        PB(),
-        ...kkP,
-        ...(prP.length?[PB(),...prP]:[]),
+        ...(options.ringkas?[]:[PB(),...kkP]),
+        ...(!options.ringkas&&prP.length?[PB(),...prP]:[]),
       ]
     }]
   });
@@ -3664,7 +3659,7 @@ function updateLimitDisplay(){
   const kuota=bt.kuota?` · sisa kuota paket ${sisaKuota()}x`:'';
   const habisPaket=bt.kuota&&sisaKuota()<=0;
   el.textContent=ok?`${t==='free'?'':NAMA_TIER[t]+' · '}Sisa generate hari ini: ${remaining}x${maks}${kuota}`:habisPaket?'Kuota paket habis. Perpanjang paket untuk lanjut.':(t==='pro'?'Batas harian habis. Coba lagi besok.':'Batas harian habis. Upgrade paket atau coba besok.');
-  el.style.color=remaining<=1?'#dc2626':'#64748b';
+  el.style.color=remaining<=0?'#dc2626':'#059669';
   const btnLbl=document.getElementById('btnLabel');
   if(btnLbl&&btnLbl.textContent.indexOf('Membuat')===-1)btnLbl.textContent=ok?`Generate Soal (${remaining}x)`:'Limit Habis';
 }
