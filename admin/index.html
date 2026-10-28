@@ -132,9 +132,13 @@ body.dark .stat b{color:#5eead4;}
 footer{background:var(--grad);color:#fff;text-align:center;padding:12px 20px;font-size:.75rem;}
 .sandi-wrap{display:inline-flex;align-items:center;gap:4px;}
 .sandi-wrap code{font-size:.74rem;background:var(--input-bg);padding:2px 6px;border-radius:4px;border:1px solid var(--border);font-family:monospace;}
-.sandi-toggle{background:none;border:none;cursor:pointer;color:var(--text-light);padding:2px;display:inline-flex;align-items:center;}
+.sandi-toggle{background:none;border:none;cursor:pointer;color:var(--teal-dark,#0d7a8a);min-width:40px;min-height:40px;margin:-8px 0;padding:0;display:inline-flex;align-items:center;justify-content:center;}
 .sandi-toggle:hover{color:var(--blue);}
-.sandi-toggle .ic{width:14px;height:14px;}
+.sandi-toggle .ic{width:20px;height:20px;}
+.sandi-val{font-size:.9rem;}
+.pw-wrap{position:relative;}.pw-wrap input{padding-right:46px;}
+.pw-eye{position:absolute;right:0;top:0;bottom:0;min-width:44px;border:0;background:none;color:var(--teal-dark,#0d7a8a);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pw-eye .ic{width:20px;height:20px;}
 .langganan-group{margin-bottom:14px;}
 .langganan-group-title{font-size:.78rem;font-weight:800;color:var(--teal-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);}
 body.dark .langganan-group-title{color:#5eead4;}
@@ -948,6 +952,20 @@ function askPin(){
       else{w.querySelector('.pin-err').textContent='PIN salah.';inp.value='';inp.focus();}};
   });
 }
+// Isian sandi di form: tombol mata (pakai PIN) untuk melihat/menyembunyikan.
+function addPwEyes(root){
+  root.querySelectorAll('input[type=password]').forEach(inp=>{
+    if(inp.closest('.pw-wrap')||inp.inputMode==='numeric')return;
+    const w=document.createElement('div');w.className='pw-wrap';inp.parentNode.insertBefore(w,inp);w.appendChild(inp);
+    const b=document.createElement('button');b.type='button';b.className='pw-eye';b.setAttribute('aria-label','Lihat sandi');b.innerHTML=use('i-eye');
+    b.onclick=async()=>{
+      if(inp.type==='password'){if(!pinOpen()&&!(await askPin()))return;inp.type='text';b.innerHTML=use('i-eye-off');}
+      else{inp.type='password';b.innerHTML=use('i-eye');}
+    };
+    w.appendChild(b);
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{const mb=document.getElementById('modalBox');if(mb)new MutationObserver(()=>addPwEyes(mb)).observe(mb,{childList:true});});
 async function togglePjSandi(btn){
   const span=btn.previousElementSibling;
   const actual=span.getAttribute('data-sandi');
