@@ -815,11 +815,12 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
         <div style="position:relative;display:inline-block;">
           <button class="btn btn-secondary" id="btnPDF" onclick="togglePDFMenu()" style="position:relative;"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> Download PDF ▾</button>
           <div id="pdfMenu" style="display:none;position:absolute;top:110%;left:0;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:999;min-width:180px;overflow:hidden;">
-            <button class="menu-action" type="button" onclick="exportPDF('all');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Semua (Soal+Kunci+Kisi)</button>
+            <button class="menu-action" type="button" onclick="exportPDF('all');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Semua (+ Prompt Gambar)</button>
             <button class="menu-action" type="button" onclick="exportPDF('soal');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-soal"/></svg> Soal Saja</button>
             <button class="menu-action" type="button" onclick="exportPDF('kunci');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Soal + Kunci</button>
             <button class="menu-action" type="button" onclick="exportPDF('kunci-tanpa-rubrik');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg> Kunci tanpa rubrik</button>
             <button class="menu-action" type="button" onclick="exportPDF('kisi');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-table"/></svg> Kisi-kisi Saja</button>
+            <button class="menu-action" type="button" onclick="exportPDF('prompt');closePDFMenu()"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> Prompt Gambar Saja</button>
           </div>
         </div>
         <div style="position:relative;display:inline-block;">
@@ -2365,8 +2366,8 @@ function buildKisiKisiPage(data,pg,isian,uraian){
 /* ════════════════════════════════════════════
    BUILD HALAMAN PROMPT GAMBAR
 ════════════════════════════════════════════ */
-function buildPromptGambarPage(data,pg,isian,uraian){
-  // Deteksi prioritas gambar
+// Daftar prompt gambar per soal PG (dipakai pratinjau/PDF dan Word).
+function promptGambarItems(pg){
   const triggerWords=[
     /perhatikan gambar/i,/gambar (di atas|berikut|tersebut)/i,/lihat gambar/i,
     /berdasarkan gambar/i,/gambar bangun/i,/bangun datar/i,/bangun ruang/i,
@@ -2374,14 +2375,18 @@ function buildPromptGambarPage(data,pg,isian,uraian){
     /grafik (di atas|berikut)/i,/peta (di atas|berikut)/i,
     /tabel (di atas|berikut)/i,/ilustrasi/i
   ];
-  function butuhGambar(t){return triggerWords.some(re=>re.test(t));}
-
-  // Semua soal PG, tandai mana yang prioritas
-  const soalBergambar=[];
-  pg.forEach((item,i)=>{
-    soalBergambar.push({no:i+1,tipe:'PG',soal:item.soal||'',prioritas:butuhGambar(item.soal||'')});
+  const kelas=document.getElementById('kelas').value;
+  const jenjang=getJenjang();
+  const gaya=jenjang==='SD'?`gaya kartun ramah anak SD kelas ${kelas}, bergaris tegas, warna cerah`:`gaya ilustrasi edukatif jenjang ${jenjang}, bersih, informatif, warna netral`;
+  return pg.map((item,i)=>{
+    const teks=stripHtml(item.soal||'').replace(/\s+/g,' ').trim();
+    return {no:i+1,prioritas:triggerWords.some(re=>re.test(item.soal||'')),
+      snippet:teks.length>120?teks.substring(0,120)+'…':teks,
+      prompt:`Buatkan ilustrasi gambar sederhana, ${gaya}, latar putih. Gambar harus menunjukkan: ${teks.substring(0,200)}. Ukuran: persegi atau landscape 4:3. Jangan tambahkan teks atau label di gambar.`};
   });
-
+}
+function buildPromptGambarPage(data,pg,isian,uraian){
+  const soalBergambar=promptGambarItems(pg);
   // Tidak ada PG → tidak tampilkan halaman
   if(!soalBergambar.length) return null;
 
@@ -2390,12 +2395,7 @@ function buildPromptGambarPage(data,pg,isian,uraian){
 
   let promptRows='';
   soalBergambar.forEach(s=>{
-    const soalPendek=stripHtml(s.soal).replace(/\s+/g,' ').trim();
-    const snippet=soalPendek.length>120?soalPendek.substring(0,120)+'…':soalPendek;
-    const jenjangGambar=getJenjang();
-    const gayaGambar=jenjangGambar==='SD'?`gaya kartun ramah anak SD kelas ${kelas}, bergaris tegas, warna cerah`:`gaya ilustrasi edukatif jenjang ${jenjangGambar}, bersih, informatif, warna netral`;
-    const promptTeks=`Buatkan ilustrasi gambar sederhana, ${gayaGambar}, latar putih. Gambar harus menunjukkan: ${soalPendek.substring(0,200)}. Ukuran: persegi atau landscape 4:3. Jangan tambahkan teks atau label di gambar.`;
-
+    const snippet=s.snippet,promptTeks=s.prompt;
     const rowBg=s.prioritas?'background:#fff7ed;':'';
     const noBg=s.prioritas?'background:#ea580c;color:#fff;':'background:#e5e7eb;color:#374151;';
     const badge=s.prioritas?'<div style="margin-top:4px;font-size:7pt;background:#ea580c;color:#fff;border-radius:10px;padding:1px 6px;display:inline-block;">⭐ Prioritas</div>':'<div style="margin-top:4px;font-size:7pt;color:#9ca3af;">opsional</div>';
@@ -2509,6 +2509,7 @@ async function exportPDF(mode){
   else if(mode==='kunci') pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='soal'||halamanMeta[i]==='kunci');
   else if(mode==='kunci-tanpa-rubrik') pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='soal'||halamanMeta[i]==='kunci').map(stripRubrikHtml);
   else if(mode==='kisi') pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='kisi');
+  else if(mode==='prompt'){pagesToRender=halamanSoal.filter((_,i)=>halamanMeta[i]==='prompt');if(!pagesToRender.length){alert('Prompt gambar hanya ada untuk soal pilihan ganda.');return;}}
 
   const btn=document.getElementById('btnPDF');
   const origTxt=btn?btn.innerHTML:'';
@@ -3037,6 +3038,24 @@ async function exportWord(options={rubrik:true}){
   kkP.push(new D.Table({width:{size:W,type:'dxa'},columnWidths:kkCW,rows:[kkHeader,...kkDataRows]}));
   kkP.push(P([T('C1=Mengingat | C2=Memahami | C3=Menerapkan | C4=Menganalisis | C5=Mengevaluasi | C6=Mencipta',{italic:true,size:16})],{before:120}));
 
+  // ── Prompt gambar (hanya bila ada PG) ──
+  const prP=[];
+  const prItems=promptGambarItems(pg);
+  if(prItems.length){
+    prP.push(P([T('PROMPT GENERATE GAMBAR SOAL',{bold:true,size:28})],{align:'center',after:40}));
+    prP.push(P([T(mapel+' | Kelas '+kelas+' '+satuanWord,{size:20})],{align:'center',after:80}));
+    pushHR(prP);
+    prP.push(P([T('Salin prompt ke AI pembuat gambar (ChatGPT, Gemini, dll), lalu sisipkan gambarnya ke soal sesuai nomor. Prioritas = soal yang terdeteksi butuh gambar.',{italic:true,size:18})],{after:120}));
+    const prCW=[1100,3200,5300];
+    const prHeader=tblRow(['No. Soal','Konteks Soal','Prompt'].map((h,ci)=>tblCell([T(h,{bold:true,size:18})],prCW[ci],'center')));
+    const prRows=prItems.map(s=>tblRow([
+      tblCell([T(String(s.no)+(s.prioritas?' (Prioritas)':''),{size:18,bold:s.prioritas})],prCW[0],'center'),
+      tblCell([T(s.snippet,{size:18,italic:true})],prCW[1]),
+      tblCell([T(s.prompt,{size:18})],prCW[2]),
+    ]));
+    prP.push(new D.Table({width:{size:W,type:'dxa'},columnWidths:prCW,rows:[prHeader,...prRows]}));
+  }
+
   // ── Buat Dokumen ──
   const doc = new D.Document({
     styles:{default:{document:{run:{font:TNR,size:22}}}},
@@ -3051,6 +3070,7 @@ async function exportWord(options={rubrik:true}){
         ...kP,
         PB(),
         ...kkP,
+        ...(prP.length?[PB(),...prP]:[]),
       ]
     }]
   });
