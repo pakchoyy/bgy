@@ -1,6 +1,6 @@
 -- Paket Modul Ajar PLUS / PRO (token ma_plus / ma_pro, pengaturan bgy_settings key 'paket_ma').
 -- Link Kreacy: aktvs-ma.html?t=ma_plus|ma_pro&order={order}&sig={sig} (toko menambah sig2).
--- Default: PLUS 3 bulan 15x (maks 4x/hari), PRO 6 bulan 40x (maks 10x/hari). Aman dijalankan ulang.
+-- Default harga PLUS Rp13.000, PRO Rp24.000. PLUS 3 bulan 15x (maks 4x/hari), PRO 6 bulan 40x (maks 10x/hari). Aman dijalankan ulang.
 begin;
 
 create or replace function public.bgy_claim_order(p_order text, p_sig text, p_email text, p_access text, p_paket text, p_sig2 text)

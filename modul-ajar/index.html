@@ -722,7 +722,7 @@ let _generationCancelled=false;
 let _currentOutputText='';
 let _isPro = false;
 /* Paket FREE/PLUS/PRO Modul Ajar: angka diatur di /admin (bgy_settings key 'paket_ma'). Saat paket.aktif=false, perilaku lama berlaku. */
-const PAKET_MA_DEFAULT={aktif:false,free:{harian:1},plus:{harian:4,kuota:15,bulan:3,harga:12000,url:''},pro:{harian:10,kuota:40,bulan:6,harga:22000,url:''}};
+const PAKET_MA_DEFAULT={aktif:false,free:{harian:1},plus:{harian:4,kuota:15,bulan:3,harga:13000,url:''},pro:{harian:10,kuota:40,bulan:6,harga:24000,url:''}};
 let PAKET_MA=(()=>{try{return Object.assign({},PAKET_MA_DEFAULT,JSON.parse(localStorage.getItem('bgy_paket_ma')||'{}'));}catch(e){return PAKET_MA_DEFAULT;}})();
 fetch('https://xtmpiqpmwirsrcsphsto.supabase.co/rest/v1/bgy_settings?key=eq.paket_ma&select=value',{headers:{apikey:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w',Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w'}})
   .then(r=>r.ok?r.json():[]).then(rows=>{const v=rows&&rows[0]&&rows[0].value;if(!v)return;PAKET_MA=Object.assign({},PAKET_MA_DEFAULT,v);try{localStorage.setItem('bgy_paket_ma',JSON.stringify(v));}catch(e){}renderPaketBox();updateLimitDisplay();}).catch(()=>{});

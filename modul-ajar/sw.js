@@ -1,7 +1,7 @@
 // BGY Modul Ajar - Service Worker v7.0
 // Cache: aset statis saja. API/generate tetap butuh internet.
 
-const CACHE = 'bgy-modul-ajar-v19';
+const CACHE = 'bgy-modul-ajar-v20';
 
 // Aset yang di-cache saat install (disesuaikan dengan jalur modul-ajar)
 const PRECACHE = [
