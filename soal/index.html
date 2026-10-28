@@ -841,6 +841,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
       <span class="page-info" id="pageInfo">—</span>
       <button id="btnNext" onclick="nextPage()" disabled>▶</button>
     </div>
+    <button type="button" id="btnKePrompt" onclick="keHalamanPrompt()" style="display:none;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin:0 0 10px;border:1.5px solid #f59e0b;background:#fffbeb;color:#92400e;border-radius:10px;font-weight:700;font-size:.85rem;cursor:pointer;font-family:inherit;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>Lihat prompt gambar soal</button>
 
     <div data-bgy-contoh="/soal/contoh/hal-{n}.webp" data-bgy-count="5" data-bgy-title="Contoh hasil: Soal Bahasa Indonesia Kelas 2" style="margin-bottom:10px;"></div>
     <div class="preview-scroll-wrapper">
@@ -2454,7 +2455,9 @@ function buildPromptGambarPage(data,pg,isian,uraian){
 /* ════════════════════════════════════════════
    NAVIGASI HALAMAN
 ════════════════════════════════════════════ */
+function keHalamanPrompt(){const i=halamanMeta.indexOf('prompt');if(i>=0){currentPage=i;showPage(i);}}
 function updatePageNav(){
+  const kp=document.getElementById('btnKePrompt');if(kp)kp.style.display=(halamanMeta.includes('prompt')&&halamanMeta[currentPage]!=='prompt')?'flex':'none';
   if(!halamanSoal.length)return;
   document.getElementById('btnPrev').disabled=currentPage===0;
   document.getElementById('btnNext').disabled=currentPage===halamanSoal.length-1;
