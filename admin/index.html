@@ -888,6 +888,7 @@ function renderProyekItem(p,kind){
     p.sandi?{k:'Sandi',v:`<span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(p.sandi)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span>`}:null,
     p.supabase?{k:'Supabase',v:esc(p.supabase)}:null,
     p.supabase_pass?{k:'Sandi Supabase',v:`<span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(p.supabase_pass)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span>`}:null,
+    p.akun_lain?{k:'Akun lain',v:esc(p.akun_lain)}:null,
     p.repo?{k:'Repo',v:esc(p.repo)}:null,
     p.tanggal?{k:'Tanggal',v:esc(p.tanggal)}:null,
     p.tanggal_perpanjangan?{k:'Perpanjangan',v:tgl(p.tanggal_perpanjangan)}:null
@@ -979,6 +980,7 @@ function openJokian(id){
       <div class="fg"><label for="jSupabasePass">Sandi Supabase</label><input id="jSupabasePass" type="password" maxlength="60" value="${esc(p.supabase_pass||'')}"/></div>
     </div>
     <div class="row2">
+      <div class="fg"><label for="jAkunLain">Akun lain (opsional)</label><input id="jAkunLain" maxlength="120" value="${esc(p.akun_lain||'')}" autocomplete="off"/></div>
       <div class="fg"><label for="jRepo">Repo GitHub</label><input id="jRepo" maxlength="100" value="${esc(p.repo||'')}"/></div>
       <div class="fg"><label for="jLangganan">Biaya langganan</label><input id="jLangganan" maxlength="30" value="${esc(p.langganan||'')}" placeholder="mis. 150rb"/></div>
     </div>
@@ -995,7 +997,7 @@ async function saveJokianItem(id){
   const val=k=>document.getElementById(k).value.trim();
   const name=val('jName');
   if(!name)return toast('Judul wajib diisi.');
-  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),langganan:val('jLangganan'),tanggal:val('jTanggal'),tanggal_perpanjangan:val('jTglPerpanjangan'),periode:val('jPeriode'),keterangan:val('jKet')};
+  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),akun_lain:val('jAkunLain'),langganan:val('jLangganan'),tanggal:val('jTanggal'),tanggal_perpanjangan:val('jTglPerpanjangan'),periode:val('jPeriode'),keterangan:val('jKet')};
   if(id){
     const idx=jokianData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;jokianData[idx]=row;}
