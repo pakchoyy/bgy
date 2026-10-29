@@ -4,7 +4,7 @@ import { aiGate } from './_gate.js';
 const buckets = globalThis.__bgySoalRateBuckets || new Map();
 globalThis.__bgySoalRateBuckets = buckets;
 const RATE_WINDOW_MS = 60 * 1000;
-const RATE_MAX = 10;
+const RATE_MAX = 20;
 
 function clientIp(req) {
   const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
