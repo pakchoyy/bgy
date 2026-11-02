@@ -269,7 +269,7 @@ footer .visitor a{color:#fff;text-decoration:none;}
   <div id="limitSub" style="margin-top:6px;">
     Reset tiap tengah malam<br>
 
-    <a href="https://lynk.id/kreacy/nq35v4y36gz8"
+    <a href="https://kreacy.my.id/produk/hbfhxx7d"
     target="_blank"
     id="badgeUpgrade"
     onclick="gtag('event','klik_upgrade')"
@@ -496,7 +496,7 @@ try{
 }catch(e){}
 // Dua jenis Pro:
 //  - lifetime (pembeli lama, kode lewat Cloudflare Worker): bgy_pro_lkpd = "1"
-//  - langganan 1 tahun (pembeli baru, Supabase): bgy_pro_lkpd_sub = {email, plan_type, active_until}
+//  - langganan per semester (pembeli baru, Supabase): bgy_pro_lkpd_sub = {email, plan_type, active_until}
 const SB_URL = "https://xtmpiqpmwirsrcsphsto.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w";
 const KODE_BARU = /^BGY-[A-Z0-9]{5}$/;
@@ -560,7 +560,7 @@ function updateUI(){
     const sisa = getSisaGenerate();
     countEl.textContent = sisa + " / " + FREE_LIMIT;
     countEl.className   = sisa === 0 ? "habis" : "";
-    sub.innerHTML       = 'Reset tiap tengah malam<br><a href="https://lynk.id/kreacy/nq35v4y36gz8" target="_blank" id="badgeUpgrade" style="display:inline-flex;align-items:center;min-height:40px;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:0 14px;border-radius:20px;text-decoration:none;letter-spacing:.3px;">Upgrade ke Pro →</a>';
+    sub.innerHTML       = 'Reset tiap tengah malam<br><a href="https://kreacy.my.id/produk/hbfhxx7d" target="_blank" id="badgeUpgrade" style="display:inline-flex;align-items:center;min-height:40px;margin-top:6px;background:#111;border:1.5px solid #ffd43b;color:#ffd43b;font-size:12px;font-weight:bold;padding:0 14px;border-radius:20px;text-decoration:none;letter-spacing:.3px;">Upgrade ke Pro →</a>';
   }
 
   // Render histori
@@ -848,7 +848,7 @@ function generatePrompt(){
   gtag('event', 'generate_prompt');
   // Cek limit
   if(!isPro() && getSisaGenerate() <= 0){
-    if(confirm("Limit harian kamu sudah habis ("+FREE_LIMIT+"x/hari).\n\nUpgrade ke Pro untuk generate unlimited?\n\nTekan OK untuk info aktivasi.")){window.open((window.bgyBuyUrl&&bgyBuyUrl())||"https://lynk.id/kreacy/nq35v4y36gz8","_blank");}
+    if(confirm("Limit harian kamu sudah habis ("+FREE_LIMIT+"x/hari).\n\nUpgrade ke Pro untuk generate unlimited?\n\nTekan OK untuk info aktivasi.")){window.open((window.bgyBuyUrl&&bgyBuyUrl())||"https://kreacy.my.id/produk/hbfhxx7d","_blank");}
     return;
   }
 
@@ -916,7 +916,7 @@ function generatePrompt(){
   tambahGenerate();
   simpanHistori(p);
   updateUI();
-  if(!isPro())window.bgyProNudge&&bgyProNudge({url:'https://lynk.id/kreacy/nq35v4y36gz8',perks:['Generate prompt LKPD tanpa batas harian (gratis hanya '+FREE_LIMIT+'x/hari)','Simpan riwayat hingga '+PRO_HISTORI+' prompt']});
+  if(!isPro())window.bgyProNudge&&bgyProNudge({url:'https://kreacy.my.id/produk/hbfhxx7d',perks:['Generate prompt LKPD tanpa batas harian (gratis hanya '+FREE_LIMIT+'x/hari)','Simpan riwayat hingga '+PRO_HISTORI+' prompt']});
 }
 
 // ============================================================
