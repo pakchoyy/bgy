@@ -1068,7 +1068,8 @@
     ['Dokumen Resmi', 'Peraturan & panduan kementerian', '/dokumen/', '<path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>', 'Administrasi'],
     ['Buat Jadwal', 'Jadwal pelajaran tanpa bentrok', 'https://bjadwal.bantuguruyuk.web.id', '<path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /><path d="M8 13h.01" /><path d="M12 13h.01" /><path d="M16 13h.01" /><path d="M8 17h.01" /><path d="M12 17h.01" /><path d="M16 17h.01" />', 'Administrasi'],
     ['Media Belajar', 'Media interaktif karya guru', 'https://bmedia.bantuguruyuk.web.id', '<path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/>', 'Web Lainnya'],
-    ['Wali Kelas', 'Administrasi wali kelas', 'https://wkelas.web.id', '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', 'Web Lainnya']
+    ['Wali Kelas', 'Administrasi wali kelas', 'https://wkelas.web.id', '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', 'Web Lainnya'],
+    ['SPMB Zone', 'Halaman SPMB sekolah', 'https://spmbz.web.id', '<path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/>', 'Web Lainnya']
   ];
   var navCss = [
     '.bgnv{position:fixed!important;left:0;right:0;bottom:0;top:auto;z-index:950;display:flex!important;box-sizing:content-box;height:58px;margin:0;width:auto;transform:none;zoom:1;background:#fff;border-top:1px solid #e2e8f0;',
