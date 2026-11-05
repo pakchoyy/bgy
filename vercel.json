@@ -115,5 +115,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/generate-soal.js": {
+      "maxDuration": 180
+    }
+  }
 }

@@ -713,7 +713,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
         <div class="row-3">
           <div>
             <label>PG <span id="opsiNote" style="font-size:.75rem;color:#0ea5a0;">(A-C)</span></label>
-            <input type="number" id="jmlPG" min="0" max="40" value="10"/>
+            <input type="number" id="jmlPG" min="0" max="50" value="10"/>
           </div>
           <div><label>Isian</label><input type="number" id="jmlIsian" min="0" max="20" value="5"/></div>
           <div><label>Uraian</label><input type="number" id="jmlUraian" min="0" max="10" value="3"/></div>
@@ -1894,7 +1894,7 @@ async function requestGenerateSoal(prompt){
   let resp;
   try{
     const ctrl=new AbortController();
-    const tid=setTimeout(()=>ctrl.abort(),90000);
+    const tid=setTimeout(()=>ctrl.abort(),180000);
     resp=await fetch('/api/generate-soal',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -1903,7 +1903,7 @@ async function requestGenerateSoal(prompt){
     });
     clearTimeout(tid);
   }catch(networkErr){
-    if(networkErr.name==='AbortError')throw new Error('Waktu habis (90 detik). Coba kurangi jumlah soal atau coba lagi.');
+    if(networkErr.name==='AbortError')throw new Error('Waktu habis (3 menit). Coba kurangi jumlah soal atau coba lagi.');
     throw new Error('Gagal terhubung ke server. Periksa koneksi internet kamu.');
   }
   let json;
@@ -3511,7 +3511,7 @@ function validateForm(){
   const ur=parseInt(document.getElementById('jmlUraian').value)||0;
   if(pg<0||is<0||ur<0){showError('Jumlah soal tidak boleh negatif.');return false;}
   if(pg+is+ur===0){showError('Jumlah soal minimal 1.');return false;}
-  if(pg>40){showError('Jumlah PG maksimal 40 soal.');return false;}
+  if(pg>50){showError('Jumlah PG maksimal 50 soal.');return false;}
   if(is>20){showError('Jumlah Isian maksimal 20 soal.');return false;}
   if(ur>10){showError('Jumlah Uraian maksimal 10 soal.');return false;}
   // Validasi custom jenis ujian
