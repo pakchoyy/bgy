@@ -1549,7 +1549,7 @@ function getDirectStages(kurikulum){
   return[
     {name:'Identifikasi dan tujuan',sections:'informasi umum; identifikasi kesiapan peserta didik; karakteristik materi; dimensi profil lulusan; CP; TP; KKTP; pemahaman bermakna; pertanyaan pemantik'},
     {name:'Desain dan kegiatan',sections:'praktik pedagogis; kemitraan; lingkungan belajar; pemanfaatan digital; langkah Pendahuluan, Memahami, Mengaplikasi, Merefleksi, dan Penutup lengkap dengan waktu serta diferensiasi konkret'},
-    {name:'Asesmen dan tindak lanjut',sections:'asesmen awal, proses, akhir; hubungan TP-KKTP-asesmen; instrumen; kunci/kriteria; rubrik; remedial; pengayaan'},
+    {name:'Asesmen dan tindak lanjut',sections:'asesmen diagnostik (pertanyaan pemantik), formatif (tabel observasi per siswa), sumatif (stimulus wacana kasus + minimal 3 soal HOTS C4/C5/C6 dengan kunci dan skor); hubungan TP-KKTP-asesmen; rubrik 3 level; remedial; pengayaan'},
     {name:'Refleksi dan lampiran',sections:'refleksi guru dan peserta didik; LKPD; ringkasan bahan ajar; soal evaluasi dan kunci; instrumen observasi; rubrik produk/kinerja; tabel kontrol mutu'}
   ];
 }
@@ -2105,6 +2105,13 @@ function clearFormErrors(){
   document.querySelectorAll('[aria-invalid="true"]').forEach(field=>field.removeAttribute('aria-invalid'));
 }
 
+// Pola asesmen yang dipakai semua jenjang/kurikulum (mengikuti contoh instrumen asesmen guru).
+const ASESMEN_STANDAR=`   Pola wajib asesmen:
+   - Diagnostik: 2-3 pertanyaan pemantik lisan yang mengaitkan materi dengan pengalaman atau kearifan lokal peserta didik, ditambah pertanyaan kesiapan non-kognitif.
+   - Formatif: tabel observasi per siswa (No/Nama | 2-3 kriteria sesuai TP atau dimensi profil | Tindak lanjut/Catatan), sebutkan dipakai pada pertemuan dan kegiatan apa.
+   - Sumatif: satu stimulus wacana kasus kontekstual (4-6 kalimat, dekat dengan kehidupan peserta didik/daerah), lalu minimal 3 soal HOTS bertingkat berlabel (C4 - Menganalisis), (C5 - Mengevaluasi), (C6 - Mencipta), masing-masing dengan kunci/kriteria jawaban dan skor.
+   - Rubrik tugas/proyek 3 level: Mulai Berkembang (1), Sesuai Harapan (2), Sangat Baik (3), dengan deskriptor jelas untuk setiap kriteria.
+   - Tulis pada pertemuan ke berapa setiap asesmen digunakan.`;
 function buildPrompt(j,namaSekolah,namaPenyusun,semester,mapel,fase,alokasi,jumlahPertemuan,topik,model,p5,karakteristik,tahun,konsentrasi,kurikulum,kbc={},cpInfo={}){
   const tgl=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
   const ttd=getTtdData();
@@ -2269,6 +2276,7 @@ Lengkapi dengan:
 - refleksi sikap/nilai cinta.
 
 Pastikan asesmen awal, proses, dan akhir masing-masing mengukur TP/KKTP yang jelas. Hindari soal atau tugas yang tidak terkait dengan tujuan pembelajaran.
+${ASESMEN_STANDAR}
 
 ### J. REMEDIAL DAN PENGAYAAN
 Tulis kegiatan remedial dan pengayaan yang manusiawi, tidak menghukum, dan tetap menumbuhkan kepercayaan diri.
@@ -2356,6 +2364,7 @@ Susun seluruh RPP dalam **Bahasa Indonesia formal, jelas, dan realistis**, denga
    - **Kegiatan Inti:** ikuti sintaks ${model} secara runtut dan integrasikan kelima tahap Saintifik 5M. Berikan aktivitas konkret, pertanyaan pemantik/HOTS, interaksi, kerja individu/kelompok, dan contoh respons yang diharapkan.
    - **Penutup:** simpulan bersama, refleksi, umpan balik, evaluasi, tindak lanjut, tugas bila perlu, informasi pertemuan berikutnya, dan doa.
 10. **PENILAIAN AUTENTIK** — sertakan penilaian sikap, pengetahuan, dan keterampilan. Tampilkan teknik, bentuk instrumen, kisi-kisi, instrumen/soal, kunci jawaban, pedoman penskoran, rubrik, dan rumus nilai. Sertakan soal HOTS serta batas/ketentuan ketuntasan yang dapat disesuaikan sekolah.
+${ASESMEN_STANDAR}
 11. **PROGRAM REMEDIAL DAN PENGAYAAN** — jelaskan kriteria peserta, bentuk kegiatan, waktu, asesmen ulang, dan tindak lanjut.
 12. **LAMPIRAN SIAP PAKAI** — LKPD, bahan ajar/ringkasan materi, lembar observasi sikap, soal evaluasi beserta kunci, rubrik keterampilan, format rekap nilai, dan lembar refleksi.
 
@@ -2412,6 +2421,7 @@ Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**, alami seperti doku
    - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — eksplorasi masalah nyata, observasi, diskusi kelompok, kolaborasi, analisis kasus, kreativitas, presentasi, refleksi proses, diferensiasi konten/proses. Sertakan contoh dialog guru-siswa.
    - C. **PENUTUP**: Refleksi siswa, penguatan konsep, kesimpulan bersama, kuis singkat, tindak lanjut, doa.
 9. **ASESMEN LENGKAP** — diagnostik (kognitif/non-kognitif), formatif, sumatif; lembar observasi, rubrik deskriptif, kisi-kisi, soal HOTS level SD. Tautkan asesmen ke TP dan KKTP.
+${ASESMEN_STANDAR}
 10. **DIFERENSIASI PEMBELAJARAN** — tindakan konkret di langkah kegiatan untuk konten, proses, dan produk sesuai kesiapan, minat, serta kebutuhan belajar; bukan hanya teori atau label gaya belajar.
 11. **REMEDIAL DAN PENGAYAAN** — kegiatan taktis untuk siswa belum tuntas dan siswa cepat.
 12. **REFLEKSI GURU** — pertanyaan reflektif tentang respons siswa, kendala, efektivitas strategi.
@@ -2494,6 +2504,7 @@ Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
    - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — eksplorasi fenomena nyata, literasi sumber, diskusi kritis kelompok, kolaborasi, analisis mendalam, presentasi, umpan balik antarteman, refleksi tengah pembelajaran. Diferensiasi konten/proses. Sertakan contoh dialog guru-siswa.
    - C. **PENUTUP**: Refleksi kritis siswa, penguatan konsep oleh guru, kesimpulan bersama, evaluasi formatif, tindak lanjut (PR/proyek mini), motivasi, doa.
 9. **ASESMEN LENGKAP** — diagnostik, formatif (observasi, peer assessment), sumatif; rubrik analitik, kisi-kisi, soal HOTS level SMP (C4–C6). Tautkan asesmen ke TP dan KKTP.
+${ASESMEN_STANDAR}
 10. **DIFERENSIASI PEMBELAJARAN** — tindakan konkret di langkah kegiatan untuk konten, proses, dan produk sesuai kesiapan, minat, serta kebutuhan belajar; bukan hanya teori atau label gaya belajar.
 11. **REMEDIAL DAN PENGAYAAN** — program remedial terstruktur dan pengayaan berbasis proyek/eksplorasi mandiri.
 12. **REFLEKSI GURU** — refleksi mendalam tentang efektivitas pembelajaran, respons siswa, perbaikan.
@@ -2570,6 +2581,7 @@ Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
    - B. **INTI**: Tahapan model ${model} terintegrasi Deep Learning — studi kasus kompleks, analisis data/teks ilmiah, debat argumentatif, kolaborasi lintas perspektif, produksi karya/solusi inovatif, presentasi akademik, peer review, refleksi epistemik. Diferensiasi sesuai jalur/minat siswa SMA.
    - C. **PENUTUP**: Sintesis konseptual, evaluasi kritis mandiri, portofolio mini, tindak lanjut riset/proyek, motivasi.
 9. **ASESMEN LENGKAP** — diagnostik, formatif portofolio, sumatif berbasis proyek; rubrik analitik holistik, soal HOTS C5–C6, penilaian esai argumentatif. Tautkan asesmen ke TP dan KKTP.
+${ASESMEN_STANDAR}
 10. **DIFERENSIASI PEMBELAJARAN** — tindakan konkret di langkah kegiatan untuk konten, proses, dan produk sesuai kesiapan, minat, serta kebutuhan belajar; bukan hanya teori atau label gaya belajar.
 11. **REMEDIAL DAN PENGAYAAN** — remedial konseptual terstruktur, pengayaan berbasis riset mandiri dan olimpiade.
 12. **REFLEKSI GURU** — evaluasi mendalam efektivitas, pencapaian KKO, dan rencana peningkatan.
@@ -2646,6 +2658,7 @@ Tulis SELURUH isi dalam **Bahasa Indonesia formal akademik**:
    - B. **INTI**: Tahapan model ${model} terintegrasi Teaching Factory — demonstrasi teknik oleh guru/instruktur, praktik terbimbing, praktik mandiri, quality control, problem solving nyata, kolaborasi tim kerja, dokumentasi hasil, presentasi produk/karya. Integrasi K3 di setiap tahap.
    - C. **PENUTUP**: Evaluasi produk/hasil praktik, refleksi profesi, pembersihan area kerja (5R), tindak lanjut PKL/proyek, motivasi.
 9. **ASESMEN LENGKAP** — asesmen kompetensi vokasional (teori + praktik); rubrik kinerja/produk standar industri, checklist K3, uji kompetensi tertulis dan praktik, portofolio vokasional. Tautkan asesmen ke TP dan KKTP.
+${ASESMEN_STANDAR}
 10. **DIFERENSIASI PEMBELAJARAN** — tindakan konkret di langkah kegiatan sesuai kesiapan penguasaan keterampilan, kebutuhan dukungan, dan jalur karier; bukan hanya teori atau label gaya belajar.
 11. **REMEDIAL DAN PENGAYAAN** — remedial praktik terbimbing, pengayaan berupa proyek industri nyata atau sertifikasi kompetensi.
 12. **REFLEKSI GURU** — evaluasi pencapaian kompetensi vokasional, kesesuaian dengan standar DUDI, perbaikan SOP.
