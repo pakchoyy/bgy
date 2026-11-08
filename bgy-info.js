@@ -389,18 +389,34 @@
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (document.documentElement.classList.contains('embed-mode')) return;
     var st = document.createElement('style');
-    st.textContent = '.bgy-reveal{opacity:0;transform:translateY(16px);}' +
-      '.bgy-reveal.bgy-in{opacity:1;transform:none;transition:opacity .45s ease,transform .45s ease;}';
+    // Muncul pelan saat di-scroll, dengan jeda bertahap antar-elemen yang masuk bersamaan.
+    st.textContent = '.bgy-reveal{opacity:0;transform:translateY(18px);}' +
+      '.bgy-reveal.bgy-in{opacity:1;transform:none;transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);}' +
+      // Hover halus (hanya perangkat dengan kursor): tombol naik sedikit, kartu naik, gambar zoom lembut.
+      '@media (hover:hover){' +
+      '.btn-primary,.btn,.btn-action,.btn-secondary,.pk-beli{transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease,border-color .2s ease;}' +
+      '.btn-primary:hover:not(:disabled),.btn:hover:not(:disabled),.btn-action:hover,.btn-secondary:hover:not(:disabled),.pk-beli:hover{transform:translateY(-1px);}' +
+      '.btn-primary:active,.btn:active,.btn-action:active,.btn-secondary:active,.pk-beli:active{transform:translateY(0) scale(.98);}' +
+      '.contoh-item,.feat-card,.page-card{transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s ease;}' +
+      '.contoh-item:hover,.feat-card:hover,a.page-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(15,23,42,.08);}' +
+      '.contoh-item img,.tool-card img,.feat-card img{transition:transform .6s cubic-bezier(.22,1,.36,1);}' +
+      '.contoh-item:hover img,.tool-card:hover img,.feat-card:hover img{transform:scale(1.04);}' +
+      '}';
     document.head.appendChild(st);
     var targets = document.querySelectorAll('.card, .page-card, .contoh-item, .tool-card, .settings-group, .feat-card');
+    var batch = 0, batchTimer;
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
         var el = en.target;
         io.unobserve(el);
+        el.style.transitionDelay = Math.min(batch++, 5) * 70 + 'ms';
+        clearTimeout(batchTimer);
+        batchTimer = setTimeout(function () { batch = 0; }, 120);
         el.classList.add('bgy-in');
         el.addEventListener('transitionend', function done() {
           el.classList.remove('bgy-reveal', 'bgy-in');
+          el.style.transitionDelay = '';
           el.removeEventListener('transitionend', done);
         });
       });

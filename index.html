@@ -381,6 +381,15 @@ a { text-decoration: none; color: inherit; }
   padding: 4px 0 8px;
 }
 .topbar-logo{width:36px;height:36px;border-radius:10px;object-fit:contain;flex:none;}
+/* Teks hero muncul bertahap saat halaman dibuka */
+@media (prefers-reduced-motion:no-preference){
+  @keyframes bgyHeroUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .hero-left>*{animation:bgyHeroUp .7s cubic-bezier(.22,1,.36,1) both}
+  .hero-left>*:nth-child(1){animation-delay:.08s}
+  .hero-left>*:nth-child(2){animation-delay:.18s}
+  .hero-left>*:nth-child(3){animation-delay:.28s}
+  .hero-left>*:nth-child(4){animation-delay:.38s}
+}
 .mob-toggle {
   display: none;
   width: 40px; height: 40px;
