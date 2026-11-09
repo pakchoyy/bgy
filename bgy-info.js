@@ -520,7 +520,7 @@
       '<div class="bgyr-s">Ulasanmu membantu guru lain menemukan tools ini. Hanya bintang yang wajib.</div>' +
       '<div class="bgyr-stars" role="radiogroup" aria-label="Beri bintang"></div><div class="bgyr-lbl" aria-live="polite"></div>' +
       '<textarea maxlength="600" placeholder="Ceritakan pengalamanmu (opsional)"></textarea>' +
-      '<div class="bgyr-row"><input maxlength="60" placeholder="Nama (opsional)" autocomplete="name"/>' +
+      '<div class="bgyr-row"><input maxlength="60" placeholder="Nama atau nama samaran *" autocomplete="nickname"/>' +
       '<input maxlength="80" placeholder="Sekolah/instansi (opsional)"/></div>' +
       '<div class="bgyr-note">Ulasan bisa tampil di Beranda Bantu Guru Yuk.</div>' +
       '<div class="bgyr-btns"><button type="button" class="bgyr-later">Nanti saja</button><button type="button" class="bgyr-send" disabled>Kirim ulasan</button></div></div></div>';
@@ -565,6 +565,8 @@
     send.addEventListener('click', function () {
       if (!rating) return;
       var inputs = bg.querySelectorAll('input');
+      // Nama wajib supaya ulasan tidak tampil anonim; nama samaran boleh.
+      if (inputs[0].value.trim().length < 2) { toast('Isi nama dulu ya, boleh nama samaran.'); inputs[0].focus(); return; }
       send.disabled = true;
       send.textContent = 'Mengirim...';
       fetch(SB_URL + '/rest/v1/rpc/bgy_submit_review', {
