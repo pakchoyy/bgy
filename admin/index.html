@@ -455,6 +455,7 @@ main{padding-bottom:90px!important;}
       <div class="segment" id="segmentProyek">
         <button class="on" data-k="jokian" onclick="switchProyek('jokian')">Jokian (klien)</button>
         <button data-k="sendiri" onclick="switchProyek('sendiri')">Sendiri</button>
+        <button data-k="invoice" onclick="switchProyek('invoice')">Invoice</button>
       </div>
       <div id="wrapJokian">
         <div class="card">
@@ -472,6 +473,16 @@ main{padding-bottom:90px!important;}
             <button class="btn btn-wide" onclick="openSendiri()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah proyek</button>
           </div>
           <div id="sendiriList"></div>
+        </div>
+      </div>
+      <div id="wrapInvoice" hidden>
+        <div class="card">
+          <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg> Invoice</div>
+          <div class="toolbar" style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-wide" style="flex:2" onclick="openInvoice()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Buat invoice</button>
+            <button class="btn" style="flex:1" onclick="openInvProfil()"><svg class="ic" aria-hidden="true"><use href="#i-settings"/></svg> Data usaha</button>
+          </div>
+          <div id="invoiceList"></div>
         </div>
       </div>
     </div>
@@ -762,7 +773,7 @@ async function boot(){
     show('notAdmin');return;
   }
   show('panel');
-  loadJokian();loadSendiri();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadLisensi();loadPaket();loadPaketMa();
+  loadJokian();loadSendiri();loadInvoices();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadLisensi();loadPaket();loadPaketMa();
   maybeLoadDashUsage();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
@@ -821,12 +832,186 @@ function showTab(t){
   document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.toggle('on',b.dataset.tab===activeBottom));
   window.scrollTo(0,0);
 }
+
+/* ─── Invoice (data di bgy_settings key 'admin_invoices', hanya admin yang bisa baca) ─── */
+let invData={profil:{nama:'Bantu Guru Yuk',pemilik:'Pak Choy',hp:'',email:'',alamat:'',rekening:'',catatan:'Terima kasih atas kepercayaannya.'},items:[]};
+async function loadInvoices(){
+  const {data,error}=await sb.from('bgy_settings').select('value').eq('key','admin_invoices').maybeSingle();
+  if(error)return fail(error);
+  if(data&&data.value){invData={profil:Object.assign({},invData.profil,data.value.profil),items:Array.isArray(data.value.items)?data.value.items:[]};}
+  renderInvoices();
+}
+async function saveInvoices(){
+  const {error}=await sb.from('bgy_settings').upsert({key:'admin_invoices',value:invData,updated_at:new Date().toISOString()});
+  if(error){toast('Gagal simpan: '+error.message);return false;}
+  return true;
+}
+function invTotal(v){
+  const sub=(v.baris||[]).reduce((s,b)=>s+(Number(b.qty)||0)*(Number(b.harga)||0),0);
+  const diskon=Number(v.diskon)||0,dp=Number(v.dp)||0;
+  return{sub,diskon,dp,total:Math.max(0,sub-diskon),sisa:Math.max(0,sub-diskon-dp)};
+}
+function invNoBaru(tgl){
+  const ym=(tgl||new Date().toISOString().slice(0,10)).slice(0,7).replace('-','');
+  const n=invData.items.filter(x=>(x.no||'').startsWith('INV-'+ym)).length+1;
+  return 'INV-'+ym+'-'+String(n).padStart(3,'0');
+}
+const rpFull=n=>'Rp '+new Intl.NumberFormat('id-ID').format(Number(n)||0);
+function renderInvoices(){
+  const box=document.getElementById('invoiceList');if(!box)return;
+  if(!invData.items.length){box.innerHTML='<div class="empty">Belum ada invoice. Tap <b>Buat invoice</b>.</div>';return;}
+  const list=[...invData.items].sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
+  box.innerHTML=list.map(v=>{const s=invTotal(v),lunas=v.status==='lunas';
+    return `<div class="pj-item">
+      <div class="pj-top"><div class="pj-ic">${use('i-file')}</div><div class="pj-body">
+        <div class="pj-title">${esc(v.klien||'-')} <span class="pill ${lunas?'teal':'gray'}">${lunas?'Lunas':'Belum lunas'}</span></div>
+        <div class="pj-meta">${esc(v.no)} · ${tgl(v.tanggal)}</div>
+        <div class="pj-meta"><b>${rpFull(s.total)}</b>${!lunas&&s.dp?' · sisa '+rpFull(s.sisa):''}</div>
+      </div></div>
+      <div class="pj-actions">
+        <button class="btn-action primary" onclick="printInvoice('${esc(v.id)}')">${use('i-ext')} Lihat / PDF</button>
+        <button class="btn-action" onclick="waInvoice('${esc(v.id)}')">${use('i-smartphone')} WA</button>
+        <button class="btn-action" onclick="toggleLunas('${esc(v.id)}')">${lunas?'Belum lunas':'Tandai lunas'}</button>
+        <button class="btn-action" onclick="openInvoice('${esc(v.id)}')">${use('i-pen')} Edit</button>
+        <button class="btn-action danger" onclick="deleteInvoice('${esc(v.id)}')">${use('i-trash')} Hapus</button>
+      </div></div>`;}).join('');
+}
+function invBarisHtml(b,i){
+  return `<div class="inv-row" style="display:grid;grid-template-columns:64px 1fr 40px;gap:6px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--border);">
+    <input class="ib-ket" style="grid-column:1/-1" maxlength="120" placeholder="Keterangan, mis. Pembuatan web sekolah" value="${esc(b.ket||'')}"/>
+    <input class="ib-qty" type="number" min="1" value="${esc(b.qty||1)}" aria-label="Jumlah"/>
+    <input class="ib-harga" type="number" min="0" step="1000" placeholder="Harga" value="${esc(b.harga||'')}" aria-label="Harga"/>
+    <button type="button" class="btn icon" onclick="this.parentNode.remove()" aria-label="Hapus baris">${use('i-trash')}</button></div>`;
+}
+function addInvBaris(b){document.getElementById('invBaris').insertAdjacentHTML('beforeend',invBarisHtml(b||{qty:1}));}
+function invPilihProyek(id){
+  const p=jokianData.find(x=>x.id===id);if(!p)return;
+  document.getElementById('invKlien').value=p.user||p.name||'';
+  document.getElementById('invHp').value=p.hp||'';
+  const harga=Number(String(p.langganan||'').replace(/rb/i,'000').replace(/\D/g,''))||'';
+  const rows=document.getElementById('invBaris');
+  if(!rows.querySelector('.ib-ket')?.value){rows.innerHTML='';addInvBaris({ket:'Pembuatan web '+(p.name||''),qty:1,harga});}
+}
+function openInvoice(id){
+  const today=new Date().toISOString().slice(0,10);
+  const v=id?invData.items.find(x=>x.id===id):{no:invNoBaru(today),tanggal:today,jatuh_tempo:'',klien:'',hp:'',baris:[{ket:'',qty:1,harga:''}],diskon:'',dp:'',status:'belum',catatan:''};
+  if(!v)return;
+  const opsi=jokianData.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}${p.user?' — '+esc(p.user):''}</option>`).join('');
+  document.getElementById('modalBox').innerHTML=`<h3>${id?'Edit Invoice':'Buat Invoice'}</h3>
+    ${id?'':`<div class="fg"><label for="invProyek">Ambil dari proyek klien (opsional)</label><select id="invProyek" onchange="invPilihProyek(this.value)"><option value="">— pilih proyek —</option>${opsi}</select></div>`}
+    <div class="row2">
+      <div class="fg"><label for="invNo">No. invoice</label><input id="invNo" maxlength="30" value="${esc(v.no)}"/></div>
+      <div class="fg"><label for="invTgl">Tanggal</label><input id="invTgl" type="date" value="${esc(v.tanggal)}"/></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label for="invKlien">Nama klien *</label><input id="invKlien" maxlength="80" value="${esc(v.klien)}"/></div>
+      <div class="fg"><label for="invHp">No HP klien</label><input id="invHp" maxlength="20" inputmode="tel" value="${esc(v.hp)}"/></div>
+    </div>
+    <div class="fg"><label>Rincian (keterangan, lalu jumlah dan harga satuan)</label><div id="invBaris">${(v.baris||[]).map(invBarisHtml).join('')}</div>
+      <button type="button" class="btn" onclick="addInvBaris()">${use('i-plus')} Tambah baris</button></div>
+    <div class="row2">
+      <div class="fg"><label for="invDiskon">Diskon (Rp)</label><input id="invDiskon" type="number" min="0" step="1000" value="${esc(v.diskon)}"/></div>
+      <div class="fg"><label for="invDp">Sudah dibayar / DP (Rp)</label><input id="invDp" type="number" min="0" step="1000" value="${esc(v.dp)}"/></div>
+    </div>
+    <div class="row2">
+      <div class="fg"><label for="invJt">Jatuh tempo (opsional)</label><input id="invJt" type="date" value="${esc(v.jatuh_tempo)}"/></div>
+      <div class="fg"><label for="invStatus">Status</label><select id="invStatus"><option value="belum"${v.status!=='lunas'?' selected':''}>Belum lunas</option><option value="lunas"${v.status==='lunas'?' selected':''}>Lunas</option></select></div>
+    </div>
+    <div class="fg"><label for="invCatatan">Catatan (opsional)</label><input id="invCatatan" maxlength="200" value="${esc(v.catatan)}" placeholder="mis. Termasuk domain 1 tahun"/></div>
+    <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveInvoiceItem('${esc(id||'')}')">Simpan</button></div>`;
+  document.getElementById('modal').hidden=false;
+}
+async function saveInvoiceItem(id){
+  const val=k=>document.getElementById(k).value.trim();
+  const klien=val('invKlien');if(!klien)return toast('Nama klien wajib diisi.');
+  const baris=[...document.querySelectorAll('#invBaris .inv-row')].map(r=>({ket:r.querySelector('.ib-ket').value.trim(),qty:Number(r.querySelector('.ib-qty').value)||1,harga:Number(r.querySelector('.ib-harga').value)||0})).filter(b=>b.ket||b.harga);
+  if(!baris.length)return toast('Isi minimal satu rincian.');
+  const row={no:val('invNo')||invNoBaru(val('invTgl')),tanggal:val('invTgl'),jatuh_tempo:val('invJt'),klien,hp:val('invHp'),baris,diskon:Number(val('invDiskon'))||0,dp:Number(val('invDp'))||0,status:val('invStatus'),catatan:val('invCatatan')};
+  const bak=JSON.stringify(invData.items);
+  if(id){const i=invData.items.findIndex(x=>x.id===id);if(i>=0)invData.items[i]=Object.assign({id},row);}
+  else invData.items.push(Object.assign({id:'v'+Date.now().toString(36)},row));
+  if(await saveInvoices()){closeModal();renderInvoices();toast('Invoice tersimpan.');}else invData.items=JSON.parse(bak);
+}
+async function deleteInvoice(id){
+  const v=invData.items.find(x=>x.id===id);if(!v||!confirm('Hapus invoice '+v.no+'?'))return;
+  const bak=invData.items;invData.items=invData.items.filter(x=>x.id!==id);
+  if(await saveInvoices())renderInvoices();else invData.items=bak;
+}
+async function toggleLunas(id){
+  const v=invData.items.find(x=>x.id===id);if(!v)return;
+  const old=v.status;v.status=old==='lunas'?'belum':'lunas';
+  if(await saveInvoices())renderInvoices();else v.status=old;
+}
+function openInvProfil(){
+  const p=invData.profil;
+  const f=(k,l,ph,max)=>`<div class="fg"><label for="ip_${k}">${l}</label><input id="ip_${k}" maxlength="${max||120}" value="${esc(p[k]||'')}" placeholder="${ph||''}"/></div>`;
+  document.getElementById('modalBox').innerHTML=`<h3>Data usaha di invoice</h3>
+    ${f('nama','Nama usaha','Bantu Guru Yuk')}${f('pemilik','Nama penanda tangan','Pak Choy')}
+    <div class="row2">${f('hp','No HP / WA','08...',20)}${f('email','Email','',80)}</div>
+    ${f('alamat','Alamat (opsional)')}
+    ${f('rekening','Pembayaran ke','mis. BRI 1234xxxx a.n. ... / DANA 08...',160)}
+    ${f('catatan','Catatan bawah invoice','Terima kasih atas kepercayaannya.',200)}
+    <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveInvProfil()">Simpan</button></div>`;
+  document.getElementById('modal').hidden=false;
+}
+async function saveInvProfil(){
+  const bak=invData.profil;
+  invData.profil={};['nama','pemilik','hp','email','alamat','rekening','catatan'].forEach(k=>invData.profil[k]=document.getElementById('ip_'+k).value.trim());
+  if(await saveInvoices()){closeModal();toast('Data usaha tersimpan.');}else invData.profil=bak;
+}
+function invoiceHtml(v){
+  const p=invData.profil,s=invTotal(v),lunas=v.status==='lunas';
+  const rows=(v.baris||[]).map((b,i)=>`<tr><td>${i+1}</td><td>${esc(b.ket)}</td><td class="c">${esc(b.qty)}</td><td class="r">${rpFull(b.harga)}</td><td class="r">${rpFull((Number(b.qty)||0)*(Number(b.harga)||0))}</td></tr>`).join('');
+  return `<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(v.no)} - ${esc(v.klien)}</title><style>
+  *{box-sizing:border-box}body{margin:0;background:#eef2f6;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#0f172a}
+  .pg{max-width:794px;margin:16px auto;background:#fff;padding:40px 44px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.08)}
+  .top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;border-bottom:3px solid #0d7a8a;padding-bottom:18px}
+  .brand{display:flex;gap:12px;align-items:center}.brand img{width:54px;height:54px}.brand b{font-size:20px;display:block}.brand span{font-size:12px;color:#64748b;line-height:1.5}
+  h1{margin:0;font-size:28px;letter-spacing:2px;color:#0d7a8a;text-align:right}.meta{font-size:13px;text-align:right;line-height:1.7;color:#334155}
+  .to{margin:20px 0;font-size:14px;line-height:1.6}.to small{color:#64748b;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  table{width:100%;border-collapse:collapse;font-size:14px}th{background:#0d7a8a;color:#fff;text-align:left;padding:10px;font-weight:600}td{padding:10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+  .c{text-align:center}.r{text-align:right;white-space:nowrap}.sum{margin-left:auto;width:300px;margin-top:12px;font-size:14px}.sum div{display:flex;justify-content:space-between;padding:6px 10px}
+  .sum .tot{background:#e6f6f5;font-weight:800;font-size:16px;border-radius:8px}.stamp{display:inline-block;border:3px solid ${lunas?'#059669':'#d97706'};color:${lunas?'#059669':'#d97706'};padding:4px 14px;border-radius:8px;font-weight:800;letter-spacing:2px;transform:rotate(-4deg);margin-top:8px}
+  .foot{display:flex;justify-content:space-between;gap:20px;margin-top:28px;font-size:13px;line-height:1.6}.ttd{text-align:center;min-width:180px}.ttd .sp{height:64px}
+  .bar{max-width:794px;margin:12px auto 0;display:flex;gap:8px;justify-content:flex-end;padding:0 12px}.bar button{min-height:44px;padding:0 18px;border:0;border-radius:10px;background:#0d7a8a;color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+  @media(max-width:600px){.pg{padding:22px 16px;margin:8px;border-radius:8px}.top{flex-direction:column}h1,.meta{text-align:left}.sum{width:100%}.foot{flex-direction:column}table{font-size:12px}td,th{padding:7px 5px}}
+  @media print{body{background:#fff}.pg{box-shadow:none;margin:0;max-width:none;padding:0}.bar{display:none}@page{size:A4;margin:16mm}}
+  </style></head><body>
+  <div class="bar"><button onclick="window.print()">Simpan PDF / Cetak</button></div>
+  <div class="pg">
+    <div class="top"><div class="brand"><img src="${location.origin}/guru-cibisd2.png" alt=""><div><b>${esc(p.nama||'Bantu Guru Yuk')}</b><span>${[p.alamat,p.hp,p.email].filter(Boolean).map(esc).join('<br>')}</span></div></div>
+      <div><h1>INVOICE</h1><div class="meta">No: <b>${esc(v.no)}</b><br>Tanggal: ${tgl(v.tanggal)}${v.jatuh_tempo?'<br>Jatuh tempo: '+tgl(v.jatuh_tempo):''}</div></div></div>
+    <div class="to"><small>Ditagihkan kepada</small><br><b>${esc(v.klien)}</b>${v.hp?'<br>'+esc(v.hp):''}</div>
+    <table><thead><tr><th style="width:36px">No</th><th>Keterangan</th><th class="c" style="width:60px">Jml</th><th class="r" style="width:120px">Harga</th><th class="r" style="width:130px">Subtotal</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="sum"><div><span>Subtotal</span><span>${rpFull(s.sub)}</span></div>${s.diskon?`<div><span>Diskon</span><span>- ${rpFull(s.diskon)}</span></div>`:''}
+      <div class="tot"><span>Total</span><span>${rpFull(s.total)}</span></div>${s.dp?`<div><span>Sudah dibayar</span><span>- ${rpFull(s.dp)}</span></div><div><b>Sisa tagihan</b><b>${rpFull(lunas?0:s.sisa)}</b></div>`:''}
+      <div style="justify-content:flex-end"><span class="stamp">${lunas?'LUNAS':'BELUM LUNAS'}</span></div></div>
+    <div class="foot"><div>${p.rekening?'<b>Pembayaran</b><br>'+esc(p.rekening)+'<br><br>':''}${v.catatan?esc(v.catatan)+'<br>':''}${esc(p.catatan||'')}</div>
+      <div class="ttd">Hormat kami,<div class="sp"></div><b>${esc(p.pemilik||'')}</b></div></div>
+  </div></body></html>`;
+}
+function printInvoice(id){
+  const v=invData.items.find(x=>x.id===id);if(!v)return;
+  const w=window.open('','_blank');
+  if(!w)return toast('Izinkan pop-up untuk membuka invoice.');
+  w.document.open();w.document.write(invoiceHtml(v));w.document.close();
+}
+function waInvoice(id){
+  const v=invData.items.find(x=>x.id===id);if(!v)return;
+  const s=invTotal(v),p=invData.profil,lunas=v.status==='lunas';
+  const rincian=(v.baris||[]).map(b=>'- '+b.ket+(Number(b.qty)>1?' ('+b.qty+'x)':'')+': '+rpFull((Number(b.qty)||0)*(Number(b.harga)||0))).join('\n');
+  const teks=`*INVOICE ${v.no}*\n${p.nama||'Bantu Guru Yuk'}\nTanggal: ${tgl(v.tanggal)}\n\nKepada: ${v.klien}\n\n${rincian}\n${s.diskon?'Diskon: -'+rpFull(s.diskon)+'\n':''}*Total: ${rpFull(s.total)}*${s.dp?'\nSudah dibayar: '+rpFull(s.dp)+'\nSisa: '+rpFull(lunas?0:s.sisa):''}\nStatus: ${lunas?'LUNAS':'Belum lunas'}${v.jatuh_tempo&&!lunas?'\nJatuh tempo: '+tgl(v.jatuh_tempo):''}${p.rekening&&!lunas?'\n\nPembayaran: '+p.rekening:''}\n\n${p.catatan||'Terima kasih.'}`;
+  const hp=normalizeHp(v.hp);
+  window.open('https://wa.me/'+(hp||'')+'?text='+encodeURIComponent(teks),'_blank','noopener');
+}
 let currentProyekTab='jokian';
 function switchProyek(which){
   currentProyekTab=which;
   document.querySelectorAll('#segmentProyek button').forEach(b=>b.classList.toggle('on',b.dataset.k===which));
   document.getElementById('wrapJokian').hidden=which!=='jokian';
   document.getElementById('wrapSendiri').hidden=which!=='sendiri';
+  document.getElementById('wrapInvoice').hidden=which!=='invoice';
+  if(which==='invoice')renderInvoices();
 }
 function renderWelcome(){
   const d=new Date();
