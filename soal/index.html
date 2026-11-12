@@ -670,7 +670,11 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
           </div>
         </div>
         <textarea id="materiKetikArea" placeholder="Ketik materi secara bebas, pisahkan dengan koma.&#10;Contoh: Pecahan senilai, Operasi hitung campuran, KPK dan FPB"></textarea>
-        <div id="materiKetikHint"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> Pisahkan materi dengan koma untuk kisi-kisi yang lebih rapi.</div>
+        <div id="materiKetikHint"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg> Pisahkan materi dengan koma, atau satu materi/TP per baris.</div>
+        <label style="display:flex;gap:10px;align-items:flex-start;margin-top:10px;font-size:.85rem;font-weight:600;color:var(--text);text-transform:none;letter-spacing:0;cursor:pointer;min-height:40px;">
+          <input type="checkbox" id="kelompokMateri" style="width:20px;height:20px;margin-top:1px;flex:none;accent-color:#0d7a8a;"/>
+          <span>Kelompokkan soal per materi/TP<br><small style="font-weight:500;color:var(--text-light);font-size:.75rem;">Contoh: Materi 1 → soal-soalnya, Materi 2 → soal-soalnya. Pilih minimal 2 materi.</small></span>
+        </label>
       </div>
 
       <div class="form-group">
@@ -1710,6 +1714,16 @@ function getMateriTerpilih(){
   if(mode==='ketik'){return(document.getElementById('materiKetikArea')?.value||'').trim();}
   return[...document.querySelectorAll('.cb-materi:checked')].map(c=>c.value).join(', ');
 }
+// Judul kelompok: pakai teks guru apa adanya bila sudah diawali Bab/TP/Materi, selain itu "Materi N: ...".
+function labelBab(n,list){const s=(list&&list[n-1])||'';return /^(bab|tp|materi|kd|unit|elemen)\b/i.test(s)?s:'Materi '+n+(s?': '+s:'');}
+// Daftar materi terpisah (untuk pengelompokan soal per materi/TP).
+function getMateriList(){
+  const mode=document.getElementById('btnModeKetik')?.classList.contains('active')?'ketik':'pilih';
+  if(mode==='pilih')return[...document.querySelectorAll('.cb-materi:checked')].map(c=>c.value.trim()).filter(Boolean);
+  const txt=(document.getElementById('materiKetikArea')?.value||'').trim();
+  const parts=/\n/.test(txt)?txt.split(/\n+/):txt.split(/[;,]/);
+  return parts.map(s=>s.replace(/^\s*[-•*\d.)]+\s*/,'').trim()).filter(Boolean).slice(0,10);
+}
 function setMateriMode(mode){
   const isPilih=mode==='pilih';
   document.getElementById('btnModePilih').classList.toggle('active',isPilih);
@@ -1830,6 +1844,9 @@ function normalizeAndValidateSoalAI(data,cfg){
   if(problems.length)throw new Error(problems.join('. '));
 
   const allowedAnswers=cfg.opsiLabels;
+  // Mode kelompok materi: urutkan stabil per nomor materi sebelum dipotong sesuai jumlah.
+  const noMateri=x=>Math.max(0,parseInt(x?.materi,10)||0);
+  if(cfg.grup){[pg,isian,uraian].forEach(a=>a.sort((x,y)=>noMateri(x)-noMateri(y)));}
   const pilihanGanda=pg.slice(0,cfg.jmlPG).map((item,i)=>{
     const soal=stripHtml(item?.soal||'').trim();
     if(!soal)throw new Error(`Soal PG nomor ${i+1} kosong.`);
@@ -1852,7 +1869,8 @@ function normalizeAndValidateSoalAI(data,cfg){
       jawaban,
       jawabanTeks,
       indikator:stripHtml(item?.indikator||'').trim()||`Siswa dapat menjawab soal nomor ${i+1}.`,
-      level:normalizeLevel(item?.level,cfg.allowedLevels)
+      level:normalizeLevel(item?.level,cfg.allowedLevels),
+      materi:noMateri(item)
     };
   });
 
@@ -1868,7 +1886,8 @@ function normalizeNonPG(arr,expected,type,labelOffset){
         jawaban,
         rubrik:Array.isArray(item?.rubrik)?item.rubrik.map(r=>stripHtml(r||'').trim()).filter(Boolean).slice(0,4):[],
         indikator:stripHtml(item?.indikator||'').trim()||`Siswa dapat menjawab soal nomor ${nomor}.`,
-        level:normalizeLevel(item?.level,cfg.allowedLevels)
+        level:normalizeLevel(item?.level,cfg.allowedLevels),
+        materi:noMateri(item)
       };
     });
   }
@@ -1995,6 +2014,14 @@ async function handleGenerate(){
   const faseLabel=getFaseLabel(kelas,jenjang);
   const modeInstruksi=getModeSoalInstruksi();
 
+  const grupList=document.getElementById('kelompokMateri')?.checked?getMateriList():[];
+  const grup=grupList.length>=2;
+  const instruksiGrup=grup?`
+Pengelompokan per materi (WAJIB):
+${grupList.map((m,i)=>(i+1)+'. '+m).join('\n')}
+- Bagi soal setiap jenis (PG, isian, uraian) secara merata ke semua materi di atas.
+- Urutkan soal sesuai urutan materi: semua soal materi 1 dulu, lalu materi 2, dan seterusnya.
+- Setiap soal WAJIB punya field "materi" berisi nomor materinya (angka 1-${grupList.length}).`:'';
   const prompt=`Kamu adalah guru ${satuanPendidikan} berpengalaman yang membuat soal Kurikulum Merdeka.
 Buatkan soal untuk siswa kelas ${kelas} ${satuanPendidikan} (${faseLabel}).
 Mata Pelajaran: ${mapelLabel}
@@ -2013,7 +2040,7 @@ Aturan:
 - Sesuaikan tingkat kesulitan dengan kelas ${kelas} ${satuanPendidikan}
 - Kalimat soal harus jelas dan tidak ambigu
 - ${opsiConfig.instruksi}
-${instruksiKelas}
+${instruksiKelas}${instruksiGrup}
 
 Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
 {
@@ -2026,6 +2053,7 @@ Field "indikator" diisi kalimat singkat "Siswa dapat [kata kerja] ..." sesuai le
 
   try{
     const validationCfg={
+      grup,
       jmlPG,
       jmlIsian,
       jmlUraian,
@@ -2056,6 +2084,7 @@ ${rawText}`;
       data=normalizeAndValidateSoalAI(parseSoalJson(rawText),validationCfg);
     }
 
+    if(grup)data.grupMateri=grupList;
     soalData=data;
     if(batas().harian!==Infinity)incrementDaily();
     saveToBank(kelas,mapel,materi,data);
@@ -2163,10 +2192,15 @@ function buildHalaman(data){
   function measure(html){meas.innerHTML='<style>.no-print{display:none!important}button{display:none!important}</style>'+html;return meas.offsetHeight;}
   function blockHtml(b){
     if(b.type==='section')return `<div class="doc-section-title">${b.label}</div><div class="doc-petunjuk">${b.petunjuk}</div>`;
+    if(b.type==='bab')return babHtml(b);
     return `<table class="doc-soal-table">${buildSoalRow(b)}</table>`;
   }
   const items=[];
   function addBlock(b){items.push({b,h:measure(blockHtml(b))});}
+  // Judul materi/TP di dalam tiap bagian bila soal dikelompokkan.
+  const grupMateri=Array.isArray(data.grupMateri)?data.grupMateri:null;
+  function babHtml(b){return `<div style="font-weight:bold;font-size:10.5pt;margin:8px 0 4px;padding:3px 8px;background:#f1f5f9;border-left:3px solid #0d7a8a;">${escHtml(b.label)}</div>`;}
+  function addItems(arr,mk){let last=-1;arr.forEach((item,i)=>{if(grupMateri&&item.materi&&item.materi!==last){last=item.materi;addBlock({type:'bab',label:labelBab(item.materi,grupMateri)});}addBlock(mk(item,i));});}
   const HEADER_H=measure(headerHtml);
 
   let currentH=HEADER_H;
@@ -2181,6 +2215,9 @@ function buildHalaman(data){
         if(tb){html+='</table>';tb=false;}
         html+=`<div class="doc-section-title">${b.label}</div><div class="doc-petunjuk">${b.petunjuk}</div>`;
         prevType='';
+      }else if(b.type==='bab'){
+        if(tb){html+='</table>';tb=false;}
+        html+=babHtml(b);prevType='';
       }else{
         if(b.type!==prevType){if(tb){html+='</table>';tb=false;}html+='<table class="doc-soal-table">';tb=true;prevType=b.type;}
         html+=buildSoalRow(b);
@@ -2194,22 +2231,21 @@ function buildHalaman(data){
 
   if(pg.length>0){
     addBlock({type:'section',label:'I. Pilihan Ganda',petunjuk:'Berilah tanda silang (X) pada huruf jawaban yang paling benar!'});
-    pg.forEach((item,i)=>{
-      addBlock({type:'pg',item,no:i+1,pgIdx:i});
-    });
+    addItems(pg,(item,i)=>({type:'pg',item,no:i+1,pgIdx:i}));
   }
   if(isian.length>0){
     addBlock({type:'section',label:'II. Isian Singkat',petunjuk:'Isilah titik-titik berikut dengan jawaban yang tepat!'});
-    isian.forEach((item,i)=>addBlock({type:'isian',item,no:pg.length+i+1}));
+    addItems(isian,(item,i)=>({type:'isian',item,no:pg.length+i+1}));
   }
   if(uraian.length>0){
     addBlock({type:'section',label:'III. Uraian',petunjuk:'Jawablah pertanyaan berikut dengan lengkap dan benar!'});
-    uraian.forEach((item,i)=>addBlock({type:'uraian',item,no:pg.length+isian.length+i+1}));
+    addItems(uraian,(item,i)=>({type:'uraian',item,no:pg.length+isian.length+i+1}));
   }
   // Susun halaman: isi sampai penuh; judul bagian tidak boleh sendirian di dasar halaman
   items.forEach((it,idx)=>{
     let need=it.h;
-    if(it.b.type==='section'&&items[idx+1])need+=items[idx+1].h;
+    if((it.b.type==='section'||it.b.type==='bab')&&items[idx+1])need+=items[idx+1].h;
+    if(it.b.type==='section'&&items[idx+1]?.b.type==='bab'&&items[idx+2])need+=items[idx+2].h;
     if(currentH+need>PAGE_H&&currentBlocks.length>0)closePage();
     currentBlocks.push(it.b);currentH+=it.h;
   });
@@ -2874,12 +2910,16 @@ async function exportWord(options={rubrik:true}){
   }));
   headerRows.push(HRbottom());
 
+  // Judul materi/TP saat soal dikelompokkan (sama dengan pratinjau).
+  const grupW=Array.isArray(soalData.grupMateri)?soalData.grupMateri:null;
+  function wordBab(arr,item){if(!grupW||!item.materi||item.materi===arr._lb)return;arr._lb=item.materi;arr.push(P([T(labelBab(item.materi,grupW),{bold:true,size:21})],{before:140,after:60}));}
   // ── Soal PG ──
   const pgP=[];
   if(pg.length>0){
     pgP.push(P([T('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:200,after:60}));
     pgP.push(P([T('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,size:20})],{after:80}));
     pg.forEach((item,i)=>{
+      wordBab(pgP,item);
       const noW=380,txtW=W-noW;
       pgP.push(new D.Table({width:{size:W,type:'dxa'},layout:'fixed',columnWidths:[noW,txtW],
         borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
@@ -2931,6 +2971,7 @@ async function exportWord(options={rubrik:true}){
     isP.push(P([T('II. Isian Singkat',{bold:true,underline:true,size:22})],{before:240,after:60}));
     isP.push(P([T('Isilah titik-titik berikut dengan jawaban yang tepat!',{italic:true,size:20})],{after:80}));
     isian.forEach((item,i)=>{
+      wordBab(isP,item);
       const noW=380,txtW=W-noW;
       isP.push(new D.Table({width:{size:W,type:'dxa'},layout:'fixed',columnWidths:[noW,txtW],
         borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
@@ -2951,6 +2992,7 @@ async function exportWord(options={rubrik:true}){
     urP.push(P([T('III. Uraian',{bold:true,underline:true,size:22})],{before:240,after:60}));
     urP.push(P([T('Jawablah pertanyaan berikut dengan lengkap dan benar!',{italic:true,size:20})],{after:80}));
     uraian.forEach((item,i)=>{
+      wordBab(urP,item);
       const noW=380,txtW=W-noW;
       urP.push(new D.Table({width:{size:W,type:'dxa'},layout:'fixed',columnWidths:[noW,txtW],
         borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
