@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Verifikasi Invoice | Pak Choy Kreacy Digital</title>
+<link rel="icon" href="/guru-cibisd2.png" type="image/png">
+<style>
+:root{--bg:#eef2f6;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--ok:#059669;--okbg:#ecfdf5;--warn:#b45309;--warnbg:#fffbeb;--bad:#dc2626;--badbg:#fef2f2;--brand:#123c35}
+@media (prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111827;--text:#f1f5f9;--muted:#94a3b8;--line:#1f2937;--okbg:#052e22;--warnbg:#2b1d05;--badbg:#2b0b0b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px}
+.card{width:100%;max-width:420px;background:var(--card);border-radius:18px;padding:24px 20px;box-shadow:0 10px 30px rgba(15,23,42,.08)}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}.brand b{font-size:16px}.brand small{display:block;color:var(--muted);font-size:12px}
+.badge{display:flex;gap:10px;align-items:center;padding:14px;border-radius:12px;font-weight:700;font-size:15px;margin-bottom:16px}
+.badge svg{flex:none;width:28px;height:28px}
+.ok{background:var(--okbg);color:var(--ok)}.bad{background:var(--badbg);color:var(--bad)}.wait{background:var(--line);color:var(--muted)}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 14px;font-size:14px}dt{color:var(--muted)}dd{margin:0;text-align:right;font-weight:600}
+.lunas{color:var(--ok)}.belum{color:var(--warn)}
+p.note{font-size:12px;color:var(--muted);line-height:1.6;margin:18px 0 0}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="brand">
+    <svg width="44" height="44" viewBox="0 0 56 56" aria-hidden="true"><rect width="56" height="56" rx="14" fill="#123c35"/><path d="M18 14v28M18 29l15-15M22 26l13 16" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M41 12l1.6 3.4L46 17l-3.4 1.6L41 22l-1.6-3.4L36 17l3.4-1.6z" fill="#fbbf24"/></svg>
+    <div><b id="usaha">Pak Choy Kreacy Digital</b><small>Verifikasi invoice</small></div>
+  </div>
+  <div id="hasil" class="badge wait">Memeriksa invoice...</div>
+  <dl id="detail" hidden></dl>
+  <p class="note">Halaman ini memastikan invoice benar diterbitkan oleh Pak Choy Kreacy Digital. Pastikan nomor, total, dan status di sini sama dengan invoice yang Anda terima.</p>
+</main>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search), no = q.get('no') || '', k = q.get('k') || '';
+  var hasil = document.getElementById('hasil'), dl = document.getElementById('detail');
+  var ICON_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>';
+  var ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>';
+  function gagal(msg) { hasil.className = 'badge bad'; hasil.innerHTML = ICON_X + '<span>' + msg + '</span>'; }
+  if (!no || !k) return gagal('Link verifikasi tidak lengkap. Pindai ulang kode QR di invoice.');
+  var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0bXBpcXBtd2lyc3Jjc3Boc3RvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0OTkyODMsImV4cCI6MjA5MzA3NTI4M30.yk1ZW3fxKn2lLoalJt97l34a80ERaGiVTIt09titk-w';
+  fetch('https://xtmpiqpmwirsrcsphsto.supabase.co/rest/v1/rpc/bgy_verify_invoice', {
+    method: 'POST', headers: { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_no: no, p_kode: k })
+  }).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); }).then(function (rows) {
+    var d = rows && rows[0];
+    if (!d) return gagal('Invoice tidak ditemukan. Bisa jadi invoice ini bukan dari kami atau sudah dihapus.');
+    var rp = function (n) { return 'Rp ' + Number(n || 0).toLocaleString('id-ID'); };
+    var tgl = d.tanggal ? new Date(d.tanggal + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+    var lunas = d.status === 'lunas';
+    document.getElementById('usaha').textContent = d.usaha || 'Pak Choy Kreacy Digital';
+    hasil.className = 'badge ok'; hasil.innerHTML = ICON_OK + '<span>Invoice asli</span>';
+    var rows2 = [['Nomor', d.no], ['Tanggal', tgl], ['Klien', d.klien], ['Total', rp(d.total)]];
+    if (Number(d.dibayar) > 0 && !lunas) rows2.push(['Sudah dibayar', rp(d.dibayar)], ['Sisa', rp(Math.max(0, d.total - d.dibayar))]);
+    dl.innerHTML = rows2.map(function (x) { return '<dt>' + x[0] + '</dt><dd></dd>'; }).join('') + '<dt>Status</dt><dd class="' + (lunas ? 'lunas' : 'belum') + '">' + (lunas ? 'LUNAS' : 'Belum lunas') + '</dd>';
+    var dds = dl.querySelectorAll('dd');
+    rows2.forEach(function (x, i) { dds[i].textContent = x[1]; });
+    dl.hidden = false;
+  }).catch(function () { gagal('Gagal memeriksa. Cek internet lalu muat ulang halaman ini.'); });
+})();
+</script>
+</body>
+</html>
