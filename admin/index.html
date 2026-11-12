@@ -292,6 +292,7 @@ body.dark .lg-group-head{color:#5eead4;}
 .pj-url{font-size:.72rem;color:var(--text-light);margin-top:3px;word-break:break-all;}
 .pj-meta{font-size:.72rem;color:var(--text-light);margin-top:3px;}
 .sb-bar{height:8px;border-radius:99px;background:var(--border);overflow:hidden;margin:4px 0 10px}.sb-bar i{display:block;height:100%;border-radius:99px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.sb-sec{margin-top:12px}.sb-sec-h{display:flex;align-items:center;gap:8px;justify-content:space-between}.sb-sec-h b{font-size:.9rem}
 .sb-projs{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .sb-proj{display:flex;align-items:center;gap:8px;min-height:40px;padding:4px 10px;border:1px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);font:inherit;font-size:.82rem;font-weight:600;text-align:left;cursor:pointer}
 .sb-proj.plain{cursor:default;font-weight:500}.sb-proj .ic{width:16px;height:16px;flex:none;color:var(--teal-dark,#0d7a8a)}.sb-proj small{color:var(--text-light);font-weight:500;margin-left:4px}
@@ -463,7 +464,7 @@ main{padding-bottom:90px!important;}
       <div class="segment" id="segmentProyek">
         <button class="on" data-k="jokian" onclick="switchProyek('jokian')">Klien</button>
         <button data-k="sendiri" onclick="switchProyek('sendiri')">Sendiri</button>
-        <button data-k="supabase" onclick="switchProyek('supabase')">Supabase</button>
+        <button data-k="supabase" onclick="switchProyek('supabase')">Database</button>
         <button data-k="invoice" onclick="switchProyek('invoice')">Invoice</button>
       </div>
       <div id="wrapJokian">
@@ -487,10 +488,10 @@ main{padding-bottom:90px!important;}
       </div>
       <div id="wrapSupabase" hidden>
         <div class="card">
-          <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg> Supabase per email</div>
-          <p class="hint">Email mana dipakai untuk proyek apa, dan sisa kuotanya. Proyek diambil otomatis dari kolom Supabase di Klien dan Sendiri. Proyek lain yang tidak ada di admin, tulis lewat Edit.</p>
+          <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg> Database per email</div>
+          <p class="hint">Email mana dipakai untuk proyek apa, dipisah per layanan (Supabase dan Neon) dengan kuotanya masing-masing. Proyek diambil otomatis dari kolom Akun database di Klien dan Sendiri; pilih Jenis database di Edit proyek. Proyek lain yang tidak ada di admin, tulis lewat Edit.</p>
           <div class="toolbar" style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-wide" onclick="openSb()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah email Supabase</button>
+            <button class="btn btn-wide" onclick="openSb()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah email database</button>
           </div>
           <div id="sbList"></div>
         </div>
@@ -1166,57 +1167,70 @@ async function saveSb(){
 }
 function sbRekap(){
   const map=new Map();
-  const get=e=>{e=e.toLowerCase();if(!map.has(e))map.set(e,{email:e,kuota:SB_GRATIS,auto:[],manual:[],catatan:'',ada:false});return map.get(e);};
+  const get=e=>{e=e.toLowerCase();if(!map.has(e))map.set(e,{email:e,kuota:SB_GRATIS,kuotaNeon:0,sb:[],neon:[],lain:[],sbManual:[],neonManual:[],catatan:'',ada:false});return map.get(e);};
   const em=v=>(String(v||'').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/)||[''])[0];
-  jokianData.forEach(p=>{const e=em(p.supabase);if(e)get(e).auto.push({nama:p.name||'-',kind:'jokian',id:p.id});});
-  sendiriData.forEach(p=>{const e=em(p.supabase);if(e)get(e).auto.push({nama:p.name||'-',kind:'sendiri',id:p.id});});
-  (sbManual||[]).forEach(a=>{const e=(a.email||'').toLowerCase();if(!e)return;const x=get(e);x.ada=true;x.kuota=Number(a.kuota)||SB_GRATIS;x.manual=Array.isArray(a.proyek)?a.proyek:[];x.catatan=a.catatan||'';});
-  return [...map.values()].sort((a,b)=>(b.auto.length+b.manual.length)-(a.auto.length+a.manual.length)||a.email.localeCompare(b.email));
+  const taruh=(p,kind)=>{const e=em(p.supabase);if(!e)return;get(e)[{supabase:'sb',neon:'neon',lain:'lain'}[dbJenis(p)]||'sb'].push({nama:p.name||'-',kind,id:p.id});};
+  jokianData.forEach(p=>taruh(p,'jokian'));sendiriData.forEach(p=>taruh(p,'sendiri'));
+  (sbManual||[]).forEach(a=>{const e=(a.email||'').toLowerCase();if(!e)return;const x=get(e);x.ada=true;x.kuota=Number(a.kuota)||SB_GRATIS;x.kuotaNeon=Number(a.kuotaNeon)||0;
+    x.sbManual=Array.isArray(a.proyek)?a.proyek:[];x.neonManual=Array.isArray(a.neon)?a.neon:[];x.catatan=a.catatan||'';});
+  return [...map.values()].sort((a,b)=>(b.sb.length+b.sbManual.length+b.neon.length+b.neonManual.length)-(a.sb.length+a.sbManual.length+a.neon.length+a.neonManual.length)||a.email.localeCompare(b.email));
 }
-const sbJumlah=e=>{const x=sbRekap().find(r=>r.email===(e||'').toLowerCase());return x?x.auto.length+x.manual.length:0;};
+// Hanya proyek Supabase yang dihitung ke kuota Supabase.
+const sbJumlah=e=>{const x=sbRekap().find(r=>r.email===(e||'').toLowerCase());return x?x.sb.length+x.sbManual.length:0;};
+function sbProjBtn(x){return `<button type="button" class="sb-proj" onclick="${x.kind==='jokian'?'openJokian':'openSendiri'}('${esc(x.id)}')">${use('i-folder')}<span>${esc(x.nama)} <small>${x.kind==='jokian'?'klien':'sendiri'}</small></span></button>`;}
+function sbProjPlain(n){return `<div class="sb-proj plain">${use('i-folder')}<span>${esc(n)} <small>lain</small></span></div>`;}
+function sbBagian(judul,jml,kuota,auto,manual){
+  const batas=kuota>0;const penuh=batas&&jml>=kuota;const persen=batas?Math.min(100,Math.round(jml/kuota*100)):0;
+  const pill=`<span class="pill ${penuh?'gray':'teal'}">${jml}${batas?'/'+kuota:''} proyek${batas?(penuh?' · penuh':' · sisa '+(kuota-jml)):''}</span>`;
+  const isi=[...auto.map(sbProjBtn),...manual.map(sbProjPlain)].join('')||'<div class="pj-meta">Belum ada proyek.</div>';
+  return `<div class="sb-sec"><div class="sb-sec-h"><b>${judul}</b>${pill}</div>${batas?`<div class="sb-bar"><i style="width:${persen}%;background:${penuh?'#dc2626':persen>=50?'#d97706':'#0d9488'}"></i></div>`:''}<div class="sb-projs">${isi}</div></div>`;
+}
 function renderSb(){
   const box=document.getElementById('sbList');if(!box)return;
   const list=sbRekap();
-  if(!list.length){box.innerHTML='<div class="empty">Belum ada. Isi kolom Supabase di proyek, atau tap <b>Tambah email Supabase</b>.</div>';return;}
+  if(!list.length){box.innerHTML='<div class="empty">Belum ada. Isi kolom "Akun database" di proyek, atau tap <b>Tambah email database</b>.</div>';return;}
   box.innerHTML=list.map(a=>{
-    const pakai=a.auto.length+a.manual.length,sisa=Math.max(0,a.kuota-pakai),penuh=pakai>=a.kuota;
-    const persen=Math.min(100,Math.round(pakai/Math.max(1,a.kuota)*100));
-    const proyekHtml=[...a.auto.map(x=>`<button type="button" class="sb-proj" onclick="${x.kind==='jokian'?'openJokian':'openSendiri'}('${esc(x.id)}')">${use('i-folder')}<span>${esc(x.nama)} <small>${x.kind==='jokian'?'klien':'sendiri'}</small></span></button>`),
-      ...a.manual.map(n=>`<div class="sb-proj plain">${use('i-folder')}<span>${esc(n)} <small>lain</small></span></div>`)].join('')||'<div class="pj-meta">Belum ada proyek.</div>';
+    const adaSb=a.sb.length+a.sbManual.length>0||!(a.neon.length+a.neonManual.length+a.lain.length),adaNeon=a.neon.length+a.neonManual.length>0||a.kuotaNeon>0;
+    const kosong=!(a.sb.length||a.neon.length||a.lain.length);
     return `<div class="pj-item">
       <div class="pj-title" style="word-break:break-all">${esc(a.email)}</div>
-      <div class="pj-meta" style="margin:6px 0 4px"><span class="pill ${penuh?'gray':'teal'}">${pakai}/${a.kuota} proyek${penuh?' · penuh':' · sisa '+sisa}</span></div>
-      <div class="sb-bar"><i style="width:${persen}%;background:${penuh?'#dc2626':persen>=50?'#d97706':'#0d9488'}"></i></div>
-      <div class="sb-projs">${proyekHtml}</div>
+      ${adaSb?sbBagian('Supabase',a.sb.length+a.sbManual.length,a.kuota,a.sb,a.sbManual):''}
+      ${adaNeon?sbBagian('Neon',a.neon.length+a.neonManual.length,a.kuotaNeon,a.neon,a.neonManual):''}
+      ${a.lain.length?`<div class="sb-sec"><div class="sb-sec-h"><b>Database lain</b></div><div class="sb-projs">${a.lain.map(sbProjBtn).join('')}</div></div>`:''}
       ${a.catatan?`<div class="pj-meta">Catatan: ${esc(a.catatan)}</div>`:''}
       <div class="pj-actions">
         <button class="btn-action" onclick="copyText('${esc(a.email)}')">${use('i-copy')} Salin</button>
         <button class="btn-action" onclick="openSb('${esc(a.email)}')">${use('i-pen')} Edit</button>
-        ${a.ada&&!a.auto.length?`<button class="btn-action danger" onclick="deleteSb('${esc(a.email)}')">${use('i-trash')} Hapus</button>`:''}
+        ${a.ada&&kosong?`<button class="btn-action danger" onclick="deleteSb('${esc(a.email)}')">${use('i-trash')} Hapus</button>`:''}
       </div></div>`;}).join('');
 }
 function openSb(email){
-  const a=email?sbRekap().find(x=>x.email===email.toLowerCase()):{email:'',kuota:SB_GRATIS,auto:[],manual:[],catatan:''};
-  document.getElementById('modalBox').innerHTML=`<h3>${email?'Edit Supabase':'Tambah email Supabase'}</h3>
-    <div class="fg"><label for="sbEmail">Email akun Supabase *</label><input id="sbEmail" type="email" maxlength="120" value="${esc(a.email)}" ${email?'readonly':''}/></div>
-    <div class="fg"><label for="sbKuota">Kuota proyek aktif</label><input id="sbKuota" type="number" min="1" max="50" value="${esc(a.kuota)}"/></div>
-    ${a.auto.length?`<div class="fg"><label>Proyek dari admin (ubah lewat Edit proyek)</label><div class="pj-meta">${a.auto.map(x=>esc(x.nama)).join(', ')}</div></div>`:''}
-    <div class="fg"><label for="sbProyek">Proyek lain yang tidak ada di admin (satu per baris)</label><textarea id="sbProyek" rows="4" maxlength="400" style="width:100%">${esc(a.manual.join('\n'))}</textarea></div>
-    <div class="fg"><label for="sbCatatan">Catatan (opsional)</label><input id="sbCatatan" maxlength="200" value="${esc(a.catatan)}" placeholder="mis. password di catatan, 2FA aktif"/></div>
+  const a=email?sbRekap().find(x=>x.email===email.toLowerCase()):{email:'',kuota:SB_GRATIS,kuotaNeon:0,sb:[],neon:[],lain:[],sbManual:[],neonManual:[],catatan:''};
+  const auto=[...a.sb,...a.neon,...a.lain];
+  document.getElementById('modalBox').innerHTML=`<h3>${email?'Edit database':'Tambah email database'}</h3>
+    <div class="fg"><label for="sbEmail">Email akun *</label><input id="sbEmail" type="email" maxlength="120" value="${esc(a.email)}" ${email?'readonly':''}/></div>
+    ${auto.length?`<div class="fg"><label>Proyek dari admin (ubah lewat Edit proyek)</label><div class="pj-meta">${auto.map(x=>esc(x.nama)).join(', ')}</div></div>`:''}
+    <div class="row2">
+      <div class="fg"><label for="sbKuota">Kuota Supabase</label><input id="sbKuota" type="number" min="1" max="50" value="${esc(a.kuota)}"/></div>
+      <div class="fg"><label for="sbKuotaNeon">Kuota Neon (0 = tanpa batas)</label><input id="sbKuotaNeon" type="number" min="0" max="500" value="${esc(a.kuotaNeon)}"/></div>
+    </div>
+    <div class="fg"><label for="sbProyek">Proyek Supabase lain yang tidak ada di admin (satu per baris)</label><textarea id="sbProyek" rows="3" maxlength="400" style="width:100%">${esc(a.sbManual.join('\n'))}</textarea></div>
+    <div class="fg"><label for="sbNeon">Proyek Neon lain yang tidak ada di admin (satu per baris)</label><textarea id="sbNeon" rows="3" maxlength="400" style="width:100%">${esc(a.neonManual.join('\n'))}</textarea></div>
+    <div class="fg"><label for="sbCatatan">Catatan (opsional)</label><input id="sbCatatan" maxlength="200" value="${esc(a.catatan)}" placeholder="mis. 2FA aktif"/></div>
     <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveSbItem()">Simpan</button></div>`;
   document.getElementById('modal').hidden=false;
 }
 async function saveSbItem(){
   const email=document.getElementById('sbEmail').value.trim().toLowerCase();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast('Email tidak valid.');
-  const row={email,kuota:Math.max(1,Number(document.getElementById('sbKuota').value)||SB_GRATIS),
-    proyek:document.getElementById('sbProyek').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,20),
-    catatan:document.getElementById('sbCatatan').value.trim()};
+  const baris=id=>document.getElementById(id).value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,20);
+  const row={email,kuota:Math.max(1,Number(document.getElementById('sbKuota').value)||SB_GRATIS),kuotaNeon:Math.max(0,Number(document.getElementById('sbKuotaNeon').value)||0),
+    proyek:baris('sbProyek'),neon:baris('sbNeon'),catatan:document.getElementById('sbCatatan').value.trim()};
   const bak=sbManual;sbManual=(sbManual||[]).filter(x=>(x.email||'').toLowerCase()!==email).concat([row]);
-  if(await saveSb()){closeModal();renderSb();toast('Supabase tersimpan.');}else sbManual=bak;
+  if(await saveSb()){closeModal();renderSb();toast('Tersimpan.');}else sbManual=bak;
 }
 async function deleteSb(email){
-  if(!confirm('Hapus '+email+' dari daftar Supabase?'))return;
+  if(!confirm('Hapus '+email+' dari daftar database?'))return;
   const bak=sbManual;sbManual=sbManual.filter(x=>(x.email||'').toLowerCase()!==email.toLowerCase());
   if(await saveSb())renderSb();else sbManual=bak;
 }
@@ -1300,10 +1314,13 @@ function dueLabel(iso){
   const diff=Math.floor((new Date(iso+'T00:00:00')-now)/86400000);
   return diff<0?'Lewat '+(-diff)+' hari':diff===0?'Hari ini':'H-'+diff;
 }
+// Jenis database proyek: pilihan eksplisit, atau ditebak dari keterangan ("neon db") untuk data lama.
+function dbJenis(p){return p.db_jenis||(/neon/i.test(p.keterangan||'')?'neon':'supabase');}
+function dbLabel(p){return {supabase:'Supabase',neon:'Neon',lain:'Database'}[dbJenis(p)]||'Supabase';}
 // Email login & Supabase langsung di atas kartu (tanpa buka "Selengkapnya"); tekan untuk menyalin.
 function emailBaris(p){
   const pick=v=>(String(v||'').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/)||[''])[0];
-  const rows=[['Login',pick(p.login)],['Supabase',pick(p.supabase)]].filter(x=>x[1]);
+  const rows=[['Login',pick(p.login)],[dbLabel(p),pick(p.supabase)]].filter(x=>x[1]);
   if(!rows.length)return '';
   return `<div class="pj-emails">${rows.map(([k,e])=>`<button type="button" class="pj-email" onclick="copyText('${esc(e)}')" title="Tekan untuk menyalin">${use('i-mail')}<span><b>${k}</b> ${esc(e)}</span></button>`).join('')}</div>`;
 }
@@ -1324,8 +1341,8 @@ function renderProyekItem(p,kind){
     p.hp?{k:'HP',v:esc(p.hp)}:null,
     p.login?{k:'Login',v:esc(p.login)}:null,
     p.sandi?{k:'Sandi',v:`<span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(p.sandi)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span>`}:null,
-    p.supabase?{k:'Supabase',v:esc(p.supabase)}:null,
-    p.supabase_pass?{k:'Sandi Supabase',v:`<span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(p.supabase_pass)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span>`}:null,
+    p.supabase?{k:dbLabel(p),v:esc(p.supabase)}:null,
+    p.supabase_pass?{k:'Sandi '+dbLabel(p),v:`<span class="sandi-wrap"><span class="sandi-val" data-sandi="${esc(p.supabase_pass)}">••••••</span><button type="button" class="sandi-toggle" onclick="togglePjSandi(this)" aria-label="Lihat sandi">${use('i-eye')}</button></span>`}:null,
     p.akun_lain?{k:'Akun lain',v:esc(p.akun_lain)}:null,
     p.repo?{k:'Repo',v:esc(p.repo)}:null,
     p.tanggal?{k:'Tanggal',v:esc(p.tanggal)}:null,
@@ -1429,8 +1446,9 @@ function openJokian(id){
       <div class="fg"><label for="jSandi">Sandi</label><input id="jSandi" type="password" maxlength="60" value="${esc(p.sandi||'')}"/></div>
     </div>
     <div class="row2">
-      <div class="fg"><label for="jSupabase">Akun Supabase</label><input id="jSupabase" maxlength="100" value="${esc(p.supabase||'')}"/></div>
-      <div class="fg"><label for="jSupabasePass">Sandi Supabase</label><input id="jSupabasePass" type="password" maxlength="60" value="${esc(p.supabase_pass||'')}"/></div>
+      <div class="fg"><label for="jSupabase">Akun database (email)</label><input id="jSupabase" maxlength="100" value="${esc(p.supabase||'')}"/></div>
+      <div class="fg"><label for="jDb">Jenis database</label><select id="jDb"><option value="supabase"${dbJenis(p)==='supabase'?' selected':''}>Supabase</option><option value="neon"${dbJenis(p)==='neon'?' selected':''}>Neon</option><option value="lain"${dbJenis(p)==='lain'?' selected':''}>Lainnya</option></select></div>
+      <div class="fg"><label for="jSupabasePass">Sandi database</label><input id="jSupabasePass" type="password" maxlength="60" value="${esc(p.supabase_pass||'')}"/></div>
     </div>
     <div class="row2">
       <div class="fg"><label for="jAkunLain">Akun lain (opsional)</label><input id="jAkunLain" maxlength="120" value="${esc(p.akun_lain||'')}" autocomplete="off"/></div>
@@ -1450,7 +1468,7 @@ async function saveJokianItem(id){
   const val=k=>document.getElementById(k).value.trim();
   const name=val('jName');
   if(!name)return toast('Judul wajib diisi.');
-  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),akun_lain:val('jAkunLain'),langganan:val('jLangganan'),tanggal:val('jTanggal'),tanggal_perpanjangan:val('jTglPerpanjangan'),periode:val('jPeriode'),keterangan:val('jKet')};
+  const row={name,url:val('jUrl'),admin_url:val('jAdminUrl'),hp:val('jHp'),user:val('jUser'),login:val('jLogin'),sandi:val('jSandi'),supabase:val('jSupabase'),db_jenis:val('jDb'),supabase_pass:val('jSupabasePass'),repo:val('jRepo'),akun_lain:val('jAkunLain'),langganan:val('jLangganan'),tanggal:val('jTanggal'),tanggal_perpanjangan:val('jTglPerpanjangan'),periode:val('jPeriode'),keterangan:val('jKet')};
   if(id){
     const idx=jokianData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;jokianData[idx]=row;}
@@ -1509,7 +1527,8 @@ function openSendiri(id){
       <div class="fg"><label for="sLogin">Admin login</label><input id="sLogin" maxlength="100" value="${esc(p.login||'')}"/></div>
       <div class="fg"><label for="sSandi">Sandi</label><input id="sSandi" type="password" maxlength="60" value="${esc(p.sandi||'')}"/></div>
     </div>
-    <div class="fg"><label for="sSupabase">Akun Supabase</label><input id="sSupabase" maxlength="100" value="${esc(p.supabase||'')}"/></div>
+    <div class="fg"><label for="sSupabase">Akun database (email)</label><input id="sSupabase" maxlength="100" value="${esc(p.supabase||'')}"/></div>
+    <div class="fg"><label for="sDb">Jenis database</label><select id="sDb"><option value="supabase"${dbJenis(p)==='supabase'?' selected':''}>Supabase</option><option value="neon"${dbJenis(p)==='neon'?' selected':''}>Neon</option><option value="lain"${dbJenis(p)==='lain'?' selected':''}>Lainnya</option></select></div>
     <div class="fg"><label for="sKet">Keterangan</label><input id="sKet" maxlength="200" value="${esc(p.keterangan||'')}"/></div>
     <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveSendiriItem('${esc(id||'')}')">Simpan</button></div>`;
   document.getElementById('modal').hidden=false;
@@ -1518,7 +1537,7 @@ async function saveSendiriItem(id){
   const val=k=>document.getElementById(k).value.trim();
   const name=val('sName');
   if(!name)return toast('Judul wajib diisi.');
-  const row={name,url:val('sUrl'),admin_url:val('sAdminUrl'),login:val('sLogin'),sandi:val('sSandi'),supabase:val('sSupabase'),keterangan:val('sKet')};
+  const row={name,url:val('sUrl'),admin_url:val('sAdminUrl'),login:val('sLogin'),sandi:val('sSandi'),supabase:val('sSupabase'),db_jenis:val('sDb'),keterangan:val('sKet')};
   if(id){
     const idx=sendiriData.findIndex(x=>x.id===id);
     if(idx>=0){row.id=id;sendiriData[idx]=row;}
