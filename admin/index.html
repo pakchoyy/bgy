@@ -291,6 +291,10 @@ body.dark .lg-group-head{color:#5eead4;}
 .pj-title{font-size:.9rem;font-weight:700;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
 .pj-url{font-size:.72rem;color:var(--text-light);margin-top:3px;word-break:break-all;}
 .pj-meta{font-size:.72rem;color:var(--text-light);margin-top:3px;}
+.pj-emails{display:flex;flex-direction:column;gap:4px;margin-top:6px;}
+.pj-email{display:flex;align-items:center;gap:6px;min-height:36px;padding:2px 10px;border:1px solid var(--border);border-radius:10px;background:var(--input-bg);color:var(--text);font:inherit;font-size:.78rem;text-align:left;cursor:pointer;max-width:100%;}
+.pj-email .ic{width:14px;height:14px;flex:none;color:var(--teal-dark,#0d7a8a);}
+.pj-email span{min-width:0;overflow-wrap:anywhere;}.pj-email b{color:var(--text-light);font-weight:700;margin-right:2px;}
 .pj-actions{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-top:12px;}
 .pj-actions.has-wa{grid-template-columns:1.6fr 44px 1fr 1fr;}
 .pj-actions .btn-wa{color:#25d366;}
@@ -1071,8 +1075,8 @@ function akunRekap(){
   const scan=(p,kind)=>{[['login','Login admin'],['supabase','Supabase'],['akun_lain','Akun lain']].forEach(([k,label])=>{(String(p[k]||'').match(EMAIL_RE)||[]).forEach(e=>add(e,label,(kind==='jokian'?'Klien: ':'')+(p.name||'-')));});};
   jokianData.forEach(p=>scan(p,'jokian'));sendiriData.forEach(p=>scan(p,'sendiri'));
   langgananData.forEach(l=>(String(l.akun||'').match(EMAIL_RE)||[]).forEach(e=>add(e,'Langganan',(l.jenis||'')+' · '+(l.customer||''))));
-  (akunManual||[]).forEach(a=>{const e=(a.email||'').toLowerCase();if(!e)return;if(!map.has(e))map.set(e,{email:e,pakai:[],catatan:'',nama:''});const x=map.get(e);x.catatan=a.catatan||'';x.nama=a.nama||'';x.sbLain=Number(a.sbLain)||0;x.manual=true;});
-  return [...map.values()].sort((a,b)=>b.pakai.length-a.pakai.length||a.email.localeCompare(b.email));
+  (akunManual||[]).forEach(a=>{const e=(a.email||'').toLowerCase();if(!e)return;if(!map.has(e))map.set(e,{email:e,pakai:[],catatan:'',nama:''});const x=map.get(e);x.catatan=a.catatan||'';x.nama=a.nama||'';x.sbLain=Number(a.sbLain)||0;x.manual=true;x.sembunyi=!!a.sembunyi;});
+  return [...map.values()].filter(a=>!a.sembunyi).sort((a,b)=>b.pakai.length-a.pakai.length||a.email.localeCompare(b.email));
 }
 let akunFilter='semua';
 function filterAkun(k){akunFilter=k;document.querySelectorAll('#segmentAkun button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));renderAkun();}
@@ -1099,7 +1103,7 @@ function renderAkun(){
       <div class="pj-actions">
         <button class="btn-action" onclick="copyText('${esc(a.email)}')">${use('i-copy')} Salin</button>
         <button class="btn-action" onclick="openAkun('${esc(a.email)}')">${use('i-pen')} Catatan</button>
-        ${a.manual?`<button class="btn-action danger" onclick="deleteAkun('${esc(a.email)}')">${use('i-trash')} Hapus</button>`:''}
+        <button class="btn-action danger" onclick="deleteAkun('${esc(a.email)}')">${use('i-trash')} ${a.pakai.length?'Sembunyikan':'Hapus'}</button>
       </div></div>`;}).join('');
 }
 function copyText(s){navigator.clipboard?.writeText(s).then(()=>toast('Disalin: '+s)).catch(()=>toast(s));}
@@ -1116,13 +1120,17 @@ function openAkun(email){
 async function saveAkunItem(){
   const email=document.getElementById('akEmail').value.trim().toLowerCase();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast('Email tidak valid.');
-  const row={email,nama:document.getElementById('akNama').value.trim(),catatan:document.getElementById('akCatatan').value.trim(),sbLain:Math.max(0,Number(document.getElementById('akSbLain').value)||0)};
+  const row={email,sembunyi:false,nama:document.getElementById('akNama').value.trim(),catatan:document.getElementById('akCatatan').value.trim(),sbLain:Math.max(0,Number(document.getElementById('akSbLain').value)||0)};
   const bak=akunManual;akunManual=(akunManual||[]).filter(x=>(x.email||'').toLowerCase()!==email).concat([row]);
   if(await saveAkun()){closeModal();renderAkun();toast('Akun tersimpan.');}else akunManual=bak;
 }
 async function deleteAkun(email){
-  if(!confirm('Hapus catatan akun '+email+'? (Pemakaian di proyek tetap tampil)'))return;
-  const bak=akunManual;akunManual=akunManual.filter(x=>(x.email||'').toLowerCase()!==email);
+  const a=akunRekap().find(x=>x.email===email.toLowerCase());
+  const dipakai=a&&a.pakai.length;
+  if(!confirm(dipakai?'Sembunyikan '+email+' dari daftar ini? Email ini masih tertulis di proyek ('+a.pakai.length+'x). Untuk menghapus sepenuhnya, kosongkan di Edit proyeknya. Muncul lagi kalau ditambah ulang lewat Tambah akun.':'Hapus akun '+email+' dari daftar?'))return;
+  const bak=akunManual;
+  akunManual=akunManual.filter(x=>(x.email||'').toLowerCase()!==email.toLowerCase());
+  if(dipakai)akunManual=akunManual.concat([{email:email.toLowerCase(),nama:'',catatan:'',sembunyi:true}]);
   if(await saveAkun())renderAkun();else akunManual=bak;
 }
 let currentProyekTab='jokian';
@@ -1203,6 +1211,13 @@ function dueLabel(iso){
   const diff=Math.floor((new Date(iso+'T00:00:00')-now)/86400000);
   return diff<0?'Lewat '+(-diff)+' hari':diff===0?'Hari ini':'H-'+diff;
 }
+// Email login & Supabase langsung di atas kartu (tanpa buka "Selengkapnya"); tekan untuk menyalin.
+function emailBaris(p){
+  const pick=v=>(String(v||'').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/)||[''])[0];
+  const rows=[['Login',pick(p.login)],['Supabase',pick(p.supabase)]].filter(x=>x[1]);
+  if(!rows.length)return '';
+  return `<div class="pj-emails">${rows.map(([k,e])=>`<button type="button" class="pj-email" onclick="copyText('${esc(e)}')" title="Tekan untuk menyalin">${use('i-mail')}<span><b>${k}</b> ${esc(e)}</span></button>`).join('')}</div>`;
+}
 function renderProyekItem(p,kind){
   const ic=kind==='jokian'?'i-briefcase':'i-folder';
   const hasAdmin=p.admin_url&&/^https?:\/\//i.test(p.admin_url);
@@ -1238,6 +1253,7 @@ function renderProyekItem(p,kind){
         <div class="pj-title">${esc(p.name)} ${pills.join(' ')}</div>
         ${url?`<div class="pj-url">${esc(url.replace(/^https?:\/\//,''))}</div>`:''}
         ${p.user||p.hp?`<div class="pj-meta">${[p.user,p.hp].filter(Boolean).map(esc).join(' · ')}</div>`:''}
+        ${emailBaris(p)}
         ${kind==='jokian'&&projDue(p)?`<div class="pj-meta">Jatuh tempo: ${tgl(projDue(p))} · <b>${dueLabel(projDue(p))}</b></div>`:''}
       </div>
     </div>
