@@ -586,10 +586,14 @@ main{padding-bottom:90px!important;}
       <div class="pane-header"><button class="btn-back" onclick="showTab('bgy')"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> Kembali</button><h2>Akun Email</h2></div>
       <div class="card">
         <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Akun Email</div>
-        <p class="hint">Otomatis dari data Proyek dan Langganan (login, akun Supabase, akun lain). Tambahkan akun yang belum tercatat, beri catatan layanan apa saja yang dipakai.</p>
+        <p class="hint">Otomatis dari data Proyek dan Langganan (login, akun Supabase, akun lain). Supabase gratis maksimal 2 proyek aktif per akun, jadi lihat "sisa" untuk tahu akun mana yang masih bisa dipakai proyek baru.</p>
         <div class="toolbar" style="display:flex;gap:8px;flex-wrap:wrap;">
           <input id="akunCari" type="search" placeholder="Cari email atau proyek..." oninput="renderAkun()" style="flex:2;min-width:160px;min-height:44px;"/>
           <button class="btn" style="flex:1;" onclick="openAkun()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Tambah akun</button>
+        </div>
+        <div class="segment" id="segmentAkun" style="margin:8px 0;">
+          <button class="on" data-k="semua" onclick="filterAkun('semua')">Semua</button>
+          <button data-k="slot" onclick="filterAkun('slot')">Supabase masih kosong</button>
         </div>
         <div id="akunList"></div>
       </div>
@@ -1058,6 +1062,7 @@ async function saveAkun(){
   if(error){toast('Gagal simpan: '+error.message);return false;}
   return true;
 }
+const SB_GRATIS=2; // Supabase gratis: maksimal 2 proyek aktif per akun
 const EMAIL_RE=/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 function akunRekap(){
   const map=new Map();
@@ -1065,20 +1070,28 @@ function akunRekap(){
   const scan=(p,kind)=>{[['login','Login admin'],['supabase','Supabase'],['akun_lain','Akun lain']].forEach(([k,label])=>{(String(p[k]||'').match(EMAIL_RE)||[]).forEach(e=>add(e,label,(kind==='jokian'?'Klien: ':'')+(p.name||'-')));});};
   jokianData.forEach(p=>scan(p,'jokian'));sendiriData.forEach(p=>scan(p,'sendiri'));
   langgananData.forEach(l=>(String(l.akun||'').match(EMAIL_RE)||[]).forEach(e=>add(e,'Langganan',(l.jenis||'')+' · '+(l.customer||''))));
-  (akunManual||[]).forEach(a=>{const e=(a.email||'').toLowerCase();if(!e)return;if(!map.has(e))map.set(e,{email:e,pakai:[],catatan:'',nama:''});const x=map.get(e);x.catatan=a.catatan||'';x.nama=a.nama||'';x.manual=true;});
+  (akunManual||[]).forEach(a=>{const e=(a.email||'').toLowerCase();if(!e)return;if(!map.has(e))map.set(e,{email:e,pakai:[],catatan:'',nama:''});const x=map.get(e);x.catatan=a.catatan||'';x.nama=a.nama||'';x.sbLain=Number(a.sbLain)||0;x.manual=true;});
   return [...map.values()].sort((a,b)=>b.pakai.length-a.pakai.length||a.email.localeCompare(b.email));
 }
+let akunFilter='semua';
+function filterAkun(k){akunFilter=k;document.querySelectorAll('#segmentAkun button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));renderAkun();}
+const sbPakai=a=>a.pakai.filter(x=>x.peran==='Supabase').length+(Number(a.sbLain)||0);
 function renderAkun(){
   const box=document.getElementById('akunList');if(!box)return;
   const q=(document.getElementById('akunCari')?.value||'').toLowerCase().trim();
-  const list=akunRekap().filter(a=>!q||a.email.includes(q)||a.nama.toLowerCase().includes(q)||a.catatan.toLowerCase().includes(q)||a.pakai.some(x=>x.proyek.toLowerCase().includes(q)));
+  const list=akunRekap().filter(a=>akunFilter!=='slot'||sbPakai(a)<SB_GRATIS).filter(a=>!q||a.email.includes(q)||a.nama.toLowerCase().includes(q)||a.catatan.toLowerCase().includes(q)||a.pakai.some(x=>x.proyek.toLowerCase().includes(q)));
   if(!list.length){box.innerHTML='<div class="empty">Belum ada akun.</div>';return;}
-  box.innerHTML=`<div class="hint" style="margin:0 0 8px">${list.length} akun</div>`+list.map(a=>{
+  if(akunFilter==='slot')list.sort((a,b)=>sbPakai(a)-sbPakai(b));
+  box.innerHTML=`<div class="hint" style="margin:0 0 8px">${list.length} akun${akunFilter==='slot'?' masih bisa dipakai untuk proyek Supabase baru':''}</div>`+list.map(a=>{
+    const sb=sbPakai(a),sisa=Math.max(0,SB_GRATIS-sb);
+    const sbPill=`<span class="pill ${sisa?'teal':'gray'}">Supabase ${sb}/${SB_GRATIS}${sisa?' · sisa '+sisa:' · penuh'}</span>`;
     const grup={};a.pakai.forEach(x=>{(grup[x.peran]=grup[x.peran]||[]).push(x.proyek);});
     return `<div class="pj-item">
       <div class="pj-top"><div class="pj-ic">${use('i-mail')}</div><div class="pj-body" style="min-width:0">
-        <div class="pj-title" style="word-break:break-all">${esc(a.email)} ${a.pakai.length?`<span class="pill teal">${a.pakai.length} dipakai</span>`:'<span class="pill gray">belum dipakai</span>'}</div>
+        <div class="pj-title" style="word-break:break-all">${esc(a.email)}</div>
+        <div class="pj-meta">${sbPill}</div>
         ${a.nama?`<div class="pj-meta">${esc(a.nama)}</div>`:''}
+        ${a.sbLain?`<div class="pj-meta"><b>Supabase lain:</b> ${a.sbLain} proyek</div>`:''}
         ${Object.entries(grup).map(([k,v])=>`<div class="pj-meta"><b>${esc(k)}:</b> ${v.map(esc).join(', ')}</div>`).join('')}
         ${a.catatan?`<div class="pj-meta">Catatan: ${esc(a.catatan)}</div>`:''}
       </div></div>
@@ -1094,6 +1107,7 @@ function openAkun(email){
   document.getElementById('modalBox').innerHTML=`<h3>${email?'Catatan akun':'Tambah akun'}</h3>
     <div class="fg"><label for="akEmail">Email *</label><input id="akEmail" type="email" maxlength="120" value="${esc(a.email)}" ${email?'readonly':''}/></div>
     <div class="fg"><label for="akNama">Nama di akun (opsional)</label><input id="akNama" maxlength="60" value="${esc(a.nama)}" placeholder="mis. Choiruddin Yasir"/></div>
+    <div class="fg"><label for="akSbLain">Proyek Supabase lain yang tidak tercatat di admin</label><input id="akSbLain" type="number" min="0" max="10" value="${esc(a.sbLain||0)}"/></div>
     <div class="fg"><label for="akCatatan">Dipakai untuk apa (opsional)</label><input id="akCatatan" maxlength="200" value="${esc(a.catatan)}" placeholder="mis. Vercel, GitHub, Canva, YouTube"/></div>
     <div style="display:flex;gap:8px;margin-top:8px;"><button class="btn" style="flex:1;" onclick="closeModal()">Batal</button><button class="btn-primary" style="flex:2;" onclick="saveAkunItem()">Simpan</button></div>`;
   document.getElementById('modal').hidden=false;
@@ -1101,7 +1115,7 @@ function openAkun(email){
 async function saveAkunItem(){
   const email=document.getElementById('akEmail').value.trim().toLowerCase();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return toast('Email tidak valid.');
-  const row={email,nama:document.getElementById('akNama').value.trim(),catatan:document.getElementById('akCatatan').value.trim()};
+  const row={email,nama:document.getElementById('akNama').value.trim(),catatan:document.getElementById('akCatatan').value.trim(),sbLain:Math.max(0,Number(document.getElementById('akSbLain').value)||0)};
   const bak=akunManual;akunManual=(akunManual||[]).filter(x=>(x.email||'').toLowerCase()!==email).concat([row]);
   if(await saveAkun()){closeModal();renderAkun();toast('Akun tersimpan.');}else akunManual=bak;
 }
