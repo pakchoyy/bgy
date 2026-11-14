@@ -167,6 +167,7 @@ footer a{color:inherit;text-decoration:underline;}
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 <script src="/bgy-info.js"></script>
+<script src="/lib/rayakan.js" defer></script>
 </head>
 <body>
 <!-- Ikon Lucide (lucide.dev, ISC) -->
@@ -367,7 +368,7 @@ function defaultOpt(id){
     atur:{pages:[]}
   }[id]||{};
 }
-function hideResult(){$('result').classList.remove('show');out=null;}
+function hideResult(){$('result').classList.remove('show');out=null;const m=$('result').querySelector('.bgym-wrap');if(m)m.remove();}
 function updateRun(){
   const ok=files.length>0&&(cur.id!=='gabung'||files.length>=2)&&(cur.id!=='ttd'||!!sigData);
   $('runBtn').disabled=!ok;
@@ -588,6 +589,7 @@ async function runTool(){
     $('resultTitle').textContent=r.title||'Selesai!';
     $('resultSub').textContent=r.sub||('Ukuran file: '+fmtSize(r.blob.size));
     $('result').classList.add('show');
+    window.bgyRayakan&&bgyRayakan({wadah:$('result')});
     $('result').scrollIntoView({behavior:'smooth',block:'nearest'});
     gaEvent('pdf_tool_run',{tool:t});
   }catch(e){err(e);}

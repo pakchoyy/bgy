@@ -1,11 +1,13 @@
 /* BGY acak — Service Worker */
-const CACHE_NAME = 'bgy-acak-v1';
+const CACHE_NAME = 'bgy-acak-v2';
 const CORE = [
   '/acak/',
   '/acak/manifest.json',
   '/guru-cibisd2.png',
   '/bgy-info.js',
-  '/fonts/bgy-font.css?v=2'
+  '/fonts/bgy-font.css?v=2',
+  '/lib/rayakan.js',
+  '/lib/confetti.js'
 ];
 
 self.addEventListener('install', e => {

@@ -197,6 +197,7 @@ textarea.names:focus{border-color:var(--blue);}
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 <script src="/bgy-info.js"></script>
+<script src="/lib/rayakan.js" defer></script>
 </head>
 <body>
 <!-- Ikon Lucide (lucide.dev, ISC) -->
@@ -233,6 +234,7 @@ textarea.names:focus{border-color:var(--blue);}
     </div>
   </div>
 </header>
+
 
 <main>
   <section id="view-home">
@@ -316,10 +318,11 @@ function bagi(){
   const g=Array.from({length:k},()=>[]);shuffle(n).forEach((x,i)=>g[i%k].push(x));
   $('outKel').innerHTML=`<div class="grp-grid">${g.map((a,i)=>`<div class="grp"><h4>Kelompok ${i+1}<small>${a.length} orang</small></h4><ol>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`).join('')}</div>
   <div class="row fs-hide"><button class="btn-sec" type="button" onclick="bagi()">${ico('i-shuffle')} Acak ulang</button><button class="btn-sec" type="button" onclick="salin('outKel')">${ico('i-copy')} Salin teks</button><button class="btn-sec" type="button" onclick="layarPenuh('outKel')">${ico('i-full')} Layar penuh</button></div>`;
-  window._kel=g;hasil();
+  window._kel=g;window.bgyRayakan&&bgyRayakan({wadah:$('outKel'),pesan:k+' kelompok siap!'});hasil();
 }
 function acakUrut(){
   const n=cukup(2);if(!n)return;const a=shuffle(n);window._urut=a;
+  setTimeout(()=>window.bgyRayakan&&bgyRayakan({wadah:$('outUrut'),pesan:'Urutan maju sudah diacak!',confetti:false}));
   $('outUrut').innerHTML=`<ol class="urut">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol><div class="row fs-hide"><button class="btn-sec" type="button" onclick="salin('outUrut')">${ico('i-copy')} Salin teks</button><button class="btn-sec" type="button" onclick="layarPenuh('outUrut')">${ico('i-full')} Layar penuh</button></div>`;
   hasil();
 }
@@ -367,6 +370,7 @@ function spin(){
     const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,4);rot=start+delta*e;drawWheel();
     if(p<1)return requestAnimationFrame(step);
     spinning=false;$('spinBtn').disabled=false;const nm=a[win];$('winner').textContent=nm;picked.push(nm);
+    window.bgyRayakan&&bgyRayakan({besar:true});
     $('picked').textContent='Terpilih: '+picked.map((x,i)=>(i+1)+'. '+x).join(', ');
     if($('rmWin').checked){sisa=a.filter((_,i)=>i!==win);setTimeout(drawWheel,1200);}
     hasil();

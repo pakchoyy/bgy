@@ -1,11 +1,13 @@
 /* BGY foto — Service Worker */
-const CACHE_NAME = 'bgy-foto-v1';
+const CACHE_NAME = 'bgy-foto-v2';
 const CORE = [
   '/foto/',
   '/foto/manifest.json',
   '/guru-cibisd2.png',
   '/bgy-info.js',
   '/fonts/bgy-font.css?v=2',
+  '/lib/rayakan.js',
+  '/lib/confetti.js',
   '/pdf/lib/jszip.min.js'
 ];
 

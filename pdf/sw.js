@@ -1,5 +1,5 @@
 /* BGY PDF Tools — Service Worker */
-const CACHE_NAME = 'bgy-pdf-v1';
+const CACHE_NAME = 'bgy-pdf-v2';
 const CORE = [
   '/pdf/',
   '/pdf/manifest.json',
@@ -7,6 +7,8 @@ const CORE = [
   '/pdf/lib/pdf.min.js',
   '/pdf/lib/pdf.worker.min.js',
   '/pdf/lib/jszip.min.js',
+  '/lib/rayakan.js',
+  '/lib/confetti.js',
   '/guru-cibisd2.png',
   '/bgy-info.js',
   '/fonts/bgy-font.css?v=2'

@@ -181,6 +181,7 @@ footer a{color:inherit;text-decoration:underline;}
 </style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
 <script src="/bgy-info.js"></script>
+<script src="/lib/rayakan.js" defer></script>
 </head>
 <body>
 <!-- Ikon Lucide (lucide.dev, ISC) -->
@@ -216,6 +217,7 @@ footer a{color:inherit;text-decoration:underline;}
     </div>
   </div>
 </header>
+
 
 <main>
   <section id="view-home">
@@ -302,7 +304,7 @@ function renderK(){
   $('kRun').disabled=!kFiles.length;
   $('kTarget').innerHTML=TARGETS.map(([v,l])=>`<button type="button" class="${kTarget===v?'on':''}" onclick="kTarget=${v};kReset()">${l}</button>`).join('');
 }
-function kReset(){kFiles.forEach(f=>f.out=null);kOut=null;$('kRes').classList.remove('show');renderK();}
+function kReset(){kFiles.forEach(f=>f.out=null);kOut=null;$('kRes').classList.remove('show');const m=$('kRes').querySelector('.bgym-wrap');if(m)m.remove();renderK();}
 function hapusK(i){URL.revokeObjectURL(kFiles[i].url);kFiles.splice(i,1);kReset();}
 $('kFile').addEventListener('change',e=>{
   let list=[...e.target.files].filter(f=>/^image\//.test(f.type));e.target.value='';
@@ -339,7 +341,7 @@ async function kompres(){
     }
     $('kResT').textContent='Foto berhasil dikompres';
     $('kResS').textContent=`${kFiles.length} foto, ${fmt(tot0)} jadi ${fmt(tot1)}. Semua di bawah ${TARGETS.find(t=>t[0]===kTarget)[1]}.`+(kFiles.length>1?' Hasil dibungkus ZIP.':'');
-    $('kRes').classList.add('show');renderK();
+    $('kRes').classList.add('show');renderK();window.bgyRayakan&&bgyRayakan({wadah:$('kRes')});
   }catch(e){toast(e.message||'Gagal mengompres.');}
   busy(false);
 }
@@ -402,6 +404,7 @@ function drawPas(){
 async function unduhPas(){
   if(!pImg)return;const [w,h]=SIZES[pSize];const c=renderPas(cm(w),cm(h));
   unduh({blob:await toBlob(c,'image/jpeg',0.95),name:`pas_foto_${pSize}${pBg!=='asli'?'_'+pBg:''}.jpg`});
+  window.bgyRayakan&&bgyRayakan({});
 }
 // Tata letak kertas 4R (10x15 cm): pilih arah kertas yang muat paling banyak.
 function lembar(w,h){
