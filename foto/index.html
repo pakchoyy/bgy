@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<script>if(!/\/$/.test(location.pathname)&&!/\.[a-z0-9]+$/i.test(location.pathname))location.replace(location.pathname+"/"+location.search+location.hash);</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bantu Guru Yuk | Foto Tools</title>
+<link rel="icon" href="../guru-cibisd2.png" sizes="192x192" type="image/png"/>
+<link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
+<meta name="theme-color" content="#0ea5a0"/>
+<link rel="manifest" href="./manifest.json"/>
+<meta name="description" content="Foto Tools gratis untuk guru: kompres foto sampai 100 KB untuk upload PMM/SPMB, dan pas foto 2x3, 3x4, 4x6 dengan latar merah atau biru, siap cetak."/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-83WBBEE5BG');
+  function gaEvent(n,p){if(typeof gtag==='function')gtag('event',n,p||{});}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
+  --blue:#0ea5a0;--radius:12px;--gray-100:#f1f5f9;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;
+  --text-light:#64748b;--border:#e2e8f0;--input-bg:#f8fafc;--accent:#0d7a8a;
+}
+body.dark{
+  --bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;
+  --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;--accent:#5eead4;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;overflow-x:hidden;}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block;}
+button{font-family:inherit;}
+
+/* INSTALL */
+#installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+#installPopup.show{top:0;}
+#installPopup button{border:none;border-radius:8px;padding:5px 14px;min-height:40px;min-width:40px;font-weight:700;cursor:pointer;font-size:.8rem;}
+.btn-install{background:#fff;color:#0d7a8a;}
+.btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;max-width:1100px;margin:0 auto;}
+.header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
+.header-brand h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-brand .badge{font-size:.75rem;font-weight:800;background:rgba(255,255,255,.22);color:#fff;border-radius:6px;padding:1px 6px;margin-left:4px;vertical-align:2px;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{height:40px;width:40px;border-radius:10px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.hdr-btn .ic{width:18px;height:18px;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;min-height:44px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+.dropdown-item:hover{background:var(--gray-100);}
+body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
+.dropdown-item .ic{color:var(--blue);width:18px;height:18px;}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+#menuOverlay{display:none;position:fixed;inset:0;z-index:250;}
+#menuOverlay.open{display:block;}
+
+/* MAIN */
+main{max-width:1100px;margin:0 auto;padding:20px;width:100%;flex:1;}
+@media(max-width:640px){main{padding:12px;}}
+.hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.8rem;color:var(--text);line-height:1.6;display:flex;gap:8px;align-items:flex-start;}
+.hint-bar .ic{color:var(--accent);margin-top:2px;}
+.hint-bar b{color:var(--accent);}
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+@media(max-width:640px){.card{padding:14px 12px;}}
+.card-title{font-size:.9rem;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding-bottom:10px;}
+.card-title .ic{color:var(--blue);width:20px;height:20px;}
+
+/* TOOL GRID */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;}
+@media(max-width:520px){.tool-grid{grid-template-columns:1fr 1fr;gap:8px;}}
+.tool-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;text-align:left;color:var(--text);display:flex;flex-direction:column;gap:6px;transition:border-color .2s,transform .2s;box-shadow:var(--shadow);min-height:120px;}
+.tool-card:hover{border-color:var(--blue);transform:translateY(-2px);}
+.tool-card .ti{width:40px;height:40px;border-radius:10px;background:rgba(14,165,160,.1);display:flex;align-items:center;justify-content:center;color:var(--blue);}
+.tool-card .ti .ic{width:22px;height:22px;}
+.tool-card .tn{font-size:.9rem;font-weight:800;}
+.tool-card .td{font-size:.75rem;color:var(--text-light);line-height:1.4;}
+
+/* TOOL PANEL */
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:none;border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:0 14px;min-height:40px;font-weight:700;font-size:.82rem;cursor:pointer;margin-bottom:12px;background:var(--card-bg);}
+.back-btn:hover{border-color:var(--blue);color:var(--blue);}
+.tool-desc{font-size:.8rem;color:var(--text-light);margin:-4px 0 12px;line-height:1.5;}
+.upload-area{border:2px dashed var(--border);border-radius:12px;padding:22px 12px;text-align:center;cursor:pointer;background:var(--input-bg);position:relative;transition:all .2s;}
+.upload-area:hover,.upload-area.drag{border-color:var(--blue);background:rgba(14,165,160,.05);}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-area .ui .ic{width:30px;height:30px;color:var(--blue);}
+.upload-area .ut{font-size:.88rem;font-weight:800;margin-top:6px;}
+.upload-area .us{font-size:.75rem;color:var(--text-light);margin-top:3px;}
+.file-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.file-row{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:10px;padding:6px 8px;background:var(--input-bg);}
+.file-row img,.file-row .fthumb{width:40px;height:40px;object-fit:cover;border-radius:6px;flex:none;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:.75rem;font-weight:800;}
+.file-row .fn{flex:1;min-width:0;font-size:.8rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-row .fs{font-size:.75rem;color:var(--text-light);font-weight:500;}
+.ibtn{width:40px;height:40px;border-radius:9px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none;}
+.ibtn:hover{border-color:var(--blue);color:var(--blue);}
+.ibtn.r:hover{border-color:#ef4444;color:#ef4444;}
+.ibtn:disabled{opacity:.35;cursor:default;}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+@media(max-width:420px){.opts{grid-template-columns:1fr;}}
+.opts .full{grid-column:1/-1;}
+label.lb{display:block;font-size:.75rem;font-weight:700;color:var(--text-light);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
+input[type=text],input[type=number],select{width:100%;padding:8px 10px;min-height:42px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;color:var(--text);background:var(--input-bg);outline:none;font-family:inherit;}
+input[type=range]{width:100%;min-height:40px;accent-color:#0ea5a0;}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+.hint{font-size:.75rem;color:var(--text-light);margin-top:4px;line-height:1.45;}
+.seg{display:flex;gap:6px;flex-wrap:wrap;}
+.seg button{flex:1;min-width:90px;min-height:42px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--text);border-radius:9px;font-weight:700;font-size:.8rem;cursor:pointer;padding:4px 8px;}
+.seg button.on{border-color:var(--blue);background:rgba(14,165,160,.12);color:var(--accent);}
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:13px;min-height:48px;border:none;border-radius:12px;background:var(--grad);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 4px 14px rgba(14,165,160,.25);}
+.btn-primary:disabled{opacity:.5;cursor:default;}
+.btn-sec{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);font-weight:700;font-size:.82rem;cursor:pointer;}
+.btn-sec:hover{border-color:var(--blue);color:var(--blue);}
+.result{display:none;margin-top:14px;border:1.5px solid rgba(16,185,129,.4);background:rgba(16,185,129,.07);border-radius:12px;padding:14px;}
+.result.show{display:block;}
+.result .rt{font-weight:800;font-size:.9rem;color:#059669;display:flex;align-items:center;gap:6px;}
+body.dark .result .rt{color:#6ee7b7;}
+.result .rs{font-size:.8rem;color:var(--text);margin-top:4px;line-height:1.5;}
+.result .btn-primary{margin-top:10px;background:linear-gradient(135deg,#10b981,#059669);}
+.warn{font-size:.78rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.35);border-radius:9px;padding:8px 10px;margin-top:10px;line-height:1.5;color:var(--text);}
+
+/* PAGE GRID (atur halaman) */
+.page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px;}
+@media(max-width:420px){.page-grid{grid-template-columns:1fr 1fr;}}
+.pg-item{border:1.5px solid var(--border);border-radius:10px;padding:8px;background:var(--input-bg);display:flex;flex-direction:column;align-items:center;gap:6px;}
+.pg-item.del{opacity:.35;}
+.pg-thumb{width:100%;aspect-ratio:1/1.3;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pg-thumb canvas{max-width:100%;max-height:100%;box-shadow:0 1px 4px rgba(0,0,0,.2);background:#fff;transition:transform .2s;}
+.pg-no{font-size:.75rem;font-weight:800;color:var(--text-light);}
+.pg-act{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;}
+
+/* TTD */
+.sig-pad{width:100%;height:180px;border:1.5px dashed var(--border);border-radius:10px;background:#fff;touch-action:none;display:block;}
+.place-wrap{position:relative;margin-top:8px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;max-width:520px;}
+.place-wrap canvas{width:100%;display:block;cursor:crosshair;touch-action:manipulation;}
+.place-wrap img{position:absolute;pointer-events:none;opacity:.9;}
+
+/* BUSY */
+#busy{display:none;position:fixed;inset:0;z-index:9000;background:rgba(15,23,42,.6);align-items:center;justify-content:center;padding:20px;}
+#busy.show{display:flex;}
+#busy .bx{background:var(--card-bg);color:var(--text);border-radius:14px;padding:22px 24px;min-width:240px;max-width:340px;text-align:center;box-shadow:var(--shadow-lg);}
+#busy .sp{width:36px;height:36px;border:3px solid rgba(14,165,160,.25);border-top-color:#0ea5a0;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
+#busy .bm{font-size:.88rem;font-weight:700;}
+#busy .bp{height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:12px;}
+#busy .bp div{height:100%;width:0;background:var(--grad);transition:width .2s;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:10px 22px;border-radius:99px;font-size:.82rem;font-weight:600;z-index:9999;opacity:0;transition:all .35s;pointer-events:none;max-width:90vw;text-align:center;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+body.dark #toast{background:#f1f5f9;color:#1e293b;}
+
+.about p{font-size:.85rem;line-height:1.7;margin-bottom:8px;}
+.about a{color:var(--accent);font-weight:700;}
+
+footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
+footer .footer-title{font-size:.85rem;font-weight:700;margin-bottom:2px;}
+footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.85);}
+footer a{color:inherit;text-decoration:underline;}
+
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;}
+.tabs button{min-height:48px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:12px;font-weight:800;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tabs button .ic{width:20px;height:20px;color:var(--blue);}
+.tabs button.on{border-color:var(--blue);background:rgba(14,165,160,.1);color:var(--accent);}
+.ok{color:#059669;font-weight:800;}body.dark .ok{color:#6ee7b7;}
+.crop{position:relative;margin:12px auto 0;max-width:300px;border-radius:8px;overflow:hidden;background:#cbd5e1;touch-action:none;cursor:grab;box-shadow:0 0 0 1px var(--border);}
+.crop canvas{width:100%;display:block;}
+.crop .guide{position:absolute;inset:0;pointer-events:none;}
+.crop .guide::before{content:"";position:absolute;left:22%;right:22%;top:9%;height:52%;border:2px dashed rgba(255,255,255,.85);border-radius:50% 50% 45% 45%;box-shadow:0 0 0 1px rgba(0,0,0,.25);}
+.swatch{display:flex;gap:8px;flex-wrap:wrap;}
+.swatch button{min-width:64px;min-height:42px;border-radius:10px;border:2px solid var(--border);cursor:pointer;font-weight:800;font-size:.78rem;padding:0 10px;}
+.swatch button.on{outline:3px solid #0ea5a0;outline-offset:2px;}
+
+</style>
+<link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+<script src="/bgy-info.js"></script>
+</head>
+<body>
+<!-- Ikon Lucide (lucide.dev, ISC) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs><symbol id="i-kompres" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" x2="21" y1="10" y2="3"/><line x1="3" x2="10" y1="21" y2="14"/></symbol><symbol id="i-paspoto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></symbol><symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol><symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-printer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></symbol><symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></symbol><symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2" /><path d="M12 18h.01" /></symbol><symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol><symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></symbol><symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol><symbol id="i-gabung" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3a2 2 0 0 1-2-2V2"/><path d="M9 18a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7l4 4v10a2 2 0 0 1-2 2Z"/><path d="M3 7.6v12.8A1.6 1.6 0 0 0 4.6 22h9.8"/></symbol><symbol id="i-pisah" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol><symbol id="i-atur" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol><symbol id="i-foto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol><symbol id="i-kegambar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="12" r="2"/><path d="m20 17-1.296-1.296a2.41 2.41 0 0 0-3.408 0L9 22"/></symbol><symbol id="i-kompres" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" x2="21" y1="10" y2="3"/><line x1="3" x2="10" y1="21" y2="14"/></symbol><symbol id="i-nomor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="9" y2="9"/><line x1="4" x2="20" y1="15" y2="15"/><line x1="10" x2="8" y1="3" y2="21"/><line x1="16" x2="14" y1="3" y2="21"/></symbol><symbol id="i-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"/><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-3-3c-1.66 0-3 1-3 3s1 2 1 3.5V13"/></symbol><symbol id="i-ttd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></symbol><symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></symbol><symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol><symbol id="i-rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol><symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol><symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol><symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></symbol><symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol><symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol></defs></svg>
+
+<div id="installPopup">
+  <span><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install Foto Tools di HP kamu!</span>
+  <button class="btn-install" onclick="installApp()">Install</button>
+  <button class="btn-install-close" onclick="closeInstall()" aria-label="Tutup"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+</div>
+<div id="toast"></div>
+<div id="busy" role="status" aria-live="polite"><div class="bx"><div class="sp"></div><div class="bm" id="busyMsg">Memproses...</div><div class="bp"><div id="busyBar"></div></div></div></div>
+<div id="menuOverlay" onclick="closeMenu()"></div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="../guru-cibisd2.png" alt="Logo"/>
+      <h1>BGY | Foto Tools<span class="badge">GRATIS</span></h1>
+    </div>
+    <div class="header-right">
+      <button class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
+      <button class="hdr-btn" onclick="toggleMenu()" title="Menu" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item" onclick="go('');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-house"/></svg> Home</button>
+        <button class="dropdown-item" onclick="go('');tab('kompres');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-kompres"/></svg> Kompres Foto</button>
+        <button class="dropdown-item" onclick="go('');tab('pas');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-paspoto"/></svg> Pas Foto</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" onclick="go('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
+        <div class="dropdown-divider"></div>
+        <div data-bgy-menu></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="view-home">
+    <div class="hint-bar"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg><div><b>Aman &amp; gratis.</b> Foto diproses langsung di HP kamu, <b>tidak diunggah</b> ke server mana pun.</div></div>
+    <div class="tabs" role="tablist">
+      <button type="button" id="tb-kompres" onclick="tab('kompres')"><svg class="ic" aria-hidden="true"><use href="#i-kompres"/></svg>Kompres Foto</button>
+      <button type="button" id="tb-pas" onclick="tab('pas')"><svg class="ic" aria-hidden="true"><use href="#i-paspoto"/></svg>Pas Foto</button>
+    </div>
+
+    <div class="card" id="pane-kompres">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-kompres"/></svg> Kompres Foto</div>
+      <div class="tool-desc">Perkecil ukuran foto supaya muat diunggah ke PMM, SIMPKB, SPMB, atau formulir online.</div>
+      <div class="upload-area"><input type="file" id="kFile" accept="image/*" multiple aria-label="Pilih foto"/><div class="ui"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg></div><div class="ut">Pilih foto</div><div class="us">Bisa banyak sekaligus. JPG, PNG, WEBP.</div></div>
+      <div class="file-list" id="kList"></div>
+      <div class="opts"><div class="full"><label class="lb">Ukuran maksimal per foto</label><div class="seg" id="kTarget"></div></div></div>
+      <button class="btn-primary" id="kRun" type="button" onclick="kompres()" disabled><svg class="ic" aria-hidden="true"><use href="#i-kompres"/></svg> Kompres Foto</button>
+      <div class="result" id="kRes"><div class="rt"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg> <span id="kResT"></span></div><div class="rs" id="kResS"></div><button class="btn-primary" type="button" onclick="unduh(kOut)"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> Unduh Hasil</button></div>
+    </div>
+
+    <div class="card" id="pane-pas" style="display:none">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-paspoto"/></svg> Pas Foto</div>
+      <div class="tool-desc">Potong foto jadi pas foto 2x3, 3x4, atau 4x6, ganti latar merah/biru, lalu unduh atau cetak satu lembar.</div>
+      <div class="upload-area"><input type="file" id="pFile" accept="image/*" aria-label="Pilih foto"/><div class="ui"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg></div><div class="ut" id="pUt">Pilih 1 foto wajah</div><div class="us">Paling bagus foto dengan latar polos (tembok putih/abu).</div></div>
+      <div id="pBody" style="display:none">
+        <div class="opts">
+          <div class="full"><label class="lb">Ukuran</label><div class="seg" id="pSize"></div></div>
+          <div class="full"><label class="lb">Warna latar</label><div class="swatch" id="pBg"></div></div>
+          <div class="full" id="tolBox"><label class="lb" for="pTol">Kepekaan ganti latar: <span id="tolLbl">30</span></label><input type="range" id="pTol" min="5" max="80" value="30"/><div class="hint">Naikkan kalau latar lama masih tersisa, turunkan kalau rambut/baju ikut berubah warna.</div></div>
+          <div class="full"><label class="lb" for="pZoom">Perbesar</label><input type="range" id="pZoom" min="100" max="300" value="100"/></div>
+        </div>
+        <div class="crop" id="cropBox"><canvas id="pCv"></canvas><div class="guide"></div></div>
+        <div class="hint" style="text-align:center">Geser foto supaya wajah pas di dalam garis putus-putus.</div>
+        <button class="btn-primary" type="button" onclick="unduhPas()"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> Unduh Pas Foto</button>
+        <button class="btn-sec" type="button" onclick="unduhLembar()" style="width:100%;margin-top:8px;min-height:46px"><svg class="ic" aria-hidden="true"><use href="#i-printer"/></svg> Unduh Lembar Cetak 4R (10x15 cm)</button>
+        <div class="hint" id="lembarInfo"></div>
+      </div>
+    </div>
+  </section>
+  <section id="view-tentang" style="display:none;">
+    <button class="back-btn" onclick="go('')"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg> Kembali</button>
+    <div class="card about">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Foto Tools</div>
+      <p>Foto Tools adalah bagian dari <b>Bantu Guru Yuk</b>. Gratis untuk Bapak/Ibu Guru.</p>
+      <p>Semua foto diproses di perangkat kamu sendiri, tidak dikirim ke server.</p>
+      <p>Kritik, saran, atau ide fitur: hubungi Pak Choy lewat <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener">TikTok @pak.choyy</a>.</p>
+    </div>
+  </section>
+</main>
+
+<div data-bgy-info></div>
+<footer>
+  <div class="footer-title">Foto Tools</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener">pak.choyy</a> &bull; v26.11.1</div>
+</footer>
+
+<script>
+'use strict';
+let deferredInstallPrompt=null;
+const $=id=>document.getElementById(id);
+const ico=id=>`<svg class="ic" aria-hidden="true"><use href="#${id}"/></svg>`;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let _tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
+
+const MAX_MB=40, MAX_FILES=30;   // batas ukuran & jumlah foto
+const TARGETS=[[100,'100 KB'],[200,'200 KB'],[500,'500 KB'],[1024,'1 MB']];
+const SIZES={'2x3':[2,3],'3x4':[3,4],'4x6':[4,6]};
+const BGS=[['asli','Asli','#fff','#1e293b'],['merah','Merah','#c8102e','#fff'],['biru','Biru','#0a58ca','#fff'],['putih','Putih','#ffffff','#1e293b']];
+const DPI=300,cm=c=>Math.round(c/2.54*DPI);
+let kFiles=[],kTarget=200,kOut=null,adaHasil=false;
+let pImg=null,pSize='3x4',pBg='merah',pZoom=1,pOff={x:0,y:0};
+const fmt=b=>b<1048576?Math.round(b/1024)+' KB':(b/1048576).toFixed(2)+' MB';
+const base=n=>String(n||'foto').replace(/\.[^.]+$/,'').replace(/[\\/:*?"<>|]+/g,'-').slice(0,50)||'foto';
+const toBlob=(c,t,q)=>new Promise(r=>c.toBlob(r,t,q));
+function hasil(){if(adaHasil)return;adaHasil=true;window.bgyAskReview&&bgyAskReview({delay:3000});}
+function unduh(o){if(!o)return;const a=document.createElement('a');a.href=URL.createObjectURL(o.blob);a.download=o.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);toast('Diunduh. Cek folder Download.');hasil();}
+async function loadImg(file){
+  try{return await createImageBitmap(file,{imageOrientation:'from-image'});}
+  catch(e){return await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>rej(new Error(file.name+' tidak bisa dibaca. Format HEIC belum didukung, ubah ke JPG dulu.'));im.src=URL.createObjectURL(file);});}
+}
+function tab(t){['kompres','pas'].forEach(x=>{$('pane-'+x).style.display=x===t?'block':'none';$('tb-'+x).classList.toggle('on',x===t);});if(t==='pas')drawPas();}
+/* ── Kompres ── */
+function renderK(){
+  $('kList').innerHTML=kFiles.map((f,i)=>`<div class="file-row"><img src="${f.url}" alt=""/><div class="fn">${esc(f.file.name)}<div class="fs">${fmt(f.file.size)}${f.out?` &rarr; <span class="ok">${fmt(f.out.size)}</span>`:''}</div></div><button class="ibtn r" onclick="hapusK(${i})" aria-label="Hapus">${ico('i-trash')}</button></div>`).join('');
+  $('kRun').disabled=!kFiles.length;
+  $('kTarget').innerHTML=TARGETS.map(([v,l])=>`<button type="button" class="${kTarget===v?'on':''}" onclick="kTarget=${v};kReset()">${l}</button>`).join('');
+}
+function kReset(){kFiles.forEach(f=>f.out=null);kOut=null;$('kRes').classList.remove('show');renderK();}
+function hapusK(i){URL.revokeObjectURL(kFiles[i].url);kFiles.splice(i,1);kReset();}
+$('kFile').addEventListener('change',e=>{
+  let list=[...e.target.files].filter(f=>/^image\//.test(f.type));e.target.value='';
+  if(list.some(f=>f.size>MAX_MB*1048576))toast('Foto lebih dari '+MAX_MB+' MB dilewati.');
+  list=list.filter(f=>f.size<=MAX_MB*1048576).slice(0,MAX_FILES-kFiles.length);
+  list.forEach(f=>kFiles.push({file:f,url:URL.createObjectURL(f)}));kReset();
+});
+async function kompresSatu(file,maxBytes){
+  const img=await loadImg(file);
+  let scale=Math.min(1,2400/Math.max(img.width,img.height));
+  for(let round=0;round<8;round++){
+    const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));
+    const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+    let lo=0.35,hi=0.92,best=null;
+    for(let i=0;i<7;i++){const q=(lo+hi)/2;const b=await toBlob(c,'image/jpeg',q);if(b.size<=maxBytes){best=b;lo=q;}else hi=q;}
+    if(best)return best;
+    scale*=0.75;
+  }
+  throw new Error(file.name+': tidak bisa dikecilkan sampai batas itu.');
+}
+async function kompres(){
+  if(!kFiles.length)return;const max=kTarget*1024;busy(true);
+  try{
+    for(let i=0;i<kFiles.length;i++){
+      const f=kFiles[i];$('kRun').innerHTML=`Mengompres ${i+1}/${kFiles.length}...`;
+      f.out=f.file.size<=max&&/jpe?g$/i.test(f.file.type)?f.file:await kompresSatu(f.file,max);
+    }
+    const tot0=kFiles.reduce((s,f)=>s+f.file.size,0),tot1=kFiles.reduce((s,f)=>s+f.out.size,0);
+    if(kFiles.length===1)kOut={blob:kFiles[0].out,name:base(kFiles[0].file.name)+'_kecil.jpg'};
+    else{
+      await new Promise((res,rej)=>{if(window.JSZip)return res();const s=document.createElement('script');s.src='/pdf/lib/jszip.min.js';s.onload=res;s.onerror=()=>rej(new Error('Gagal memuat komponen ZIP.'));document.head.appendChild(s);});
+      const z=new JSZip();const used={};kFiles.forEach(f=>{let n=base(f.file.name);while(used[n])n+='_';used[n]=1;z.file(n+'_kecil.jpg',f.out);});
+      kOut={blob:await z.generateAsync({type:'blob'}),name:'foto_kecil.zip'};
+    }
+    $('kResT').textContent='Foto berhasil dikompres';
+    $('kResS').textContent=`${kFiles.length} foto, ${fmt(tot0)} jadi ${fmt(tot1)}. Semua di bawah ${TARGETS.find(t=>t[0]===kTarget)[1]}.`+(kFiles.length>1?' Hasil dibungkus ZIP.':'');
+    $('kRes').classList.add('show');renderK();
+  }catch(e){toast(e.message||'Gagal mengompres.');}
+  busy(false);
+}
+function busy(on){$('kRun').disabled=on;if(!on)$('kRun').innerHTML=ico('i-kompres')+' Kompres Foto';}
+/* ── Pas foto ── */
+function renderPasOpts(){
+  $('pSize').innerHTML=Object.keys(SIZES).map(k=>`<button type="button" class="${pSize===k?'on':''}" onclick="pSize='${k}';pOff={x:0,y:0};renderPasOpts();drawPas()">${k} cm</button>`).join('');
+  $('pBg').innerHTML=BGS.map(([k,l,bg,fg])=>`<button type="button" class="${pBg===k?'on':''}" style="background:${k==='asli'?'repeating-conic-gradient(#e2e8f0 0 25%,#fff 0 50%) 0 0/14px 14px':bg};color:${fg}" onclick="pBg='${k}';renderPasOpts();drawPas()">${l}</button>`).join('');
+  $('tolBox').style.display=pBg==='asli'?'none':'block';
+  const [w,h]=SIZES[pSize];const L=lembar(cm(w),cm(h));
+  $('lembarInfo').textContent=`Muat ${L.cols*L.rows} foto ${pSize} di kertas 4R. Bisa dicetak di tempat cetak foto.`;
+}
+$('pFile').addEventListener('change',async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{pImg=await loadImg(f);pZoom=1;$('pZoom').value=100;pOff={x:0,y:0};$('pBody').style.display='block';$('pUt').textContent='Ganti foto';renderPasOpts();drawPas();}
+  catch(err){toast(err.message);}
+});
+$('pZoom').addEventListener('input',e=>{pZoom=e.target.value/100;drawPas();});
+$('pTol').addEventListener('input',e=>{$('tolLbl').textContent=e.target.value;clearTimeout(window._tt2);window._tt2=setTimeout(drawPas,120);});
+// Gambar pas foto ke kanvas berukuran W x H (dalam piksel).
+function renderPas(W,H){
+  const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,W,H);
+  const s=Math.max(W/pImg.width,H/pImg.height)*pZoom;const dw=pImg.width*s,dh=pImg.height*s;
+  const maxX=Math.max(0,(dw-W)/2),maxY=Math.max(0,(dh-H)/2);
+  pOff.x=Math.max(-maxX/W,Math.min(maxX/W,pOff.x));pOff.y=Math.max(-maxY/H,Math.min(maxY/H,pOff.y));
+  x.drawImage(pImg,(W-dw)/2+pOff.x*W,(H-dh)/2+pOff.y*H,dw,dh);
+  if(pBg!=='asli')gantiLatar(c,BGS.find(b=>b[0]===pBg)[2],+$('pTol').value);
+  return c;
+}
+// Ganti latar: isi dari tepi gambar ke dalam selama warnanya mirip latar di tepi (latar polos).
+function gantiLatar(c,warna,tol){
+  const W=c.width,H=c.height,x=c.getContext('2d');const im=x.getImageData(0,0,W,H),d=im.data;
+  const ref=[];const sample=(px,py)=>{const i=(py*W+px)*4;ref.push([d[i],d[i+1],d[i+2]]);};
+  for(let i=0;i<20;i++){sample(Math.floor(i*(W-1)/19),0);sample(0,Math.floor(i*(H-1)/19*0.6));sample(W-1,Math.floor(i*(H-1)/19*0.6));}
+  const T=tol*tol*3;const near=i=>{const r=d[i],g=d[i+1],b=d[i+2];for(const q of ref){const dr=r-q[0],dg=g-q[1],db=b-q[2];if(dr*dr+dg*dg+db*db<T)return true;}return false;};
+  const mask=new Uint8Array(W*H),st=[];
+  const push=(px,py)=>{const k=py*W+px;if(!mask[k]&&near(k*4)){mask[k]=1;st.push(k);}};
+  for(let px=0;px<W;px++)push(px,0);for(let py=0;py<H*0.75;py++){push(0,py);push(W-1,py);}
+  while(st.length){const k=st.pop(),px=k%W,py=(k/W)|0;if(px>0)push(px-1,py);if(px<W-1)push(px+1,py);if(py>0)push(px,py-1);if(py<H-1)push(px,py+1);}
+  // Haluskan tepi (blur kecil pada mask).
+  const soft=new Float32Array(W*H);const R=2;
+  for(let py=0;py<H;py++)for(let px=0;px<W;px++){let s=0,n=0;for(let dy=-R;dy<=R;dy++){const yy=py+dy;if(yy<0||yy>=H)continue;for(let dx=-R;dx<=R;dx++){const xx=px+dx;if(xx<0||xx>=W)continue;s+=mask[yy*W+xx];n++;}}soft[py*W+px]=s/n;}
+  const cr=parseInt(warna.slice(1,3),16),cg=parseInt(warna.slice(3,5),16),cb=parseInt(warna.slice(5,7),16);
+  for(let k=0;k<W*H;k++){const a=soft[k];if(!a)continue;const i=k*4;d[i]=d[i]*(1-a)+cr*a;d[i+1]=d[i+1]*(1-a)+cg*a;d[i+2]=d[i+2]*(1-a)+cb*a;}
+  x.putImageData(im,0,0);
+}
+function drawPas(){
+  if(!pImg||$('pane-pas').style.display==='none')return;
+  const [w,h]=SIZES[pSize];const W=300,H=Math.round(300*h/w);
+  const c=renderPas(W,H);const cv=$('pCv');cv.width=W;cv.height=H;cv.getContext('2d').drawImage(c,0,0);
+}
+(function drag(){
+  const box=$('cropBox');let st=null;
+  box.addEventListener('pointerdown',e=>{if(!pImg)return;st={x:e.clientX,y:e.clientY,ox:pOff.x,oy:pOff.y};box.setPointerCapture(e.pointerId);});
+  box.addEventListener('pointermove',e=>{if(!st)return;const r=box.getBoundingClientRect();pOff.x=st.ox+(e.clientX-st.x)/r.width;pOff.y=st.oy+(e.clientY-st.y)/r.height;
+    if(!window._raf)window._raf=requestAnimationFrame(()=>{window._raf=0;const keep=pBg;pBg='asli';drawPas();pBg=keep;});});
+  const end=()=>{if(st){st=null;drawPas();}};box.addEventListener('pointerup',end);box.addEventListener('pointercancel',end);
+})();
+async function unduhPas(){
+  if(!pImg)return;const [w,h]=SIZES[pSize];const c=renderPas(cm(w),cm(h));
+  unduh({blob:await toBlob(c,'image/jpeg',0.95),name:`pas_foto_${pSize}${pBg!=='asli'?'_'+pBg:''}.jpg`});
+}
+// Tata letak kertas 4R (10x15 cm): pilih arah kertas yang muat paling banyak.
+function lembar(w,h){
+  const gap=cm(0.3),m=cm(0.2);
+  const fit=(PW,PH)=>({PW,PH,gap,cols:Math.floor((PW-2*m+gap)/(w+gap)),rows:Math.floor((PH-2*m+gap)/(h+gap))});
+  const a=fit(cm(10),cm(15)),b=fit(cm(15),cm(10));
+  return b.cols*b.rows>a.cols*a.rows?b:a;
+}
+async function unduhLembar(){
+  if(!pImg)return;const [w,h]=SIZES[pSize];const one=renderPas(cm(w),cm(h));
+  const {PW,PH,cols,rows,gap}=lembar(one.width,one.height);
+  const c=document.createElement('canvas');c.width=PW;c.height=PH;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,PW,PH);
+  const ox=(PW-(cols*one.width+(cols-1)*gap))/2,oy=(PH-(rows*one.height+(rows-1)*gap))/2;
+  x.strokeStyle='#cbd5e1';x.lineWidth=2;
+  for(let r=0;r<rows;r++)for(let k=0;k<cols;k++){const px=ox+k*(one.width+gap),py=oy+r*(one.height+gap);x.drawImage(one,px,py);x.strokeRect(px,py,one.width,one.height);}
+  unduh({blob:await toBlob(c,'image/jpeg',0.95),name:`lembar_4R_pas_foto_${pSize}.jpg`});
+}
+/* Halaman */
+function go(id){location.hash=id||'';route();}
+function route(){const id=location.hash.replace('#','');$('view-home').style.display=id==='tentang'?'none':'block';$('view-tentang').style.display=id==='tentang'?'block':'none';}
+window.addEventListener('hashchange',route);
+function init(){renderK();tab(location.hash==='#pas'?'pas':'kompres');route();}
+
+/* ── Tema, menu, install ── */
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  const d=document.body.classList.contains('dark');
+  $('darkIcon').setAttribute('href',d?'#i-sun':'#i-moon');
+  try{localStorage.setItem('foto_theme',d?'dark':'light');}catch(e){}
+}
+try{if(localStorage.getItem('foto_theme')==='dark'){document.body.classList.add('dark');$('darkIcon').setAttribute('href','#i-sun');}}catch(e){}
+let _menuOpen=false;
+function toggleMenu(){_menuOpen=!_menuOpen;$('dropdownMenu').classList.toggle('open',_menuOpen);$('menuOverlay').classList.toggle('open',_menuOpen);}
+function closeMenu(){_menuOpen=false;$('dropdownMenu').classList.remove('open');$('menuOverlay').classList.remove('open');}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button'))closeMenu();});
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstallPrompt=e;
+  let last=0;try{last=parseInt(localStorage.getItem('foto_installClosed')||'0');}catch(_){}
+  if(Date.now()-last>86400000)setTimeout(()=>$('installPopup').classList.add('show'),2500);
+});
+function installApp(){
+  if(deferredInstallPrompt){deferredInstallPrompt.prompt();deferredInstallPrompt.userChoice.then(c=>{if(c.outcome==='accepted')toast('Aplikasi berhasil diinstall');deferredInstallPrompt=null;});}
+  else window.open('https://bantuguruyuk.web.id','_blank','noopener');
+  closeInstall();
+}
+function closeInstall(){$('installPopup').classList.remove('show');try{localStorage.setItem('foto_installClosed',Date.now().toString());}catch(e){}}
+
+init();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/foto/sw.js',{scope:'/foto/'}).then(reg=>{
+      reg.addEventListener('updatefound',()=>{const nw=reg.installing;nw.addEventListener('statechange',()=>{if(nw.state==='installed'&&navigator.serviceWorker.controller)toast('Foto Tools diperbarui. Muat ulang untuk versi terbaru.');});});
+    }).catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>

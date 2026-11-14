@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<script>if(!/\/$/.test(location.pathname)&&!/\.[a-z0-9]+$/i.test(location.pathname))location.replace(location.pathname+"/"+location.search+location.hash);</script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Bantu Guru Yuk | Acak Kelas</title>
+<link rel="icon" href="../guru-cibisd2.png" sizes="192x192" type="image/png"/>
+<link rel="apple-touch-icon" href="../guru-cibisd2.png"/>
+<meta name="theme-color" content="#0ea5a0"/>
+<link rel="manifest" href="./manifest.json"/>
+<meta name="description" content="Acak Kelas gratis untuk guru: bagi kelompok siswa otomatis, roda putar nama, dan urutan maju acak. Bisa layar penuh untuk IFP."/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-83WBBEE5BG"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-83WBBEE5BG');
+  function gaEvent(n,p){if(typeof gtag==='function')gtag('event',n,p||{});}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --grad:linear-gradient(135deg,#0ea5a0,#0d7a8a,#2d6a7f);
+  --blue:#0ea5a0;--radius:12px;--gray-100:#f1f5f9;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 32px rgba(0,0,0,.13);
+  --bg:#f0f4f8;--card-bg:#fff;--text:#1e293b;
+  --text-light:#64748b;--border:#e2e8f0;--input-bg:#f8fafc;--accent:#0d7a8a;
+}
+body.dark{
+  --bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;
+  --text-light:#94a3b8;--border:#334155;--input-bg:#0f172a;--accent:#5eead4;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .3s,color .3s;display:flex;flex-direction:column;overflow-x:hidden;}
+.ic{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;display:inline-block;}
+button{font-family:inherit;}
+
+/* INSTALL */
+#installPopup{position:fixed;top:-90px;left:0;right:0;background:var(--grad);color:#fff;padding:12px 16px;text-align:center;transition:.4s;z-index:9998;font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+#installPopup.show{top:0;}
+#installPopup button{border:none;border-radius:8px;padding:5px 14px;min-height:40px;min-width:40px;font-weight:700;cursor:pointer;font-size:.8rem;}
+.btn-install{background:#fff;color:#0d7a8a;}
+.btn-install-close{background:rgba(255,255,255,.2);color:#fff;}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:300;background:var(--grad);padding:0 16px;box-shadow:0 2px 10px rgba(0,0,0,.18);}
+body.dark header{background:linear-gradient(135deg,#0d4a47,#1a3a4a);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:60px;max-width:1100px;margin:0 auto;}
+.header-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
+.header-brand img{width:36px;height:36px;border-radius:10px;flex-shrink:0;}
+.header-brand h1{font-size:1rem;font-weight:800;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.header-brand .badge{font-size:.75rem;font-weight:800;background:rgba(255,255,255,.22);color:#fff;border-radius:6px;padding:1px 6px;margin-left:4px;vertical-align:2px;}
+.header-right{display:flex;align-items:center;gap:6px;position:relative;flex-shrink:0;}
+.hdr-btn{height:40px;width:40px;border-radius:10px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.hdr-btn:hover{background:rgba(255,255,255,.22);}
+.hdr-btn .ic{width:18px;height:18px;}
+.dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-lg);width:280px;max-width:calc(100vw - 24px);max-height:calc(100vh - 90px);overflow-y:auto;display:none;z-index:400;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:11px 16px;min-height:44px;font-size:.83rem;font-weight:600;color:var(--text);cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+.dropdown-item:hover{background:var(--gray-100);}
+body.dark .dropdown-item:hover{background:rgba(255,255,255,.06);}
+.dropdown-item .ic{color:var(--blue);width:18px;height:18px;}
+.dropdown-divider{height:1px;background:var(--border);margin:4px 0;}
+#menuOverlay{display:none;position:fixed;inset:0;z-index:250;}
+#menuOverlay.open{display:block;}
+
+/* MAIN */
+main{max-width:1100px;margin:0 auto;padding:20px;width:100%;flex:1;}
+@media(max-width:640px){main{padding:12px;}}
+.hint-bar{background:rgba(14,165,160,.08);border:1.5px solid rgba(14,165,160,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.8rem;color:var(--text);line-height:1.6;display:flex;gap:8px;align-items:flex-start;}
+.hint-bar .ic{color:var(--accent);margin-top:2px;}
+.hint-bar b{color:var(--accent);}
+.card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:12px;border:1px solid var(--border);}
+@media(max-width:640px){.card{padding:14px 12px;}}
+.card-title{font-size:.9rem;font-weight:800;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding-bottom:10px;}
+.card-title .ic{color:var(--blue);width:20px;height:20px;}
+
+/* TOOL GRID */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;}
+@media(max-width:520px){.tool-grid{grid-template-columns:1fr 1fr;gap:8px;}}
+.tool-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;text-align:left;color:var(--text);display:flex;flex-direction:column;gap:6px;transition:border-color .2s,transform .2s;box-shadow:var(--shadow);min-height:120px;}
+.tool-card:hover{border-color:var(--blue);transform:translateY(-2px);}
+.tool-card .ti{width:40px;height:40px;border-radius:10px;background:rgba(14,165,160,.1);display:flex;align-items:center;justify-content:center;color:var(--blue);}
+.tool-card .ti .ic{width:22px;height:22px;}
+.tool-card .tn{font-size:.9rem;font-weight:800;}
+.tool-card .td{font-size:.75rem;color:var(--text-light);line-height:1.4;}
+
+/* TOOL PANEL */
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:none;border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:0 14px;min-height:40px;font-weight:700;font-size:.82rem;cursor:pointer;margin-bottom:12px;background:var(--card-bg);}
+.back-btn:hover{border-color:var(--blue);color:var(--blue);}
+.tool-desc{font-size:.8rem;color:var(--text-light);margin:-4px 0 12px;line-height:1.5;}
+.upload-area{border:2px dashed var(--border);border-radius:12px;padding:22px 12px;text-align:center;cursor:pointer;background:var(--input-bg);position:relative;transition:all .2s;}
+.upload-area:hover,.upload-area.drag{border-color:var(--blue);background:rgba(14,165,160,.05);}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-area .ui .ic{width:30px;height:30px;color:var(--blue);}
+.upload-area .ut{font-size:.88rem;font-weight:800;margin-top:6px;}
+.upload-area .us{font-size:.75rem;color:var(--text-light);margin-top:3px;}
+.file-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.file-row{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:10px;padding:6px 8px;background:var(--input-bg);}
+.file-row img,.file-row .fthumb{width:40px;height:40px;object-fit:cover;border-radius:6px;flex:none;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:#ef4444;font-size:.75rem;font-weight:800;}
+.file-row .fn{flex:1;min-width:0;font-size:.8rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.file-row .fs{font-size:.75rem;color:var(--text-light);font-weight:500;}
+.ibtn{width:40px;height:40px;border-radius:9px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex:none;}
+.ibtn:hover{border-color:var(--blue);color:var(--blue);}
+.ibtn.r:hover{border-color:#ef4444;color:#ef4444;}
+.ibtn:disabled{opacity:.35;cursor:default;}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+@media(max-width:420px){.opts{grid-template-columns:1fr;}}
+.opts .full{grid-column:1/-1;}
+label.lb{display:block;font-size:.75rem;font-weight:700;color:var(--text-light);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
+input[type=text],input[type=number],select{width:100%;padding:8px 10px;min-height:42px;border:1.5px solid var(--border);border-radius:9px;font-size:.88rem;color:var(--text);background:var(--input-bg);outline:none;font-family:inherit;}
+input[type=range]{width:100%;min-height:40px;accent-color:#0ea5a0;}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,160,.12);}
+.hint{font-size:.75rem;color:var(--text-light);margin-top:4px;line-height:1.45;}
+.seg{display:flex;gap:6px;flex-wrap:wrap;}
+.seg button{flex:1;min-width:90px;min-height:42px;border:1.5px solid var(--border);background:var(--input-bg);color:var(--text);border-radius:9px;font-weight:700;font-size:.8rem;cursor:pointer;padding:4px 8px;}
+.seg button.on{border-color:var(--blue);background:rgba(14,165,160,.12);color:var(--accent);}
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:13px;min-height:48px;border:none;border-radius:12px;background:var(--grad);color:#fff;font-weight:800;font-size:1rem;cursor:pointer;box-shadow:0 4px 14px rgba(14,165,160,.25);}
+.btn-primary:disabled{opacity:.5;cursor:default;}
+.btn-sec{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:0 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);font-weight:700;font-size:.82rem;cursor:pointer;}
+.btn-sec:hover{border-color:var(--blue);color:var(--blue);}
+.result{display:none;margin-top:14px;border:1.5px solid rgba(16,185,129,.4);background:rgba(16,185,129,.07);border-radius:12px;padding:14px;}
+.result.show{display:block;}
+.result .rt{font-weight:800;font-size:.9rem;color:#059669;display:flex;align-items:center;gap:6px;}
+body.dark .result .rt{color:#6ee7b7;}
+.result .rs{font-size:.8rem;color:var(--text);margin-top:4px;line-height:1.5;}
+.result .btn-primary{margin-top:10px;background:linear-gradient(135deg,#10b981,#059669);}
+.warn{font-size:.78rem;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.35);border-radius:9px;padding:8px 10px;margin-top:10px;line-height:1.5;color:var(--text);}
+
+/* PAGE GRID (atur halaman) */
+.page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px;}
+@media(max-width:420px){.page-grid{grid-template-columns:1fr 1fr;}}
+.pg-item{border:1.5px solid var(--border);border-radius:10px;padding:8px;background:var(--input-bg);display:flex;flex-direction:column;align-items:center;gap:6px;}
+.pg-item.del{opacity:.35;}
+.pg-thumb{width:100%;aspect-ratio:1/1.3;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pg-thumb canvas{max-width:100%;max-height:100%;box-shadow:0 1px 4px rgba(0,0,0,.2);background:#fff;transition:transform .2s;}
+.pg-no{font-size:.75rem;font-weight:800;color:var(--text-light);}
+.pg-act{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;}
+
+/* TTD */
+.sig-pad{width:100%;height:180px;border:1.5px dashed var(--border);border-radius:10px;background:#fff;touch-action:none;display:block;}
+.place-wrap{position:relative;margin-top:8px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff;max-width:520px;}
+.place-wrap canvas{width:100%;display:block;cursor:crosshair;touch-action:manipulation;}
+.place-wrap img{position:absolute;pointer-events:none;opacity:.9;}
+
+/* BUSY */
+#busy{display:none;position:fixed;inset:0;z-index:9000;background:rgba(15,23,42,.6);align-items:center;justify-content:center;padding:20px;}
+#busy.show{display:flex;}
+#busy .bx{background:var(--card-bg);color:var(--text);border-radius:14px;padding:22px 24px;min-width:240px;max-width:340px;text-align:center;box-shadow:var(--shadow-lg);}
+#busy .sp{width:36px;height:36px;border:3px solid rgba(14,165,160,.25);border-top-color:#0ea5a0;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
+#busy .bm{font-size:.88rem;font-weight:700;}
+#busy .bp{height:6px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:12px;}
+#busy .bp div{height:100%;width:0;background:var(--grad);transition:width .2s;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:#1e293b;color:#fff;padding:10px 22px;border-radius:99px;font-size:.82rem;font-weight:600;z-index:9999;opacity:0;transition:all .35s;pointer-events:none;max-width:90vw;text-align:center;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+body.dark #toast{background:#f1f5f9;color:#1e293b;}
+
+.about p{font-size:.85rem;line-height:1.7;margin-bottom:8px;}
+.about a{color:var(--accent);font-weight:700;}
+
+footer{background:var(--grad);color:#fff;text-align:center;padding:14px 20px 10px;margin-top:auto;}
+footer .footer-title{font-size:.85rem;font-weight:700;margin-bottom:2px;}
+footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.85);}
+footer a{color:inherit;text-decoration:underline;}
+
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;}
+.tabs button{min-height:48px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:12px;font-weight:800;font-size:.82rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 4px;}
+.tabs button .ic{width:20px;height:20px;color:var(--blue);}
+.tabs button.on{border-color:var(--blue);background:rgba(14,165,160,.1);color:var(--accent);}
+textarea.names{width:100%;min-height:150px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;color:var(--text);background:var(--input-bg);outline:none;font-family:inherit;resize:vertical;line-height:1.5;}
+textarea.names:focus{border-color:var(--blue);}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;}
+.cnt{font-size:.8rem;color:var(--text-light);font-weight:700;margin-left:auto;}
+.grp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:12px;}
+.grp{border:1.5px solid var(--border);border-radius:12px;padding:10px 12px;background:var(--input-bg);}
+.grp h4{font-size:.9rem;font-weight:800;margin-bottom:6px;color:var(--accent);display:flex;justify-content:space-between;}
+.grp h4 small{font-size:.75rem;color:var(--text-light);font-weight:700;}
+.grp ol{padding-left:20px;font-size:.88rem;line-height:1.6;}
+.out{margin-top:12px;}
+.out.fs{background:var(--bg);padding:24px;overflow:auto;}
+.out.fs .grp-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}
+.out.fs .grp h4{font-size:1.4rem;}.out.fs .grp ol,.out.fs .urut{font-size:1.35rem;}
+.out.fs .fs-hide{display:none;}
+.urut{columns:2 180px;padding-left:28px;font-size:.92rem;line-height:1.8;margin-top:12px;}
+.wheel-wrap{position:relative;width:min(100%,380px);margin:8px auto 0;}
+.wheel-wrap canvas{width:100%;height:auto;display:block;}
+.wheel-ptr{position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:26px solid #ef4444;filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));}
+.winner{text-align:center;font-size:1.5rem;font-weight:900;color:var(--accent);min-height:2.2em;margin-top:10px;}
+.picked{font-size:.8rem;color:var(--text-light);margin-top:6px;line-height:1.6;}
+.out.fs .winner{font-size:3rem;}
+.out.fs .wheel-wrap{width:min(80vh,90vw);}
+.chk{display:flex;align-items:center;gap:8px;font-size:.85rem;min-height:40px;cursor:pointer;}
+.chk input{width:20px;height:20px;accent-color:#0ea5a0;}
+
+</style>
+<link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+<script src="/bgy-info.js"></script>
+</head>
+<body>
+<!-- Ikon Lucide (lucide.dev, ISC) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs><symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-wheel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/><path d="M2 12h20"/><path d="m4.93 4.93 14.14 14.14"/><path d="m19.07 4.93-14.14 14.14"/></symbol><symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12h11"/><path d="M10 18h11"/><path d="M10 6h11"/><path d="M4 10h2"/><path d="M4 6h1v4"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></symbol><symbol id="i-shuffle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h1.973a4 4 0 0 0 3.3-1.7l5.454-7.6a4 4 0 0 1 3.3-1.7H22"/><path d="M2 6h1.972a4 4 0 0 1 3.6 2.2"/><path d="M22 18h-6.041a4 4 0 0 1-3.3-1.8l-.359-.45"/></symbol><symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol><symbol id="i-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol><symbol id="i-rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol><symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol><symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></symbol><symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2" /><path d="M12 18h.01" /></symbol><symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" /></symbol><symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2" /><path d="M12 20v2" /><path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" /><path d="M2 12h2" /><path d="M20 12h2" /><path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" /></symbol><symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></symbol><symbol id="i-gabung" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3a2 2 0 0 1-2-2V2"/><path d="M9 18a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h7l4 4v10a2 2 0 0 1-2 2Z"/><path d="M3 7.6v12.8A1.6 1.6 0 0 0 4.6 22h9.8"/></symbol><symbol id="i-pisah" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol><symbol id="i-atur" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol><symbol id="i-foto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol><symbol id="i-kegambar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><circle cx="10" cy="12" r="2"/><path d="m20 17-1.296-1.296a2.41 2.41 0 0 0-3.408 0L9 22"/></symbol><symbol id="i-kompres" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" x2="21" y1="10" y2="3"/><line x1="3" x2="10" y1="21" y2="14"/></symbol><symbol id="i-nomor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="9" y2="9"/><line x1="4" x2="20" y1="15" y2="15"/><line x1="10" x2="8" y1="3" y2="21"/><line x1="16" x2="14" y1="3" y2="21"/></symbol><symbol id="i-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M19.27 13.73A2.5 2.5 0 0 0 17.5 13h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-.66-.26-1.3-.73-1.77Z"/><path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-3-3c-1.66 0-3 1-3 3s1 2 1 3.5V13"/></symbol><symbol id="i-ttd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></symbol><symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></symbol><symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol><symbol id="i-rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol><symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol><symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol><symbol id="i-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></symbol><symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></symbol><symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol></defs></svg>
+
+<div id="installPopup">
+  <span><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg> Install Acak Kelas di HP kamu!</span>
+  <button class="btn-install" onclick="installApp()">Install</button>
+  <button class="btn-install-close" onclick="closeInstall()" aria-label="Tutup"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
+</div>
+<div id="toast"></div>
+<div id="busy" role="status" aria-live="polite"><div class="bx"><div class="sp"></div><div class="bm" id="busyMsg">Memproses...</div><div class="bp"><div id="busyBar"></div></div></div></div>
+<div id="menuOverlay" onclick="closeMenu()"></div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <img src="../guru-cibisd2.png" alt="Logo"/>
+      <h1>BGY | Acak Kelas<span class="badge">GRATIS</span></h1>
+    </div>
+    <div class="header-right">
+      <button class="hdr-btn" onclick="toggleDark()" title="Mode gelap/terang" aria-label="Mode gelap/terang"><svg class="ic" aria-hidden="true"><use id="darkIcon" href="#i-moon"/></svg></button>
+      <button class="hdr-btn" onclick="toggleMenu()" title="Menu" aria-label="Menu"><svg class="ic" aria-hidden="true"><use href="#i-menu"/></svg></button>
+      <div class="dropdown-menu" id="dropdownMenu">
+        <button class="dropdown-item" onclick="go('');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-house"/></svg> Home</button>
+        <button class="dropdown-item" onclick="go('');tab('kel');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Bagi Kelompok</button>
+        <button class="dropdown-item" onclick="go('');tab('roda');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-wheel"/></svg> Roda Nama</button>
+        <button class="dropdown-item" onclick="go('');tab('urut');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg> Urutan Acak</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" onclick="go('tentang');closeMenu()"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang &amp; Kontak</button>
+        <div class="dropdown-divider"></div>
+        <div data-bgy-menu></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="view-home">
+    <div class="hint-bar"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg><div>Tempel nama siswa sekali, lalu <b>bagi kelompok</b>, <b>putar roda nama</b>, atau <b>acak urutan maju</b>. Daftar nama tersimpan di HP ini saja.</div></div>
+    <div class="card">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Daftar Nama</div>
+      <label class="lb" for="names">Satu nama per baris</label>
+      <textarea id="names" class="names" placeholder="Tempel nama siswa di sini, bisa langsung dari Excel"></textarea>
+      <div class="row"><button class="btn-sec" type="button" onclick="contoh()">Isi contoh</button><button class="btn-sec" type="button" onclick="hapusNama()"><svg class="ic" aria-hidden="true"><use href="#i-trash"/></svg> Kosongkan</button><span class="cnt" id="cnt">0 nama</span></div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button type="button" id="tb-kel" onclick="tab('kel')"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>Kelompok</button>
+      <button type="button" id="tb-roda" onclick="tab('roda')"><svg class="ic" aria-hidden="true"><use href="#i-wheel"/></svg>Roda Nama</button>
+      <button type="button" id="tb-urut" onclick="tab('urut')"><svg class="ic" aria-hidden="true"><use href="#i-list"/></svg>Urutan Acak</button>
+    </div>
+    <div class="card" id="pane-kel">
+      <div class="opts" style="margin-top:0"><div class="full"><label class="lb">Bagi berdasarkan</label><div class="seg"><button type="button" id="m-jml" onclick="setMode('jml')">Jumlah kelompok</button><button type="button" id="m-ang" onclick="setMode('ang')">Anggota per kelompok</button></div></div>
+      <div class="full"><label class="lb" for="kelN" id="kelLbl">Jumlah kelompok</label><input type="number" id="kelN" min="1" max="50" value="5"/></div></div>
+      <button class="btn-primary" type="button" onclick="bagi()"><svg class="ic" aria-hidden="true"><use href="#i-shuffle"/></svg> Bagi Kelompok</button>
+      <div class="out" id="outKel"></div>
+    </div>
+    <div class="card" id="pane-roda" style="display:none">
+      <div class="out" id="outRoda">
+        <div class="wheel-wrap"><div class="wheel-ptr"></div><canvas id="wheel" width="760" height="760" aria-label="Roda nama"></canvas></div>
+        <div class="winner" id="winner" aria-live="polite"></div>
+        <div class="row" style="justify-content:center"><button class="btn-primary" type="button" id="spinBtn" onclick="spin()" style="max-width:320px"><svg class="ic" aria-hidden="true"><use href="#i-rotate"/></svg> Putar</button></div>
+        <div class="fs-hide"><label class="chk"><input type="checkbox" id="rmWin" checked/> Nama terpilih tidak ikut putaran berikutnya</label>
+        <div class="row"><button class="btn-sec" type="button" onclick="resetRoda()">Kembalikan semua nama</button><button class="btn-sec" type="button" onclick="layarPenuh('outRoda')"><svg class="ic" aria-hidden="true"><use href="#i-full"/></svg> Layar penuh</button></div></div>
+        <div class="picked" id="picked"></div>
+      </div>
+    </div>
+    <div class="card" id="pane-urut" style="display:none">
+      <button class="btn-primary" type="button" onclick="acakUrut()" style="margin-top:0"><svg class="ic" aria-hidden="true"><use href="#i-shuffle"/></svg> Acak Urutan</button>
+      <div class="out" id="outUrut"></div>
+    </div>
+  </section>
+  <section id="view-tentang" style="display:none;">
+    <button class="back-btn" onclick="go('')"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg> Kembali</button>
+    <div class="card about">
+      <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg> Tentang Acak Kelas</div>
+      <p>Acak Kelas adalah bagian dari <b>Bantu Guru Yuk</b>. Gratis untuk Bapak/Ibu Guru.</p>
+      <p>Daftar nama hanya disimpan di perangkat ini, tidak dikirim ke server.</p>
+      <p>Kritik, saran, atau ide fitur: hubungi Pak Choy lewat <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener">TikTok @pak.choyy</a>.</p>
+    </div>
+  </section>
+</main>
+
+<div data-bgy-info></div>
+<footer>
+  <div class="footer-title">Acak Kelas</div>
+  <div class="footer-sub">© 2026 Bantu Guru Yuk by <a href="https://www.tiktok.com/@pak.choyy" target="_blank" rel="noopener">pak.choyy</a> &bull; v26.11.1</div>
+</footer>
+
+<script>
+'use strict';
+let deferredInstallPrompt=null;
+const $=id=>document.getElementById(id);
+const ico=id=>`<svg class="ic" aria-hidden="true"><use href="#${id}"/></svg>`;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let _tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),3000);}
+
+const MAX_NAMES=200;   // batas jumlah nama
+const COLORS=['#0ea5a0','#f59e0b','#3b82f6','#ef4444','#8b5cf6','#10b981','#ec4899','#f97316','#14b8a6','#6366f1'];
+let mode='jml',curTab='kel',sisa=null,picked=[],rot=0,spinning=false,adaHasil=false;
+function rnd(n){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n;}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function names(){return $('names').value.split(/\r?\n|\t|;/).map(s=>s.replace(/^\s*\d+[\.\)]\s*/,'').trim()).filter(Boolean).slice(0,MAX_NAMES);}
+function simpan(){try{localStorage.setItem('acak_names',$('names').value);}catch(e){}}
+function updCnt(){const n=names().length;$('cnt').textContent=n+' nama'+(n>=MAX_NAMES?' (maks)':'');sisa=null;picked=[];drawWheel();$('picked').textContent='';$('winner').textContent='';}
+function contoh(){$('names').value=['Andi','Bunga','Citra','Dimas','Eka','Fajar','Gita','Hadi','Intan','Joko','Kirana','Lutfi','Maya','Nanda','Oki','Putri','Rizky','Salsa','Tegar','Umi'].join('\n');simpan();updCnt();}
+function hapusNama(){if(!$('names').value||confirm('Kosongkan daftar nama?')){$('names').value='';simpan();updCnt();}}
+function hasil(){if(adaHasil)return;adaHasil=true;window.bgyAskReview&&bgyAskReview({delay:4000});}
+function cukup(min){const n=names();if(n.length<min){toast(min>1?'Isi minimal '+min+' nama dulu.':'Isi daftar nama dulu.');$('names').focus();return null;}return n;}
+function tab(t){curTab=t;['kel','roda','urut'].forEach(x=>{$('pane-'+x).style.display=x===t?'block':'none';$('tb-'+x).classList.toggle('on',x===t);$('tb-'+x).setAttribute('aria-selected',x===t);});if(t==='roda')drawWheel();}
+function setMode(m){mode=m;$('m-jml').classList.toggle('on',m==='jml');$('m-ang').classList.toggle('on',m==='ang');$('kelLbl').textContent=m==='jml'?'Jumlah kelompok':'Anggota per kelompok';}
+function bagi(){
+  const n=cukup(2);if(!n)return;
+  let k=Math.max(1,parseInt($('kelN').value)||1);
+  if(mode==='ang')k=Math.ceil(n.length/k);
+  k=Math.min(k,n.length);
+  const g=Array.from({length:k},()=>[]);shuffle(n).forEach((x,i)=>g[i%k].push(x));
+  $('outKel').innerHTML=`<div class="grp-grid">${g.map((a,i)=>`<div class="grp"><h4>Kelompok ${i+1}<small>${a.length} orang</small></h4><ol>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>`).join('')}</div>
+  <div class="row fs-hide"><button class="btn-sec" type="button" onclick="bagi()">${ico('i-shuffle')} Acak ulang</button><button class="btn-sec" type="button" onclick="salin('outKel')">${ico('i-copy')} Salin teks</button><button class="btn-sec" type="button" onclick="layarPenuh('outKel')">${ico('i-full')} Layar penuh</button></div>`;
+  window._kel=g;hasil();
+}
+function acakUrut(){
+  const n=cukup(2);if(!n)return;const a=shuffle(n);window._urut=a;
+  $('outUrut').innerHTML=`<ol class="urut">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol><div class="row fs-hide"><button class="btn-sec" type="button" onclick="salin('outUrut')">${ico('i-copy')} Salin teks</button><button class="btn-sec" type="button" onclick="layarPenuh('outUrut')">${ico('i-full')} Layar penuh</button></div>`;
+  hasil();
+}
+function salin(id){
+  let t='';
+  if(id==='outKel')t=(window._kel||[]).map((a,i)=>`Kelompok ${i+1}:\n`+a.map((x,j)=>`${j+1}. ${x}`).join('\n')).join('\n\n');
+  else t=(window._urut||[]).map((x,i)=>`${i+1}. ${x}`).join('\n');
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast('Tersalin. Tinggal tempel di WA/dokumen.')).catch(()=>toast('Gagal menyalin.'));
+}
+function layarPenuh(id){
+  const el=$(id);
+  if(document.fullscreenElement){document.exitFullscreen();return;}
+  if(el.requestFullscreen){el.classList.add('fs');el.requestFullscreen().catch(()=>el.classList.remove('fs'));}
+  else toast('Layar penuh tidak didukung di browser ini.');
+}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement)document.querySelectorAll('.out.fs').forEach(e=>e.classList.remove('fs'));setTimeout(drawWheel,100);});
+document.addEventListener('keydown',e=>{if(document.fullscreenElement&&curTab==='roda'&&(e.key===' '||e.key==='Enter')){e.preventDefault();spin();}});
+/* Roda */
+function wheelNames(){if(!sisa)sisa=names();return sisa;}
+function drawWheel(){
+  const cv=$('wheel');if(!cv)return;const x=cv.getContext('2d');const W=cv.width,R=W/2-8;
+  x.clearRect(0,0,W,W);const a=wheelNames();
+  if(!a.length){x.fillStyle='#e2e8f0';x.beginPath();x.arc(W/2,W/2,R,0,7);x.fill();x.fillStyle='#64748b';x.font='bold 30px sans-serif';x.textAlign='center';x.fillText('Isi daftar nama dulu',W/2,W/2+10);return;}
+  const seg=2*Math.PI/a.length;
+  a.forEach((nm,i)=>{
+    const s=rot+i*seg-Math.PI/2;x.beginPath();x.moveTo(W/2,W/2);x.arc(W/2,W/2,R,s,s+seg);x.closePath();
+    x.fillStyle=a.length===1?COLORS[0]:COLORS[i%(a.length%COLORS.length===1?COLORS.length-1:COLORS.length)];x.fill();x.strokeStyle='#fff';x.lineWidth=3;x.stroke();
+    x.save();x.translate(W/2,W/2);x.rotate(s+seg/2);x.fillStyle='#fff';x.textAlign='right';
+    const fs=Math.max(14,Math.min(34,seg*R*0.55));x.font=`bold ${fs}px sans-serif`;
+    let t=nm;while(x.measureText(t).width>R-60&&t.length>3)t=t.slice(0,-2);if(t!==nm)t=t.trim()+'…';
+    x.fillText(t,R-18,fs/3);x.restore();
+  });
+  x.beginPath();x.arc(W/2,W/2,34,0,7);x.fillStyle='#fff';x.fill();x.strokeStyle='#0d7a8a';x.lineWidth=6;x.stroke();
+}
+function spin(){
+  if(spinning)return;const a=wheelNames();
+  if(!a.length){if(names().length)toast('Semua nama sudah terpilih. Tekan "Kembalikan semua nama".');else cukup(1);return;}
+  spinning=true;$('spinBtn').disabled=true;$('winner').textContent='';
+  const seg=2*Math.PI/a.length,win=rnd(a.length);
+  // Pointer di atas: sudut tengah segmen pemenang harus berada di -PI/2.
+  const target=-(win*seg+seg/2);const cur=rot%(2*Math.PI);
+  let delta=target-cur;while(delta<0)delta+=2*Math.PI;delta+=2*Math.PI*(5+rnd(3));
+  const start=rot,dur=4200+rnd(1200),t0=performance.now();
+  (function step(now){
+    const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,4);rot=start+delta*e;drawWheel();
+    if(p<1)return requestAnimationFrame(step);
+    spinning=false;$('spinBtn').disabled=false;const nm=a[win];$('winner').textContent=nm;picked.push(nm);
+    $('picked').textContent='Terpilih: '+picked.map((x,i)=>(i+1)+'. '+x).join(', ');
+    if($('rmWin').checked){sisa=a.filter((_,i)=>i!==win);setTimeout(drawWheel,1200);}
+    hasil();
+  })(t0);
+}
+function resetRoda(){sisa=null;picked=[];$('picked').textContent='';$('winner').textContent='';drawWheel();}
+/* Halaman */
+function go(id){location.hash=id||'';route();}
+function route(){const id=location.hash.replace('#','');$('view-home').style.display=id==='tentang'?'none':'block';$('view-tentang').style.display=id==='tentang'?'block':'none';}
+window.addEventListener('hashchange',route);
+function init(){
+  try{$('names').value=localStorage.getItem('acak_names')||'';}catch(e){}
+  $('names').addEventListener('input',()=>{simpan();updCnt();});
+  setMode('jml');tab('kel');updCnt();route();
+}
+
+/* ── Tema, menu, install ── */
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  const d=document.body.classList.contains('dark');
+  $('darkIcon').setAttribute('href',d?'#i-sun':'#i-moon');
+  try{localStorage.setItem('acak_theme',d?'dark':'light');}catch(e){}
+}
+try{if(localStorage.getItem('acak_theme')==='dark'){document.body.classList.add('dark');$('darkIcon').setAttribute('href','#i-sun');}}catch(e){}
+let _menuOpen=false;
+function toggleMenu(){_menuOpen=!_menuOpen;$('dropdownMenu').classList.toggle('open',_menuOpen);$('menuOverlay').classList.toggle('open',_menuOpen);}
+function closeMenu(){_menuOpen=false;$('dropdownMenu').classList.remove('open');$('menuOverlay').classList.remove('open');}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#dropdownMenu [data-bgy-menu] a, #dropdownMenu [data-bgy-menu] button'))closeMenu();});
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredInstallPrompt=e;
+  let last=0;try{last=parseInt(localStorage.getItem('acak_installClosed')||'0');}catch(_){}
+  if(Date.now()-last>86400000)setTimeout(()=>$('installPopup').classList.add('show'),2500);
+});
+function installApp(){
+  if(deferredInstallPrompt){deferredInstallPrompt.prompt();deferredInstallPrompt.userChoice.then(c=>{if(c.outcome==='accepted')toast('Aplikasi berhasil diinstall');deferredInstallPrompt=null;});}
+  else window.open('https://bantuguruyuk.web.id','_blank','noopener');
+  closeInstall();
+}
+function closeInstall(){$('installPopup').classList.remove('show');try{localStorage.setItem('acak_installClosed',Date.now().toString());}catch(e){}}
+
+init();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/acak/sw.js',{scope:'/acak/'}).then(reg=>{
+      reg.addEventListener('updatefound',()=>{const nw=reg.installing;nw.addEventListener('statechange',()=>{if(nw.state==='installed'&&navigator.serviceWorker.controller)toast('Acak Kelas diperbarui. Muat ulang untuk versi terbaru.');});});
+    }).catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>

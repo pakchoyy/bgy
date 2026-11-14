@@ -22,7 +22,9 @@
     { text: 'Kumpulan Tujuan Pembelajaran terupdate', url: 'https://www.bantuguruyuk.web.id/draft-tp/', path: '/draft-tp' },
     { text: 'Undangan rapor jadi dalam 1 menit', url: 'https://www.bantuguruyuk.web.id/teks-sekolah/', path: '/teks-sekolah' },
     { text: 'Simpan akun digital guru, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' },
-    { text: 'Gabung, kompres & TTD PDF gratis', url: 'https://www.bantuguruyuk.web.id/pdf/', path: '/pdf' }
+    { text: 'Gabung, kompres & TTD PDF gratis', url: 'https://www.bantuguruyuk.web.id/pdf/', path: '/pdf' },
+    { text: 'Bagi kelompok & roda nama siswa', url: 'https://www.bantuguruyuk.web.id/acak/', path: '/acak' },
+    { text: 'Pas foto latar merah/biru, gratis', url: 'https://www.bantuguruyuk.web.id/foto/', path: '/foto' }
   ];
   // Ikon Lucide (lucide.dev, lisensi ISC) — isi <svg viewBox="0 0 24 24">
   var ICONS = {
@@ -282,6 +284,8 @@
     'draft-tp': 'Cobain Draft TP dari Bantu Guru Yuk: TP siap tempel ke e-Rapor, plus ATP, Prota & Prosem otomatis.',
     'teks-sekolah': 'Cobain Teks Sekolah dari Bantu Guru Yuk: undangan rapor, rapat, dan pemberitahuan sekolah jadi dalam 1 menit.',
     dokumen: 'Cobain Dokumen Resmi dari Bantu Guru Yuk: peraturan & panduan kementerian untuk guru, lengkap dengan ringkasan, tinggal unduh.',
+    acak: 'Cobain Acak Kelas dari Bantu Guru Yuk: bagi kelompok siswa, roda putar nama, dan urutan maju acak. Gratis, bisa layar penuh di IFP.',
+    foto: 'Cobain Foto Tools dari Bantu Guru Yuk: kompres foto untuk upload PMM/SPMB dan pas foto latar merah/biru siap cetak. Gratis.',
     pdf: 'Cobain PDF Tools dari Bantu Guru Yuk: gabung, pisah, kompres, foto ke PDF, sampai tanda tangan PDF. Gratis dan file tidak diunggah.',
     sandi: 'Cobain Simpan Sandi dari Bantu Guru Yuk: catat akun Dapodik, PMM, email sekolah, dan lainnya rapi di HP. Aman & bisa offline.'
   };
@@ -1089,6 +1093,8 @@
     ['Simpan Sandi', 'Akun digital guru, aman & offline', '/sandi/', '<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />', 'Administrasi'],
     ['Buat Jadwal', 'Jadwal pelajaran tanpa bentrok', 'https://bjadwal.bantuguruyuk.web.id', '<path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /><path d="M8 13h.01" /><path d="M12 13h.01" /><path d="M16 13h.01" /><path d="M8 17h.01" /><path d="M12 17h.01" /><path d="M16 17h.01" />', 'Administrasi'],
     ['PDF Tools', 'Gabung, kompres & TTD PDF', '/pdf/', '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>', 'Tools Lainnya'],
+    ['Acak Kelas', 'Kelompok & roda nama siswa', '/acak/', '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', 'Tools Lainnya'],
+    ['Foto Tools', 'Kompres foto & pas foto', '/foto/', '<rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 21v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/>', 'Tools Lainnya'],
     ['Presensi Siswa', 'Absensi siswa QR & PJJ', 'https://presiswa.bantuguruyuk.web.id', '<rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" />', 'Web Lainnya'],
     ['Presensi Guru', 'Absensi & rekap kehadiran guru', 'https://preguru.bantuguruyuk.web.id', '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/>', 'Web Lainnya'],
     ['CBT Yuk', 'Ujian online untuk siswa', 'https://cbt-yuk.web.id', '<path d="m9 10 2 2 4-4"/><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/>', 'Web Lainnya'],
