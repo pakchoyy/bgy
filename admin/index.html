@@ -681,6 +681,21 @@ main{padding-bottom:90px!important;}
         <div class="msg" id="promoMsg"></div>
       </form>
       <hr style="margin:20px 0;border:none;border-top:1px solid var(--border)">
+      <div class="card-title" style="margin-top:0"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Traktir Pak Choy (QRIS)</div>
+      <p class="hint">Tombol "Traktir Pak Choy" muncul di menu tiap tool, di Beranda, dan sesekali setelah pengguna berhasil mengunduh hasil. QR dibuat otomatis sesuai nominal yang dipilih.</p>
+      <form id="traktirForm">
+        <div class="fg"><label class="chk"><input type="checkbox" id="tkAktif"/> Tampilkan tombol Traktir</label></div>
+        <div class="fg"><label for="tkFile">Upload gambar QRIS</label><input type="file" id="tkFile" accept="image/*"/><div class="hint" id="tkInfo">Foto/screenshot QRIS dari aplikasi bank/merchant. Kodenya dibaca otomatis.</div></div>
+        <div class="fg"><label for="tkKode">Kode QRIS (terisi otomatis)</label><textarea id="tkKode" rows="3" maxlength="600" placeholder="000201010211..." style="font-family:monospace;font-size:.78rem"></textarea></div>
+        <div class="row2">
+          <div class="fg"><label for="tkNominal">Pilihan nominal (Rp, pisah koma)</label><input id="tkNominal" maxlength="60" placeholder="5000, 10000, 25000"/></div>
+          <div class="fg"><label for="tkJudul">Judul</label><input id="tkJudul" maxlength="50" placeholder="Traktir Kopi Pak Choy"/></div>
+        </div>
+        <div class="fg"><label for="tkPesan">Pesan</label><textarea id="tkPesan" rows="2" maxlength="200" placeholder="Semua tools BGY gratis dipakai. Kalau terbantu, boleh traktir kopi supaya BGY terus jalan."></textarea></div>
+        <button class="btn-primary" type="submit" id="btnTraktir">Simpan</button>
+        <div class="msg" id="traktirMsg"></div>
+      </form>
+      <hr style="margin:20px 0;border:none;border-top:1px solid var(--border)">
       <div class="card-title" style="margin-top:0"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg> Paket Buat Soal (FREE / PLUS / PRO)</div>
       <p class="hint">Selama "Paket aktif" mati, Buat Soal memakai aturan lama. Nyalakan setelah produk PLUS/PRO siap di Kreacy dan aktivasinya sudah jalan.</p>
       <form id="paketForm">
@@ -812,7 +827,7 @@ async function boot(){
     show('notAdmin');return;
   }
   show('panel');
-  loadJokian();loadSendiri();loadInvoices();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadLisensi();loadPaket();loadPaketMa();
+  loadJokian();loadSendiri();loadInvoices();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadTraktir();loadLisensi();loadPaket();loadPaketMa();
   maybeLoadDashUsage();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
@@ -2108,6 +2123,49 @@ async function loadStats(){
   const rows=data.tools||[];
   document.getElementById('toolRows').innerHTML=rows.length?rows.map(t=>`<tr><td>${esc(TOOL_NAMES[t.tool]||t.tool)}</td><td><b>${fmtN(t.guru)}</b></td><td>${fmtN(t.buka)}</td><td>${fmtN(t.hasil)}</td><td>${fmtN(t.pro)}</td><td>${fmtN(t.install)}</td><td>${fmtN(t.share)}</td></tr>`).join(''):'<tr><td colspan="7" class="empty">Belum ada data. Data mulai terkumpul setelah migrasi dijalankan.</td></tr>';
 }
+
+/* ─── Traktir (QRIS) — bgy_settings key 'traktir', dibaca publik ─── */
+function qrisCrc(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF;}return c.toString(16).toUpperCase().padStart(4,'0');}
+function qrisValid(s){return /^000201/.test(s)&&/6304[0-9A-F]{4}$/i.test(s)&&qrisCrc(s.slice(0,-4))===s.slice(-4).toUpperCase();}
+async function loadTraktir(){
+  const {data}=await sb.from('bgy_settings').select('value').eq('key','traktir').maybeSingle();
+  const v=(data&&data.value)||{};
+  document.getElementById('tkAktif').checked=!!v.aktif;
+  document.getElementById('tkKode').value=v.qris||'';
+  document.getElementById('tkNominal').value=(v.nominal||[5000,10000,25000]).join(', ');
+  document.getElementById('tkJudul').value=v.judul||'';
+  document.getElementById('tkPesan').value=v.pesan||'';
+}
+document.getElementById('tkFile').addEventListener('change',async e=>{
+  const f=e.target.files[0];if(!f)return;const info=document.getElementById('tkInfo');info.textContent='Membaca QRIS...';
+  try{
+    if(!window.jsQR)await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+    const bmp=await createImageBitmap(f);let found=null;
+    for(const max of [1200,800,1800]){
+      const s=Math.min(1,max/Math.max(bmp.width,bmp.height));const c=document.createElement('canvas');c.width=Math.round(bmp.width*s);c.height=Math.round(bmp.height*s);
+      const x=c.getContext('2d');x.drawImage(bmp,0,0,c.width,c.height);const d=x.getImageData(0,0,c.width,c.height);
+      const r=jsQR(d.data,c.width,c.height);if(r&&r.data){found=r.data;break;}
+    }
+    if(!found){info.textContent='QR tidak terbaca. Coba gambar yang lebih jelas/terpotong rapi.';return;}
+    if(!qrisValid(found)){info.textContent='Ini bukan kode QRIS yang valid.';return;}
+    document.getElementById('tkKode').value=found;
+    let nama='';for(let i=0;i+4<=found.length;){const tag=found.substr(i,2),n=+found.substr(i+2,2);if(tag==='59'){nama=found.substr(i+4,n);break;}i+=4+n;}
+    info.textContent='QRIS terbaca'+(nama?': '+nama:'')+'. Tekan Simpan.';
+  }catch(err){info.textContent='Gagal membaca gambar.';}
+});
+document.getElementById('traktirForm').addEventListener('submit',async e=>{
+  e.preventDefault();const msg=document.getElementById('traktirMsg');msg.className='msg';
+  const qris=document.getElementById('tkKode').value.replace(/\s+/g,'');
+  const aktif=document.getElementById('tkAktif').checked;
+  if(qris&&!qrisValid(qris)){msg.className='msg err';msg.textContent='Kode QRIS tidak valid. Upload ulang gambar QRIS.';return;}
+  if(aktif&&!qris){msg.className='msg err';msg.textContent='Upload QRIS dulu sebelum menyalakan Traktir.';return;}
+  const nominal=[...new Set(document.getElementById('tkNominal').value.split(/[,;\s]+/).map(x=>parseInt(x.replace(/\D/g,''))).filter(n=>n>=1000&&n<=10000000))].slice(0,6);
+  const value={aktif,qris,nominal:nominal.length?nominal:[5000,10000,25000],judul:document.getElementById('tkJudul').value.trim(),pesan:document.getElementById('tkPesan').value.trim()};
+  const btn=document.getElementById('btnTraktir');btn.disabled=true;
+  const {error}=await sb.from('bgy_settings').upsert({key:'traktir',value,updated_at:new Date().toISOString()});
+  btn.disabled=false;if(error)return fail(error);
+  msg.textContent='Tersimpan. Tampil di tool dalam beberapa menit.';toast('Traktir tersimpan');
+});
 
 /* ─── Promo ─── */
 const PROMO_FIELDS={pText:'promo_text',pUntil:'promo_until',pUrl:'promo_url',vCode:'voucher_code',vText:'voucher_text',bText:'bundle_text',bUrl:'bundle_url',gText:'garansi_text',aText:'ann_text',aLevel:'ann_level'};

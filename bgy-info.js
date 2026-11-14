@@ -254,6 +254,10 @@
     slot.appendChild(d2);
     }
     slot.appendChild(menuButton(ICONS.share, 'Bagikan ke teman guru', shareTool));
+    var tkBtn = menuButton(CUP, 'Traktir Pak Choy', function () { openTraktir('menu'); });
+    tkBtn.style.display = 'none';
+    slot.appendChild(tkBtn);
+    traktirSetting().then(function (v) { if (v) tkBtn.style.display = ''; });
     slot.appendChild(menuButton(ICONS.chat, 'Kritik & saran', function () {
       track('menu', 'Kritik & saran', 'wa');
       window.open('https://wa.me/6289530713597?text=' + encodeURIComponent('Halo Pak Choy, saya pakai ' + toolName() + '. Kritik/saran/lapor bug: '), '_blank', 'noopener');
@@ -495,10 +499,10 @@
     if (!opts.force) usageHasil();
     var tool = String(opts.tool || page).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40) || 'home';
     if (!opts.force) {
-      if (reviewAsked || nudgeShown) return;
-      if (lsGet('bgy_review_done_' + tool)) return;
-      if (Number(lsGet('bgy_review_snooze_' + tool) || 0) > Date.now()) return;
-      if (Date.now() - Number(lsGet('bgy_review_last') || 0) < REVIEW_GAP_DAYS * 864e5) return;
+      var skip = reviewAsked || nudgeShown || lsGet('bgy_review_done_' + tool) ||
+        Number(lsGet('bgy_review_snooze_' + tool) || 0) > Date.now() ||
+        Date.now() - Number(lsGet('bgy_review_last') || 0) < REVIEW_GAP_DAYS * 864e5;
+      if (skip) { if (!reviewAsked && !nudgeShown) traktirNudge(opts.delay); return; }
     }
     reviewAsked = true;
     setTimeout(function () { openReview(tool); }, opts.delay == null ? 1200 : opts.delay);
@@ -1199,6 +1203,160 @@
     document.body.appendChild(sheet);
     document.documentElement.classList.add('bgnv-on');
   }
+
+
+  /* ---- Traktir Pak Choy (QRIS). Diatur di /admin > Promo, bgy_settings key 'traktir'. ---- */
+  var CUP = '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>';
+  var TRAKTIR_GAP_DAYS = 3;
+  var traktirData = null;
+  function traktirSetting() {
+    if (!traktirData) {
+      traktirData = fetch(SB_URL + '/rest/v1/bgy_settings?key=eq.traktir&select=value', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (rows) { var v = rows && rows[0] && rows[0].value; return v && v.aktif && v.qris ? v : null; })
+        .catch(function () { return null; });
+    }
+    return traktirData;
+  }
+  function qrisCrc(s) {
+    var c = 0xFFFF;
+    for (var i = 0; i < s.length; i++) { c ^= s.charCodeAt(i) << 8; for (var j = 0; j < 8; j++) c = (c & 0x8000) ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF; }
+    return ('000' + c.toString(16).toUpperCase()).slice(-4);
+  }
+  // QRIS statis -> dinamis dengan nominal (tag 54), CRC dihitung ulang.
+  function qrisAmount(base, amount) {
+    var list = [], i = 0;
+    while (i + 4 <= base.length) { var tag = base.substr(i, 2), n = parseInt(base.substr(i + 2, 2), 10); if (isNaN(n)) break; list.push([tag, base.substr(i + 4, n)]); i += 4 + n; }
+    list = list.filter(function (x) { return x[0] !== '54' && x[0] !== '63'; });
+    if (!amount) return base;
+    list.forEach(function (x) { if (x[0] === '01') x[1] = '12'; });
+    var at = list.findIndex(function (x) { return x[0] > '54'; });
+    list.splice(at < 0 ? list.length : at, 0, ['54', String(amount)]);
+    var s = list.map(function (x) { return x[0] + ('0' + x[1].length).slice(-2) + x[1]; }).join('') + '6304';
+    return s + qrisCrc(s);
+  }
+  var qrLib = null;
+  function needQr() {
+    if (!qrLib) qrLib = new Promise(function (res, rej) {
+      if (window.qrcode) return res(window.qrcode);
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+      s.onload = function () { res(window.qrcode); };
+      s.onerror = function () { qrLib = null; rej(new Error('qr')); };
+      document.head.appendChild(s);
+    });
+    return qrLib;
+  }
+  function rupiah(n) { return 'Rp' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  var traktirCss = [
+    '.bgyt-bg{position:fixed;inset:0;z-index:100000;background:rgba(15,23,42,.6);display:flex;align-items:center;justify-content:center;padding:16px;font-family:inherit}',
+    '.bgyt{background:#fff;color:#1e293b;border-radius:18px;width:100%;max-width:380px;max-height:calc(100vh - 32px);overflow:auto;padding:20px 18px 16px;position:relative;box-shadow:0 12px 40px rgba(0,0,0,.3);text-align:center}',
+    '.bgyt-x{position:absolute;top:8px;right:8px;width:40px;height:40px;border:none;background:none;color:#64748b;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:10px}',
+    '.bgyt-ic{width:52px;height:52px;border-radius:16px;margin:0 auto 8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:flex;align-items:center;justify-content:center}',
+    '.bgyt-ic svg{width:28px;height:28px}',
+    '.bgyt h3{font-size:1.1rem;font-weight:800;margin:0 0 6px}',
+    '.bgyt p{font-size:.85rem;color:#475569;line-height:1.5;margin:0 0 12px}',
+    '.bgyt-nom{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}',
+    '.bgyt-nom button{min-height:42px;padding:0 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;color:#1e293b;font-weight:800;font-size:.88rem;cursor:pointer;font-family:inherit}',
+    '.bgyt-nom button.on{border-color:#0ea5a0;background:rgba(14,165,160,.12);color:#0d7a8a}',
+    '.bgyt-qr{width:230px;max-width:100%;aspect-ratio:1;margin:0 auto;border:1px solid #e2e8f0;border-radius:12px;padding:8px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#64748b}',
+    '.bgyt-qr img{width:100%;height:100%;image-rendering:pixelated}',
+    '.bgyt-amt{font-weight:800;font-size:1rem;margin:8px 0 2px}',
+    '.bgyt-nm{font-size:.75rem;color:#64748b;margin-bottom:10px}',
+    '.bgyt-save{width:100%;min-height:46px;border:none;border-radius:12px;background:linear-gradient(135deg,#0ea5a0,#0d7a8a);color:#fff;font-weight:800;font-size:.92rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}',
+    '.bgyt-save svg{width:18px;height:18px}',
+    '.bgyt-how{font-size:.75rem;color:#64748b;line-height:1.5;margin-top:10px;text-align:left;background:#f8fafc;border-radius:10px;padding:8px 10px}',
+    '.bgyt-chip{position:fixed;left:50%;transform:translate(-50%,20px);bottom:150px;z-index:99990;background:#1e293b;color:#fff;border-radius:14px;padding:6px 6px 6px 14px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:all .35s;font-size:.85rem;font-weight:600;width:max-content;max-width:calc(100vw - 24px);font-family:inherit}',
+    '.bgyt-chip span{white-space:nowrap}',
+    '.bgyt-chip.show{opacity:1;transform:translate(-50%,0)}',
+    '.bgyt-chip svg{width:18px;height:18px;color:#fbbf24;flex:none}',
+    '.bgyt-chip .go{min-height:40px;padding:0 12px;border:none;border-radius:10px;background:#f59e0b;color:#1e293b;font-weight:800;cursor:pointer;white-space:nowrap;font-family:inherit;font-size:.82rem}',
+    '.bgyt-chip .no{width:40px;height:40px;border:none;background:none;color:#cbd5e1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:none}'
+  ].join('');
+  function traktirStyle() {
+    if (document.getElementById('bgyt-css')) return;
+    var st = document.createElement('style'); st.id = 'bgyt-css'; st.textContent = traktirCss; document.head.appendChild(st);
+  }
+  var XSVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+  function openTraktir(from) {
+    traktirSetting().then(function (v) {
+      if (!v || document.querySelector('.bgyt-bg')) return;
+      track('traktir', 'open', from || '');
+      traktirStyle();
+      var nominal = (v.nominal && v.nominal.length ? v.nominal : [5000, 10000, 25000]).slice(0, 6);
+      var amt = nominal[Math.min(1, nominal.length - 1)];
+      var bg = document.createElement('div');
+      bg.className = 'bgyt-bg';
+      bg.innerHTML = '<div class="bgyt" role="dialog" aria-modal="true" aria-labelledby="bgyt-t">' +
+        '<button type="button" class="bgyt-x" aria-label="Tutup">' + XSVG + '</button>' +
+        '<div class="bgyt-ic">' + svgIcon(CUP) + '</div><h3 id="bgyt-t"></h3><p></p>' +
+        '<div class="bgyt-nom" role="group" aria-label="Pilih nominal"></div>' +
+        '<div class="bgyt-qr">Memuat QR...</div><div class="bgyt-amt"></div><div class="bgyt-nm">QRIS a.n. Pak Choy Kreacy · bisa semua e-wallet &amp; m-banking</div>' +
+        '<button type="button" class="bgyt-save">' + svgIcon('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>') + '<span>Simpan gambar QR</span></button>' +
+        '<div class="bgyt-how">Bayar dari HP yang sama: simpan gambar QR, buka DANA/GoPay/OVO/ShopeePay/m-banking, pilih scan dari galeri. Terima kasih banyak!</div></div>';
+      bg.querySelector('h3').textContent = v.judul || 'Traktir Kopi Pak Choy';
+      bg.querySelector('p').textContent = v.pesan || 'Semua tools BGY gratis dipakai. Kalau terbantu, boleh traktir kopi supaya BGY terus jalan.';
+      var nomBox = bg.querySelector('.bgyt-nom'), qrBox = bg.querySelector('.bgyt-qr'), amtBox = bg.querySelector('.bgyt-amt');
+      var opts = nominal.concat([0]);
+      opts.forEach(function (n) {
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = n ? rupiah(n) : 'Bebas';
+        b.addEventListener('click', function () { amt = n; draw(); });
+        nomBox.appendChild(b);
+      });
+      var lastUrl = '';
+      function draw() {
+        Array.prototype.forEach.call(nomBox.children, function (b, i) { b.classList.toggle('on', opts[i] === amt); });
+        amtBox.textContent = amt ? rupiah(amt) : 'Nominal bebas (isi sendiri di aplikasi)';
+        needQr().then(function (qrcode) {
+          var q = qrcode(0, 'M'); q.addData(qrisAmount(v.qris, amt)); q.make();
+          var cnt = q.getModuleCount(), cell = 8, pad = 4 * cell, size = cnt * cell + pad * 2;
+          var c = document.createElement('canvas'); c.width = size; c.height = size + 70;
+          var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#000';
+          for (var r = 0; r < cnt; r++) for (var k = 0; k < cnt; k++) if (q.isDark(r, k)) x.fillRect(pad + k * cell, pad + r * cell, cell, cell);
+          x.font = 'bold 26px sans-serif'; x.textAlign = 'center';
+          x.fillText((amt ? rupiah(amt) : 'Nominal bebas') + ' - Traktir Pak Choy', size / 2, size + 40);
+          lastUrl = c.toDataURL('image/png');
+          qrBox.innerHTML = '<img alt="QRIS Traktir Pak Choy">';
+          qrBox.firstChild.src = lastUrl;
+        }).catch(function () { qrBox.textContent = 'QR gagal dimuat. Cek koneksi internet.'; });
+      }
+      bg.querySelector('.bgyt-save').addEventListener('click', function () {
+        if (!lastUrl) return;
+        var a = document.createElement('a'); a.href = lastUrl; a.download = 'QRIS-Traktir-Pak-Choy' + (amt ? '-' + amt : '') + '.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        track('traktir', 'save', String(amt));
+      });
+      function close() { bg.remove(); document.removeEventListener('keydown', onKey); }
+      function onKey(e) { if (e.key === 'Escape') close(); }
+      bg.querySelector('.bgyt-x').addEventListener('click', close);
+      bg.addEventListener('click', function (e) { if (e.target === bg) close(); });
+      document.addEventListener('keydown', onKey);
+      document.body.appendChild(bg);
+      draw();
+    });
+  }
+  function traktirNudge(delay) {
+    if (Date.now() - Number(lsGet('bgy_traktir_last') || 0) < TRAKTIR_GAP_DAYS * 864e5) return;
+    traktirSetting().then(function (v) {
+      if (!v) return;
+      setTimeout(function () {
+        if (document.querySelector('.bgyt-chip,.bgyr-bg,.bgyt-bg')) return;
+        lsSet('bgy_traktir_last', String(Date.now()));
+        traktirStyle();
+        var c = document.createElement('div');
+        c.className = 'bgyt-chip'; c.setAttribute('role', 'status');
+        c.innerHTML = svgIcon(CUP) + '<span>Terbantu? Traktir Pak Choy</span><button type="button" class="go">Traktir</button><button type="button" class="no" aria-label="Tutup">' + XSVG + '</button>';
+        function hide() { c.classList.remove('show'); setTimeout(function () { c.remove(); }, 400); }
+        c.querySelector('.go').addEventListener('click', function () { hide(); openTraktir('nudge'); });
+        c.querySelector('.no').addEventListener('click', hide);
+        document.body.appendChild(c);
+        requestAnimationFrame(function () { c.classList.add('show'); });
+        setTimeout(hide, 12000);
+      }, (delay == null ? 1200 : delay) + 1500);
+    });
+  }
+  window.bgyTraktir = openTraktir;
+  window.bgyTraktirReady = function () { return traktirSetting().then(function (v) { return !!v; }); };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { mount(); mountNav(); });
   else { mount(); mountNav(); }
