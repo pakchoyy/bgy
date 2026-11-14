@@ -1,0 +1,18 @@
+{
+  "id": "/pdf/",
+  "name": "Bantu Guru Yuk | PDF Tools",
+  "short_name": "PDF Tools",
+  "description": "Gabung, pisah, kompres, foto ke PDF, nomor halaman, watermark, dan tanda tangan PDF. Gratis, diproses di HP sendiri.",
+  "start_url": "/pdf/",
+  "scope": "/pdf/",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#0ea5a0",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "../guru-cibisd2.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "../guru-cibisd2.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["education", "productivity", "utilities"],
+  "lang": "id"
+}
