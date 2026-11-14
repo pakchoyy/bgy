@@ -722,6 +722,10 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
           <div><label>Isian</label><input type="number" id="jmlIsian" min="0" max="20" value="5"/></div>
           <div><label>Uraian</label><input type="number" id="jmlUraian" min="0" max="10" value="3"/></div>
         </div>
+        <div class="row-3" style="grid-template-columns:1fr 1fr;margin-top:8px;">
+          <div><label>PG Kompleks <span style="font-size:.75rem;color:#0ea5a0;">(MCMA)</span></label><input type="number" id="jmlPGK" min="0" max="20" value="0"/></div>
+          <div><label>Benar / Salah</label><input type="number" id="jmlBS" min="0" max="20" value="0"/></div>
+        </div>
         <div class="preset-actions">
           <button class="preset-chip" type="button" onclick="applyPaketSoal('ringkas')">Ringkas</button>
           <button class="preset-chip" type="button" onclick="applyPaketSoal('standar')">Standar</button>
@@ -1714,6 +1718,8 @@ function getMateriTerpilih(){
   if(mode==='ketik'){return(document.getElementById('materiKetikArea')?.value||'').trim();}
   return[...document.querySelectorAll('.cb-materi:checked')].map(c=>c.value).join(', ');
 }
+// Opsi PG Kompleks: minimal A-D (kelas rendah yang PG-nya A-C tetap dapat 4 opsi).
+function opsiLabelsPGK(){const l=getOpsiPGConfig(parseInt(document.getElementById('kelas').value)||1).labels;return l.length>=4?l:['A','B','C','D'];}
 // Judul kelompok: pakai teks guru apa adanya bila sudah diawali Bab/TP/Materi, selain itu "Materi N: ...".
 function labelBab(n,list){const s=(list&&list[n-1])||'';return /^(bab|tp|materi|kd|unit|elemen)\b/i.test(s)?s:'Materi '+n+(s?': '+s:'');}
 // Daftar materi terpisah (untuk pengelompokan soal per materi/TP).
@@ -1892,7 +1898,36 @@ function normalizeNonPG(arr,expected,type,labelOffset){
     });
   }
 
+  // PG Kompleks (MCMA) & Benar/Salah: opsional, nomor melanjutkan setelah uraian.
+  const offset=pilihanGanda.length+(cfg.jmlIsian||0)+(cfg.jmlUraian||0);
+  const pgkRaw=Array.isArray(data.pgKompleks)?data.pgKompleks:[];
+  const bsRaw=Array.isArray(data.benarSalah)?data.benarSalah:[];
+  if(cfg.jmlPGK&&pgkRaw.length<cfg.jmlPGK)throw new Error(`PG Kompleks kurang: diminta ${cfg.jmlPGK}, diterima ${pgkRaw.length}`);
+  if(cfg.jmlBS&&bsRaw.length<cfg.jmlBS)throw new Error(`Benar/Salah kurang: diminta ${cfg.jmlBS}, diterima ${bsRaw.length}`);
+  if(cfg.grup){[pgkRaw,bsRaw].forEach(a=>a.sort((x,y)=>noMateri(x)-noMateri(y)));}
+  const labelsK=cfg.pgkLabels||['A','B','C','D'];
+  const pgKompleks=pgkRaw.slice(0,cfg.jmlPGK||0).map((item,i)=>{
+    const nomor=offset+i+1;
+    const soal=stripHtml(item?.soal||'').trim();
+    if(!soal)throw new Error(`Soal PG Kompleks nomor ${nomor} kosong.`);
+    const rawOpsi=Array.isArray(item?.opsi)?item.opsi:[];
+    if(rawOpsi.length<labelsK.length)throw new Error(`Opsi PG Kompleks nomor ${nomor} kurang, wajib ${labelsK.length} opsi.`);
+    const opsi=labelsK.map((l,idx)=>normalizeOpsiText(rawOpsi[idx],l));
+    const jw=(Array.isArray(item?.jawaban)?item.jawaban:String(item?.jawaban||'').split(/[,\s]+/)).map(x=>String(x).trim().toUpperCase().charAt(0)).filter(x=>labelsK.includes(x));
+    const jawaban=[...new Set(jw)].sort();
+    if(jawaban.length<2)throw new Error(`Jawaban PG Kompleks nomor ${nomor} harus minimal 2 huruf.`);
+    return{soal,opsi,jawaban,indikator:stripHtml(item?.indikator||'').trim()||`Siswa dapat menjawab soal nomor ${nomor}.`,level:normalizeLevel(item?.level,cfg.allowedLevels),materi:noMateri(item)};
+  });
+  const benarSalah=bsRaw.slice(0,cfg.jmlBS||0).map((item,i)=>{
+    const nomor=offset+pgKompleks.length+i+1;
+    const soal=stripHtml(item?.soal||'').trim()||'Tentukan Benar atau Salah setiap pernyataan berikut!';
+    const pernyataan=(Array.isArray(item?.pernyataan)?item.pernyataan:[]).map(x=>({teks:stripHtml(x?.teks||x?.pernyataan||'').trim(),jawaban:/^s/i.test(String(x?.jawaban||''))?'S':'B'})).filter(x=>x.teks).slice(0,6);
+    if(pernyataan.length<2)throw new Error(`Soal Benar/Salah nomor ${nomor} minimal 2 pernyataan.`);
+    return{soal,pernyataan,indikator:stripHtml(item?.indikator||'').trim()||`Siswa dapat menjawab soal nomor ${nomor}.`,level:normalizeLevel(item?.level,cfg.allowedLevels),materi:noMateri(item)};
+  });
   return{
+    pgKompleks,
+    benarSalah,
     pilihanGanda,
     isian:normalizeNonPG(isian,cfg.jmlIsian,'isian',pilihanGanda.length),
     uraian:normalizeNonPG(uraian,cfg.jmlUraian,'uraian',pilihanGanda.length+cfg.jmlIsian)
@@ -1962,6 +1997,9 @@ async function handleGenerate(){
   const jmlPG=parseInt(document.getElementById('jmlPG').value)||0;
   const jmlIsian=parseInt(document.getElementById('jmlIsian').value)||0;
   const jmlUraian=parseInt(document.getElementById('jmlUraian').value)||0;
+  const jmlPGK=parseInt(document.getElementById('jmlPGK')?.value)||0;
+  const jmlBS=parseInt(document.getElementById('jmlBS')?.value)||0;
+  const pgkLabels=opsiLabelsPGK();
   const opsiConfig=getOpsiPGConfig(kelas);
   const opsiPG=opsiConfig.label;
   const opsiJsonTemplate=opsiConfig.template;
@@ -1972,7 +2010,7 @@ async function handleGenerate(){
     showError('Batas generate harian ('+bt.harian+'x) sudah habis. '+(tier()==='pro'?'Coba lagi besok.':'Upgrade paket untuk kuota lebih banyak, atau coba lagi besok.'));
     return;
   }
-  if(jmlPG+jmlIsian+jmlUraian>bt.max_soal){
+  if(jmlPG+jmlIsian+jmlUraian+jmlPGK+jmlBS>bt.max_soal){
     showError('Paket '+NAMA_TIER[tier()]+' maksimal '+bt.max_soal+' soal per lembar. Kurangi jumlah soal'+(tier()==='pro'?'.':' atau upgrade paket.'));
     return;
   }
@@ -2031,7 +2069,7 @@ Jumlah soal:
 - Pilihan Ganda: ${jmlPG} soal (gunakan ${opsiPG})
 - Isian Singkat: ${jmlIsian} soal
 - Uraian: ${jmlUraian} soal
-
+${jmlPGK?`- PG Kompleks (MCMA, jawaban benar lebih dari satu): ${jmlPGK} soal (opsi ${pgkLabels.join(', ')})\n`:''}${jmlBS?`- Benar/Salah (kategori): ${jmlBS} soal\n`:''}
 Gaya penulisan soal: ${gaya}
 Mode soal: ${modeInstruksi}
 
@@ -2049,6 +2087,8 @@ Kembalikan HANYA JSON valid tanpa markdown, tanpa backtick, tanpa komentar:
   "uraian":[{"soal":"...","jawaban":"...","rubrik":["Skor 4: ...","Skor 3: ...","Skor 2: ...","Skor 1: ..."],"indikator":"Siswa dapat ...","level":"C4"}]
 }
 Untuk uraian, field "rubrik" wajib berisi 4 kriteria skor singkat dari skor 4 sampai skor 1.
+${jmlPGK?`Tambahkan juga "pgKompleks": [{"soal":"... (akhiri dengan: Pilihlah semua jawaban yang benar!)","opsi":[${pgkLabels.map(l=>'"'+l+'. ..."').join(',')}],"jawaban":["A","C"],"indikator":"Siswa dapat ...","level":"C3"}] tepat ${jmlPGK} soal; setiap soal punya 2 sampai ${pgkLabels.length-1} jawaban benar.`:''}
+${jmlBS?`Tambahkan juga "benarSalah": [{"soal":"stimulus/konteks singkat lalu: Tentukan Benar atau Salah setiap pernyataan berikut!","pernyataan":[{"teks":"...","jawaban":"B"},{"teks":"...","jawaban":"S"}],"indikator":"Siswa dapat ...","level":"C2"}] tepat ${jmlBS} soal; setiap soal 3-5 pernyataan, jawaban "B" (Benar) atau "S" (Salah), campur keduanya.`:''}
 Field "indikator" diisi kalimat singkat "Siswa dapat [kata kerja] ..." sesuai level kognitif Bloom. Field "level" diisi salah satu: C1, C2, C3, C4, C5, C6.`;
 
   try{
@@ -2057,6 +2097,9 @@ Field "indikator" diisi kalimat singkat "Siswa dapat [kata kerja] ..." sesuai le
       jmlPG,
       jmlIsian,
       jmlUraian,
+      jmlPGK,
+      jmlBS,
+      pgkLabels,
       opsiLabels:opsiConfig.labels,
       allowedLevels:getKesulitanLevels()
     };
@@ -2076,7 +2119,7 @@ Aturan wajib:
 - Jawaban PG hanya boleh ${opsiConfig.labels.join(', ')}
 - Isian tepat ${jmlIsian} soal
 - Uraian tepat ${jmlUraian} soal dan setiap uraian punya rubrik skor 4, 3, 2, 1
-- Level Bloom hanya boleh salah satu dari: ${getKesulitanLevels().join(', ')}
+${jmlPGK?'- pgKompleks tepat '+jmlPGK+' soal, opsi '+pgkLabels.join(', ')+', field jawaban berupa array minimal 2 huruf\n':''}${jmlBS?'- benarSalah tepat '+jmlBS+' soal, setiap soal 3-5 pernyataan dengan jawaban "B" atau "S"\n':''}- Level Bloom hanya boleh salah satu dari: ${getKesulitanLevels().join(', ')}
 
 JSON bermasalah:
 ${rawText}`;
@@ -2241,6 +2284,16 @@ function buildHalaman(data){
     addBlock({type:'section',label:'III. Uraian',petunjuk:'Jawablah pertanyaan berikut dengan lengkap dan benar!'});
     addItems(uraian,(item,i)=>({type:'uraian',item,no:pg.length+isian.length+i+1}));
   }
+  const pgk=data.pgKompleks||[],bsl=data.benarSalah||[];
+  const off=pg.length+isian.length+uraian.length;
+  if(pgk.length>0){
+    addBlock({type:'section',label:romawiBagian(data,'pgk')+'. Pilihan Ganda Kompleks',petunjuk:'Pilihlah SEMUA jawaban yang benar dengan memberi tanda centang (✓) pada kotak!'});
+    addItems(pgk,(item,i)=>({type:'pgk',item,no:off+i+1}));
+  }
+  if(bsl.length>0){
+    addBlock({type:'section',label:romawiBagian(data,'bs')+'. Benar / Salah',petunjuk:'Berilah tanda centang (✓) pada kolom Benar atau Salah untuk setiap pernyataan!'});
+    addItems(bsl,(item,i)=>({type:'bs',item,no:off+pgk.length+i+1}));
+  }
   // Susun halaman: isi sampai penuh; judul bagian tidak boleh sendirian di dasar halaman
   items.forEach((it,idx)=>{
     let need=it.h;
@@ -2274,11 +2327,11 @@ function buildKunciPage(data,pg,isian,uraian){
   const namaSekolah=escHtml(document.getElementById('namaSekolah').value||(getSatuanPendidikan()+'N ---'));
   const judulUjian=escHtml(getJudulUjian());
   // Bobot skor standar
-  const bobotPG=1,bobotIsian=2,bobotUraian=4;
+  const bobotPG=1,bobotIsian=2,bobotUraian=4,bobotPGK=2,bobotBS=2;
   const totalPG=pg.length*bobotPG;
   const totalIsian=isian.length*bobotIsian;
   const totalUraian=uraian.length*bobotUraian;
-  const totalSkor=totalPG+totalIsian+totalUraian;
+  const totalSkor=totalPG+totalIsian+totalUraian+(data.pgKompleks||[]).length*bobotPGK+(data.benarSalah||[]).length*bobotBS;
   const kelasNum=parseInt(document.getElementById('kelas').value)||1;
   const jenjangKunci=getJenjang();
   const satuanKunci=getSatuanPendidikan();
@@ -2287,7 +2340,7 @@ function buildKunciPage(data,pg,isian,uraian){
   <div class="kunci-page-header">KUNCI JAWABAN</div>
   <div class="kunci-page-sub">${judulUjian} — ${namaSekolah}</div>
   <div class="kunci-page-sub" style="margin-bottom:4px;">${mapel} &nbsp;|&nbsp; Kelas ${kelas} ${satuanKunci} / ${fase}</div>
-  <div class="kunci-page-sub" style="margin-bottom:12px;font-size:9pt;color:#555;">Bobot: PG=${bobotPG}pt &nbsp;|&nbsp; Isian=${bobotIsian}pt &nbsp;|&nbsp; Uraian=${bobotUraian}pt &nbsp;|&nbsp; <strong>Total Skor Maksimal: ${totalSkor}</strong></div>
+  <div class="kunci-page-sub" style="margin-bottom:12px;font-size:9pt;color:#555;">Bobot: PG=${bobotPG}pt &nbsp;|&nbsp; Isian=${bobotIsian}pt &nbsp;|&nbsp; Uraian=${bobotUraian}pt${(data.pgKompleks||[]).length?' &nbsp;|&nbsp; PG Kompleks='+bobotPGK+'pt':''}${(data.benarSalah||[]).length?' &nbsp;|&nbsp; B/S='+bobotBS+'pt':''} &nbsp;|&nbsp; <strong>Total Skor Maksimal: ${totalSkor}</strong></div>
   <div class="kunci-page-line"></div>`;
   if(pg.length>0){
     html+=`<div class="kunci-section-title">I. Pilihan Ganda &nbsp;<span style="font-size:9pt;font-weight:normal;">(${pg.length} soal × ${bobotPG} = ${totalPG} poin)</span></div><div class="kunci-pg-grid">`;
@@ -2307,6 +2360,17 @@ function buildKunciPage(data,pg,isian,uraian){
         :'';
       html+=`<tr><td class="kunci-no-col">${pg.length+isian.length+i+1}.</td><td>${escHtml(stripHtml(item.jawaban||'—'))}${rubrik}</td></tr>`;
     });
+    html+=`</table>`;
+  }
+  const pgkK=data.pgKompleks||[],bsK=data.benarSalah||[],offK=pg.length+isian.length+uraian.length;
+  if(pgkK.length>0){
+    html+=`<div class="kunci-section-title">${romawiBagian(data,'pgk')}. PG Kompleks &nbsp;<span style="font-size:9pt;font-weight:normal;">(${pgkK.length} soal × ${bobotPGK} = ${pgkK.length*bobotPGK} poin, semua jawaban harus tepat)</span></div><table class="kunci-isian-table">`;
+    pgkK.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${offK+i+1}.</td><td><strong>${escHtml((item.jawaban||[]).join(', '))}</strong></td></tr>`;});
+    html+=`</table>`;
+  }
+  if(bsK.length>0){
+    html+=`<div class="kunci-section-title">${romawiBagian(data,'bs')}. Benar / Salah &nbsp;<span style="font-size:9pt;font-weight:normal;">(${bsK.length} soal × ${bobotBS} = ${bsK.length*bobotBS} poin)</span></div><table class="kunci-isian-table">`;
+    bsK.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${offK+pgkK.length+i+1}.</td><td>${(item.pernyataan||[]).map((x,k)=>`${k+1}-<strong>${x.jawaban==='S'?'Salah':'Benar'}</strong>`).join(' &nbsp; ')}</td></tr>`;});
     html+=`</table>`;
   }
   html+=`<div style="margin-top:14px;padding:8px 12px;background:#f0f9f4;border:1px solid #6ee7b7;border-radius:6px;font-size:10pt;font-family:'Times New Roman',serif;">
@@ -2344,7 +2408,7 @@ function buildKisiKisiPage(data,pg,isian,uraian){
     return levels[idx%levels.length];
   }
 
-  const totalSoal=pg.length+isian.length+uraian.length;
+  const totalSoal=pg.length+isian.length+uraian.length+(data.pgKompleks||[]).length+(data.benarSalah||[]).length;
   let rows='';let no=1;
 
   pg.forEach((item,i)=>{
@@ -2372,7 +2436,12 @@ function buildKisiKisiPage(data,pg,isian,uraian){
     rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${mat}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(level)}</td><td class="kisi-bentuk">Uraian</td><td class="kisi-nomor">${pg.length+isian.length+i+1}</td></tr>`;
   });
 
-  const distribusi=[pg.length?`PG: ${pg.length}`:'',isian.length?`Isian: ${isian.length}`:'',uraian.length?`Uraian: ${uraian.length}`:''].filter(Boolean).join(' | ');
+  const pgkS=data.pgKompleks||[],bsS=data.benarSalah||[],offS=pg.length+isian.length+uraian.length;
+  [[pgkS,'PG Kompleks',0],[bsS,'Benar/Salah',pgkS.length]].forEach(([arr,bentuk,tambah])=>arr.forEach((item,i)=>{
+    const indikator=escHtml(stripHtml(item.indikator||item.soal||'').slice(0,120));
+    rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${escHtml(getMateriSoal(i,Math.max(arr.length,1)))}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(item.level||'C3')}</td><td class="kisi-bentuk">${bentuk}</td><td class="kisi-nomor">${offS+tambah+i+1}</td></tr>`;
+  }));
+  const distribusi=[pg.length?`PG: ${pg.length}`:'',isian.length?`Isian: ${isian.length}`:'',uraian.length?`Uraian: ${uraian.length}`:'',pgkS.length?`PG Kompleks: ${pgkS.length}`:'',bsS.length?`B/S: ${bsS.length}`:''].filter(Boolean).join(' | ');
 
   return `
   <div class="kisi-page-header">KISI-KISI SOAL</div>
@@ -2714,8 +2783,9 @@ async function exportWord(options={rubrik:true}){
   const tanggal     = document.getElementById('tanggal').value
     ? new Date(document.getElementById('tanggal').value).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})
     : '.....................';
-  const bobotPG=1,bobotIsian=2,bobotUraian=4;
-  const totalSkor=pg.length*bobotPG+isian.length*bobotIsian+uraian.length*bobotUraian;
+  const pgkW=soalData.pgKompleks||[],bsW=soalData.benarSalah||[];
+  const bobotPG=1,bobotIsian=2,bobotUraian=4,bobotPGK=2,bobotBS=2;
+  const totalSkor=pg.length*bobotPG+isian.length*bobotIsian+uraian.length*bobotUraian+pgkW.length*bobotPGK+bsW.length*bobotBS;
 
   gaEvent('download_word',{kelas:'Kelas '+kelas,mata_pelajaran:mapel,tipe_user:isPro()?'pro':'free'});
   window.bgyAskReview&&bgyAskReview({delay:4000});
@@ -3009,6 +3079,30 @@ async function exportWord(options={rubrik:true}){
     });
   }
 
+  // ── PG Kompleks & Benar/Salah ──
+  const exP=[];const offW=pg.length+isian.length+uraian.length;
+  if(pgkW.length){
+    exP.push(P([T(romawiBagian(soalData,'pgk')+'. Pilihan Ganda Kompleks',{bold:true,underline:true,size:22})],{before:240,after:60}));
+    exP.push(P([T('Pilihlah SEMUA jawaban yang benar dengan memberi tanda centang (✓) pada kotak!',{italic:true,size:20})],{after:80}));
+    pgkW.forEach((item,i)=>{
+      wordBab(exP,item);
+      exP.push(P([T((offW+i+1)+'. ',{bold:true,size:22}),...TB(stripHtml(item.soal||''),{size:22})],{before:80,after:30}));
+      (item.opsi||[]).forEach(o=>exP.push(P([T('☐  '+stripHtml(o),{size:22})],{indent:460,after:20})));
+    });
+  }
+  if(bsW.length){
+    exP.push(P([T(romawiBagian(soalData,'bs')+'. Benar / Salah',{bold:true,underline:true,size:22})],{before:240,after:60}));
+    exP.push(P([T('Berilah tanda centang (✓) pada kolom Benar atau Salah untuk setiap pernyataan!',{italic:true,size:20})],{after:80}));
+    const bsCW=[500,W-2000,750,750];
+    bsW.forEach((item,i)=>{
+      wordBab(exP,item);
+      exP.push(P([T((offW+pgkW.length+i+1)+'. ',{bold:true,size:22}),...TB(stripHtml(item.soal||''),{size:22})],{before:80,after:40}));
+      const head=tblRow(['No','Pernyataan','Benar','Salah'].map((h,ci)=>tblCell([T(h,{bold:true,size:20})],bsCW[ci],'center')));
+      const rowsW=(item.pernyataan||[]).map((x,k)=>tblRow([tblCell([T(String(k+1),{size:20})],bsCW[0],'center'),tblCell([T(stripHtml(x.teks),{size:20})],bsCW[1]),tblCell([T('',{size:20})],bsCW[2]),tblCell([T('',{size:20})],bsCW[3])]));
+      exP.push(new D.Table({width:{size:W,type:'dxa'},columnWidths:bsCW,rows:[head,...rowsW]}));
+    });
+  }
+
   // ── Kunci Jawaban ──
   const kP=[];
   kP.push(P([T('KUNCI JAWABAN',{bold:true,size:28})],{align:'center',after:40}));
@@ -3047,6 +3141,14 @@ async function exportWord(options={rubrik:true}){
       }
     });
   }
+  if(pgkW.length){
+    kP.push(P([T(romawiBagian(soalData,'pgk')+'. PG Kompleks',{bold:true,underline:true,size:22})],{before:160,after:60}));
+    pgkW.forEach((item,i)=>kP.push(P([T((offW+i+1)+'. ',{bold:true,size:20}),T((item.jawaban||[]).join(', '),{bold:true,size:20})],{after:40})));
+  }
+  if(bsW.length){
+    kP.push(P([T(romawiBagian(soalData,'bs')+'. Benar / Salah',{bold:true,underline:true,size:22})],{before:160,after:60}));
+    bsW.forEach((item,i)=>kP.push(P([T((offW+pgkW.length+i+1)+'. ',{bold:true,size:20}),T((item.pernyataan||[]).map((x,k)=>(k+1)+'-'+(x.jawaban==='S'?'Salah':'Benar')).join('   '),{size:20})],{after:40})));
+  }
   kP.push(P([T('Nilai = (Skor Diperoleh ÷ '+totalSkor+') × 100',{italic:true,size:20})],{before:160}));
 
   // ── Kisi-kisi ──
@@ -3067,6 +3169,8 @@ async function exportWord(options={rubrik:true}){
     ...pg.map((s,i)=>({no:i+1,mat:getMs(i,pg.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C1',bnt:'PG',nom:i+1})),
     ...isian.map((s,i)=>({no:pg.length+i+1,mat:getMs(i,isian.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C2',bnt:'Isian',nom:pg.length+i+1})),
     ...uraian.map((s,i)=>({no:pg.length+isian.length+i+1,mat:getMs(i,uraian.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C4',bnt:'Uraian',nom:pg.length+isian.length+i+1})),
+    ...pgkW.map((s,i)=>({no:offW+i+1,mat:getMs(i,pgkW.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C3',bnt:'PG Kompleks',nom:offW+i+1})),
+    ...bsW.map((s,i)=>({no:offW+pgkW.length+i+1,mat:getMs(i,bsW.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C2',bnt:'B/S',nom:offW+pgkW.length+i+1})),
   ];
   const kkDataRows=allSoal.map(s=>tblRow([
     tblCell([T(String(s.no),{size:18})],kkCW[0],'center'),
@@ -3107,6 +3211,7 @@ async function exportWord(options={rubrik:true}){
         ...pgP,
         ...isP,
         ...urP,
+        ...exP,
         PB(),
         ...kP,
         ...(options.ringkas?[]:[PB(),...kkP]),
@@ -3285,7 +3390,23 @@ function buildDocHeader(){
   <div class="doc-identitas-line"></div>`;
 }
 
+// Nomor romawi bagian sesuai jenis yang ada (I PG, II Isian, III Uraian, lalu PG Kompleks, Benar/Salah).
+function romawiBagian(data,jenis){
+  const urut=[['pg',(data.pilihanGanda||[]).length],['isian',(data.isian||[]).length],['uraian',(data.uraian||[]).length],['pgk',(data.pgKompleks||[]).length],['bs',(data.benarSalah||[]).length]];
+  const ada=urut.filter(x=>x[1]>0).map(x=>x[0]);
+  return ['I','II','III','IV','V'][Math.max(0,ada.indexOf(jenis))]||'';
+}
 function buildSoalRow(b){
+  if(b.type==='pgk'){
+    const opsi=(b.item.opsi||[]).map(s=>{const m=String(s).match(/^([A-Ea-e])[\.\)]\s*([\s\S]*)/);return m?{h:m[1].toUpperCase(),t:m[2]}:{h:'',t:s};});
+    const rows=opsi.map(o=>`<tr><td style="width:22px;vertical-align:top;"><span style="display:inline-block;width:12px;height:12px;border:1px solid #333;margin-top:3px;"></span></td><td style="width:18px;vertical-align:top;">${escHtml(o.h)}.</td><td>${richHtml(o.t)}</td></tr>`).join('');
+    return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${richHtml(b.item.soal)}</span><table class="opsi-table">${rows}</table></td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
+  }
+  if(b.type==='bs'){
+    const rows=(b.item.pernyataan||[]).map((x,i)=>`<tr><td style="border:1px solid #555;padding:3px 5px;text-align:center;width:26px;">${i+1}</td><td style="border:1px solid #555;padding:3px 6px;">${richHtml(x.teks)}</td><td style="border:1px solid #555;width:52px;"></td><td style="border:1px solid #555;width:52px;"></td></tr>`).join('');
+    return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${richHtml(b.item.soal)}</span>
+      <table style="width:100%;border-collapse:collapse;margin-top:4px;font-size:10.5pt;"><tr style="background:#f1f5f9;"><th style="border:1px solid #555;padding:3px;">No</th><th style="border:1px solid #555;padding:3px;">Pernyataan</th><th style="border:1px solid #555;padding:3px;">Benar</th><th style="border:1px solid #555;padding:3px;">Salah</th></tr>${rows}</table></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;
+  }
   if(b.type==='pg'){
     const opsiArr=b.item.opsi||[];
     let opsiHtml='<table class="opsi-table">';
@@ -3551,8 +3672,11 @@ function validateForm(){
   const pg=parseInt(document.getElementById('jmlPG').value)||0;
   const is=parseInt(document.getElementById('jmlIsian').value)||0;
   const ur=parseInt(document.getElementById('jmlUraian').value)||0;
-  if(pg<0||is<0||ur<0){showError('Jumlah soal tidak boleh negatif.');return false;}
-  if(pg+is+ur===0){showError('Jumlah soal minimal 1.');return false;}
+  const pk=parseInt(document.getElementById('jmlPGK')?.value)||0;
+  const bs=parseInt(document.getElementById('jmlBS')?.value)||0;
+  if(pg<0||is<0||ur<0||pk<0||bs<0){showError('Jumlah soal tidak boleh negatif.');return false;}
+  if(pg+is+ur+pk+bs===0){showError('Jumlah soal minimal 1.');return false;}
+  if(pk>20||bs>20){showError('PG Kompleks dan Benar/Salah maksimal 20 soal.');return false;}
   if(pg>50){showError('Jumlah PG maksimal 50 soal.');return false;}
   if(is>20){showError('Jumlah Isian maksimal 20 soal.');return false;}
   if(ur>10){showError('Jumlah Uraian maksimal 10 soal.');return false;}
