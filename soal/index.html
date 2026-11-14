@@ -1899,7 +1899,7 @@ function normalizeNonPG(arr,expected,type,labelOffset){
   }
 
   // PG Kompleks (MCMA) & Benar/Salah: opsional, nomor melanjutkan setelah uraian.
-  const offset=pilihanGanda.length+(cfg.jmlIsian||0)+(cfg.jmlUraian||0);
+  const offset=pilihanGanda.length;
   const pgkRaw=Array.isArray(data.pgKompleks)?data.pgKompleks:[];
   const bsRaw=Array.isArray(data.benarSalah)?data.benarSalah:[];
   if(cfg.jmlPGK&&pgkRaw.length<cfg.jmlPGK)throw new Error(`PG Kompleks kurang: diminta ${cfg.jmlPGK}, diterima ${pgkRaw.length}`);
@@ -2272,27 +2272,26 @@ function buildHalaman(data){
     currentBlocks=[];currentH=0;isFirstPage=false;
   }
 
+  const pgk=data.pgKompleks||[],bsl=data.benarSalah||[];
   if(pg.length>0){
-    addBlock({type:'section',label:'I. Pilihan Ganda',petunjuk:'Berilah tanda silang (X) pada huruf jawaban yang paling benar!'});
+    addBlock({type:'section',label:romawiBagian(data,'pg')+'. Pilihan Ganda',petunjuk:'Berilah tanda silang (X) pada huruf jawaban yang paling benar!'});
     addItems(pg,(item,i)=>({type:'pg',item,no:i+1,pgIdx:i}));
   }
-  if(isian.length>0){
-    addBlock({type:'section',label:'II. Isian Singkat',petunjuk:'Isilah titik-titik berikut dengan jawaban yang tepat!'});
-    addItems(isian,(item,i)=>({type:'isian',item,no:pg.length+i+1}));
-  }
-  if(uraian.length>0){
-    addBlock({type:'section',label:'III. Uraian',petunjuk:'Jawablah pertanyaan berikut dengan lengkap dan benar!'});
-    addItems(uraian,(item,i)=>({type:'uraian',item,no:pg.length+isian.length+i+1}));
-  }
-  const pgk=data.pgKompleks||[],bsl=data.benarSalah||[];
-  const off=pg.length+isian.length+uraian.length;
   if(pgk.length>0){
     addBlock({type:'section',label:romawiBagian(data,'pgk')+'. Pilihan Ganda Kompleks',petunjuk:'Pilihlah SEMUA jawaban yang benar dengan memberi tanda centang (✓) pada kotak!'});
-    addItems(pgk,(item,i)=>({type:'pgk',item,no:off+i+1}));
+    addItems(pgk,(item,i)=>({type:'pgk',item,no:nomorAwal(data,'pgk')+i+1,idx:i}));
   }
   if(bsl.length>0){
     addBlock({type:'section',label:romawiBagian(data,'bs')+'. Benar / Salah',petunjuk:'Berilah tanda centang (✓) pada kolom Benar atau Salah untuk setiap pernyataan!'});
-    addItems(bsl,(item,i)=>({type:'bs',item,no:off+pgk.length+i+1}));
+    addItems(bsl,(item,i)=>({type:'bs',item,no:nomorAwal(data,'bs')+i+1,idx:i}));
+  }
+  if(isian.length>0){
+    addBlock({type:'section',label:romawiBagian(data,'isian')+'. Isian Singkat',petunjuk:'Isilah titik-titik berikut dengan jawaban yang tepat!'});
+    addItems(isian,(item,i)=>({type:'isian',item,no:nomorAwal(data,'isian')+i+1,idx:i}));
+  }
+  if(uraian.length>0){
+    addBlock({type:'section',label:romawiBagian(data,'uraian')+'. Uraian',petunjuk:'Jawablah pertanyaan berikut dengan lengkap dan benar!'});
+    addItems(uraian,(item,i)=>({type:'uraian',item,no:nomorAwal(data,'uraian')+i+1,idx:i}));
   }
   // Susun halaman: isi sampai penuh; judul bagian tidak boleh sendirian di dasar halaman
   items.forEach((it,idx)=>{
@@ -2343,34 +2342,34 @@ function buildKunciPage(data,pg,isian,uraian){
   <div class="kunci-page-sub" style="margin-bottom:12px;font-size:9pt;color:#555;">Bobot: PG=${bobotPG}pt &nbsp;|&nbsp; Isian=${bobotIsian}pt &nbsp;|&nbsp; Uraian=${bobotUraian}pt${(data.pgKompleks||[]).length?' &nbsp;|&nbsp; PG Kompleks='+bobotPGK+'pt':''}${(data.benarSalah||[]).length?' &nbsp;|&nbsp; B/S='+bobotBS+'pt':''} &nbsp;|&nbsp; <strong>Total Skor Maksimal: ${totalSkor}</strong></div>
   <div class="kunci-page-line"></div>`;
   if(pg.length>0){
-    html+=`<div class="kunci-section-title">I. Pilihan Ganda &nbsp;<span style="font-size:9pt;font-weight:normal;">(${pg.length} soal × ${bobotPG} = ${totalPG} poin)</span></div><div class="kunci-pg-grid">`;
+    html+=`<div class="kunci-section-title">${romawiBagian(data,'pg')}. Pilihan Ganda &nbsp;<span style="font-size:9pt;font-weight:normal;">(${pg.length} soal × ${bobotPG} = ${totalPG} poin)</span></div><div class="kunci-pg-grid">`;
     pg.forEach((item,i)=>{html+=`<div class="kunci-pg-cell">${i+1}. <strong>${escHtml(stripHtml(item.jawaban||'—'))}</strong></div>`;});
     html+=`</div>`;
   }
-  if(isian.length>0){
-    html+=`<div class="kunci-section-title">II. Isian Singkat &nbsp;<span style="font-size:9pt;font-weight:normal;">(${isian.length} soal × ${bobotIsian} = ${totalIsian} poin)</span></div><table class="kunci-isian-table">`;
-    isian.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${pg.length+i+1}.</td><td>${escHtml(stripHtml(item.jawaban||'—'))}</td></tr>`;});
-    html+=`</table>`;
-  }
-  if(uraian.length>0){
-    html+=`<div class="kunci-section-title">III. Uraian &nbsp;<span style="font-size:9pt;font-weight:normal;">(${uraian.length} soal × ${bobotUraian} = ${totalUraian} poin)</span></div><table class="kunci-uraian-table">`;
-    uraian.forEach((item,i)=>{
-      const rubrik=Array.isArray(item.rubrik)&&item.rubrik.length
-        ?`<div class="rubrik-block" style="margin-top:4px;font-size:9pt;color:#555;line-height:1.5;"><strong>Rubrik:</strong><br>${item.rubrik.map(r=>`- ${escHtml(stripHtml(r))}`).join('<br>')}</div>`
-        :'';
-      html+=`<tr><td class="kunci-no-col">${pg.length+isian.length+i+1}.</td><td>${escHtml(stripHtml(item.jawaban||'—'))}${rubrik}</td></tr>`;
-    });
-    html+=`</table>`;
-  }
-  const pgkK=data.pgKompleks||[],bsK=data.benarSalah||[],offK=pg.length+isian.length+uraian.length;
+  const pgkK=data.pgKompleks||[],bsK=data.benarSalah||[];
   if(pgkK.length>0){
     html+=`<div class="kunci-section-title">${romawiBagian(data,'pgk')}. PG Kompleks &nbsp;<span style="font-size:9pt;font-weight:normal;">(${pgkK.length} soal × ${bobotPGK} = ${pgkK.length*bobotPGK} poin, semua jawaban harus tepat)</span></div><table class="kunci-isian-table">`;
-    pgkK.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${offK+i+1}.</td><td><strong>${escHtml((item.jawaban||[]).join(', '))}</strong></td></tr>`;});
+    pgkK.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${nomorAwal(data,'pgk')+i+1}.</td><td><strong>${escHtml((item.jawaban||[]).join(', '))}</strong></td></tr>`;});
     html+=`</table>`;
   }
   if(bsK.length>0){
     html+=`<div class="kunci-section-title">${romawiBagian(data,'bs')}. Benar / Salah &nbsp;<span style="font-size:9pt;font-weight:normal;">(${bsK.length} soal × ${bobotBS} = ${bsK.length*bobotBS} poin)</span></div><table class="kunci-isian-table">`;
-    bsK.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${offK+pgkK.length+i+1}.</td><td>${(item.pernyataan||[]).map((x,k)=>`${k+1}-<strong>${x.jawaban==='S'?'Salah':'Benar'}</strong>`).join(' &nbsp; ')}</td></tr>`;});
+    bsK.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${nomorAwal(data,'bs')+i+1}.</td><td>${(item.pernyataan||[]).map((x,k)=>`${k+1}-<strong>${x.jawaban==='S'?'Salah':'Benar'}</strong>`).join(' &nbsp; ')}</td></tr>`;});
+    html+=`</table>`;
+  }
+  if(isian.length>0){
+    html+=`<div class="kunci-section-title">${romawiBagian(data,'isian')}. Isian Singkat &nbsp;<span style="font-size:9pt;font-weight:normal;">(${isian.length} soal × ${bobotIsian} = ${totalIsian} poin)</span></div><table class="kunci-isian-table">`;
+    isian.forEach((item,i)=>{html+=`<tr><td class="kunci-no-col">${nomorAwal(data,'isian')+i+1}.</td><td>${escHtml(stripHtml(item.jawaban||'—'))}</td></tr>`;});
+    html+=`</table>`;
+  }
+  if(uraian.length>0){
+    html+=`<div class="kunci-section-title">${romawiBagian(data,'uraian')}. Uraian &nbsp;<span style="font-size:9pt;font-weight:normal;">(${uraian.length} soal × ${bobotUraian} = ${totalUraian} poin)</span></div><table class="kunci-uraian-table">`;
+    uraian.forEach((item,i)=>{
+      const rubrik=Array.isArray(item.rubrik)&&item.rubrik.length
+        ?`<div class="rubrik-block" style="margin-top:4px;font-size:9pt;color:#555;line-height:1.5;"><strong>Rubrik:</strong><br>${item.rubrik.map(r=>`- ${escHtml(stripHtml(r))}`).join('<br>')}</div>`
+        :'';
+      html+=`<tr><td class="kunci-no-col">${nomorAwal(data,'uraian')+i+1}.</td><td>${escHtml(stripHtml(item.jawaban||'—'))}${rubrik}</td></tr>`;
+    });
     html+=`</table>`;
   }
   html+=`<div style="margin-top:14px;padding:8px 12px;background:#f0f9f4;border:1px solid #6ee7b7;border-radius:6px;font-size:10pt;font-family:'Times New Roman',serif;">
@@ -2419,13 +2418,19 @@ function buildKisiKisiPage(data,pg,isian,uraian){
     const mat=escHtml(getMateriSoal(i,Math.max(pg.length,1)));
     rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${mat}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(level)}</td><td class="kisi-bentuk">PG</td><td class="kisi-nomor">${i+1}</td></tr>`;
   });
+  {const pgkS=data.pgKompleks||[],bsS=data.benarSalah||[];
+  [[pgkS,'PG Kompleks','pgk'],[bsS,'Benar/Salah','bs']].forEach(([arr,bentuk,tambah])=>arr.forEach((item,i)=>{
+    const indikator=escHtml(stripHtml(item.indikator||item.soal||'').slice(0,120));
+    rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${escHtml(getMateriSoal(i,Math.max(arr.length,1)))}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(item.level||'C3')}</td><td class="kisi-bentuk">${bentuk}</td><td class="kisi-nomor">${nomorAwal(data,tambah)+i+1}</td></tr>`;
+  }));
+  }
   isian.forEach((item,i)=>{
     const indikator=item.indikator
       ? escHtml(stripHtml(item.indikator))
       : (()=>{const s=stripHtml(item.soal).replace(/\s+/g,' ').trim();return escHtml(s.length>90?s.substring(0,90)+'…':s);})();
     const level=item.level||getLevel('isian',i);
     const mat=escHtml(getMateriSoal(i,Math.max(isian.length,1)));
-    rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${mat}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(level)}</td><td class="kisi-bentuk">Isian</td><td class="kisi-nomor">${pg.length+i+1}</td></tr>`;
+    rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${mat}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(level)}</td><td class="kisi-bentuk">Isian</td><td class="kisi-nomor">${nomorAwal(data,'isian')+i+1}</td></tr>`;
   });
   uraian.forEach((item,i)=>{
     const indikator=item.indikator
@@ -2433,14 +2438,10 @@ function buildKisiKisiPage(data,pg,isian,uraian){
       : (()=>{const s=stripHtml(item.soal).replace(/\s+/g,' ').trim();return escHtml(s.length>90?s.substring(0,90)+'…':s);})();
     const level=item.level||getLevel('uraian',i);
     const mat=escHtml(getMateriSoal(i,Math.max(uraian.length,1)));
-    rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${mat}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(level)}</td><td class="kisi-bentuk">Uraian</td><td class="kisi-nomor">${pg.length+isian.length+i+1}</td></tr>`;
+    rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${mat}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(level)}</td><td class="kisi-bentuk">Uraian</td><td class="kisi-nomor">${nomorAwal(data,'uraian')+i+1}</td></tr>`;
   });
 
-  const pgkS=data.pgKompleks||[],bsS=data.benarSalah||[],offS=pg.length+isian.length+uraian.length;
-  [[pgkS,'PG Kompleks',0],[bsS,'Benar/Salah',pgkS.length]].forEach(([arr,bentuk,tambah])=>arr.forEach((item,i)=>{
-    const indikator=escHtml(stripHtml(item.indikator||item.soal||'').slice(0,120));
-    rows+=`<tr><td class="kisi-no">${no++}</td><td class="kisi-materi">${escHtml(getMateriSoal(i,Math.max(arr.length,1)))}</td><td class="kisi-indikator" contenteditable="true" style="min-width:180px;outline:none;">${indikator}</td><td class="kisi-level">${escHtml(item.level||'C3')}</td><td class="kisi-bentuk">${bentuk}</td><td class="kisi-nomor">${offS+tambah+i+1}</td></tr>`;
-  }));
+  const pgkS=data.pgKompleks||[],bsS=data.benarSalah||[];
   const distribusi=[pg.length?`PG: ${pg.length}`:'',isian.length?`Isian: ${isian.length}`:'',uraian.length?`Uraian: ${uraian.length}`:'',pgkS.length?`PG Kompleks: ${pgkS.length}`:'',bsS.length?`B/S: ${bsS.length}`:''].filter(Boolean).join(' | ');
 
   return `
@@ -2986,7 +2987,7 @@ async function exportWord(options={rubrik:true}){
   // ── Soal PG ──
   const pgP=[];
   if(pg.length>0){
-    pgP.push(P([T('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:200,after:60}));
+    pgP.push(P([T(romawiBagian(soalData,'pg')+'. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:200,after:60}));
     pgP.push(P([T('Berilah tanda silang (X) pada huruf jawaban yang paling benar!',{italic:true,size:20})],{after:80}));
     pg.forEach((item,i)=>{
       wordBab(pgP,item);
@@ -3038,7 +3039,7 @@ async function exportWord(options={rubrik:true}){
   // ── Soal Isian ──
   const isP=[];
   if(isian.length>0){
-    isP.push(P([T('II. Isian Singkat',{bold:true,underline:true,size:22})],{before:240,after:60}));
+    isP.push(P([T(romawiBagian(soalData,'isian')+'. Isian Singkat',{bold:true,underline:true,size:22})],{before:240,after:60}));
     isP.push(P([T('Isilah titik-titik berikut dengan jawaban yang tepat!',{italic:true,size:20})],{after:80}));
     isian.forEach((item,i)=>{
       wordBab(isP,item);
@@ -3047,7 +3048,7 @@ async function exportWord(options={rubrik:true}){
         borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
         rows:[new D.TableRow({children:[
           new D.TableCell({width:{size:noW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:0,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((pg.length+i+1)+'.',{bold:true,size:22})]})]}),
+            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((nomorAwal(soalData,'isian')+i+1)+'.',{bold:true,size:22})]})]}),
           new D.TableCell({width:{size:txtW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:80,right:0},
             children:[new D.Paragraph({spacing:{before:80,after:10},children:TB(stripHtml(item.soal||''),{size:22})})]}),
         ]})]
@@ -3059,7 +3060,7 @@ async function exportWord(options={rubrik:true}){
   // ── Soal Uraian ──
   const urP=[];
   if(uraian.length>0){
-    urP.push(P([T('III. Uraian',{bold:true,underline:true,size:22})],{before:240,after:60}));
+    urP.push(P([T(romawiBagian(soalData,'uraian')+'. Uraian',{bold:true,underline:true,size:22})],{before:240,after:60}));
     urP.push(P([T('Jawablah pertanyaan berikut dengan lengkap dan benar!',{italic:true,size:20})],{after:80}));
     uraian.forEach((item,i)=>{
       wordBab(urP,item);
@@ -3068,7 +3069,7 @@ async function exportWord(options={rubrik:true}){
         borders:{top:bNone,bottom:bNone,left:bNone,right:bNone,insideH:bNone,insideV:bNone},
         rows:[new D.TableRow({children:[
           new D.TableCell({width:{size:noW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:0,right:0},
-            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((pg.length+isian.length+i+1)+'.',{bold:true,size:22})]})]}),
+            children:[new D.Paragraph({spacing:{before:80,after:0},children:[T((nomorAwal(soalData,'uraian')+i+1)+'.',{bold:true,size:22})]})]}),
           new D.TableCell({width:{size:txtW,type:'dxa'},borders:{top:bNone,bottom:bNone,left:bNone,right:bNone},margins:{top:0,bottom:0,left:80,right:0},
             children:[new D.Paragraph({spacing:{before:80,after:10},children:TB(stripHtml(item.soal||''),{size:22})})]}),
         ]})]
@@ -3080,7 +3081,7 @@ async function exportWord(options={rubrik:true}){
   }
 
   // ── PG Kompleks & Benar/Salah ──
-  const exP=[];const offW=pg.length+isian.length+uraian.length;
+  const exP=[];const offW=nomorAwal(soalData,'pgk');
   if(pgkW.length){
     exP.push(P([T(romawiBagian(soalData,'pgk')+'. Pilihan Ganda Kompleks',{bold:true,underline:true,size:22})],{before:240,after:60}));
     exP.push(P([T('Pilihlah SEMUA jawaban yang benar dengan memberi tanda centang (✓) pada kotak!',{italic:true,size:20})],{after:80}));
@@ -3111,7 +3112,7 @@ async function exportWord(options={rubrik:true}){
   kP.push(P([T('Bobot: PG='+bobotPG+'pt | Isian='+bobotIsian+'pt | Uraian='+bobotUraian+'pt | Total Skor Maks: '+totalSkor,{size:18,italic:true})],{align:'center',after:80}));
   pushHR(kP);
   if(pg.length>0){
-    kP.push(P([T('I. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:120,after:60}));
+    kP.push(P([T(romawiBagian(soalData,'pg')+'. Pilihan Ganda',{bold:true,underline:true,size:22})],{before:120,after:60}));
     // Grid 5 kolom
     const kCW=Math.floor(W/5);
     const kRows=[];
@@ -3125,22 +3126,6 @@ async function exportWord(options={rubrik:true}){
     }
     kP.push(new D.Table({width:{size:W,type:'dxa'},columnWidths:[kCW,kCW,kCW,kCW,kCW],rows:kRows}));
   }
-  if(isian.length>0){
-    kP.push(P([T('II. Isian Singkat',{bold:true,underline:true,size:22})],{before:160,after:60}));
-    isian.forEach((item,i)=>{
-      kP.push(P([T((pg.length+i+1)+'. ',{bold:true,size:20}),T(stripHtml(item.jawaban||'—'),{size:20})],{after:40}));
-    });
-  }
-  if(uraian.length>0){
-    kP.push(P([T('III. Uraian',{bold:true,underline:true,size:22})],{before:160,after:60}));
-    uraian.forEach((item,i)=>{
-      kP.push(P([T((pg.length+isian.length+i+1)+'. ',{bold:true,size:20}),T(stripHtml(item.jawaban||'—'),{size:20})],{after:40}));
-      if(options.rubrik!==false&&Array.isArray(item.rubrik)&&item.rubrik.length){
-        kP.push(P([T('Rubrik:',{bold:true,size:18})],{indent:360,after:20}));
-        item.rubrik.forEach(r=>kP.push(P([T('- '+stripHtml(r),{size:18})],{indent:540,after:20})));
-      }
-    });
-  }
   if(pgkW.length){
     kP.push(P([T(romawiBagian(soalData,'pgk')+'. PG Kompleks',{bold:true,underline:true,size:22})],{before:160,after:60}));
     pgkW.forEach((item,i)=>kP.push(P([T((offW+i+1)+'. ',{bold:true,size:20}),T((item.jawaban||[]).join(', '),{bold:true,size:20})],{after:40})));
@@ -3148,6 +3133,22 @@ async function exportWord(options={rubrik:true}){
   if(bsW.length){
     kP.push(P([T(romawiBagian(soalData,'bs')+'. Benar / Salah',{bold:true,underline:true,size:22})],{before:160,after:60}));
     bsW.forEach((item,i)=>kP.push(P([T((offW+pgkW.length+i+1)+'. ',{bold:true,size:20}),T((item.pernyataan||[]).map((x,k)=>(k+1)+'-'+(x.jawaban==='S'?'Salah':'Benar')).join('   '),{size:20})],{after:40})));
+  }
+  if(isian.length>0){
+    kP.push(P([T(romawiBagian(soalData,'isian')+'. Isian Singkat',{bold:true,underline:true,size:22})],{before:160,after:60}));
+    isian.forEach((item,i)=>{
+      kP.push(P([T((nomorAwal(soalData,'isian')+i+1)+'. ',{bold:true,size:20}),T(stripHtml(item.jawaban||'—'),{size:20})],{after:40}));
+    });
+  }
+  if(uraian.length>0){
+    kP.push(P([T(romawiBagian(soalData,'uraian')+'. Uraian',{bold:true,underline:true,size:22})],{before:160,after:60}));
+    uraian.forEach((item,i)=>{
+      kP.push(P([T((nomorAwal(soalData,'uraian')+i+1)+'. ',{bold:true,size:20}),T(stripHtml(item.jawaban||'—'),{size:20})],{after:40}));
+      if(options.rubrik!==false&&Array.isArray(item.rubrik)&&item.rubrik.length){
+        kP.push(P([T('Rubrik:',{bold:true,size:18})],{indent:360,after:20}));
+        item.rubrik.forEach(r=>kP.push(P([T('- '+stripHtml(r),{size:18})],{indent:540,after:20})));
+      }
+    });
   }
   kP.push(P([T('Nilai = (Skor Diperoleh ÷ '+totalSkor+') × 100',{italic:true,size:20})],{before:160}));
 
@@ -3167,10 +3168,10 @@ async function exportWord(options={rubrik:true}){
   ));
   const allSoal=[
     ...pg.map((s,i)=>({no:i+1,mat:getMs(i,pg.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C1',bnt:'PG',nom:i+1})),
-    ...isian.map((s,i)=>({no:pg.length+i+1,mat:getMs(i,isian.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C2',bnt:'Isian',nom:pg.length+i+1})),
-    ...uraian.map((s,i)=>({no:pg.length+isian.length+i+1,mat:getMs(i,uraian.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C4',bnt:'Uraian',nom:pg.length+isian.length+i+1})),
     ...pgkW.map((s,i)=>({no:offW+i+1,mat:getMs(i,pgkW.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C3',bnt:'PG Kompleks',nom:offW+i+1})),
     ...bsW.map((s,i)=>({no:offW+pgkW.length+i+1,mat:getMs(i,bsW.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C2',bnt:'B/S',nom:offW+pgkW.length+i+1})),
+    ...isian.map((s,i)=>({no:nomorAwal(soalData,'isian')+i+1,mat:getMs(i,isian.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C2',bnt:'Isian',nom:nomorAwal(soalData,'isian')+i+1})),
+    ...uraian.map((s,i)=>({no:nomorAwal(soalData,'uraian')+i+1,mat:getMs(i,uraian.length),ind:s.indikator||stripHtml(s.soal).substring(0,80),lvl:s.level||'C4',bnt:'Uraian',nom:nomorAwal(soalData,'uraian')+i+1})),
   ];
   const kkDataRows=allSoal.map(s=>tblRow([
     tblCell([T(String(s.no),{size:18})],kkCW[0],'center'),
@@ -3209,9 +3210,9 @@ async function exportWord(options={rubrik:true}){
       children:[
         ...headerRows,
         ...pgP,
+        ...exP,
         ...isP,
         ...urP,
-        ...exP,
         PB(),
         ...kP,
         ...(options.ringkas?[]:[PB(),...kkP]),
@@ -3284,15 +3285,16 @@ function shuffleSoal(){
 
 async function regenerateSoalItem(type,idx){
   if(!soalData)return;
-  const arr=type==='pg'?soalData.pilihanGanda:type==='isian'?soalData.isian:soalData.uraian;
+  const arr=type==='pg'?soalData.pilihanGanda:type==='isian'?soalData.isian:type==='pgk'?soalData.pgKompleks:type==='bs'?soalData.benarSalah:soalData.uraian;
   const item=arr&&arr[idx];
   if(!item)return;
   const kelas=parseInt(document.getElementById('kelas').value)||1;
   const jenjang=getJenjang();
   const mapel=getMapelValue();
   const opsiConfig=getOpsiPGConfig(kelas);
-  const tipeLabel=type==='pg'?'pilihan ganda':type==='isian'?'isian singkat':'uraian';
-  const counts={pg:type==='pg'?1:0,isian:type==='isian'?1:0,uraian:type==='uraian'?1:0};
+  const tipeLabel={pg:'pilihan ganda',isian:'isian singkat',uraian:'uraian',pgk:'pilihan ganda kompleks (jawaban benar lebih dari satu)',bs:'benar/salah (beberapa pernyataan)'}[type];
+  const counts={pg:type==='pg'?1:0,isian:type==='isian'?1:0,uraian:type==='uraian'?1:0,pgk:type==='pgk'?1:0,bs:type==='bs'?1:0};
+  const pgkLabels=opsiLabelsPGK();
   const prompt=`Buat ulang 1 soal ${tipeLabel} untuk mengganti soal berikut. Jangan menyalin soal lama.
 
 Kelas: ${kelas} ${getSatuanPendidikan()} (${getFaseLabel(kelas,jenjang)})
@@ -3309,12 +3311,14 @@ Kembalikan HANYA JSON valid:
 {
   "pilihanGanda":${type==='pg'?'[{"soal":"...","opsi":'+opsiConfig.template+',"jawaban":"A","indikator":"Siswa dapat ...","level":"C2"}]':'[]'},
   "isian":${type==='isian'?'[{"soal":"...","jawaban":"...","indikator":"Siswa dapat ...","level":"C1"}]':'[]'},
-  "uraian":${type==='uraian'?'[{"soal":"...","jawaban":"...","rubrik":["Skor 4: ...","Skor 3: ...","Skor 2: ...","Skor 1: ..."],"indikator":"Siswa dapat ...","level":"C4"}]':'[]'}
-}`;
+  "uraian":${type==='uraian'?'[{"soal":"...","jawaban":"...","rubrik":["Skor 4: ...","Skor 3: ...","Skor 2: ...","Skor 1: ..."],"indikator":"Siswa dapat ...","level":"C4"}]':'[]'},
+  "pgKompleks":${type==='pgk'?'[{"soal":"... Pilihlah semua jawaban yang benar!","opsi":['+pgkLabels.map(l=>'"'+l+'. ..."').join(',')+'],"jawaban":["A","C"],"indikator":"Siswa dapat ...","level":"C3"}]':'[]'},
+  "benarSalah":${type==='bs'?'[{"soal":"stimulus singkat lalu: Tentukan Benar atau Salah setiap pernyataan berikut!","pernyataan":[{"teks":"...","jawaban":"B"},{"teks":"...","jawaban":"S"}],"indikator":"Siswa dapat ...","level":"C2"}]':'[]'}
+}${type==='pgk'?`\nJawaban benar 2 sampai ${pgkLabels.length-1} huruf.`:type==='bs'?'\nBuat 3-5 pernyataan, campur Benar dan Salah.':''}`;
   const savedPage=currentPage;
   hideError();setLoading(true);showGenerateFeedback(`Membuat ulang soal ${tipeLabel} nomor ${idx+1}...`,0);
   try{
-    const cfg={jmlPG:counts.pg,jmlIsian:counts.isian,jmlUraian:counts.uraian,opsiLabels:opsiConfig.labels,allowedLevels:getKesulitanLevels()};
+    const cfg={jmlPG:counts.pg,jmlIsian:counts.isian,jmlUraian:counts.uraian,jmlPGK:counts.pgk,jmlBS:counts.bs,pgkLabels,opsiLabels:opsiConfig.labels,allowedLevels:getKesulitanLevels()};
     let rawText=await requestGenerateSoal(prompt);
     let fresh;
     try{
@@ -3326,6 +3330,8 @@ Kembalikan HANYA JSON valid:
     if(type==='pg')soalData.pilihanGanda[idx]=fresh.pilihanGanda[0];
     if(type==='isian')soalData.isian[idx]=fresh.isian[0];
     if(type==='uraian')soalData.uraian[idx]=fresh.uraian[0];
+    if(type==='pgk')soalData.pgKompleks[idx]=fresh.pgKompleks[0];
+    if(type==='bs')soalData.benarSalah[idx]=fresh.benarSalah[0];
     buildHalaman(soalData);
     showPage(Math.min(savedPage,halamanSoal.length-1));
     setTimeout(()=>enableInlineEdit(),200);
@@ -3390,21 +3396,32 @@ function buildDocHeader(){
   <div class="doc-identitas-line"></div>`;
 }
 
-// Nomor romawi bagian sesuai jenis yang ada (I PG, II Isian, III Uraian, lalu PG Kompleks, Benar/Salah).
+// Nomor romawi bagian sesuai jenis yang ada (PG, PG Kompleks, Benar/Salah, Isian, Uraian).
+const URUT_JENIS=['pg','pgk','bs','isian','uraian'];
+function jumlahJenis(data){return{pg:(data.pilihanGanda||[]).length,pgk:(data.pgKompleks||[]).length,bs:(data.benarSalah||[]).length,isian:(data.isian||[]).length,uraian:(data.uraian||[]).length};}
+// Nomor soal sebelum jenis ini (urutan: PG, PG Kompleks, Benar/Salah, Isian, Uraian).
+function nomorAwal(data,jenis){const j=jumlahJenis(data);let n=0;for(const k of URUT_JENIS){if(k===jenis)return n;n+=j[k];}return n;}
 function romawiBagian(data,jenis){
-  const urut=[['pg',(data.pilihanGanda||[]).length],['isian',(data.isian||[]).length],['uraian',(data.uraian||[]).length],['pgk',(data.pgKompleks||[]).length],['bs',(data.benarSalah||[]).length]];
+  const j=jumlahJenis(data);const urut=URUT_JENIS.map(k=>[k,j[k]]);
   const ada=urut.filter(x=>x[1]>0).map(x=>x[0]);
   return ['I','II','III','IV','V'][Math.max(0,ada.indexOf(jenis))]||'';
+}
+function tombolSoal(type,idx){
+  const st='background:none;border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.75rem;cursor:pointer;color:var(--text-light);margin-top:1px;';
+  return `<span class="no-print" style="display:inline-flex;gap:3px;flex-shrink:0;"><button onclick="regenerateSoalItem('${type}',${idx})" style="${st}" title="Buat ulang soal">↻</button><button onclick="openEditModal('${type}',${idx})" style="${st}" title="Edit soal" aria-label="Edit soal"><svg class="ic" aria-hidden="true"><use href="#i-pencil"/></svg></button></span>`;
+}
+function teksDenganTombol(b){
+  return `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;"><span class="soal-teks">${richHtml(b.item.soal)}</span>${tombolSoal(b.type,b.idx)}</div>`;
 }
 function buildSoalRow(b){
   if(b.type==='pgk'){
     const opsi=(b.item.opsi||[]).map(s=>{const m=String(s).match(/^([A-Ea-e])[\.\)]\s*([\s\S]*)/);return m?{h:m[1].toUpperCase(),t:m[2]}:{h:'',t:s};});
     const rows=opsi.map(o=>`<tr><td style="width:22px;vertical-align:top;"><span style="display:inline-block;width:12px;height:12px;border:1px solid #333;margin-top:3px;"></span></td><td style="width:18px;vertical-align:top;">${escHtml(o.h)}.</td><td>${richHtml(o.t)}</td></tr>`).join('');
-    return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${richHtml(b.item.soal)}</span><table class="opsi-table">${rows}</table></td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
+    return `<tr><td class="soal-no">${b.no}.</td><td>${teksDenganTombol(b)}<table class="opsi-table">${rows}</table></td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
   }
   if(b.type==='bs'){
     const rows=(b.item.pernyataan||[]).map((x,i)=>`<tr><td style="border:1px solid #555;padding:3px 5px;text-align:center;width:26px;">${i+1}</td><td style="border:1px solid #555;padding:3px 6px;">${richHtml(x.teks)}</td><td style="border:1px solid #555;width:52px;"></td><td style="border:1px solid #555;width:52px;"></td></tr>`).join('');
-    return `<tr><td class="soal-no">${b.no}.</td><td><span class="soal-teks">${richHtml(b.item.soal)}</span>
+    return `<tr><td class="soal-no">${b.no}.</td><td>${teksDenganTombol(b)}
       <table style="width:100%;border-collapse:collapse;margin-top:4px;font-size:10.5pt;"><tr style="background:#f1f5f9;"><th style="border:1px solid #555;padding:3px;">No</th><th style="border:1px solid #555;padding:3px;">Pernyataan</th><th style="border:1px solid #555;padding:3px;">Benar</th><th style="border:1px solid #555;padding:3px;">Salah</th></tr>${rows}</table></td></tr><tr><td colspan="2" style="height:5px;"></td></tr>`;
   }
   if(b.type==='pg'){
@@ -3434,7 +3451,7 @@ function buildSoalRow(b){
       ${opsiHtml}</td></tr><tr><td colspan="2" style="height:4px;"></td></tr>`;
   }
   if(b.type==='isian'){
-    const isIdx=b.no-((soalData&&soalData.pilihanGanda?soalData.pilihanGanda.length:0))-1;
+    const isIdx=b.idx!==undefined?b.idx:b.no-nomorAwal(soalData||{},'isian')-1;
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="isian" data-idx="${isIdx}">${richHtml(b.item.soal)}</span>
@@ -3446,9 +3463,7 @@ function buildSoalRow(b){
       <br><span class="isian-garis">&nbsp;</span></td></tr><tr><td colspan="2" style="height:3px;"></td></tr>`;
   }
   if(b.type==='uraian'){
-    const pgLen=(soalData&&soalData.pilihanGanda?soalData.pilihanGanda.length:0);
-    const isLen=(soalData&&soalData.isian?soalData.isian.length:0);
-    const urIdx=b.no-pgLen-isLen-1;
+    const urIdx=b.idx!==undefined?b.idx:b.no-nomorAwal(soalData||{},'uraian')-1;
     return `<tr><td class="soal-no">${b.no}.</td><td>
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px;">
         <span class="soal-teks" data-type="uraian" data-idx="${urIdx}">${richHtml(b.item.soal)}</span>
@@ -3474,24 +3489,28 @@ function openEditModal(type,idx){
   if(type==='pg')item=(soalData.pilihanGanda||[])[idx];
   if(type==='isian')item=(soalData.isian||[])[idx];
   if(type==='uraian')item=(soalData.uraian||[])[idx];
+  if(type==='pgk')item=(soalData.pgKompleks||[])[idx];
+  if(type==='bs')item=(soalData.benarSalah||[])[idx];
   if(!item)return;
 
-  const label=type==='pg'?'PG':type==='isian'?'Isian':'Uraian';
-  document.getElementById('editModalTitle').textContent=`Edit Soal ${label} No. ${idx+1}`;
+  const label={pg:'PG',isian:'Isian',uraian:'Uraian',pgk:'PG Kompleks',bs:'Benar/Salah'}[type];
+  document.getElementById('editModalTitle').textContent=`Edit Soal ${label} No. ${nomorAwal(soalData,type)+idx+1}`;
   document.getElementById('editSoalTeks').value=stripHtml(item.soal||'');
-  document.getElementById('editJawaban').value=stripHtml(item.jawaban||'');
+  document.getElementById('editJawaban').value=type==='pgk'?(item.jawaban||[]).join(', '):stripHtml(item.jawaban||'');
   document.getElementById('editLevel').value=item.level||'C2';
 
   // Opsi PG
   const opsiCont=document.getElementById('editOpsiContainer');
-  if(type==='pg'&&item.opsi&&item.opsi.length){
+  if(type==='bs'){
+    opsiCont.innerHTML='<div class="form-group"><label for="editBSList">Pernyataan (satu per baris, akhiri dengan | B atau | S)</label><textarea id="editBSList" rows="6" style="width:100%;padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;background:var(--input-bg);color:var(--text);">'+escHtml((item.pernyataan||[]).map(x=>stripHtml(x.teks)+' | '+(x.jawaban==='S'?'S':'B')).join('\n'))+'</textarea></div>';
+  }else if((type==='pg'||type==='pgk')&&item.opsi&&item.opsi.length){
     opsiCont.innerHTML='<div class="form-group"><label>Opsi Jawaban</label>'+
       item.opsi.map((o,i)=>`<input type="text" data-opsi-idx="${i}" value="${escHtml(stripHtml(o))}" style="width:100%;padding:7px 11px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.85rem;background:var(--input-bg);color:var(--text);margin-bottom:5px;display:block;"/>`).join('')+
     '</div>';
   }else{
     opsiCont.innerHTML='';
   }
-  document.getElementById('editJawabanGroup').style.display='block';
+  document.getElementById('editJawabanGroup').style.display=type==='bs'?'none':'block';
   document.getElementById('editModal').style.display='block';
   document.body.style.overflow='hidden';
   setTimeout(()=>document.getElementById('editSoalTeks').focus(),100);
@@ -3514,14 +3533,29 @@ function saveEditModal(){
   if(_editType==='pg')arr=soalData.pilihanGanda;
   if(_editType==='isian')arr=soalData.isian;
   if(_editType==='uraian')arr=soalData.uraian;
+  if(_editType==='pgk')arr=soalData.pgKompleks;
+  if(_editType==='bs')arr=soalData.benarSalah;
   if(!arr||!arr[_editIdx])return;
 
+  if(_editType==='pgk'){
+    const huruf=[...new Set((jawabanBaru.toUpperCase().match(/[A-F]/g)||[]))].sort();
+    if(huruf.length<2){alert('PG Kompleks butuh minimal 2 jawaban benar, contoh: A, C');return;}
+    arr[_editIdx].jawaban=huruf;
+  }else if(_editType==='bs'){
+    const list=(document.getElementById('editBSList').value||'').split('\n').map(s=>s.trim()).filter(Boolean).map(s=>{
+      const m=s.match(/^(.*?)\s*\|\s*([BbSs])\w*\s*$/);
+      return m?{teks:m[1].trim(),jawaban:m[2].toUpperCase()}:{teks:s,jawaban:'B'};
+    }).filter(x=>x.teks);
+    if(!list.length){alert('Isi minimal 1 pernyataan.');return;}
+    arr[_editIdx].pernyataan=list;
+  }else{
+    arr[_editIdx].jawaban=jawabanBaru;
+  }
   arr[_editIdx].soal=soalBaru;
-  arr[_editIdx].jawaban=jawabanBaru;
   arr[_editIdx].level=levelBaru;
 
   // Simpan opsi PG yang diedit
-  if(_editType==='pg'){
+  if(_editType==='pg'||_editType==='pgk'){
     const inputs=document.querySelectorAll('#editOpsiContainer input[data-opsi-idx]');
     if(inputs.length){arr[_editIdx].opsi=[...inputs].map(el=>el.value.trim());}
   }
