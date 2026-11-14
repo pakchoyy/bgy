@@ -22,7 +22,6 @@
     { text: 'Kumpulan Tujuan Pembelajaran terupdate', url: 'https://www.bantuguruyuk.web.id/draft-tp/', path: '/draft-tp' },
     { text: 'Undangan rapor jadi dalam 1 menit', url: 'https://www.bantuguruyuk.web.id/teks-sekolah/', path: '/teks-sekolah' },
     { text: 'Simpan akun digital guru, aman & offline', url: 'https://www.bantuguruyuk.web.id/sandi/', path: '/sandi' },
-    { text: 'Dokumen resmi guru, tinggal unduh', url: 'https://www.bantuguruyuk.web.id/dokumen/', path: '/dokumen' },
     { text: 'Gabung, kompres & TTD PDF gratis', url: 'https://www.bantuguruyuk.web.id/pdf/', path: '/pdf' }
   ];
   // Ikon Lucide (lucide.dev, lisensi ISC) — isi <svg viewBox="0 0 24 24">
@@ -1084,7 +1083,6 @@
     ['Katrol Nilai', 'Hitung & katrol nilai otomatis', '/katrol-nilai/', '<path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" />', 'Administrasi'],
     ['Teks Sekolah', 'Undangan rapor & surat, sekali klik', '/teks-sekolah/', '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" />', 'Administrasi'],
     ['Simpan Sandi', 'Akun digital guru, aman & offline', '/sandi/', '<path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />', 'Administrasi'],
-    ['Dokumen Resmi', 'Peraturan & panduan kementerian', '/dokumen/', '<path d="M10 12h4"/><path d="M10 8h4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/>', 'Administrasi'],
     ['Buat Jadwal', 'Jadwal pelajaran tanpa bentrok', 'https://bjadwal.bantuguruyuk.web.id', '<path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /><path d="M8 13h.01" /><path d="M12 13h.01" /><path d="M16 13h.01" /><path d="M8 17h.01" /><path d="M12 17h.01" /><path d="M16 17h.01" />', 'Administrasi'],
     ['PDF Tools', 'Gabung, kompres & TTD PDF', '/pdf/', '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>', 'Tools Lainnya'],
     ['Presensi Siswa', 'Absensi siswa QR & PJJ', 'https://presiswa.bantuguruyuk.web.id', '<rect width="8" height="4" x="8" y="2" rx="1" ry="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" />', 'Web Lainnya'],
