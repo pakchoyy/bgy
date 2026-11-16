@@ -3823,6 +3823,8 @@ function renderAffiliateTab(){
   <p class="ti-lead">Khusus member PRO. Kamu dapat <b>${rupiah(k)}</b> setiap ada guru yang membeli paket Buat Soal memakai kode kamu${bonus?`, dan temanmu dapat <b>bonus ${bonus} hari</b> masa aktif`:''}.</p>`;
   if(_aff){el.innerHTML=kepala+affDasbor(_aff);return;}
   const c=affKredensial();
+  // Sudah pernah memasukkan kode aktivasi di HP ini: langsung buka dasbor tanpa isi apa pun.
+  if(isPro&&c.e&&/^BGY-[A-Z0-9]{5}$/.test(c.k)&&!el.dataset.auto){el.dataset.auto='1';el.innerHTML=kepala+'<p class="ti-note">Memuat dasbor affiliate...</p><input id="affEmail" type="hidden" value="'+escHtml(c.e)+'"/><input id="affKode" type="hidden" value="'+escHtml(c.k)+'"/><button id="affMasuk" hidden></button><div class="ti-note" id="affMsg"></div>';affMasuk().then(()=>{if(!_aff){renderAffiliateTab();}});return;}
   el.innerHTML=kepala+`<h4>Cara kerja</h4>
   <ol class="ti-list">
     <li>Masuk dengan email PRO dan kode aktivasi (BGY-XXXXX) untuk mendapat kode affiliate.</li>
@@ -3833,7 +3835,7 @@ function renderAffiliateTab(){
     <label for="affEmail">Email PRO</label><input id="affEmail" type="email" value="${escHtml(c.e)}" autocomplete="email"/>
     <label for="affKode">Kode aktivasi</label><input id="affKode" type="text" value="${escHtml(c.k)}" placeholder="BGY-XXXXX" maxlength="9" style="text-transform:uppercase"/>
     <button type="button" class="pk-beli pro" id="affMasuk" onclick="affMasuk()">Buka dasbor affiliate</button>
-    <div class="ti-note" id="affMsg">Lupa kode aktivasi? Hubungi Pak Choy lewat WhatsApp.</div></div>`
+    <div class="ti-note" id="affMsg">Cukup sekali di HP ini. Kode aktivasi diminta supaya saldo komisimu tidak bisa dibuka orang lain yang tahu emailmu. Lupa kode? Hubungi Pak Choy lewat WhatsApp.</div></div>`
   :`<p class="ti-note">Paket kamu sekarang ${NAMA_TIER[tier()]}. Upgrade ke PRO dulu untuk ikut program ini.</p><button type="button" class="pk-beli pro" onclick="showTab('upgrade')">Lihat paket PRO</button>`}`;
 }
 async function affMasuk(){
