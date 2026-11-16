@@ -48,13 +48,13 @@
       display: block; font-size: 12px; font-weight: 700;
       color: #64748b; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 5px;
     }
-    input[type=email] {
+    input[type=email], input#refCode {
       width: 100%; padding: 11px 13px; margin-bottom: 14px;
       border-radius: 10px; border: 2px solid #e2e8f0;
       font-size: 14px; color: #1e293b; background: #f8fafc;
       outline: none; transition: border-color .2s;
     }
-    input[type=email]:focus { border-color: #0d7a8a; background: white; }
+    input[type=email]:focus, input#refCode:focus { border-color: #0d7a8a; background: white; }
     .btn-primary {
       width: 100%; padding: 12px; font-size: 15px; font-weight: 700;
       background: linear-gradient(135deg, #0d7a8a, #059669);
@@ -100,6 +100,9 @@
   </div>
   <label>Email Pembelian</label>
   <input type="email" id="email" placeholder="contoh: guru@sekolah.com">
+  <label for="refCode" style="margin-top:12px">Kode affiliate teman (opsional)</label>
+  <input type="text" id="refCode" maxlength="8" placeholder="contoh: BS-AB12C" style="text-transform:uppercase" autocomplete="off">
+  <div style="font-size:12px;color:#64748b;margin-top:4px">Punya kode dari teman guru? Isi untuk dapat bonus masa aktif.</div>
   <button class="btn-primary" id="btnDapat">🔑 Dapatkan Kode Aktivasi</button>
   <div id="hasil" class="kode"></div>
   <div class="info">Kode ini hanya untuk kamu. Jangan bagikan ke orang lain.</div>
@@ -149,6 +152,7 @@
       };
       if (!data || !data.activation_code) throw new Error(pesan[data && data.result] || 'Kode tidak tersedia. Hubungi admin.');
       tampilKode(data.activation_code, email);
+      await pakaiAffiliate(q.get('order'), q.get('sig'));
 
     } catch (err) {
       hasil.className = "kode error";
@@ -158,6 +162,39 @@
       btn.disabled = false;
     }
   });
+
+  // Kode affiliate dari link teman (?ref=) atau isian manual.
+  (function () {
+    var r = new URLSearchParams(location.search).get('ref');
+    try { r = r || localStorage.getItem('bgy_ref') || ''; } catch (e) {}
+    if (/^BS-[A-Z0-9]{5}$/i.test(r || '')) document.getElementById('refCode').value = r.toUpperCase();
+  })();
+  async function pakaiAffiliate(order, sig) {
+    const ref = (document.getElementById('refCode').value || '').trim().toUpperCase();
+    if (!ref) return;
+    const info = document.createElement('div');
+    info.style.cssText = 'margin-top:10px;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.5;text-align:left;';
+    try {
+      const { data, error } = await sbClient.rpc('bgy_aff_apply', { p_order: order, p_sig: sig, p_ref: ref });
+      if (error) throw error;
+      const r = data && data.result;
+      const pesan = {
+        ok: 'Kode affiliate ' + ref + ' dipakai.' + (data.bonus_hari ? ' Bonus +' + data.bonus_hari + ' hari masa aktif sudah ditambahkan.' : ''),
+        used: 'Pesanan ini sudah memakai kode affiliate.',
+        self: 'Kode affiliate milik sendiri tidak bisa dipakai.',
+        no_code: 'Kode affiliate ' + ref + ' tidak ditemukan atau sudah tidak aktif.',
+        invalid: 'Kode affiliate tidak bisa dipakai untuk pesanan ini.'
+      };
+      info.textContent = pesan[r] || pesan.invalid;
+      info.style.background = r === 'ok' ? '#f0fdf4' : '#fffbeb';
+      info.style.color = r === 'ok' ? '#166534' : '#92400e';
+      if (r === 'ok') { try { localStorage.removeItem('bgy_ref'); } catch (e) {} }
+    } catch (e) {
+      info.textContent = 'Kode affiliate belum tercatat. Hubungi admin dengan menyebut kode ' + ref + '.';
+      info.style.background = '#fffbeb'; info.style.color = '#92400e';
+    }
+    document.getElementById('hasil').appendChild(info);
+  }
 
   function tampilKode(kode, email) {
     const hasil = document.getElementById("hasil");

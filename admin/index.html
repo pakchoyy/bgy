@@ -63,6 +63,12 @@ body.dark .bar:hover i,body.dark .bar.on i{background:#5eead4;}
 .chart-tip{font-size:.8rem;margin-top:6px;color:var(--text);}
 .chart-axis{display:flex;justify-content:space-between;font-size:.74rem;color:var(--text-light);margin-top:4px;}
 .tbl-wrap{overflow-x:auto;}
+.aff-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
+.aff-seg button{min-height:42px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:10px;font-weight:800;font-size:.8rem;cursor:pointer;font-family:inherit;}
+.aff-seg button.on{background:var(--grad,#0ea5a0);color:#fff;border-color:transparent;}
+.aff-item{border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;}
+.aff-item b{font-size:.95rem;}.aff-item small{display:block;color:var(--text-light);font-size:.75rem;margin-top:2px;}
+.aff-item .acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}.aff-item .acts .btn{min-height:40px;flex:1;}
 .stat-tbl{width:100%;border-collapse:collapse;font-size:.8rem;}
 .stat-tbl th{text-align:right;font-size:.72rem;color:var(--text-light);font-weight:700;padding:6px 6px;border-bottom:1px solid var(--border);white-space:nowrap;}
 .stat-tbl td{text-align:right;padding:8px 6px;border-bottom:1px solid var(--border);white-space:nowrap;}
@@ -535,6 +541,7 @@ main{padding-bottom:90px!important;}
         <button class="menu-row" onclick="showTab('docs')"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg></div><div class="mr-body"><b>Dokumen Resmi</b><small>Peraturan &amp; dokumen pendidikan</small></div><div class="mr-chev"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></div></button>
         <button class="menu-row" onclick="showTab('stat')"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg></div><div class="mr-body"><b>Statistik</b><small>Pemakaian tool oleh guru</small></div><div class="mr-chev"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></div></button>
         <button class="menu-row" onclick="showTab('akun')"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg></div><div class="mr-body"><b>Akun Email</b><small>Gmail dan dipakai untuk proyek apa saja</small></div><div class="mr-chev"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></div></button>
+        <button class="menu-row" onclick="showTab('aff')"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg></div><div class="mr-body"><b>Affiliate Buat Soal</b><small>Penarikan dana &amp; daftar affiliate</small></div><div class="mr-chev"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></div></button>
         <button class="menu-row" onclick="showTab('users')" style="margin-bottom:0;"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg></div><div class="mr-body"><b>Pengguna Pro</b><small>Daftar pelanggan Pro</small></div><div class="mr-chev"><svg class="ic" aria-hidden="true"><use href="#i-chevron-right"/></svg></div></button>
         <button class="menu-row" onclick="logout()" style="margin:12px 0 0;"><div class="mr-ic"><svg class="ic" aria-hidden="true"><use href="#i-logout"/></svg></div><div class="mr-body"><b>Keluar akun</b><small>Perlu kode email lagi untuk masuk</small></div></button>
       </div>
@@ -617,6 +624,24 @@ main{padding-bottom:90px!important;}
           <button data-k="slot" onclick="filterAkun('slot')">Supabase masih kosong</button>
         </div>
         <div id="akunList"></div>
+      </div>
+    </div>
+
+    <div id="pane-aff" hidden>
+      <div class="pane-header"><button class="btn-back" onclick="showTab('bgy')"><svg class="ic" aria-hidden="true"><use href="#i-arrow-left"/></svg> Kembali</button><h2>Affiliate Buat Soal</h2></div>
+      <div class="card">
+        <div class="card-title" style="justify-content:space-between"><span>Penarikan dana</span><button class="btn" onclick="loadAff()" aria-label="Muat ulang">Muat ulang</button></div>
+        <div class="aff-seg" role="tablist"><button type="button" data-s="menunggu" class="on" onclick="affStatus('menunggu')">Menunggu</button><button type="button" data-s="dibayar" onclick="affStatus('dibayar')">Dibayar</button><button type="button" data-s="ditolak" onclick="affStatus('ditolak')">Ditolak</button></div>
+        <div id="affPay"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Daftar affiliate</div>
+        <p class="hint">Komisi dan bonus pembeli diatur di Promo &rarr; Paket Buat Soal.</p>
+        <div class="tbl-wrap"><table class="stat-tbl"><thead><tr><th>Kode / pemilik</th><th>Ref</th><th>Saldo</th><th>Cair</th></tr></thead><tbody id="affRows"></tbody></table></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Referal terbaru</div>
+        <div class="tbl-wrap"><table class="stat-tbl"><thead><tr><th>Tanggal</th><th>Kode</th><th>Pembeli</th><th>Komisi</th></tr></thead><tbody id="affRefRows"></tbody></table></div>
       </div>
     </div>
 
@@ -721,6 +746,7 @@ main{padding-bottom:90px!important;}
         <div class="row2">
           <div class="fg"><label for="pk_affiliate_min_cair">Affiliate: saldo minimal cair (Rp)</label><input id="pk_affiliate_min_cair" type="number" min="0" step="1000" required/></div>
           <div class="fg"><label for="pk_affiliate_jadwal">Affiliate: jadwal &amp; cara cair</label><input id="pk_affiliate_jadwal" maxlength="60" required/></div>
+          <div class="fg"><label for="pk_affiliate_bonus_hari">Affiliate: bonus pembeli (hari masa aktif)</label><input id="pk_affiliate_bonus_hari" type="number" min="0" max="60" required/></div>
         </div>
         <button class="btn-primary" type="submit" id="btnPaket">Simpan paket</button>
         <div class="msg" id="paketMsg"></div>
@@ -854,7 +880,7 @@ document.getElementById('loginForm').addEventListener('submit',async e=>{
 sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_IN')setTimeout(boot,0);});
 async function logout(){await sb.auth.signOut();document.getElementById('otpWrap').hidden=true;document.getElementById('otp').required=false;document.getElementById('btnLogin').textContent='Kirim kode ke email';document.getElementById('loginInfo').textContent='';show('loginCard');}
 
-const TABS=['dash','portal','proyek','langganan','bgy','links','reviews','promo','docs','stat','users','akun'];
+const TABS=['dash','portal','proyek','langganan','bgy','links','reviews','promo','docs','stat','users','akun','aff'];
 const BOTTOM_TABS={dash:'dash',portal:'portal',proyek:'proyek',langganan:'langganan',bgy:'bgy'};
 const PARENT_MAP={links:'bgy',reviews:'bgy',promo:'bgy',docs:'bgy',stat:'bgy',users:'bgy',akun:'bgy'};
 let editMode=false;
@@ -883,6 +909,7 @@ function showTab(t){
   TABS.forEach(x=>{const el=document.getElementById('pane-'+x);if(el)el.hidden=x!==t;});
   if(t==='users'&&!document.getElementById('userRows').textContent.trim())loadUsers();
   if(t==='akun')loadAkun();
+  if(t==='aff')loadAff();
   const activeBottom=BOTTOM_TABS[t]||PARENT_MAP[t]||'dash';
   document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.toggle('on',b.dataset.tab===activeBottom));
   window.scrollTo(0,0);
@@ -2167,6 +2194,38 @@ document.getElementById('traktirForm').addEventListener('submit',async e=>{
   msg.textContent='Tersimpan. Tampil di tool dalam beberapa menit.';toast('Traktir tersimpan');
 });
 
+/* ─── Affiliate Buat Soal (migrasi 20261116_affiliate_soal.sql) ─── */
+let affPays=[],affStat='menunggu';
+const affRp=n=>'Rp'+Number(n||0).toLocaleString('id-ID');
+const affTgl=d=>d?new Date(d).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+async function loadAff(){
+  const [p,a,r]=await Promise.all([
+    sb.from('bgy_aff_payout').select('*').order('created_at',{ascending:false}).limit(200),
+    sb.from('bgy_aff').select('*').order('total',{ascending:false}).limit(500),
+    sb.from('bgy_aff_ref').select('*').order('created_at',{ascending:false}).limit(50)]);
+  const err=p.error||a.error||r.error;
+  if(err){document.getElementById('affPay').innerHTML='<div class="empty">'+(/relation|does not exist/i.test(err.message)?'Jalankan migrasi 20261116_affiliate_soal.sql di Supabase dulu.':esc(err.message))+'</div>';return;}
+  affPays=p.data||[];renderAffPay();
+  document.getElementById('affRows').innerHTML=(a.data||[]).map(x=>`<tr><td><b style="font-family:monospace">${esc(x.code)}</b><br><small>${esc(x.email)}</small></td><td class="c">${x.ref_count}</td><td>${affRp(x.saldo)}</td><td>${affRp(x.cair)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">Belum ada affiliate.</td></tr>';
+  document.getElementById('affRefRows').innerHTML=(r.data||[]).map(x=>`<tr><td>${new Date(x.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short'})}</td><td style="font-family:monospace">${esc(x.code)}</td><td><small>${esc(x.buyer_email)}</small></td><td>${affRp(x.komisi)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">Belum ada referal.</td></tr>';
+}
+function affStatus(s){affStat=s;document.querySelectorAll('.aff-seg button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));renderAffPay();}
+function renderAffPay(){
+  const list=affPays.filter(x=>x.status===affStat);
+  document.getElementById('affPay').innerHTML=list.map(x=>`<div class="aff-item"><b>${affRp(x.amount)}</b> ke DANA <b>${esc(x.dana)}</b>
+    <small>${esc(x.code)} &middot; ${esc(x.email)} &middot; ${affTgl(x.created_at)}${x.processed_at?' &middot; diproses '+affTgl(x.processed_at):''}${x.note?' &middot; '+esc(x.note):''}</small>
+    ${x.status==='menunggu'?`<div class="acts"><button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(x.dana)}').then(()=>toast('Nomor DANA tersalin'))">Salin nomor</button><button class="btn" style="border-color:#10b981;color:#059669" onclick="affSet(${x.id},'dibayar')">Sudah dibayar</button><button class="btn" style="border-color:#ef4444;color:#dc2626" onclick="affSet(${x.id},'ditolak')">Tolak</button></div>`:''}</div>`).join('')||'<div class="empty">Tidak ada.</div>';
+}
+async function affSet(id,status){
+  let note=null;
+  if(status==='ditolak'){note=prompt('Alasan ditolak (saldo dikembalikan ke member):','');if(note===null)return;}
+  else if(!confirm('Tandai sudah ditransfer?'))return;
+  const {data,error}=await sb.rpc('bgy_aff_payout_set',{p_id:id,p_status:status,p_note:note});
+  if(error)return fail(error);
+  if(data!=='ok')return toast('Gagal: '+data);
+  toast(status==='dibayar'?'Ditandai dibayar':'Ditolak, saldo dikembalikan');loadAff();
+}
+
 /* ─── Promo ─── */
 const PROMO_FIELDS={pText:'promo_text',pUntil:'promo_until',pUrl:'promo_url',vCode:'voucher_code',vText:'voucher_text',bText:'bundle_text',bUrl:'bundle_url',gText:'garansi_text',aText:'ann_text',aLevel:'ann_level'};
 let promoOld={};
@@ -2198,8 +2257,8 @@ document.getElementById('promoForm').addEventListener('submit',async e=>{
 });
 
 /* ─── Paket Buat Soal ─── */
-const PAKET_DEF={aktif:false,free:{harian:1},plus:{harian:4,kuota:20,bulan:3,harga:15000,url:''},pro:{harian:10,kuota:50,bulan:6,harga:27000,url:''},affiliate:{komisi:3000,min_cair:20000,jadwal:'tiap tanggal 1 lewat DANA'}};
-const PAKET_KEYS={free:['harian'],plus:['harian','kuota','bulan','harga','url'],pro:['harian','kuota','bulan','harga','url'],affiliate:['komisi','min_cair','jadwal']};
+const PAKET_DEF={aktif:false,free:{harian:1},plus:{harian:4,kuota:20,bulan:3,harga:15000,url:''},pro:{harian:10,kuota:50,bulan:6,harga:27000,url:''},affiliate:{komisi:3000,min_cair:20000,jadwal:'tiap tanggal 1 lewat DANA',bonus_hari:7}};
+const PAKET_KEYS={free:['harian'],plus:['harian','kuota','bulan','harga','url'],pro:['harian','kuota','bulan','harga','url'],affiliate:['komisi','min_cair','jadwal','bonus_hari']};
 /* ─── Paket Modul Ajar ─── */
 const PAKET_MA_DEF={aktif:false,free:{harian:1},plus:{harian:4,kuota:15,bulan:3,harga:13000,url:''},pro:{harian:10,kuota:40,bulan:6,harga:24000,url:''}};
 const PAKET_MA_KEYS={free:['harian'],plus:['harian','kuota','bulan','harga','url'],pro:['harian','kuota','bulan','harga','url']};

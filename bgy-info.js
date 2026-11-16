@@ -53,6 +53,13 @@
 
   var here = location.pathname.replace(/\/+$/, '') || '/';
   var page = here === '/' ? 'home' : here.split('/')[1].replace(/\.html$/, '');
+  // Link affiliate Buat Soal (?ref=BS-XXXXX): simpan supaya terisi otomatis saat aktivasi paket.
+  (function () {
+    try {
+      var ref = new URLSearchParams(location.search).get('ref');
+      if (ref && /^BS-[A-Z0-9]{5}$/i.test(ref)) localStorage.setItem('bgy_ref', ref.toUpperCase());
+    } catch (e) {}
+  })();
   function notHere(it) {
     return !it.path || (here !== it.path && here.indexOf(it.path + '/') !== 0);
   }

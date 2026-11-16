@@ -126,3 +126,9 @@ Lihat `DESIGN-BGY.md` bagian 14. Ringkasnya, di setiap tool berbayar:
 4. Di tool: `isPro()` membaca localStorage dengan **kunci unik**, fungsi aktivasi kode (`bgy_activate_pro`) & login email (`bgy_subscription_status`), konstanta `DAILY_LIMIT`.
 5. Pasang komponen penawaran (bagian 6) dan daftarkan tool di Beranda dengan label "Gratis · Ada Limit".
 6. Endpoint AI baru mengikuti `DESIGN-BGY.md` bagian 15 (origin, batas per IP, batas prompt, kunci di env).
+
+## Program Affiliate Buat Soal (otomatis)
+- Migrasi `supabase/migrations/20261116_affiliate_soal.sql`: tabel `bgy_aff`, `bgy_aff_ref`, `bgy_aff_payout`; RPC `bgy_aff_me`, `bgy_aff_withdraw`, `bgy_aff_apply`, `bgy_aff_payout_set` (admin).
+- Member PRO (tier `pro` atau lisensi lama) membuka menu **Program Affiliate** di Buat Soal, masuk dengan email + kode aktivasi `BGY-XXXXX`, lalu mendapat kode `BS-XXXXX` dan link `/soal/?ref=BS-XXXXX`.
+- `bgy-info.js` menyimpan `?ref=` ke `localStorage.bgy_ref`; `aktvs-bs.html` mengisinya otomatis di kolom "Kode affiliate teman" dan memanggil `bgy_aff_apply` setelah `bgy_claim_order` berhasil. Satu pesanan satu kode, tidak bisa kode sendiri.
+- Komisi, saldo minimal cair, jadwal, dan bonus hari pembeli diatur di `/admin` → Promo → Paket Buat Soal (`paket_soal.affiliate`). Penarikan diproses di `/admin` → Affiliate Buat Soal.
