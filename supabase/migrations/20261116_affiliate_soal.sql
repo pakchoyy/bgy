@@ -232,9 +232,90 @@ $$;
 revoke all on function public.bgy_admin_user_codes(text) from public;
 grant execute on function public.bgy_admin_user_codes(text) to authenticated;
 
+-- Tanpa login tambahan: member PRO di Buat Soal otomatis jadi affiliate (cukup email PRO yang sudah aktif di HP).
+-- Pengaman uang: nomor DANA terkunci setelah penarikan pertama; ganti nomor hanya lewat admin.
+create or replace function public.bgy_aff_auto(p_email text)
+returns jsonb
+language plpgsql security definer set search_path = pg_catalog, public
+as $$
+declare
+  v_email text := lower(trim(coalesce(p_email, '')));
+  v_aff public.bgy_aff;
+  v_cfg record;
+  v_new text;
+  v_pending int;
+  v_refs jsonb;
+begin
+  if v_email !~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$' then return jsonb_build_object('result', 'invalid'); end if;
+  select * into v_aff from public.bgy_aff where email = v_email;
+  if not found then
+    if not public.bgy_aff_is_pro(v_email) then return jsonb_build_object('result', 'not_pro'); end if;
+    loop
+      v_new := 'BS-' || upper(substr(translate(encode(extensions.gen_random_bytes(8), 'base64'), '+/=0O1IL', ''), 1, 5));
+      exit when length(v_new) = 8 and not exists (select 1 from public.bgy_aff where code = v_new);
+    end loop;
+    insert into public.bgy_aff (code, email) values (v_new, v_email) returning * into v_aff;
+  end if;
+  select * into v_cfg from public.bgy_aff_cfg();
+  select coalesce(sum(amount), 0) into v_pending from public.bgy_aff_payout where code = v_aff.code and status = 'menunggu';
+  select coalesce(jsonb_agg(jsonb_build_object('tgl', r.created_at, 'komisi', r.komisi) order by r.created_at desc), '[]'::jsonb)
+    into v_refs from (select created_at, komisi from public.bgy_aff_ref where code = v_aff.code order by created_at desc limit 20) r;
+  return jsonb_build_object('result', 'ok', 'code', v_aff.code, 'saldo', v_aff.saldo, 'total', v_aff.total, 'cair', v_aff.cair,
+    'ref_count', v_aff.ref_count,
+    'dana', case when v_aff.dana is null then null else left(v_aff.dana, 4) || repeat('*', greatest(length(v_aff.dana) - 7, 0)) || right(v_aff.dana, 3) end,
+    'dana_kunci', v_aff.dana is not null, 'pending', v_pending, 'pro', public.bgy_aff_is_pro(v_email),
+    'komisi', v_cfg.komisi, 'min_cair', v_cfg.min_cair, 'bonus_hari', v_cfg.bonus_hari, 'jadwal', v_cfg.jadwal, 'refs', v_refs);
+end;
+$$;
+revoke all on function public.bgy_aff_auto(text) from public;
+grant execute on function public.bgy_aff_auto(text) to anon, authenticated;
+
+create or replace function public.bgy_aff_tarik(p_email text, p_dana text)
+returns text
+language plpgsql security definer set search_path = pg_catalog, public
+as $$
+declare
+  v_email text := lower(trim(coalesce(p_email, '')));
+  v_dana text := regexp_replace(coalesce(p_dana, ''), '[^0-9]', '', 'g');
+  v_aff public.bgy_aff;
+  v_min int;
+begin
+  select * into v_aff from public.bgy_aff where email = v_email for update;
+  if not found then return 'invalid'; end if;
+  if v_aff.dana is not null then v_dana := v_aff.dana;
+  elsif v_dana !~ '^0?8[0-9]{8,12}$' and v_dana !~ '^628[0-9]{8,12}$' then return 'bad_dana'; end if;
+  if exists (select 1 from public.bgy_aff_payout where code = v_aff.code and status = 'menunggu') then return 'pending'; end if;
+  select min_cair into v_min from public.bgy_aff_cfg();
+  if v_aff.saldo < greatest(v_min, 1) then return 'kurang'; end if;
+  insert into public.bgy_aff_payout (code, email, amount, dana) values (v_aff.code, v_email, v_aff.saldo, v_dana);
+  update public.bgy_aff set saldo = 0, dana = v_dana where code = v_aff.code;
+  return 'ok';
+end;
+$$;
+revoke all on function public.bgy_aff_tarik(text, text) from public;
+grant execute on function public.bgy_aff_tarik(text, text) to anon, authenticated;
+
+-- Admin: ganti/hapus nomor DANA member (mis. member ganti nomor).
+create or replace function public.bgy_aff_set_dana(p_code text, p_dana text)
+returns text
+language plpgsql security definer set search_path = pg_catalog, public
+as $$
+declare v_dana text := nullif(regexp_replace(coalesce(p_dana, ''), '[^0-9]', '', 'g'), '');
+begin
+  if not public.bgy_is_admin() then return 'forbidden'; end if;
+  update public.bgy_aff set dana = v_dana where code = upper(trim(p_code));
+  return case when found then 'ok' else 'invalid' end;
+end;
+$$;
+revoke all on function public.bgy_aff_set_dana(text, text) from public;
+grant execute on function public.bgy_aff_set_dana(text, text) to authenticated;
+
 commit;
 
 -- ═══ Rollback (manual) ═══
+-- drop function if exists public.bgy_aff_set_dana(text, text);
+-- drop function if exists public.bgy_aff_tarik(text, text);
+-- drop function if exists public.bgy_aff_auto(text);
 -- drop function if exists public.bgy_admin_user_codes(text);
 -- drop function if exists public.bgy_aff_payout_set(bigint, text, text);
 -- drop function if exists public.bgy_aff_apply(text, text, text);

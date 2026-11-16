@@ -3812,45 +3812,31 @@ function renderUpgradeTab(){
   <p class="ti-q">Ada kendala?</p>
   <p class="ti-a"><a href="https://wa.me/6289530713597?text=${encodeURIComponent('Halo Pak Choy, saya mau tanya paket Buat Soal.')}" target="_blank" rel="noopener">Chat Pak Choy di WhatsApp</a>.</p>`;
 }
-// Program Affiliate otomatis: dasbor member PRO (email + kode aktivasi), lihat migrasi 20261116_affiliate_soal.sql.
-let _aff=null;
-function affKredensial(){let e='',k='';try{e=localStorage.getItem('pro_email')||'';k=localStorage.getItem('pro_kode')||'';}catch{}return{e,k};}
+// Program Affiliate otomatis: semua member PRO langsung jadi affiliate (migrasi 20261116_affiliate_soal.sql).
+let _aff=null,_affLoading=false;
+function proEmail(){try{return localStorage.getItem('pro_email')||'';}catch{return'';}}
 function renderAffiliateTab(){
   const el=document.getElementById('tab-affiliate');if(!el)return;
   const af=Object.assign({},PAKET_DEFAULT.affiliate,PAKET.affiliate),k=Number(af.komisi)||0,isPro=tier()==='pro'||tier()==='lama';
   const bonus=Number(af.bonus_hari??7)||0;
   const kepala=`<h3><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Program Affiliate</h3>
-  <p class="ti-lead">Khusus member PRO. Kamu dapat <b>${rupiah(k)}</b> setiap ada guru yang membeli paket Buat Soal memakai kode kamu${bonus?`, dan temanmu dapat <b>bonus ${bonus} hari</b> masa aktif`:''}.</p>`;
+  <p class="ti-lead">Kamu dapat <b>${rupiah(k)}</b> setiap ada guru yang membeli paket Buat Soal memakai kode kamu${bonus?`, dan temanmu dapat <b>bonus ${bonus} hari</b> masa aktif`:''}.</p>`;
+  if(!isPro){el.innerHTML=kepala+`<p class="ti-note">Khusus member PRO. Paket kamu sekarang ${NAMA_TIER[tier()]}. Upgrade ke PRO, otomatis langsung jadi affiliate.</p><button type="button" class="pk-beli pro" onclick="showTab('upgrade')">Lihat paket PRO</button>`;return;}
   if(_aff){el.innerHTML=kepala+affDasbor(_aff);return;}
-  const c=affKredensial();
-  // Sudah pernah memasukkan kode aktivasi di HP ini: langsung buka dasbor tanpa isi apa pun.
-  if(isPro&&c.e&&/^BGY-[A-Z0-9]{5}$/.test(c.k)&&!el.dataset.auto){el.dataset.auto='1';el.innerHTML=kepala+'<p class="ti-note">Memuat dasbor affiliate...</p><input id="affEmail" type="hidden" value="'+escHtml(c.e)+'"/><input id="affKode" type="hidden" value="'+escHtml(c.k)+'"/><button id="affMasuk" hidden></button><div class="ti-note" id="affMsg"></div>';affMasuk().then(()=>{if(!_aff){renderAffiliateTab();}});return;}
-  el.innerHTML=kepala+`<h4>Cara kerja</h4>
-  <ol class="ti-list">
-    <li>Masuk dengan email PRO dan kode aktivasi (BGY-XXXXX) untuk mendapat kode affiliate.</li>
-    <li>Bagikan link atau kode ke teman guru. Mereka mengisi kode saat aktivasi paket setelah membeli di Kreacy.</li>
-    <li>Komisi masuk otomatis ke saldo. Tarik ke DANA kalau saldo sudah ${rupiah(af.min_cair)}, dibayar ${escHtml(String(af.jadwal||''))}.</li>
-  </ol>
-  ${isPro?`<div class="aff-login">
-    <label for="affEmail">Email PRO</label><input id="affEmail" type="email" value="${escHtml(c.e)}" autocomplete="email"/>
-    <label for="affKode">Kode aktivasi</label><input id="affKode" type="text" value="${escHtml(c.k)}" placeholder="BGY-XXXXX" maxlength="9" style="text-transform:uppercase"/>
-    <button type="button" class="pk-beli pro" id="affMasuk" onclick="affMasuk()">Buka dasbor affiliate</button>
-    <div class="ti-note" id="affMsg">Cukup sekali di HP ini. Kode aktivasi diminta supaya saldo komisimu tidak bisa dibuka orang lain yang tahu emailmu. Lupa kode? Hubungi Pak Choy lewat WhatsApp.</div></div>`
-  :`<p class="ti-note">Paket kamu sekarang ${NAMA_TIER[tier()]}. Upgrade ke PRO dulu untuk ikut program ini.</p><button type="button" class="pk-beli pro" onclick="showTab('upgrade')">Lihat paket PRO</button>`}`;
+  el.innerHTML=kepala+'<p class="ti-note" id="affMsg">Memuat kode affiliate kamu...</p>';
+  affMuat();
 }
-async function affMasuk(){
-  const email=(document.getElementById('affEmail').value||'').trim().toLowerCase(),kode=(document.getElementById('affKode').value||'').trim().toUpperCase();
-  const msg=document.getElementById('affMsg'),btn=document.getElementById('affMasuk');
-  if(!email||!/^BGY-[A-Z0-9]{5}$/.test(kode)){msg.textContent='Isi email dan kode aktivasi (format BGY-XXXXX).';return;}
-  const sb=getSupabase();if(!sb)return;btn.disabled=true;msg.textContent='Memuat...';
+async function affMuat(){
+  if(_affLoading)return;const email=proEmail(),sb=getSupabase();
+  const msg=()=>document.getElementById('affMsg');
+  if(!email||!sb){if(msg())msg().textContent='Masuk PRO dulu dengan email pembelian.';return;}
+  _affLoading=true;
   try{
-    const{data,error}=await sb.rpc('bgy_aff_me',{p_email:email,p_code:kode});if(error)throw error;
-    if(!data||data.result==='invalid'){msg.textContent='Email atau kode aktivasi tidak cocok.';return;}
-    if(data.result==='not_pro'){msg.textContent='Program ini khusus member PRO yang masih aktif.';return;}
-    try{localStorage.setItem('pro_kode',kode);}catch{}
-    _aff=Object.assign(data,{email,kode});renderAffiliateTab();
-  }catch(e){msg.textContent='Gagal memuat. Cek koneksi lalu coba lagi.';}
-  finally{if(document.body.contains(btn))btn.disabled=false;}
+    const{data,error}=await sb.rpc('bgy_aff_auto',{p_email:email});if(error)throw error;
+    if(data&&data.result==='ok'){_aff=data;renderAffiliateTab();return;}
+    if(msg())msg().textContent=data&&data.result==='not_pro'?'Program ini khusus member PRO yang masih aktif.':'Kode affiliate belum bisa dibuat. Hubungi Pak Choy.';
+  }catch(e){if(msg())msg().innerHTML='Gagal memuat. <button type="button" class="aff-keluar" onclick="renderAffiliateTab()">Coba lagi</button>';}
+  finally{_affLoading=false;}
 }
 function affDasbor(a){
   const link='https://bantuguruyuk.web.id/soal/?ref='+a.code;
@@ -3860,29 +3846,30 @@ function affDasbor(a){
     <div class="pk-beli-row"><button type="button" class="pk-beli plus" onclick="affSalin(${escHtml(JSON.stringify(a.code))},'Kode tersalin')">Salin kode</button>
     <a class="pk-beli pro" href="https://wa.me/?text=${encodeURIComponent(ajak)}" target="_blank" rel="noopener">Bagikan ke WhatsApp</a></div>
     <button type="button" class="aff-link" onclick="affSalin(${escHtml(JSON.stringify(link))},'Link tersalin')">${escHtml(link)}</button></div>
+  <p class="ti-note">Teman mengisi kode ini saat aktivasi paket setelah membeli di Kreacy. Kalau teman membuka link di atas, kodenya terisi otomatis.</p>
   <div class="aff-stat"><div><b>${a.ref_count}</b><small>Referal</small></div><div><b>${rupiah(a.saldo)}</b><small>Saldo</small></div><div><b>${rupiah(a.cair)}</b><small>Sudah cair</small></div></div>
   ${a.pending?`<p class="ti-note"><b>${rupiah(a.pending)}</b> sedang diproses ke DANA ${escHtml(a.dana||'')}. Dibayar ${escHtml(a.jadwal)}.</p>`:''}
   ${!a.pro?`<p class="ti-note">Langganan PRO kamu sudah habis. Kode tidak bisa dipakai teman sampai PRO diperpanjang, tapi saldo tetap bisa ditarik.</p>`:''}
   <h4>Tarik saldo</h4>
-  ${bisaTarik?`<label for="affDana">Nomor DANA</label><input id="affDana" type="tel" inputmode="numeric" value="${escHtml(a.dana||'')}" placeholder="08xxxxxxxxxx"/>
-    <button type="button" class="pk-beli plus" id="affTarik" onclick="affTarik()">Tarik ${rupiah(a.saldo)}</button><div class="ti-note" id="affTarikMsg"></div>`
+  ${bisaTarik?(a.dana_kunci?`<p class="ti-note">Dikirim ke DANA <b>${escHtml(a.dana)}</b>. Mau ganti nomor? Hubungi Pak Choy.</p>`
+      :`<label for="affDana">Nomor DANA</label><input id="affDana" type="tel" inputmode="numeric" placeholder="08xxxxxxxxxx"/><p class="ti-note">Pastikan benar. Nomor ini dipakai untuk semua penarikan berikutnya.</p>`)
+    +`<button type="button" class="pk-beli plus" id="affTarik" onclick="affTarik()">Tarik ${rupiah(a.saldo)}</button><div class="ti-note" id="affTarikMsg"></div>`
   :`<p class="ti-note">${a.pending?'Tunggu penarikan sebelumnya selesai.':`Bisa ditarik kalau saldo sudah ${rupiah(a.min_cair)}.`}</p>`}
   ${a.refs&&a.refs.length?`<h4>Riwayat komisi</h4><ul class="ti-list">${a.refs.map(r=>`<li>${new Date(r.tgl).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}: +${rupiah(r.komisi)}</li>`).join('')}</ul>`:''}
   <button type="button" class="aff-keluar" onclick="_aff=null;renderAffiliateTab()">Muat ulang</button>`;
 }
 function affSalin(t,ok){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>showGenerateFeedback(ok,1800)).catch(()=>prompt('Salin:',t));}
 async function affTarik(){
-  const a=_aff,dana=(document.getElementById('affDana').value||'').replace(/\D/g,''),msg=document.getElementById('affTarikMsg'),btn=document.getElementById('affTarik');
-  if(!/^(0?8\d{8,12}|628\d{8,12})$/.test(dana)){msg.textContent='Nomor DANA belum benar.';return;}
-  if(!confirm(`Tarik ${rupiah(a.saldo)} ke DANA ${dana}?`))return;
+  const a=_aff,inp=document.getElementById('affDana'),msg=document.getElementById('affTarikMsg'),btn=document.getElementById('affTarik');
+  const dana=inp?(inp.value||'').replace(/\D/g,''):'';
+  if(inp&&!/^(0?8\d{8,12}|628\d{8,12})$/.test(dana)){msg.textContent='Nomor DANA belum benar.';return;}
+  if(!confirm(`Tarik ${rupiah(a.saldo)} ke DANA ${inp?dana:a.dana}?`))return;
   const sb=getSupabase();if(!sb)return;btn.disabled=true;msg.textContent='Mengirim...';
   try{
-    const{data,error}=await sb.rpc('bgy_aff_withdraw',{p_email:a.email,p_code:a.kode,p_dana:dana});if(error)throw error;
+    const{data,error}=await sb.rpc('bgy_aff_tarik',{p_email:proEmail(),p_dana:dana});if(error)throw error;
     const p={ok:'Penarikan diajukan. Pak Choy akan mentransfer sesuai jadwal.',pending:'Masih ada penarikan yang diproses.',kurang:'Saldo belum cukup.',bad_dana:'Nomor DANA belum benar.',invalid:'Data akun tidak cocok.'};
     if(data!=='ok'){msg.textContent=p[data]||'Gagal. Coba lagi.';btn.disabled=false;return;}
-    const{data:me}=await sb.rpc('bgy_aff_me',{p_email:a.email,p_code:a.kode});
-    if(me&&me.result==='ok')_aff=Object.assign(me,{email:a.email,kode:a.kode});
-    renderAffiliateTab();showGenerateFeedback(p.ok,3000);
+    _aff=null;renderAffiliateTab();showGenerateFeedback(p.ok,3000);
   }catch(e){msg.textContent='Gagal mengirim. Coba lagi.';btn.disabled=false;}
 }
 function renderPaketBox(){
@@ -4016,7 +4003,7 @@ async function verifikasiKode(){
     if(data.result==='expired'||data.result==='inactive'){msg.innerText='Masa langganan telah habis. Silakan perpanjang.';msg.style.color='red';return;}
     if(!subscriptionIsActive(data)){msg.innerText='Akun belum aktif PRO.';msg.style.color='red';return;}
     msg.innerText='Aktivasi berhasil. Selamat menikmati PRO!';msg.style.color='green';
-    localStorage.setItem('pro_email',email);try{localStorage.setItem('pro_kode',kode);}catch{}unlockPro(true,data);
+    localStorage.setItem('pro_email',email);unlockPro(true,data);
   }catch(e){console.error(e);msg.innerText='Gagal menghubungi server.';msg.style.color='red';}
 }
 

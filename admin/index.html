@@ -2228,7 +2228,7 @@ async function loadAff(){
   const err=p.error||a.error||r.error;
   if(err){document.getElementById('affPay').innerHTML='<div class="empty">'+(/relation|does not exist/i.test(err.message)?'Jalankan migrasi 20261116_affiliate_soal.sql di Supabase dulu.':esc(err.message))+'</div>';return;}
   affPays=p.data||[];renderAffPay();
-  document.getElementById('affRows').innerHTML=(a.data||[]).map(x=>`<tr><td><b style="font-family:monospace">${esc(x.code)}</b><br><small>${esc(x.email)}</small></td><td class="c">${x.ref_count}</td><td>${affRp(x.saldo)}</td><td>${affRp(x.cair)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">Belum ada affiliate.</td></tr>';
+  document.getElementById('affRows').innerHTML=(a.data||[]).map(x=>`<tr><td><b style="font-family:monospace">${esc(x.code)}</b><br><small>${esc(x.email)}</small><br><small>DANA: ${esc(x.dana||'belum ada')} <button type="button" class="btn" style="min-height:32px;padding:2px 8px" onclick="affGantiDana('${esc(x.code)}','${esc(x.dana||'')}')">Ganti</button></small></td><td class="c">${x.ref_count}</td><td>${affRp(x.saldo)}</td><td>${affRp(x.cair)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">Belum ada affiliate.</td></tr>';
   document.getElementById('affRefRows').innerHTML=(r.data||[]).map(x=>`<tr><td>${new Date(x.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short'})}</td><td style="font-family:monospace">${esc(x.code)}</td><td><small>${esc(x.buyer_email)}</small></td><td>${affRp(x.komisi)}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">Belum ada referal.</td></tr>';
 }
 function affStatus(s){affStat=s;document.querySelectorAll('.aff-seg button').forEach(b=>b.classList.toggle('on',b.dataset.s===s));renderAffPay();}
@@ -2237,6 +2237,11 @@ function renderAffPay(){
   document.getElementById('affPay').innerHTML=list.map(x=>`<div class="aff-item"><b>${affRp(x.amount)}</b> ke DANA <b>${esc(x.dana)}</b>
     <small>${esc(x.code)} &middot; ${esc(x.email)} &middot; ${affTgl(x.created_at)}${x.processed_at?' &middot; diproses '+affTgl(x.processed_at):''}${x.note?' &middot; '+esc(x.note):''}</small>
     ${x.status==='menunggu'?`<div class="acts"><button class="btn" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(x.dana)}').then(()=>toast('Nomor DANA tersalin'))">Salin nomor</button><button class="btn" style="border-color:#10b981;color:#059669" onclick="affSet(${x.id},'dibayar')">Sudah dibayar</button><button class="btn" style="border-color:#ef4444;color:#dc2626" onclick="affSet(${x.id},'ditolak')">Tolak</button></div>`:''}</div>`).join('')||'<div class="empty">Tidak ada.</div>';
+}
+async function affGantiDana(code,lama){
+  const v=prompt('Nomor DANA baru untuk '+code+' (kosongkan supaya member isi sendiri):',lama);if(v===null)return;
+  const {data,error}=await sb.rpc('bgy_aff_set_dana',{p_code:code,p_dana:v});
+  if(error)return fail(error);toast(data==='ok'?'Nomor DANA diperbarui':'Gagal: '+data);loadAff();
 }
 async function affSet(id,status){
   let note=null;
