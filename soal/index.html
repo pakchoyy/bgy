@@ -3848,15 +3848,18 @@ async function affMuat(){
   finally{_affLoading=false;}
 }
 function affDasbor(a){
-  const link='https://bantuguruyuk.web.id/soal/?ref='+a.code;
-  const ajak=`Bikin soal + kunci + kisi-kisi jadi gak sampai 10 menit pakai Buat Soal (Bantu Guru Yuk). Pakai kode affiliate aku *${a.code}* saat aktivasi paket, dapat bonus ${a.bonus_hari} hari masa aktif.\n${link}`;
+  // Link langsung ke halaman beli Kreacy (PRO, atau PLUS kalau PRO belum ada); cadangan: halaman Buat Soal.
+  const beliUrl=(p)=>{const u=/^https:\/\/[^\s"'<>]+$/.test((p||{}).url||'')?p.url:'';if(!u)return'';try{const x=new URL(u);x.searchParams.set('aff',a.code);return x.toString();}catch{return'';}};
+  const linkPro=beliUrl(PAKET.pro),linkPlus=beliUrl(PAKET.plus);
+  const link=linkPro||linkPlus||'https://bantuguruyuk.web.id/soal/?ref='+a.code;
+  const ajak=`Bikin soal + kunci + kisi-kisi jadi gak sampai 10 menit pakai Buat Soal (Bantu Guru Yuk).${a.bonus_hari?` Beli lewat link aku, dapat bonus ${a.bonus_hari} hari masa aktif:`:''}\n${linkPro?`PRO 6 bulan: ${linkPro}\n`:''}${linkPlus?`PLUS 3 bulan: ${linkPlus}\n`:''}${!linkPro&&!linkPlus?link+'\n':''}Coba gratis dulu juga bisa: https://bantuguruyuk.web.id/soal/?ref=${a.code}`;
   const bisaTarik=a.saldo>=a.min_cair&&!a.pending;
   return `<div class="aff-kode"><small>Kode affiliate kamu</small><b>${escHtml(a.code)}</b>
     <div class="pk-beli-row"><button type="button" class="pk-beli plus" onclick="affSalin(${escHtml(JSON.stringify(a.code))},'Kode tersalin')">Salin kode</button>
     <a class="pk-beli pro" href="https://wa.me/?text=${encodeURIComponent(ajak)}" target="_blank" rel="noopener">Bagikan ke WhatsApp</a></div>
     <button type="button" class="aff-link" onclick="affSalin(${escHtml(JSON.stringify(link))},'Link tersalin')">${escHtml(link)}</button>
     ${a.ref_count?'':`<button type="button" class="aff-ganti" onclick="affGantiKode()">Ganti kode</button>`}</div>
-  <p class="ti-note">Bagikan <b>link</b> di atas: kalau teman membeli paket lewat link itu, komisi tercatat otomatis tanpa perlu mengisi kode. Kode cukup disebut kalau teman membeli langsung dari Kreacy.</p>
+  <p class="ti-note">Link di atas langsung ke halaman beli di Kreacy. Kalau teman membeli lewat link itu, komisi tercatat otomatis tanpa perlu mengisi kode.</p>
   <div class="aff-stat"><div><b>${a.ref_count}</b><small>Referal</small></div><div><b>${rupiah(a.saldo)}</b><small>Saldo</small></div><div><b>${rupiah(a.cair)}</b><small>Sudah cair</small></div></div>
   ${a.pending?`<p class="ti-note"><b>${rupiah(a.pending)}</b> sedang diproses ke DANA ${escHtml(a.dana||'')}. Dibayar ${escHtml(a.jadwal)}.</p>`:''}
   ${!a.pro?`<p class="ti-note">Langganan PRO kamu sudah habis. Kode tidak bisa dipakai teman sampai PRO diperpanjang, tapi saldo tetap bisa ditarik.</p>`:''}
