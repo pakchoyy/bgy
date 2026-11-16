@@ -3778,7 +3778,13 @@ function incrementPaket(){try{localStorage.setItem('bgy_paket_used',JSON.stringi
 function sisaKuota(){const k=batas().kuota;return k?Math.max(0,k-getPaketUsed()):Infinity;}
 const NAMA_TIER={free:'FREE',plus:'PLUS',pro:'PRO',lama:'PRO'};
 const rupiah=n=>'Rp'+Number(n||0).toLocaleString('id-ID');
-const amanUrl=u=>/^https:\/\/[^\s"'<>]+$/.test(u||'')?u:'';
+const amanUrl=u=>/^https:\/\/[^\s"'<>]+$/.test(u||'')?affUrl(u):'';
+// Link beli paket membawa kode affiliate teman (?aff=) ke Kreacy, supaya komisi tercatat otomatis tanpa isi kode.
+function affUrl(u){
+  let ref='';try{ref=localStorage.getItem('bgy_ref')||'';}catch{}
+  if(!/^[A-Z0-9][A-Z0-9-]{2,14}$/.test(ref)||/bantuguruyuk\.web\.id/i.test(u))return u;
+  try{const x=new URL(u);x.searchParams.set('aff',ref);return x.toString();}catch{return u;}
+}
 function paketDari(k){return Object.assign({},PAKET_DEFAULT[k],PAKET[k]);}
 function renderUpgradeTab(){
   const el=document.getElementById('tab-upgrade');if(!el)return;
@@ -3850,7 +3856,7 @@ function affDasbor(a){
     <a class="pk-beli pro" href="https://wa.me/?text=${encodeURIComponent(ajak)}" target="_blank" rel="noopener">Bagikan ke WhatsApp</a></div>
     <button type="button" class="aff-link" onclick="affSalin(${escHtml(JSON.stringify(link))},'Link tersalin')">${escHtml(link)}</button>
     ${a.ref_count?'':`<button type="button" class="aff-ganti" onclick="affGantiKode()">Ganti kode</button>`}</div>
-  <p class="ti-note">Teman mengisi kode ini saat aktivasi paket setelah membeli di Kreacy. Kalau teman membuka link di atas, kodenya terisi otomatis.</p>
+  <p class="ti-note">Bagikan <b>link</b> di atas: kalau teman membeli paket lewat link itu, komisi tercatat otomatis tanpa perlu mengisi kode. Kode cukup disebut kalau teman membeli langsung dari Kreacy.</p>
   <div class="aff-stat"><div><b>${a.ref_count}</b><small>Referal</small></div><div><b>${rupiah(a.saldo)}</b><small>Saldo</small></div><div><b>${rupiah(a.cair)}</b><small>Sudah cair</small></div></div>
   ${a.pending?`<p class="ti-note"><b>${rupiah(a.pending)}</b> sedang diproses ke DANA ${escHtml(a.dana||'')}. Dibayar ${escHtml(a.jadwal)}.</p>`:''}
   ${!a.pro?`<p class="ti-note">Langganan PRO kamu sudah habis. Kode tidak bisa dipakai teman sampai PRO diperpanjang, tapi saldo tetap bisa ditarik.</p>`:''}
@@ -3925,7 +3931,7 @@ function renderPaketBox(){
   const rp=n=>'Rp'+Number(n||0).toLocaleString('id-ID'),t=tier();
   box.innerHTML=['plus','pro'].filter(k=>!(t==='plus'&&k==='plus')).map(k=>{
     const p=Object.assign({},PAKET_DEFAULT[k],PAKET[k]);
-    const url=/^https:\/\/[^\s"'<>]+$/.test(p.url||'')?p.url:'';
+    const url=/^https:\/\/[^\s"'<>]+$/.test(p.url||'')?affUrl(p.url):'';
     const pro=k==='pro';
     return `<div style="border:1.5px solid ${pro?'#f59e0b':'var(--border)'};border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px;background:var(--card-bg);">
       <div style="flex:1;min-width:0;">
