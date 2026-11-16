@@ -129,7 +129,7 @@ Lihat `DESIGN-BGY.md` bagian 14. Ringkasnya, di setiap tool berbayar:
 
 ## Program Affiliate Buat Soal (otomatis)
 - Migrasi `supabase/migrations/20261116_affiliate_soal.sql`: tabel `bgy_aff`, `bgy_aff_ref`, `bgy_aff_payout`; RPC `bgy_aff_me`, `bgy_aff_withdraw`, `bgy_aff_apply`, `bgy_aff_payout_set` (admin).
-- Member PRO (tier `pro` atau lisensi lama) otomatis jadi affiliate: menu **Program Affiliate** di Buat Soal langsung menampilkan kode `BS-XXXXX` dan link `/soal/?ref=BS-XXXXX` (RPC `bgy_aff_auto`, cukup email PRO). Penarikan lewat `bgy_aff_tarik`; nomor DANA terkunci setelah dipakai, ganti lewat admin (`bgy_aff_set_dana`).
+- Member PRO (tier `pro` atau lisensi lama) otomatis jadi affiliate: menu **Program Affiliate** di Buat Soal langsung menampilkan kode dari nama email (mis. `INDAH`, bentrok jadi `INDAH2`) dan link `/soal/?ref=INDAH`; member bisa mengganti kode (3-12 huruf/angka) selama belum dipakai pembeli (`bgy_aff_ganti_kode`, migrasi `20261116b_affiliate_kode_nama.sql`) (RPC `bgy_aff_auto`, cukup email PRO). Penarikan lewat `bgy_aff_tarik`; nomor DANA terkunci setelah dipakai, ganti lewat admin (`bgy_aff_set_dana`).
 - `bgy-info.js` menyimpan `?ref=` ke `localStorage.bgy_ref`; `aktvs-bs.html` mengisinya otomatis di kolom "Kode affiliate teman" dan memanggil `bgy_aff_apply` setelah `bgy_claim_order` berhasil. Satu pesanan satu kode, tidak bisa kode sendiri.
 - Komisi, saldo minimal cair, jadwal, dan bonus hari pembeli diatur di `/admin` → Promo → Paket Buat Soal (`paket_soal.affiliate`). Penarikan diproses di `/admin` → Affiliate Buat Soal.
 - Lupa isi kode saat aktivasi: pembeli bisa memasukkannya di Buat Soal → Program Affiliate maksimal 7 hari setelah aktivasi (`bgy_aff_susul`, butuh email PRO + kode aktivasi).
