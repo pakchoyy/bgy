@@ -310,9 +310,74 @@ $$;
 revoke all on function public.bgy_aff_set_dana(text, text) from public;
 grant execute on function public.bgy_aff_set_dana(text, text) to authenticated;
 
+-- Kode affiliate menyusul: pembeli yang lupa mengisi kode saat aktivasi masih bisa memasukkannya
+-- maksimal 7 hari setelah aktivasi, dari Buat Soal (bukti pemilik: email + kode aktivasi BGY-XXXXX).
+create or replace function public.bgy_aff_credit(p_order text, p_ref text)
+returns jsonb
+language plpgsql security definer set search_path = pg_catalog, public
+as $$
+declare
+  v_ref text := upper(trim(coalesce(p_ref, '')));
+  v_claim record;
+  v_aff public.bgy_aff;
+  v_cfg record;
+begin
+  if v_ref !~ '^BS-[A-Z0-9]{5}$' then return jsonb_build_object('result', 'no_code'); end if;
+  select * into v_claim from public.bgy_order_claims where order_id = p_order;
+  if not found or v_claim.access <> 'soal' then return jsonb_build_object('result', 'invalid'); end if;
+  if exists (select 1 from public.bgy_aff_ref where order_id = p_order) then return jsonb_build_object('result', 'used'); end if;
+  select * into v_aff from public.bgy_aff where code = v_ref for update;
+  if not found then return jsonb_build_object('result', 'no_code'); end if;
+  if v_aff.email = lower(v_claim.email) then return jsonb_build_object('result', 'self'); end if;
+  if not public.bgy_aff_is_pro(v_aff.email) then return jsonb_build_object('result', 'no_code'); end if;
+  select * into v_cfg from public.bgy_aff_cfg();
+  insert into public.bgy_aff_ref (order_id, code, buyer_email, komisi, bonus_hari)
+  values (p_order, v_aff.code, lower(v_claim.email), v_cfg.komisi, v_cfg.bonus_hari);
+  update public.bgy_aff set saldo = saldo + v_cfg.komisi, total = total + v_cfg.komisi, ref_count = ref_count + 1
+  where code = v_aff.code;
+  if v_cfg.bonus_hari > 0 then
+    update public.users u set active_until = u.active_until + make_interval(days => v_cfg.bonus_hari)
+    where lower(u.email) = lower(v_claim.email) and u.access = 'soal' and u.active_until is not null;
+  end if;
+  return jsonb_build_object('result', 'ok', 'bonus_hari', v_cfg.bonus_hari);
+end;
+$$;
+revoke all on function public.bgy_aff_credit(text, text) from public, anon, authenticated;
+
+create or replace function public.bgy_aff_susul(p_email text, p_code text, p_ref text)
+returns jsonb
+language plpgsql security definer set search_path = pg_catalog, public
+as $$
+declare
+  v_email text := lower(trim(coalesce(p_email, '')));
+  v_code text := upper(trim(coalesce(p_code, '')));
+  v_order text;
+begin
+  if not exists (select 1 from public.users u where lower(u.email) = v_email and upper(u.code) = v_code and u.access = 'soal') then
+    return jsonb_build_object('result', 'login');
+  end if;
+  select c.order_id into v_order from public.bgy_order_claims c
+  where lower(c.email) = v_email and c.access = 'soal' and c.created_at > now() - interval '7 days'
+    and not exists (select 1 from public.bgy_aff_ref r where r.order_id = c.order_id)
+  order by c.created_at desc limit 1;
+  if v_order is null then
+    if exists (select 1 from public.bgy_aff_ref r join public.bgy_order_claims c on c.order_id = r.order_id
+               where lower(c.email) = v_email and c.created_at > now() - interval '7 days') then
+      return jsonb_build_object('result', 'used');
+    end if;
+    return jsonb_build_object('result', 'late');
+  end if;
+  return public.bgy_aff_credit(v_order, p_ref);
+end;
+$$;
+revoke all on function public.bgy_aff_susul(text, text, text) from public;
+grant execute on function public.bgy_aff_susul(text, text, text) to anon, authenticated;
+
 commit;
 
 -- ═══ Rollback (manual) ═══
+-- drop function if exists public.bgy_aff_susul(text, text, text);
+-- drop function if exists public.bgy_aff_credit(text, text);
 -- drop function if exists public.bgy_aff_set_dana(text, text);
 -- drop function if exists public.bgy_aff_tarik(text, text);
 -- drop function if exists public.bgy_aff_auto(text);

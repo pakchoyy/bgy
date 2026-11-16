@@ -273,6 +273,7 @@ body.dark .btn-secondary{background:#374151;color:#f1f5f9;}
 .aff-stat div{border:1px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center;background:var(--card-bg);}
 .aff-stat b{display:block;font-size:1rem;font-weight:900;}
 .aff-stat small{font-size:.75rem;color:var(--text-light);font-weight:700;}
+.aff-susul{margin-top:18px;padding-top:14px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:6px;}
 .aff-keluar{margin-top:14px;min-height:40px;padding:0 14px;border:1.5px solid var(--border);background:none;border-radius:10px;color:var(--text);font-weight:700;cursor:pointer;font-family:inherit;}
 .ti-q{font-size:.85rem;font-weight:700;margin:12px 0 2px;}
 .ti-a{font-size:.85rem;line-height:1.6;margin:0;color:var(--text-light);}
@@ -3821,9 +3822,10 @@ function renderAffiliateTab(){
   const bonus=Number(af.bonus_hari??7)||0;
   const kepala=`<h3><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg> Program Affiliate</h3>
   <p class="ti-lead">Kamu dapat <b>${rupiah(k)}</b> setiap ada guru yang membeli paket Buat Soal memakai kode kamu${bonus?`, dan temanmu dapat <b>bonus ${bonus} hari</b> masa aktif`:''}.</p>`;
-  if(!isPro){el.innerHTML=kepala+`<p class="ti-note">Khusus member PRO. Paket kamu sekarang ${NAMA_TIER[tier()]}. Upgrade ke PRO, otomatis langsung jadi affiliate.</p><button type="button" class="pk-beli pro" onclick="showTab('upgrade')">Lihat paket PRO</button>`;return;}
-  if(_aff){el.innerHTML=kepala+affDasbor(_aff);return;}
-  el.innerHTML=kepala+'<p class="ti-note" id="affMsg">Memuat kode affiliate kamu...</p>';
+  const susul=tier()!=='free'?affSusulBox():'';
+  if(!isPro){el.innerHTML=kepala+`<p class="ti-note">Khusus member PRO. Paket kamu sekarang ${NAMA_TIER[tier()]}. Upgrade ke PRO, otomatis langsung jadi affiliate.</p><button type="button" class="pk-beli pro" onclick="showTab('upgrade')">Lihat paket PRO</button>`+susul;return;}
+  if(_aff){el.innerHTML=kepala+affDasbor(_aff)+susul;return;}
+  el.innerHTML=kepala+'<p class="ti-note" id="affMsg">Memuat kode affiliate kamu...</p>'+susul;
   affMuat();
 }
 async function affMuat(){
@@ -3857,6 +3859,33 @@ function affDasbor(a){
   :`<p class="ti-note">${a.pending?'Tunggu penarikan sebelumnya selesai.':`Bisa ditarik kalau saldo sudah ${rupiah(a.min_cair)}.`}</p>`}
   ${a.refs&&a.refs.length?`<h4>Riwayat komisi</h4><ul class="ti-list">${a.refs.map(r=>`<li>${new Date(r.tgl).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}: +${rupiah(r.komisi)}</li>`).join('')}</ul>`:''}
   <button type="button" class="aff-keluar" onclick="_aff=null;renderAffiliateTab()">Muat ulang</button>`;
+}
+// Pembeli yang lupa mengisi kode affiliate saat aktivasi: masih bisa sampai 7 hari setelah aktivasi.
+function affSusulBox(){
+  let k='',ref='';try{k=localStorage.getItem('pro_kode')||'';ref=localStorage.getItem('bgy_ref')||'';}catch{}
+  const butuhKode=!/^BGY-[A-Z0-9]{5}$/.test(k);
+  return `<div class="aff-susul"><h4>Punya kode affiliate dari teman?</h4>
+  <p class="ti-note">Lupa mengisi saat aktivasi? Masih bisa dimasukkan sampai 7 hari setelah aktivasi paket. Kamu dapat bonus masa aktif.</p>
+  <label for="affRef">Kode affiliate teman</label><input id="affRef" type="text" maxlength="8" placeholder="BS-XXXXX" value="${escHtml(ref)}" style="text-transform:uppercase"/>
+  ${butuhKode?`<label for="affKodeAkt">Kode aktivasi kamu</label><input id="affKodeAkt" type="text" maxlength="9" placeholder="BGY-XXXXX" style="text-transform:uppercase"/>`:''}
+  <button type="button" class="pk-beli plus" id="affSusulBtn" onclick="affSusul()">Pakai kode</button><div class="ti-note" id="affSusulMsg"></div></div>`;
+}
+async function affSusul(){
+  const ref=(document.getElementById('affRef').value||'').trim().toUpperCase(),msg=document.getElementById('affSusulMsg'),btn=document.getElementById('affSusulBtn');
+  const ka=document.getElementById('affKodeAkt');let kode='';try{kode=localStorage.getItem('pro_kode')||'';}catch{}
+  if(ka)kode=(ka.value||'').trim().toUpperCase();
+  if(!/^BS-[A-Z0-9]{5}$/.test(ref)){msg.textContent='Format kode affiliate: BS-XXXXX.';return;}
+  if(!/^BGY-[A-Z0-9]{5}$/.test(kode)){msg.textContent='Isi kode aktivasi kamu (BGY-XXXXX).';return;}
+  const sb=getSupabase();if(!sb)return;btn.disabled=true;msg.textContent='Memproses...';
+  try{
+    const{data,error}=await sb.rpc('bgy_aff_susul',{p_email:proEmail(),p_code:kode,p_ref:ref});if(error)throw error;
+    const r=data&&data.result;
+    const p={ok:`Berhasil! Bonus +${data&&data.bonus_hari} hari masa aktif sudah ditambahkan.`,used:'Pembelian kamu sudah memakai kode affiliate.',late:'Sudah lewat 7 hari sejak aktivasi, kode tidak bisa dipakai lagi.',self:'Kode affiliate milik sendiri tidak bisa dipakai.',no_code:'Kode affiliate tidak ditemukan atau sudah tidak aktif.',login:'Kode aktivasi tidak cocok dengan email PRO kamu.',invalid:'Kode tidak bisa dipakai untuk pembelian ini.'};
+    msg.textContent=p[r]||p.invalid;
+    if(r==='ok'){try{localStorage.setItem('pro_kode',kode);localStorage.removeItem('bgy_ref');}catch{}btn.hidden=true;}
+    else if(r!=='login'&&ka){try{localStorage.setItem('pro_kode',kode);}catch{}}
+  }catch(e){msg.textContent='Gagal. Coba lagi.';}
+  finally{btn.disabled=false;}
 }
 function affSalin(t,ok){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>showGenerateFeedback(ok,1800)).catch(()=>prompt('Salin:',t));}
 async function affTarik(){
@@ -4003,7 +4032,7 @@ async function verifikasiKode(){
     if(data.result==='expired'||data.result==='inactive'){msg.innerText='Masa langganan telah habis. Silakan perpanjang.';msg.style.color='red';return;}
     if(!subscriptionIsActive(data)){msg.innerText='Akun belum aktif PRO.';msg.style.color='red';return;}
     msg.innerText='Aktivasi berhasil. Selamat menikmati PRO!';msg.style.color='green';
-    localStorage.setItem('pro_email',email);unlockPro(true,data);
+    localStorage.setItem('pro_email',email);try{localStorage.setItem('pro_kode',kode);}catch{}unlockPro(true,data);
   }catch(e){console.error(e);msg.innerText='Gagal menghubungi server.';msg.style.color='red';}
 }
 
