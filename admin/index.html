@@ -63,6 +63,10 @@ body.dark .bar:hover i,body.dark .bar.on i{background:#5eead4;}
 .chart-tip{font-size:.8rem;margin-top:6px;color:var(--text);}
 .chart-axis{display:flex;justify-content:space-between;font-size:.74rem;color:var(--text-light);margin-top:4px;}
 .tbl-wrap{overflow-x:auto;}
+.aff-dash{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 12px;padding:12px 14px;min-height:64px;border-radius:14px;border:1.5px solid rgba(245,158,11,.35);background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(14,165,160,.08));color:var(--text);cursor:pointer;text-align:left;font-family:inherit;}
+.aff-dash .ad-ic{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;display:flex;align-items:center;justify-content:center;flex:none;}
+.aff-dash .ad-body{flex:1;min-width:0;}.aff-dash b{display:block;font-size:.9rem;}.aff-dash small{display:block;font-size:.75rem;color:var(--text-light);margin-top:2px;}
+.aff-dash .ad-badge{background:#ef4444;color:#fff;font-weight:800;font-size:.75rem;border-radius:99px;padding:3px 9px;white-space:nowrap;}
 .aff-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px;}
 .aff-seg button{min-height:42px;border:1.5px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:10px;font-weight:800;font-size:.8rem;cursor:pointer;font-family:inherit;}
 .aff-seg button.on{background:var(--grad,#0ea5a0);color:#fff;border-color:transparent;}
@@ -424,6 +428,12 @@ main{padding-bottom:90px!important;}
         <div class="shortcut-head"><b>Admin Eksternal</b><button type="button" onclick="showTab('portal')" style="background:none;border:none;color:var(--blue);font-size:.72rem;font-weight:700;cursor:pointer;padding:0;font-family:inherit;">Lihat semua →</button></div>
         <div class="shortcut-row" id="shortcutRow"></div>
       </div>
+      <button type="button" class="aff-dash" id="affDash" hidden onclick="showTab('aff')">
+        <span class="ad-ic"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg></span>
+        <span class="ad-body"><b>Affiliate Buat Soal</b><small id="affDashSub">Memuat...</small></span>
+        <span class="ad-badge" id="affDashBadge" hidden></span>
+        <svg class="ic" aria-hidden="true" style="opacity:.5"><use href="#i-chevron-right"/></svg>
+      </button>
       <div id="dueAlert" hidden></div>
       <div class="dash-charts">
         <div class="card dash-chart-card" id="chartRevenue">
@@ -672,7 +682,7 @@ main{padding-bottom:90px!important;}
       </div>
       <div class="tbl-wrap">
         <table class="stat-tbl">
-          <thead><tr><th>Email</th><th>Tool</th><th>Paket</th><th>Aktif sampai</th><th>Status</th></tr></thead>
+          <thead><tr><th>Email</th><th>Tool</th><th>Kode aktivasi</th><th>Paket</th><th>Aktif sampai</th><th>Status</th></tr></thead>
           <tbody id="userRows"></tbody>
         </table>
       </div>
@@ -853,7 +863,7 @@ async function boot(){
     show('notAdmin');return;
   }
   show('panel');
-  loadJokian();loadSendiri();loadInvoices();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadTraktir();loadLisensi();loadPaket();loadPaketMa();
+  loadJokian();loadSendiri();loadInvoices();loadLangganan();loadPortal();loadLinks();loadReviews();loadPromo();loadTraktir();loadAffDash();loadLisensi();loadPaket();loadPaketMa();
   maybeLoadDashUsage();
 }
 document.getElementById('loginForm').addEventListener('submit',async e=>{
@@ -2198,6 +2208,18 @@ document.getElementById('traktirForm').addEventListener('submit',async e=>{
 let affPays=[],affStat='menunggu';
 const affRp=n=>'Rp'+Number(n||0).toLocaleString('id-ID');
 const affTgl=d=>d?new Date(d).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+async function loadAffDash(){
+  const el=document.getElementById('affDash');if(!el)return;
+  const [p,a]=await Promise.all([
+    sb.from('bgy_aff_payout').select('amount').eq('status','menunggu'),
+    sb.from('bgy_aff').select('ref_count,total')]);
+  if(p.error||a.error){el.hidden=true;return;}
+  const pend=p.data||[],aff=a.data||[];
+  const totPend=pend.reduce((s,x)=>s+x.amount,0),refs=aff.reduce((s,x)=>s+x.ref_count,0),kom=aff.reduce((s,x)=>s+x.total,0);
+  document.getElementById('affDashSub').textContent=`${aff.length} affiliate · ${refs} referal · komisi ${affRp(kom)}`;
+  const bd=document.getElementById('affDashBadge');bd.hidden=!pend.length;bd.textContent=pend.length?`${pend.length} cair ${affRp(totPend)}`:'';
+  el.hidden=false;
+}
 async function loadAff(){
   const [p,a,r]=await Promise.all([
     sb.from('bgy_aff_payout').select('*').order('created_at',{ascending:false}).limit(200),
@@ -2223,7 +2245,7 @@ async function affSet(id,status){
   const {data,error}=await sb.rpc('bgy_aff_payout_set',{p_id:id,p_status:status,p_note:note});
   if(error)return fail(error);
   if(data!=='ok')return toast('Gagal: '+data);
-  toast(status==='dibayar'?'Ditandai dibayar':'Ditolak, saldo dikembalikan');loadAff();
+  toast(status==='dibayar'?'Ditandai dibayar':'Ditolak, saldo dikembalikan');loadAff();loadAffDash();
 }
 
 /* ─── Promo ─── */
@@ -2482,6 +2504,10 @@ async function loadUsers(){
   if(error){msg.textContent=error.message.includes('not admin')?'Fungsi bgy_list_users belum ada: jalankan migrasi 20261001_lisensi.sql dulu.':error.message;return;}
   msg.textContent='';
   _usersCache=data||[];
+  // Kode aktivasi (butuh migrasi 20261116_affiliate_soal.sql); kalau belum ada, kolom berisi tanda strip.
+  const {data:codes}=await sb.rpc('bgy_admin_user_codes',{p_access:access});
+  const map={};(codes||[]).forEach(c=>{map[c.email+'|'+c.access]=c.code;});
+  _usersCache.forEach(u=>{u.code=map[String(u.email||'').toLowerCase()+'|'+u.access]||'';});
   renderUsers();
 }
 function renderUsers(){
@@ -2497,8 +2523,8 @@ function renderUsers(){
   const SCLS={aktif:'teal',kedaluwarsa:'gray',gratis:'gray'};
   const SLBL={aktif:'Aktif',kedaluwarsa:'Kedaluwarsa',gratis:'Gratis'};
   document.getElementById('userRows').innerHTML=rows.length
-    ?rows.map(r=>`<tr><td style="word-break:break-all;max-width:160px">${esc(r.email)}</td><td>${esc(TOOL_NAMES[r.access]||r.access||'?')}</td><td>${esc(r.plan_type||'—')}</td><td style="white-space:nowrap">${fmtDate(r.active_until)}</td><td><span class="pill ${SCLS[r.status]||'gray'}">${SLBL[r.status]||r.status}</span></td></tr>`).join('')
-    :'<tr><td colspan="5" class="empty">Tidak ada pengguna.</td></tr>';
+    ?rows.map(r=>`<tr><td style="word-break:break-all;max-width:160px">${esc(r.email)}</td><td>${esc(TOOL_NAMES[r.access]||r.access||'?')}</td><td>${r.code?`<button type="button" class="btn" style="font-family:monospace;min-height:36px" onclick="navigator.clipboard&&navigator.clipboard.writeText('${esc(r.code)}').then(()=>toast('Kode tersalin'))">${esc(r.code)}</button>`:'—'}</td><td>${esc(r.plan_type||'—')}</td><td style="white-space:nowrap">${fmtDate(r.active_until)}</td><td><span class="pill ${SCLS[r.status]||'gray'}">${SLBL[r.status]||r.status}</span></td></tr>`).join('')
+    :'<tr><td colspan="6" class="empty">Tidak ada pengguna.</td></tr>';
 }
 
 /* ─── Tautan Beli Pro ─── */

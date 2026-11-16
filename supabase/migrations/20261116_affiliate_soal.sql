@@ -218,9 +218,24 @@ $$;
 revoke all on function public.bgy_aff_payout_set(bigint, text, text) from public;
 grant execute on function public.bgy_aff_payout_set(bigint, text, text) to authenticated;
 
+-- Admin: kode aktivasi pengguna (untuk membantu member yang lupa kode).
+create or replace function public.bgy_admin_user_codes(p_access text default null)
+returns table (email text, access text, code text)
+language plpgsql stable security definer set search_path = pg_catalog, public
+as $$
+begin
+  if not public.bgy_is_admin() then raise exception 'not admin'; end if;
+  return query select lower(u.email)::text, u.access::text, u.code::text from public.users u
+    where u.code is not null and (p_access is null or u.access = p_access);
+end;
+$$;
+revoke all on function public.bgy_admin_user_codes(text) from public;
+grant execute on function public.bgy_admin_user_codes(text) to authenticated;
+
 commit;
 
 -- ═══ Rollback (manual) ═══
+-- drop function if exists public.bgy_admin_user_codes(text);
 -- drop function if exists public.bgy_aff_payout_set(bigint, text, text);
 -- drop function if exists public.bgy_aff_apply(text, text, text);
 -- drop function if exists public.bgy_aff_withdraw(text, text, text);
