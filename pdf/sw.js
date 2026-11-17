@@ -1,5 +1,5 @@
 /* BGY PDF Tools — Service Worker */
-const CACHE_NAME = 'bgy-pdf-v2';
+const CACHE_NAME = 'bgy-pdf-v3';
 const CORE = [
   '/pdf/',
   '/pdf/manifest.json',
@@ -11,6 +11,7 @@ const CORE = [
   '/lib/confetti.js',
   '/guru-cibisd2.png',
   '/bgy-info.js',
+  '/kontak.js',
   '/fonts/bgy-font.css?v=2'
 ];
 
@@ -33,8 +34,8 @@ self.addEventListener('fetch', e => {
   if (url.origin !== location.origin) return;
 
   // HTML dan info bersama: ambil terbaru saat online, cache saat offline.
-  if (req.mode === 'navigate' || url.pathname === '/bgy-info.js') {
-    const key = req.mode === 'navigate' ? '/pdf/' : '/bgy-info.js';
+  if (req.mode === 'navigate' || /^\/(bgy-info|kontak)\.js$/.test(url.pathname)) {
+    const key = req.mode === 'navigate' ? '/pdf/' : url.pathname;
     e.respondWith(
       fetch(req).then(res => {
         if (res.ok) { const copy = res.clone(); caches.open(CACHE_NAME).then(c => c.put(key, copy)); }

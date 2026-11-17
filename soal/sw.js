@@ -1,7 +1,7 @@
 // BGY Buat Soal — Service Worker v1.0
 // Cache: aset statis saja. API/generate tetap butuh internet.
 
-const CACHE = 'bgy-soal-v36';
+const CACHE = 'bgy-soal-v37';
 const OFFLINE_URL = '/soal/offline.html';
 
 // Aset yang di-cache saat install
@@ -40,7 +40,7 @@ self.addEventListener('activate', e => {
 // ── Fetch: strategi per tipe request ──
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-  if (new URL(e.request.url).pathname === '/bgy-info.js') return; // bar Info selalu versi terbaru
+  if (/^\/(bgy-info|kontak)\.js$/.test(new URL(e.request.url).pathname)) return; // bar Info selalu versi terbaru
 
   // 1. API request (generate soal, supabase, gtag) → network only, jangan cache
   if (

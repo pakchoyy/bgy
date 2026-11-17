@@ -10,6 +10,14 @@
    Link ke halaman yang sedang dibuka otomatis disembunyikan. */
 (function () {
   'use strict';
+  // Nomor WhatsApp kontak hanya ada di kontak.js (satu-satunya tempat). Halaman yang belum memuatnya dimuatkan di sini,
+  // dari lokasi yang sama dengan bgy-info.js supaya tetap jalan di situs lain yang memakai file ini.
+  if (!window.bgyWaUrl) {
+    var _me = document.currentScript, _ks = document.createElement('script');
+    _ks.src = (_me && _me.src ? _me.src.replace(/[^\/]*$/, '') : '/') + 'kontak.js';
+    _ks.async = true;
+    document.head.appendChild(_ks);
+  }
 
   var INFO_ITEMS = [
     { text: 'Bikin soal gak sampai 10 menit', url: 'https://www.bantuguruyuk.web.id/soal', path: '/soal' },
@@ -269,7 +277,7 @@
     traktirSetting().then(function (v) { if (v) tkBtn.style.display = ''; });
     slot.appendChild(menuButton(ICONS.chat, 'Kritik & saran', function () {
       track('menu', 'Kritik & saran', 'wa');
-      window.open('https://wa.me/6289530713597?text=' + encodeURIComponent('Halo Pak Choy, saya pakai ' + toolName() + '. Kritik/saran/lapor bug: '), '_blank', 'noopener');
+      window.open(window.bgyWaUrl('Halo Pak Choy, saya pakai ' + toolName() + '. Kritik/saran/lapor bug: '), '_blank', 'noopener');
     }));
   }
   function menuButton(icon, text, onClick) {

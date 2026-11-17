@@ -159,7 +159,7 @@ Urutan isi:
    - **Tools Bantu Guru Yuk lainnya** — maks **4** tools (tool halaman sendiri otomatis disembunyikan)
    - **Semua Tools Bantu Guru Yuk** (satu baris)
    - **Bagikan ke teman guru** — Web Share di HP (fallback WhatsApp), link ber-UTM `utm_source=share`; kode voucher dari tab Promo ikut ditempel
-   - **Kritik & saran** — WhatsApp Pak Choy (6289530713597) dengan pesan berisi nama tool
+   - **Kritik & saran** — WhatsApp Pak Choy (nomor hanya di `/kontak.js`, pakai `bgyWaUrl(teks)`) dengan pesan berisi nama tool
 
 ```css
 .dropdown-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--card-bg);color:var(--text);

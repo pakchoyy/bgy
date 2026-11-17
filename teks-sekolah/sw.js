@@ -1,5 +1,5 @@
 /* BGY Teks Sekolah — Service Worker */
-const CACHE_NAME = 'bgy-teks-v12';
+const CACHE_NAME = 'bgy-teks-v13';
 const CACHE_URLS = [
   '/teks-sekolah/',
   '/teks-sekolah/index.html',
@@ -27,7 +27,7 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.hostname !== self.location.hostname) return;
-  if (url.pathname === '/bgy-info.js' || url.pathname.startsWith('/api/')) return;
+  if (/^\/(bgy-info|kontak)\.js$/.test(url.pathname) || url.pathname.startsWith('/api/')) return;
 
   const isHtml = event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('/');
   if (isHtml) {

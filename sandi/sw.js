@@ -2,7 +2,7 @@
 
 /* SANDI service worker — caches core assets for offline use. */
 
-const CACHE_NAME = 'sandi-cache-v23';
+const CACHE_NAME = 'sandi-cache-v24';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -15,6 +15,7 @@ const CORE_ASSETS = [
   './icons/maskable-512.png',
   '../guru-cibisd2.png',
   '../bgy-info.js',
+  '../kontak.js',
   '../fonts/bgy-font.css?v=2',
 ];
 
@@ -38,15 +39,17 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   // Iklan bersama: ambil versi terbaru saat online, pakai cache saat offline.
-  if (new URL(event.request.url).pathname === '/bgy-info.js') {
+  const _p = new URL(event.request.url).pathname;
+  if (/^\/(bgy-info|kontak)\.js$/.test(_p)) {
+    const _key = '..' + _p;
     event.respondWith(
       fetch(event.request)
         .then((response) => {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('../bgy-info.js', clone));
+          caches.open(CACHE_NAME).then((cache) => cache.put(_key, clone));
           return response;
         })
-        .catch(() => caches.match('../bgy-info.js'))
+        .catch(() => caches.match(_key))
     );
     return;
   }

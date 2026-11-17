@@ -1,10 +1,11 @@
 /* BGY acak — Service Worker */
-const CACHE_NAME = 'bgy-acak-v2';
+const CACHE_NAME = 'bgy-acak-v3';
 const CORE = [
   '/acak/',
   '/acak/manifest.json',
   '/guru-cibisd2.png',
   '/bgy-info.js',
+  '/kontak.js',
   '/fonts/bgy-font.css?v=2',
   '/lib/rayakan.js',
   '/lib/confetti.js'
@@ -29,8 +30,8 @@ self.addEventListener('fetch', e => {
   if (url.origin !== location.origin) return;
 
   // HTML dan info bersama: ambil terbaru saat online, cache saat offline.
-  if (req.mode === 'navigate' || url.pathname === '/bgy-info.js') {
-    const key = req.mode === 'navigate' ? '/acak/' : '/bgy-info.js';
+  if (req.mode === 'navigate' || /^\/(bgy-info|kontak)\.js$/.test(url.pathname)) {
+    const key = req.mode === 'navigate' ? '/acak/' : url.pathname;
     e.respondWith(
       fetch(req).then(res => {
         if (res.ok) { const copy = res.clone(); caches.open(CACHE_NAME).then(c => c.put(key, copy)); }

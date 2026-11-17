@@ -393,6 +393,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2"></script>
 <meta name="theme-color" content="#34d399"/>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+<script src="/kontak.js"></script>
 <script src="/bgy-info.js"></script>
 </head>
 <body>
@@ -499,7 +500,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
   <h3 style="font-size:1rem;font-weight:700;margin:26px 0 12px;padding-top:18px;border-top:1px solid var(--border);"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Kontak</h3>
   <p style="font-size:.85rem;color:var(--text);line-height:1.7;margin-bottom:16px;">Untuk info lebih lanjut, bantuan penggunaan, atau kritik dan saran:</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp</button>
+    <button onclick="window.open(bgyWaUrl())" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp</button>
     <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> TikTok</button>
   </div>
 </div>
@@ -876,7 +877,7 @@ footer .footer-sub{font-size:.75rem;color:rgba(255,255,255,.8);}
     </div>
     <div id="userFeedbackBox" style="display:none;margin-top:10px;padding:12px 16px;border:1px solid var(--border);border-radius:12px;background:var(--input-bg);text-align:center;font-size:.82rem;color:var(--text-light);">
       <svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Ada saran atau perbaikan soal?
-      <button onclick="window.open('https://wa.me/6289530713597?text=Saran+BGY+Soal:+','_blank')" style="margin-left:8px;background:var(--grad);color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">Kirim Kritik &amp; Saran</button>
+      <button onclick="window.open(bgyWaUrl('Saran BGY Soal: '),'_blank')" style="margin-left:8px;background:var(--grad);color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;">Kirim Kritik &amp; Saran</button>
     </div>
   </div>
 </main>
@@ -3818,7 +3819,7 @@ function renderUpgradeTab(){
   <p class="ti-q">Ganti HP atau browser?</p>
   <p class="ti-a">Buka kotak Upgrade Paket, pilih "Cek pakai email", lalu masukkan email pembelian.</p>
   <p class="ti-q">Ada kendala?</p>
-  <p class="ti-a"><a href="https://wa.me/6289530713597?text=${encodeURIComponent('Halo Pak Choy, saya mau tanya paket Buat Soal.')}" target="_blank" rel="noopener">Chat Pak Choy di WhatsApp</a>.</p>`;
+  <p class="ti-a"><a href="${bgyWaUrl('Halo Pak Choy, saya mau tanya paket Buat Soal.')}" target="_blank" rel="noopener">Chat Pak Choy di WhatsApp</a>.</p>`;
 }
 // Program Affiliate otomatis: semua member PRO langsung jadi affiliate (migrasi 20261116_affiliate_soal.sql).
 let _aff=null,_affLoading=false;

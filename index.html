@@ -1234,7 +1234,7 @@ a { text-decoration: none; color: inherit; }
       <button id="installTopbarBtn" onclick="doInstall()" class="btn-topbar btn-outline" title="Install aplikasi" style="display:none;gap:6px;">
         <svg class="ic" aria-hidden="true"><use href="#i-download"/></svg> <span class="install-btn-label">Install</span>
       </button>
-      <a href="https://wa.me/6289530713597" target="_blank" rel="noopener noreferrer" class="btn-topbar btn-icon-only" title="Hubungi via WhatsApp" aria-label="Hubungi via WhatsApp"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg></a>
+      <a href="https://wa.me/" data-bgy-wa target="_blank" rel="noopener noreferrer" class="btn-topbar btn-icon-only" title="Hubungi via WhatsApp" aria-label="Hubungi via WhatsApp"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg></a>
     </div>
   </div>
 
@@ -1581,7 +1581,7 @@ a { text-decoration: none; color: inherit; }
       <div class="creator-desc">Guru SD aktif yang paham betul betapa sibuknya administrasi guru. Platform ini lahir dari kebutuhan nyata di kelas — bukan dari perusahaan teknologi.</div>
       <div class="creator-links">
         <a href="https://tiktok.com/@pak.choyy" target="_blank" rel="noopener noreferrer" class="creator-link"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> @pak.choyy di TikTok</a>
-        <a href="https://wa.me/6289530713597" target="_blank" rel="noopener noreferrer" class="creator-link"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Chat WhatsApp</a>
+        <a href="https://wa.me/" data-bgy-wa target="_blank" rel="noopener noreferrer" class="creator-link"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Chat WhatsApp</a>
         <a href="#" id="traktirLink" class="creator-link" role="button" style="display:none" onclick="event.preventDefault();window.bgyTraktir&&bgyTraktir('beranda')"><svg class="ic" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/></svg> Traktir Pak Choy</a>
       </div>
     </div>
@@ -1659,12 +1659,12 @@ a { text-decoration: none; color: inherit; }
         </div>
       </div>
       <a href="https://tiktok.com/@pak.choyy" target="_blank" rel="noopener noreferrer" class="social-btn"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> @pak.choyy di TikTok</a>
-      <a href="https://wa.me/6289530713597" target="_blank" rel="noopener noreferrer" class="social-btn"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Chat WhatsApp</a>
+      <a href="https://wa.me/" data-bgy-wa target="_blank" rel="noopener noreferrer" class="social-btn"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> Chat WhatsApp</a>
     </div>
 
   </div>
 
-  <footer class="site-footer" id="siteFooter"><a href="#" onclick="openGuide();return false;">Panduan</a> · <a href="/privasi.html">Kebijakan Privasi</a> · <a href="https://wa.me/6289530713597?text=Halo%20Pak%20Choyy%2C%20saya%20punya%20saran%20untuk%20BGY." target="_blank" rel="noopener noreferrer">Saran &amp; Lapor Masalah</a><br>Hasil dari AI perlu ditinjau dan disesuaikan oleh guru sebelum digunakan di kelas.</footer>
+  <footer class="site-footer" id="siteFooter"><a href="#" onclick="openGuide();return false;">Panduan</a> · <a href="/privasi.html">Kebijakan Privasi</a> · <a href="https://wa.me/" data-bgy-wa="Halo Pak Choyy, saya punya saran untuk BGY." target="_blank" rel="noopener noreferrer">Saran &amp; Lapor Masalah</a><br>Hasil dari AI perlu ditinjau dan disesuaikan oleh guru sebelum digunakan di kelas.</footer>
   <script>(function(){var f=document.getElementById('siteFooter');if(!f)return;var t=0,last=0;f.addEventListener('click',function(e){if(e.target.closest('a'))return;var n=Date.now();if(n-last>800)t=0;last=n;t++;if(t>=3){t=0;location.href='/admin/';}});})();</script>
 
 </main>
@@ -1915,6 +1915,7 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+<script src="/kontak.js" defer></script>
 <script src="/bgy-info.js" defer></script>
 <script>window.addEventListener('load',function(){if(window.bgyTraktirReady)bgyTraktirReady().then(function(ok){var l=document.getElementById('traktirLink');if(ok&&l)l.style.display='';});});</script>
 </body>

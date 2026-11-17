@@ -1,5 +1,5 @@
 /* BGY Draft TP — Service Worker: HTML/JS network-first supaya update langsung sampai */
-const CACHE = 'bgy-draft-tp-v28';
+const CACHE = 'bgy-draft-tp-v29';
 const ASSETS = ['./', './index.html', './perangkat.js?v=1', './guru-cibisd2.png', './manifest.json'];
 
 self.addEventListener('install', e => {
@@ -17,7 +17,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  if (url.pathname === '/bgy-info.js' || url.hostname !== self.location.hostname) return;
+  if (/^\/(bgy-info|kontak)\.js$/.test(url.pathname) || url.hostname !== self.location.hostname) return;
   const fresh = e.request.mode === 'navigate' || /\.(html|js)$/.test(url.pathname) || url.pathname.endsWith('/');
   if (fresh) {
     e.respondWith(

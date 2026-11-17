@@ -1,4 +1,4 @@
-const CACHE_NAME = "bantu-guru-v23";
+const CACHE_NAME = "bantu-guru-v24";
 
 // FILE WAJIB CACHE
 const CORE_ASSETS = [
@@ -41,7 +41,7 @@ self.addEventListener("activate", event => {
 
 // FETCH (SMART STRATEGY)
 self.addEventListener("fetch", event => {
-  if (new URL(event.request.url).pathname === '/bgy-info.js') return; // bar Info selalu versi terbaru
+  if (/^\/(bgy-info|kontak)\.js$/.test(new URL(event.request.url).pathname)) return; // bar Info selalu versi terbaru
 
   // SKIP API (biar tidak ganggu fetch Gemini kamu)
   if (event.request.url.includes("script.google.com")) return;

@@ -359,6 +359,7 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }</style>
 <link rel="stylesheet" href="/fonts/bgy-font.css?v=2">
+<script src="/kontak.js"></script>
 <script src="/bgy-info.js"></script>
 </head>
 <body>
@@ -530,7 +531,7 @@ body.dark #toast{background:#f1f5f9;color:#1e293b;}
     <div class="card-title"><svg class="ic" aria-hidden="true"><use href="#i-mail"/></svg> Kontak</div>
     <p style="font-size:.84rem;color:var(--text);line-height:1.7;margin-bottom:14px;">Untuk bantuan, kritik, saran, atau kolaborasi:</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button onclick="window.open('https://wa.me/6289530713597')" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp Pak Choyy</button>
+      <button onclick="window.open(bgyWaUrl())" style="background:#25D366;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg> WhatsApp Pak Choyy</button>
       <button onclick="window.open('https://tiktok.com/@pak.choyy')" style="background:#000;color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:700;cursor:pointer;font-size:.85rem;"><svg class="ic" aria-hidden="true"><use href="#i-music"/></svg> TikTok @pak.choyy</button>
     </div>
   </div>
@@ -785,7 +786,7 @@ function kirimFeedback(){
   if(!pesan && !selectedEmoji){ showToast('Tulis pesan atau pilih emoji dulu ya!'); return; }
   const emoji = selectedEmoji||'-';
   const teks = `*Kritik & Saran — Katrol Nilai*\n\n👤 Nama: ${nama}\n${emoji} Perasaan: ${emoji}\n💬 Pesan: ${pesan||'-'}\n\n_Dikirim dari bantuguruyuk.web.id_`;
-  window.open('https://wa.me/6289530713597?text='+encodeURIComponent(teks),'_blank');
+  window.open(bgyWaUrl(teks),'_blank');
   document.getElementById('fbForm').style.display='none';
   document.getElementById('fbSuccess').style.display='block';
 }
